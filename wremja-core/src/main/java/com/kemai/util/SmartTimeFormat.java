@@ -1,10 +1,11 @@
-package com.kemai.text;
+package com.kemai.util;
 
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+
 
 /**
  * Smart time format based on the simple date format.

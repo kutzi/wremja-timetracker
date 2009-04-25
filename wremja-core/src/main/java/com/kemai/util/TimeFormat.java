@@ -1,4 +1,4 @@
-package com.kemai.text;
+package com.kemai.util;
 
 import java.text.DateFormat;
 import java.text.FieldPosition;
