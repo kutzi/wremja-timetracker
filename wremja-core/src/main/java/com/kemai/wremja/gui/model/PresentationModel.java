@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.Launcher;
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.lists.MonthFilterList;
 import com.kemai.wremja.gui.lists.ProjectFilterList;
 import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
@@ -158,7 +158,7 @@ public class PresentationModel extends Observable {
         // Mark data as dirty
         this.dirty = true;
 
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.PROJECT_ADDED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ADDED, source);
         event.setData(project);
 
         notify(event);
@@ -176,7 +176,7 @@ public class PresentationModel extends Observable {
         // Mark data as dirty
         this.dirty = true;
 
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.PROJECT_REMOVED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_REMOVED, source);
         event.setData(project);
 
         notify(event);
@@ -215,7 +215,7 @@ public class PresentationModel extends Observable {
         getData().start(start);
 
         // Fire start event
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.PROJECT_ACTIVITY_STARTED);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_STARTED);
         notify(event);
     }
 
@@ -231,7 +231,7 @@ public class PresentationModel extends Observable {
      * Helper method to notify all observers of an event.
      * @param event the event to forward to the observers
      */
-    private void notify(final BaralgaEvent event) {
+    private void notify(final WremjaEvent event) {
         setChanged();
         notifyObservers(event);
     }
@@ -242,7 +242,7 @@ public class PresentationModel extends Observable {
      * @param propertyChangeEvent the event to fire
      */
     public void fireProjectChangedEvent(final Project changedProject, final PropertyChangeEvent propertyChangeEvent) {
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.PROJECT_CHANGED);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_CHANGED);
         event.setData(changedProject);
         event.setPropertyChangeEvent(propertyChangeEvent);
 
@@ -258,7 +258,7 @@ public class PresentationModel extends Observable {
      * @param propertyChangeEvent the event to fire
      */
     public void fireProjectActivityChangedEvent(final ProjectActivity changedActivity, final PropertyChangeEvent propertyChangeEvent) {
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.PROJECT_ACTIVITY_CHANGED);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_CHANGED);
         event.setData(changedActivity);
         event.setPropertyChangeEvent(propertyChangeEvent);
 
@@ -289,7 +289,7 @@ public class PresentationModel extends Observable {
 
         final DateTime now = DateUtils.getNowAsDateTime();
 
-        BaralgaEvent eventOnEndDay = null;
+        WremjaEvent eventOnEndDay = null;
         DateTime stop2 = null;
 
         // If start is on a different day from now end the activity at 0:00 one day after start.
@@ -309,7 +309,7 @@ public class PresentationModel extends Observable {
             this.activitiesList.add(activityOnEndDay);
 
             // Create Event for Project Activity
-            eventOnEndDay  = new BaralgaEvent(BaralgaEvent.PROJECT_ACTIVITY_ADDED);
+            eventOnEndDay  = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_ADDED);
             eventOnEndDay.setData(activityOnEndDay);
         } else {
             stop = now;
@@ -332,7 +332,7 @@ public class PresentationModel extends Observable {
 
         if (notifyObservers) {
             // Create Event for Project Activity
-            BaralgaEvent event  = new BaralgaEvent(BaralgaEvent.PROJECT_ACTIVITY_ADDED);
+            WremjaEvent event  = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_ADDED);
             event.setData(activityOnStartDay);
             notify(event);
 
@@ -342,7 +342,7 @@ public class PresentationModel extends Observable {
             }
 
             // Create Stop Event
-            event = new BaralgaEvent(BaralgaEvent.PROJECT_ACTIVITY_STOPPED);
+            event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_STOPPED);
             notify(event);
         }
     }
@@ -387,7 +387,7 @@ public class PresentationModel extends Observable {
             UserSettings.instance().setLastDescription(StringUtils.EMPTY);
 
             // 3. Broadcast project activity event.
-            final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.PROJECT_ACTIVITY_ADDED);
+            final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_ADDED);
             event.setData(activity);
             notify(event);
             
@@ -397,7 +397,7 @@ public class PresentationModel extends Observable {
         }
 
         // Fire project changed event
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.PROJECT_CHANGED);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_CHANGED);
         event.setData(activeProject);
         notify(event);
     }
@@ -437,7 +437,7 @@ public class PresentationModel extends Observable {
         this.dirty = true;
 
         // Fire event
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.PROJECT_ACTIVITY_ADDED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_ADDED, source);
         event.setData(activity);
         notify(event);
     }
@@ -459,7 +459,7 @@ public class PresentationModel extends Observable {
         this.dirty = true;
 
         // Fire event
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.PROJECT_ACTIVITY_REMOVED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_REMOVED, source);
         event.setData(activity);
         notify(event);
     }
@@ -488,11 +488,11 @@ public class PresentationModel extends Observable {
         // Fire events
         // TODO: because of the way the events are evaluated in the observers are evaluated
         // order of the events is currently important: first ADDED then REMOVED
-        final BaralgaEvent event2 = new BaralgaEvent(BaralgaEvent.PROJECT_ACTIVITY_ADDED, source);
+        final WremjaEvent event2 = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_ADDED, source);
         event2.setData(newActivity);
         notify(event2);
         
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.PROJECT_ACTIVITY_REMOVED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_REMOVED, source);
         event.setData(oldActivity);
         notify(event);
     }
@@ -574,7 +574,7 @@ public class PresentationModel extends Observable {
         this.data.setStartTime(start);
         
         // Fire event
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.START_CHANGED, this);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.START_CHANGED, this);
         event.setData(start);
         
         notify(event);
@@ -636,7 +636,7 @@ public class PresentationModel extends Observable {
         initialize();
 
         // Fire event
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.DATA_CHANGED, this);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.DATA_CHANGED, this);
         notify(event);
     }
 
@@ -661,7 +661,7 @@ public class PresentationModel extends Observable {
         applyFilter();
 
         // Fire event
-        final BaralgaEvent event = new BaralgaEvent(BaralgaEvent.FILTER_CHANGED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.FILTER_CHANGED, source);
         event.setData(filter);
 
         notify(event);

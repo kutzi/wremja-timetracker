@@ -30,7 +30,7 @@ import com.kemai.swing.util.GuiConstants;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.Launcher;
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.panels.table.AllActivitiesTableFormat;
 import com.kemai.wremja.model.Project;
@@ -153,23 +153,23 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
      * {@inheritDoc}
      */
     public void update(final Observable source, final Object eventObject) {
-        if (source == null || !(eventObject instanceof BaralgaEvent)) {
+        if (source == null || !(eventObject instanceof WremjaEvent)) {
             return;
         }
 
-        final BaralgaEvent event = (BaralgaEvent) eventObject;
+        final WremjaEvent event = (WremjaEvent) eventObject;
 
         switch (event.getType()) {
-            case BaralgaEvent.PROJECT_ACTIVITY_CHANGED:
+            case WremjaEvent.PROJECT_ACTIVITY_CHANGED:
                 tableModel.fireTableDataChanged();
                 break;
             
-            case BaralgaEvent.PROJECT_ACTIVITY_ADDED:
-            case BaralgaEvent.PROJECT_ACTIVITY_REMOVED:
+            case WremjaEvent.PROJECT_ACTIVITY_ADDED:
+            case WremjaEvent.PROJECT_ACTIVITY_REMOVED:
                 tableModel.fireTableDataChanged();
                 break;
     
-            case BaralgaEvent.PROJECT_CHANGED:
+            case WremjaEvent.PROJECT_CHANGED:
                 tableModel.fireTableDataChanged();
                 break;
         }

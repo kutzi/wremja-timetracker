@@ -3,7 +3,7 @@ package com.kemai.wremja.gui.model.report;
 import java.util.Observable;
 import java.util.Observer;
 
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.filter.Filter;
@@ -76,27 +76,27 @@ public class HoursByDayReport extends Observable implements Observer  {
      * {@inheritDoc}
      */
     public void update(final Observable source, final Object eventObject) {
-        if (eventObject == null || !(eventObject instanceof BaralgaEvent)) {
+        if (eventObject == null || !(eventObject instanceof WremjaEvent)) {
             return;
         }
 
-        final BaralgaEvent event = (BaralgaEvent) eventObject;
+        final WremjaEvent event = (WremjaEvent) eventObject;
         switch (event.getType()) {
 
-            case BaralgaEvent.PROJECT_ACTIVITY_ADDED:
+            case WremjaEvent.PROJECT_ACTIVITY_ADDED:
                 final ProjectActivity activity = (ProjectActivity) event.getData();
                 addHours(activity);
                 break;
 
-            case BaralgaEvent.PROJECT_ACTIVITY_REMOVED:
+            case WremjaEvent.PROJECT_ACTIVITY_REMOVED:
                 calculateHours();
                 break;
 
-            case BaralgaEvent.PROJECT_ACTIVITY_CHANGED:
+            case WremjaEvent.PROJECT_ACTIVITY_CHANGED:
                 calculateHours();
                 break;
                 
-            case BaralgaEvent.FILTER_CHANGED:
+            case WremjaEvent.FILTER_CHANGED:
                 final Filter newFilter = (Filter) event.getData();
                 setFilter(newFilter);
                 break;

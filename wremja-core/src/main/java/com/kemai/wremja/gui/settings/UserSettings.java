@@ -36,7 +36,7 @@ public final class UserSettings {
     }
 
     /** Key for the name of the user properties file. */
-    private static String USER_PROPERTIES_FILENAME = "baralga.properties";
+    private static String USER_PROPERTIES_FILENAME = "wremja.properties";
 
     /** Node for Baralga user preferences. */
     private PropertiesConfiguration userConfig;

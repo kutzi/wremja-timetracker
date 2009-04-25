@@ -24,7 +24,7 @@ import com.kemai.wremja.gui.actions.ChangeProjectAction;
 import com.kemai.wremja.gui.actions.ExitAction;
 import com.kemai.wremja.gui.actions.StartAction;
 import com.kemai.wremja.gui.actions.StopAction;
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.Project;
 
@@ -145,20 +145,20 @@ public class TrayIcon implements Observer {
      * {@inheritDoc}
      */
     public void update(final Observable source, final Object eventObject) {
-        if (eventObject != null && eventObject instanceof BaralgaEvent) {
-            BaralgaEvent event = (BaralgaEvent) eventObject;
+        if (eventObject != null && eventObject instanceof WremjaEvent) {
+            WremjaEvent event = (WremjaEvent) eventObject;
 
             switch (event.getType()) {
 
-                case BaralgaEvent.PROJECT_ACTIVITY_STARTED:
+                case WremjaEvent.PROJECT_ACTIVITY_STARTED:
                     this.updateStart();
                     break;
 
-                case BaralgaEvent.PROJECT_ACTIVITY_STOPPED:
+                case WremjaEvent.PROJECT_ACTIVITY_STOPPED:
                     this.updateStop();
                     break;
 
-                case BaralgaEvent.PROJECT_CHANGED:
+                case WremjaEvent.PROJECT_CHANGED:
                     this.buildMenu();
 
                     if (model.isActive()) {
@@ -167,15 +167,15 @@ public class TrayIcon implements Observer {
                     
                     break;
 
-                case BaralgaEvent.PROJECT_ADDED:
+                case WremjaEvent.PROJECT_ADDED:
                     this.buildMenu();
                     break;
 
-                case BaralgaEvent.PROJECT_REMOVED:
+                case WremjaEvent.PROJECT_REMOVED:
                     this.buildMenu();
                     break;
                     
-                case BaralgaEvent.START_CHANGED:
+                case WremjaEvent.START_CHANGED:
                     this.updateToolTip();
                     break;
                     

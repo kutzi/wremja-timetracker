@@ -23,7 +23,7 @@ import org.jdesktop.swingx.JXTable;
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.dialogs.table.ProjectListTableFormat;
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.Project;
 
@@ -225,14 +225,14 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
 
     @Override
     public void update(Observable source, Object eventObject) {
-        if (source == null || !(eventObject instanceof BaralgaEvent)) {
+        if (source == null || !(eventObject instanceof WremjaEvent)) {
             return;
         }
 
-        final BaralgaEvent event = (BaralgaEvent) eventObject;
+        final WremjaEvent event = (WremjaEvent) eventObject;
 
         switch (event.getType()) {
-        case BaralgaEvent.PROJECT_CHANGED:
+        case WremjaEvent.PROJECT_CHANGED:
             projectListTableModel.fireTableDataChanged();
             break;
         }

@@ -6,7 +6,7 @@ import java.util.Observer;
 
 import com.kemai.swing.util.LabeledItem;
 import com.kemai.util.TextResourceBundle;
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.Project;
 
@@ -65,19 +65,19 @@ public class ProjectFilterList implements Observer {
     }
 
     public void update(final Observable source, final Object eventObject) {
-        if (eventObject == null || !(eventObject instanceof BaralgaEvent)) {
+        if (eventObject == null || !(eventObject instanceof WremjaEvent)) {
             return;
         }
 
-        final BaralgaEvent event = (BaralgaEvent) eventObject;
+        final WremjaEvent event = (WremjaEvent) eventObject;
 
         switch (event.getType()) {
 
-        case BaralgaEvent.PROJECT_ADDED:
+        case WremjaEvent.PROJECT_ADDED:
             this.addProject((Project) event.getData());
             break;
 
-        case BaralgaEvent.PROJECT_REMOVED:
+        case WremjaEvent.PROJECT_REMOVED:
             this.removeProject((Project) event.getData());
             break;
         }

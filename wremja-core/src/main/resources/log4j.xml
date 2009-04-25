@@ -7,7 +7,7 @@
     INFO: Console appender is added programmatically to make log directory relative to application data directory.
 	<appender name="main" class="org.apache.log4j.DailyRollingFileAppender">
 		<param name="datePattern" value="'.'yyyy-MM-dd" />
-		<param name="file" value="log/baralga.log" />
+		<param name="file" value="log/wremja.log" />
 		<param name="Append" value="true" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] %c: %m%n" />

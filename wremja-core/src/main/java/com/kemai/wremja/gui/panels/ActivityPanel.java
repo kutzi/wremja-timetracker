@@ -39,7 +39,7 @@ import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.MainFrame;
 import com.kemai.wremja.gui.actions.StartAction;
 import com.kemai.wremja.gui.actions.StopAction;
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.model.Project;
@@ -302,33 +302,33 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
      * {@inheritDoc}
      */
     public final void update(final Observable source, final Object eventObject) {
-        if (eventObject == null || !(eventObject instanceof BaralgaEvent)) {
+        if (eventObject == null || !(eventObject instanceof WremjaEvent)) {
             return;
         }
 
-        final BaralgaEvent event = (BaralgaEvent) eventObject;
+        final WremjaEvent event = (WremjaEvent) eventObject;
 
         switch (event.getType()) {
 
-        case BaralgaEvent.PROJECT_ACTIVITY_STARTED:
+        case WremjaEvent.PROJECT_ACTIVITY_STARTED:
             this.updateStart();
             break;
 
-        case BaralgaEvent.PROJECT_ACTIVITY_STOPPED:
+        case WremjaEvent.PROJECT_ACTIVITY_STOPPED:
             this.updateStop();
             break;
 
-        case BaralgaEvent.PROJECT_CHANGED:
+        case WremjaEvent.PROJECT_CHANGED:
             this.updateProjectChanged(event);
             break;
 
-        case BaralgaEvent.PROJECT_ADDED:
+        case WremjaEvent.PROJECT_ADDED:
             break;
 
-        case BaralgaEvent.PROJECT_REMOVED:
+        case WremjaEvent.PROJECT_REMOVED:
             break;
 
-        case BaralgaEvent.START_CHANGED:
+        case WremjaEvent.START_CHANGED:
             updateDuration();
             break;
         }
@@ -338,7 +338,7 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
      * Executed on project changed event.
      * @param event the event of the project change
      */
-    private void updateProjectChanged(final BaralgaEvent event) {
+    private void updateProjectChanged(final WremjaEvent event) {
         getProjectSelector().setSelectedItem((Project) event.getData());
 
         if (model.isActive()) {

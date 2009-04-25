@@ -28,7 +28,7 @@ import com.kemai.wremja.gui.actions.ExportDataAction;
 import com.kemai.wremja.gui.actions.ExportExcelAction;
 import com.kemai.wremja.gui.actions.ImportDataAction;
 import com.kemai.wremja.gui.actions.ManageProjectsAction;
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.panels.ActivityPanel;
 import com.kemai.wremja.gui.panels.ReportPanel;
@@ -323,36 +323,36 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      * {@inheritDoc}
      */
     public void update(final Observable source, final Object eventObject) {
-        if (eventObject == null || !(eventObject instanceof BaralgaEvent)) {
+        if (eventObject == null || !(eventObject instanceof WremjaEvent)) {
             return;
         }
 
-        final BaralgaEvent event = (BaralgaEvent) eventObject;
+        final WremjaEvent event = (WremjaEvent) eventObject;
 
         switch (event.getType()) {
 
-        case BaralgaEvent.PROJECT_ACTIVITY_STARTED:
+        case WremjaEvent.PROJECT_ACTIVITY_STARTED:
             this.updateStart();
             break;
 
-        case BaralgaEvent.PROJECT_ACTIVITY_STOPPED:
+        case WremjaEvent.PROJECT_ACTIVITY_STOPPED:
             this.updateStop();
             break;
 
-        case BaralgaEvent.PROJECT_CHANGED:
+        case WremjaEvent.PROJECT_CHANGED:
             // If there is no active project leave everything as is
             if (model.isActive()) {
                 this.updateTitle();
             }
             break;
 
-        case BaralgaEvent.PROJECT_ADDED:
+        case WremjaEvent.PROJECT_ADDED:
             break;
 
-        case BaralgaEvent.PROJECT_REMOVED:
+        case WremjaEvent.PROJECT_REMOVED:
             break;
 
-        case BaralgaEvent.START_CHANGED:
+        case WremjaEvent.START_CHANGED:
             this.updateTitle();
             break;
         }

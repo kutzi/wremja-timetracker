@@ -11,7 +11,7 @@ import org.joda.time.format.DateTimeFormatter;
 import com.kemai.swing.util.LabeledItem;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -87,27 +87,27 @@ public class YearFilterList implements Observer {
      * {@inheritDoc}
      */
     public void update(final Observable source, final Object eventObject) {
-        if (eventObject == null || !(eventObject instanceof BaralgaEvent)) {
+        if (eventObject == null || !(eventObject instanceof WremjaEvent)) {
             return;
         }
 
-        final BaralgaEvent event = (BaralgaEvent) eventObject;
+        final WremjaEvent event = (WremjaEvent) eventObject;
 
         switch (event.getType()) {
 
-        case BaralgaEvent.PROJECT_ACTIVITY_ADDED:
+        case WremjaEvent.PROJECT_ACTIVITY_ADDED:
             ProjectActivity activity = (ProjectActivity) event.getData();
             this.addYear(activity);
             break;
             
-        case BaralgaEvent.PROJECT_ACTIVITY_CHANGED:
+        case WremjaEvent.PROJECT_ACTIVITY_CHANGED:
             final PropertyChangeEvent propertyChangeEvent = event.getPropertyChangeEvent();
             if (StringUtils.equals(ProjectActivity.PROPERTY_DATE, propertyChangeEvent.getPropertyName())) {
                 this.initialize();
             }
             break;
 
-        case BaralgaEvent.PROJECT_ACTIVITY_REMOVED:
+        case WremjaEvent.PROJECT_ACTIVITY_REMOVED:
             this.initialize();
             break;
         }

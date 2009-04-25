@@ -15,7 +15,7 @@ import javax.swing.JScrollPane;
 import org.jdesktop.swingx.JXPanel;
 
 import com.kemai.swing.util.GuiConstants;
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.filter.Filter;
@@ -88,16 +88,16 @@ public class DescriptionPanel extends JXPanel implements Observer {
      * {@inheritDoc}
      */
     public void update(final Observable source, final Object eventObject) {
-        if (eventObject == null || !(eventObject instanceof BaralgaEvent)) {
+        if (eventObject == null || !(eventObject instanceof WremjaEvent)) {
             return;
         }
 
-        final BaralgaEvent event = (BaralgaEvent) eventObject;
+        final WremjaEvent event = (WremjaEvent) eventObject;
         ProjectActivity activity;
 
         switch (event.getType()) {
 
-            case BaralgaEvent.PROJECT_ACTIVITY_ADDED:
+            case WremjaEvent.PROJECT_ACTIVITY_ADDED:
                 activity = (ProjectActivity) event.getData();
                 DescriptionPanelEntry newEntryPanel = new DescriptionPanelEntry(activity, this.model);
                 entriesByActivity.put(activity, newEntryPanel);
@@ -111,14 +111,14 @@ public class DescriptionPanel extends JXPanel implements Observer {
                 }
                 break;
 
-            case BaralgaEvent.PROJECT_ACTIVITY_CHANGED:
+            case WremjaEvent.PROJECT_ACTIVITY_CHANGED:
                 activity = (ProjectActivity) event.getData();
                 if (entriesByActivity.containsKey(activity)) {
                     entriesByActivity.get(activity).update();
                 }
                 break;
 
-            case BaralgaEvent.PROJECT_ACTIVITY_REMOVED:
+            case WremjaEvent.PROJECT_ACTIVITY_REMOVED:
                 activity = (ProjectActivity) event.getData();
                 if (entriesByActivity.containsKey(activity)) {
                     final DescriptionPanelEntry entryPanel = entriesByActivity.get(activity);
@@ -126,13 +126,13 @@ public class DescriptionPanel extends JXPanel implements Observer {
                 }
                 break;
 
-            case BaralgaEvent.PROJECT_CHANGED:
+            case WremjaEvent.PROJECT_CHANGED:
                 for (Entry<ProjectActivity, DescriptionPanelEntry> entry : entriesByActivity.entrySet()) {
                     entry.getValue().update();
                 }
                 break;
 
-            case BaralgaEvent.FILTER_CHANGED:
+            case WremjaEvent.FILTER_CHANGED:
                 final Filter newFilter = (Filter) event.getData();
                 setFilter(newFilter);
                 break;

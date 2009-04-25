@@ -32,9 +32,6 @@
 			<distribution>manual</distribution>
 		</license>
 	</licenses>
-	<organization>
-		<name>Jan Stamer</name>
-	</organization>
 	
 	<properties>
 	    <!-- See http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding -->
@@ -49,23 +46,23 @@
 		    <filtering>false</filtering>
 		    <directory>src/main/resources/</directory>
 		    <excludes>
-		      <exclude>org/remast/baralga/baralga.properties</exclude>
+		      <exclude>com/kemai/wremja/wremja.properties</exclude>
 		    </excludes>
 		  </resource>
 		  <resource>
 		    <filtering>true</filtering>
 		    <directory>src/main/resources/</directory>
 		    <includes>
-		      <include>org/remast/baralga/baralga.properties</include>
+		      <include>com/kemai/wremja/wremja.properties</include>
 		    </includes>
 		  </resource>
 		</resources>
 
 		<plugins>
-			<!-- <plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-			</plugin> -->
+			</plugin>
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>

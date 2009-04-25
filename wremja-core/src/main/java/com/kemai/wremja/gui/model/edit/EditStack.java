@@ -11,7 +11,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import com.kemai.wremja.gui.actions.RedoAction;
 import com.kemai.wremja.gui.actions.UndoAction;
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -35,12 +35,12 @@ public class EditStack implements Observer {
 	/**
 	 * The undoable edit events.
 	 */
-	private final Stack<BaralgaEvent> undoStack = new Stack<BaralgaEvent>();
+	private final Stack<WremjaEvent> undoStack = new Stack<WremjaEvent>();
 
 	/**
 	 * The redoable edit events.
 	 */
-	private final Stack<BaralgaEvent> redoStack = new Stack<BaralgaEvent>();
+	private final Stack<WremjaEvent> redoStack = new Stack<WremjaEvent>();
 
 	/** The model. */
 	private PresentationModel model;
@@ -61,11 +61,11 @@ public class EditStack implements Observer {
      * {@inheritDoc}
      */
 	public void update(final Observable source, final Object eventObject) {
-		if (eventObject == null || !(eventObject instanceof BaralgaEvent)) {
+		if (eventObject == null || !(eventObject instanceof WremjaEvent)) {
 			return;
 		}
 
-		final BaralgaEvent event = (BaralgaEvent) eventObject;
+		final WremjaEvent event = (WremjaEvent) eventObject;
 
 		// Ignore our own events
 		if (this == event.getSource()) {
@@ -109,7 +109,7 @@ public class EditStack implements Observer {
 			return;
 		}
 
-		final BaralgaEvent event = undoStack.pop();
+		final WremjaEvent event = undoStack.pop();
 		redoStack.push(event);
 
 		executeUndo(event);
@@ -125,7 +125,7 @@ public class EditStack implements Observer {
 			return;
 		}
 
-		final BaralgaEvent event = redoStack.pop();
+		final WremjaEvent event = redoStack.pop();
 		undoStack.push(event);
 
 		executeRedo(event);
@@ -137,10 +137,10 @@ public class EditStack implements Observer {
      * Undoes the given event.
      * @param event the event to undo
      */
-	private void executeUndo(final BaralgaEvent event) {
-		if (BaralgaEvent.PROJECT_ACTIVITY_REMOVED == event.getType()) {
+	private void executeUndo(final WremjaEvent event) {
+		if (WremjaEvent.PROJECT_ACTIVITY_REMOVED == event.getType()) {
 			model.addActivity((ProjectActivity) event.getData(), this);
-		} else if (BaralgaEvent.PROJECT_ACTIVITY_ADDED == event.getType()) {
+		} else if (WremjaEvent.PROJECT_ACTIVITY_ADDED == event.getType()) {
 			model.removeActivity((ProjectActivity) event.getData(), this);
 		}
 	}
@@ -149,10 +149,10 @@ public class EditStack implements Observer {
 	 * Redoes the given event.
 	 * @param event the event to redo
 	 */
-	private void executeRedo(final BaralgaEvent event) {
-		if (BaralgaEvent.PROJECT_ACTIVITY_REMOVED == event.getType()) {
+	private void executeRedo(final WremjaEvent event) {
+		if (WremjaEvent.PROJECT_ACTIVITY_REMOVED == event.getType()) {
 			model.removeActivity((ProjectActivity) event.getData(), this);
-		} else if (BaralgaEvent.PROJECT_ACTIVITY_ADDED == event.getType()) {
+		} else if (WremjaEvent.PROJECT_ACTIVITY_ADDED == event.getType()) {
 			model.addActivity((ProjectActivity) event.getData(), this);
 		}
 	}

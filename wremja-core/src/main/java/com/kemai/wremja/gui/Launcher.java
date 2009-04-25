@@ -90,15 +90,15 @@ public final class Launcher {
         String version = "?";
         String revision = "?";
         try {
-            InputStream in = Launcher.class.getResourceAsStream("/org/remast/baralga/baralga.properties");
+            InputStream in = Launcher.class.getResourceAsStream("/org/remast/wremja/wremja.properties");
             if(in != null) {
                 Properties props = new Properties();
                 props.load(in);
-                version = props.getProperty("baralga.version", "?");
-                revision = props.getProperty("baralga.buildnumber", "?");
+                version = props.getProperty("wremja.version", "?");
+                revision = props.getProperty("wremja.buildnumber", "?");
             }
         } catch (IOException e) {
-            log.warn( "Couldn't access baralga.properties", e );
+            log.warn( "Couldn't access wremja.properties", e );
         }
         versionNumber = version;
         revisionNumber = revision;
@@ -355,7 +355,7 @@ public final class Launcher {
         log.debug("Initializing logger ...");
         DOMConfigurator.configure(Launcher.class.getResource("/log4j.xml"));
 
-        logFileName = ApplicationSettings.instance().getApplicationDataDirectory().getAbsolutePath() + File.separator + "log" + File.separator + "baralga.log";
+        logFileName = ApplicationSettings.instance().getApplicationDataDirectory().getAbsolutePath() + File.separator + "log" + File.separator + "wremja.log";
         final Appender mainAppender = new DailyRollingFileAppender(new PatternLayout("%d{ISO8601} %-5p [%t] %c: %m%n"), logFileName, "'.'yyyy-MM-dd");
 
         final Logger root = Logger.getRootLogger();
@@ -401,7 +401,7 @@ public final class Launcher {
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification="Its irrelevant if lock file already existed or not.")
     private static boolean tryLock() {
-        checkOrCreateBaralgaDir();
+        checkOrCreateDataDir();
         final File lockFile = new File(UserSettings.getLockFileLocation());
         try {
             if (!lockFile.exists()) {
@@ -420,14 +420,14 @@ public final class Launcher {
     }
 
     /**
-     * Checks whether the Baralga directory exists and creates it if necessary.
+     * Checks whether the data directory exists and creates it if necessary.
      */
-    private static void checkOrCreateBaralgaDir() {
-        final File baralgaDir = ApplicationSettings.instance().getApplicationDataDirectory();
-        if (!baralgaDir.exists()) {
-            final boolean baralgaDirCreated = baralgaDir.mkdir();
-            if (!baralgaDirCreated) {
-                throw new RuntimeException("Could not create directory at " + baralgaDir.getAbsolutePath() + ".");
+    private static void checkOrCreateDataDir() {
+        final File wremjaDir = ApplicationSettings.instance().getApplicationDataDirectory();
+        if (!wremjaDir.exists()) {
+            final boolean wremjaDirCreated = wremjaDir.mkdir();
+            if (!wremjaDirCreated) {
+                throw new RuntimeException("Could not create directory at " + wremjaDir.getAbsolutePath() + ".");
             }
         }
     }

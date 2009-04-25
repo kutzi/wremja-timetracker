@@ -5,7 +5,7 @@ import java.util.Observer;
 
 import org.joda.time.DateTime;
 
-import com.kemai.wremja.gui.events.BaralgaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.filter.Filter;
@@ -80,24 +80,24 @@ public class HoursByWeekReport extends Observable implements Observer  {
      * {@inheritDoc}
      */
     public void update(final Observable source, final Object eventObject) {
-        if (eventObject != null && eventObject instanceof BaralgaEvent) {
-            final BaralgaEvent event = (BaralgaEvent) eventObject;
+        if (eventObject != null && eventObject instanceof WremjaEvent) {
+            final WremjaEvent event = (WremjaEvent) eventObject;
             switch (event.getType()) {
 
-                case BaralgaEvent.PROJECT_ACTIVITY_ADDED:
+                case WremjaEvent.PROJECT_ACTIVITY_ADDED:
                     ProjectActivity activity = (ProjectActivity) event.getData();
                     addHours(activity);
                     break;
 
-                case BaralgaEvent.PROJECT_ACTIVITY_REMOVED:
+                case WremjaEvent.PROJECT_ACTIVITY_REMOVED:
                     calculateHours();
                     break;
                     
-                case BaralgaEvent.PROJECT_ACTIVITY_CHANGED:
+                case WremjaEvent.PROJECT_ACTIVITY_CHANGED:
                     calculateHours();
                     break;
 
-                case BaralgaEvent.FILTER_CHANGED:
+                case WremjaEvent.FILTER_CHANGED:
                     final Filter newFilter = (Filter) event.getData();
                     setFilter(newFilter);
                     break;

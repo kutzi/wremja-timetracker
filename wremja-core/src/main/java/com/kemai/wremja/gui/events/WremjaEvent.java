@@ -3,10 +3,10 @@ package com.kemai.wremja.gui.events;
 import java.beans.PropertyChangeEvent;
 
 /**
- * Events of Baralga.
+ * Events of Wremja.
  * @author remast
  */
-public class BaralgaEvent {
+public class WremjaEvent {
 
     //------------------------------------------------
     // Constants for ActivityRepository Events
@@ -61,7 +61,7 @@ public class BaralgaEvent {
      * Constructor for a new event.
      * @param type the type of the event.
      */
-    public BaralgaEvent(final int type) {
+    public WremjaEvent(final int type) {
         this.type = type;
     }
 
@@ -70,7 +70,7 @@ public class BaralgaEvent {
      * @param type the type of the event.
      * @param source the source that fired the event
      */
-    public BaralgaEvent(final int type, final Object source) {
+    public WremjaEvent(final int type, final Object source) {
         this.type = type;
         this.source = source;
     }
