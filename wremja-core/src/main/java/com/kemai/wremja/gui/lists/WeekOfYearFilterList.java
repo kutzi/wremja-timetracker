@@ -48,7 +48,7 @@ public class WeekOfYearFilterList implements Observer {
     /** Filter item for the current week of year dummy. */
     public static final LabeledItem<Integer> CURRENT_WEEK_OF_YEAR_FILTER_ITEM = new LabeledItem<Integer>(
             CURRENT_WEEK_OF_YEAR_DUMMY,
-            textBundle.textFor("WeekOfYearFilterList.CurrentWeekOfYearLabel", WEEK_OF_YEAR_FORMAT.print(DateUtils.getNowAsDateTime())) //$NON-NLS-1$
+            textBundle.textFor("WeekOfYearFilterList.CurrentWeekOfYearLabel", WEEK_OF_YEAR_FORMAT.print(DateUtils.getNow())) //$NON-NLS-1$
     );
 
     /** The actual list containing all weeks of year. */

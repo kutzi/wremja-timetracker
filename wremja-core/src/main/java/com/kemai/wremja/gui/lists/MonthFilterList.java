@@ -48,7 +48,7 @@ public class MonthFilterList implements Observer {
     /** filter item for the current month dummy. */
     public static final LabeledItem<Integer> CURRENT_MONTH_FILTER_ITEM = new LabeledItem<Integer>(
             CURRENT_MONTH_DUMMY,
-            textBundle.textFor("MonthFilterList.CurrentMonthLabel", MONTH_FORMAT.print(DateUtils.getNowAsDateTime())) //$NON-NLS-1$
+            textBundle.textFor("MonthFilterList.CurrentMonthLabel", MONTH_FORMAT.print(DateUtils.getNow())) //$NON-NLS-1$
     );
 
     /** The actual list containing all months. */

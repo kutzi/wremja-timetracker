@@ -408,7 +408,7 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
     private void updateDuration() {
         final Period period = new Period(
                 this.model.getStart(), 
-                DateUtils.getNowAsDateTime()
+                DateUtils.getNow()
         );
         final String durationPrint = period.getHours() + ":" + MINUTE_FORMAT.format(period.getMinutes()) + " h";
 
@@ -434,14 +434,14 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
         try {
             final Date newStartTime = FormatUtils.parseTime(start.getText()).toDate();
             final DateTime newStart = DateUtils.adjustToSameDay(
-                    DateUtils.getNowAsDateTime(), 
+                    DateUtils.getNow(), 
                     new DateTime(newStartTime), 
                     false
             );
 
             final boolean correct = DateUtils.isBeforeOrEqual(
                     newStart, 
-                    DateUtils.getNowAsDateTime()
+                    DateUtils.getNow()
             );
 
             if (correct) {

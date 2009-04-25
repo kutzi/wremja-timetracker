@@ -120,7 +120,7 @@ public class PresentationModel extends Observable {
 
         // If there is a active project that has been started on another day,
         // we end it here.
-        if (active && !org.apache.commons.lang.time.DateUtils.isSameDay(start.toDate(), DateUtils.getNow())) {
+        if (active && start.getDayOfYear() != DateUtils.getNow().getDayOfYear() ) {
             try {
                 stop();
             } catch (ProjectActivityStateException e) {
@@ -206,7 +206,7 @@ public class PresentationModel extends Observable {
         // Set start time to now if null
         DateTime start;
         if (startTime == null) {
-            start = DateUtils.getNowAsDateTime();
+            start = DateUtils.getNow();
         } else {
             start = startTime;
         }
@@ -224,7 +224,7 @@ public class PresentationModel extends Observable {
      * @throws ProjectActivityStateException if there is already a running project
      */
     public final void start() throws ProjectActivityStateException {
-        start(DateUtils.getNowAsDateTime());
+        start(DateUtils.getNow());
     }
 
     /**
@@ -287,7 +287,7 @@ public class PresentationModel extends Observable {
             throw new ProjectActivityStateException(textBundle.textFor("PresentationModel.NoActiveProjectError")); //$NON-NLS-1$
         }
 
-        final DateTime now = DateUtils.getNowAsDateTime();
+        final DateTime now = DateUtils.getNow();
 
         WremjaEvent eventOnEndDay = null;
         DateTime stop2 = null;
@@ -300,7 +300,7 @@ public class PresentationModel extends Observable {
 
             stop = dt.toDateMidnight().toDateTime();
 
-            stop2 = DateUtils.getNowAsDateTime();
+            stop2 = DateUtils.getNow();
             final DateTime start2 = stop;
 
             final ProjectActivity activityOnEndDay = new ProjectActivity(start2, stop2,
@@ -369,7 +369,7 @@ public class PresentationModel extends Observable {
         // Set active project to new project
         this.data.setActiveProject(activeProject);
 
-        final DateTime now = DateUtils.getNowAsDateTime();
+        final DateTime now = DateUtils.getNow();
 
         // If a project is currently running we create a new project activity.
         if (isActive()) {

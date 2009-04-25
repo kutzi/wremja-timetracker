@@ -258,7 +258,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
 
         switch (selectedMonth) {
         case MonthFilterList.CURRENT_MONTH_DUMMY:
-            filter.setMonth(DateUtils.getNowAsDateTime());
+            filter.setMonth(DateUtils.getNow());
             break;
 
         case MonthFilterList.ALL_MONTHS_DUMMY:
@@ -283,7 +283,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
 
         switch (selectedWeekOfYear) {
         case WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY:
-            filter.setWeekOfYear(DateUtils.getNowAsDateTime());
+            filter.setWeekOfYear(DateUtils.getNow());
             break;
 
         case WeekOfYearFilterList.ALL_WEEKS_OF_YEAR_DUMMY:
@@ -309,7 +309,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
 
         switch (selectedYear) {
         case YearFilterList.CURRENT_YEAR_DUMMY:
-            filter.setYear(DateUtils.getNowAsDateTime());
+            filter.setYear(DateUtils.getNow());
             break;
 
         case YearFilterList.ALL_YEARS_DUMMY:

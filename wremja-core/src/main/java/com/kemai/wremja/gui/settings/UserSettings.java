@@ -276,7 +276,7 @@ public final class UserSettings {
         }
 
         if (selectedYear == YearFilterList.CURRENT_YEAR_DUMMY) {
-            filter.setYear(DateUtils.getNowAsDateTime());
+            filter.setYear(DateUtils.getNow());
             return;
         } 
 
@@ -302,7 +302,7 @@ public final class UserSettings {
         }
 
         if (selectedMonth == MonthFilterList.CURRENT_MONTH_DUMMY) {
-            filter.setMonth(DateUtils.getNowAsDateTime());
+            filter.setMonth(DateUtils.getNow());
             return;
         } 
 
@@ -328,7 +328,7 @@ public final class UserSettings {
         }
 
         if (selectedWeekOfYear == WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY) {
-            filter.setWeekOfYear(DateUtils.getNowAsDateTime());
+            filter.setWeekOfYear(DateUtils.getNow());
             return;
         } 
 

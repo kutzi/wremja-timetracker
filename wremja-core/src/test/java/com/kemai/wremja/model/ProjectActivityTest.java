@@ -11,7 +11,7 @@ public class ProjectActivityTest extends TestCase {
 
     public void testCalculateDuration() {
         ProjectActivity act = new ProjectActivity(new DateTime(0L), new DateTime(1000L * 60 * 60 * 30), null);
-        DateTime startTime = new DateTime(DateUtils.getNow());
+        DateTime startTime = DateUtils.getNow();
 
         act = new ProjectActivity(startTime, startTime.plusMinutes(45), null);
         assertEquals(0.75, act.getDuration());

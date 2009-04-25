@@ -1,7 +1,5 @@
 package com.kemai.util;
 
-import java.util.Date;
-
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
 
@@ -20,15 +18,7 @@ public abstract class DateUtils {
      * Get current time rounded to minutes.
      * @return
      */
-    public static Date getNow() {
-        return getNowAsDateTime().toDate();
-    }
-    
-    /**
-     * Get current time rounded to minutes.
-     * @return
-     */
-    public static DateTime getNowAsDateTime() {
+    public static DateTime getNow() {
         DateTime now = new DateTime();
         DateTime nowRounded = now.minuteOfDay().roundHalfCeilingCopy();
         return nowRounded;

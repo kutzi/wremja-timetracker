@@ -6,6 +6,7 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.joda.time.DateTime;
+import org.joda.time.ReadableInstant;
 
 import com.kemai.util.DateUtils;
 import com.kemai.wremja.gui.model.PresentationModel;
@@ -41,27 +42,18 @@ public class PresentationModelTest extends TestCase {
      * @see Issue <a href="http://wremja.origo.ethz.ch/node/87">#17</a>
      */
     public void testAcitivityOverMidnight() throws ProjectActivityStateException {
-        final Date nowTmp = DateUtils.getNow();
+        final DateTime yesterday = DateUtils.getNow().minusMinutes(5).minusDays(1);
 
-        final Calendar yesterdayCal = Calendar.getInstance();
-        yesterdayCal.setTime(nowTmp);
-        yesterdayCal.set(Calendar.MINUTE, yesterdayCal.get(Calendar.MINUTE) - 5);
-        yesterdayCal.set(Calendar.DAY_OF_MONTH, yesterdayCal.get(Calendar.DAY_OF_MONTH) -1);
-
-        final Date yesterday = yesterdayCal.getTime();
-
-        DateTime dateTmp = new DateTime(yesterday);
-        dateTmp = dateTmp.plusDays(1);
-        final Date midnight = dateTmp.toDateMidnight().toDate();
+        final ReadableInstant midnight = yesterday.plusDays(1).toDateMidnight();
 
         // Set active project
         model.changeProject(project1);
 
         // Start activity on yesterday
-        model.start(new DateTime(yesterday));
+        model.start(yesterday);
 
         // End activity today
-        final Date now = DateUtils.getNow();
+        final DateTime now = DateUtils.getNow();
         model.stop();
 
         // Verify outcome
@@ -75,12 +67,12 @@ public class PresentationModelTest extends TestCase {
         final ProjectActivity yesterdaysActivity = model.getActivitiesList().get(1);
 
         // 1. Check yesterdays activity
-        assertEquals(yesterday, yesterdaysActivity.getStart().toDate());
-        assertEquals(midnight, yesterdaysActivity.getEnd().toDate());
+        assertEquals(yesterday, yesterdaysActivity.getStart());
+        assertEquals(midnight, yesterdaysActivity.getEnd());
 
         // 2. Check today activity
-        assertEquals(midnight, todaysActivity.getStart().toDate());
-        assertEquals(now, todaysActivity.getEnd().toDate());
+        assertEquals(midnight, todaysActivity.getStart());
+        assertEquals(now, todaysActivity.getEnd());
     }
 
     /**
