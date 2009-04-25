@@ -5,9 +5,6 @@ import java.awt.Frame;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.kemai.swing.util.FileFilters;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
@@ -26,9 +23,6 @@ public final class ExportExcelAction extends AbstractExportAction {
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExportExcelAction.class);
 
-    /** The logger. */
-    private static final Log log = LogFactory.getLog(ExportExcelAction.class);
-    
     /** File extension of MS Excel files. */
     private static final String EXCEL_FILE_EXTENSION = ".xls";
     

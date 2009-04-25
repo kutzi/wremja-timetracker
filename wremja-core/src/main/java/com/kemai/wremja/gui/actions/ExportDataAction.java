@@ -5,9 +5,6 @@ import java.awt.Frame;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.kemai.swing.util.FileFilters;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
@@ -22,9 +19,6 @@ import com.kemai.wremja.model.export.RawDataExporter;
 @SuppressWarnings("serial") //$NON-NLS-1$
 public class ExportDataAction extends AbstractExportAction {
     
-    /** The logger. */
-    private static final Log log = LogFactory.getLog(ExportDataAction.class);
-
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExportDataAction.class);
     

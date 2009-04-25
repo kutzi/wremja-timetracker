@@ -4,7 +4,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import com.kemai.wremja.gui.events.WremjaEvent;
-import com.kemai.wremja.gui.events.WremjaEvent.Type;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.filter.Filter;
