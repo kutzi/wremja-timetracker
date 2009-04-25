@@ -158,7 +158,7 @@ public class PresentationModel extends Observable {
         // Mark data as dirty
         this.dirty = true;
 
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ADDED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ADDED, source);
         event.setData(project);
 
         notify(event);
@@ -176,7 +176,7 @@ public class PresentationModel extends Observable {
         // Mark data as dirty
         this.dirty = true;
 
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_REMOVED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_REMOVED, source);
         event.setData(project);
 
         notify(event);
@@ -215,7 +215,7 @@ public class PresentationModel extends Observable {
         getData().start(start);
 
         // Fire start event
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_STARTED);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STARTED);
         notify(event);
     }
 
@@ -242,7 +242,7 @@ public class PresentationModel extends Observable {
      * @param propertyChangeEvent the event to fire
      */
     public void fireProjectChangedEvent(final Project changedProject, final PropertyChangeEvent propertyChangeEvent) {
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_CHANGED);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_CHANGED);
         event.setData(changedProject);
         event.setPropertyChangeEvent(propertyChangeEvent);
 
@@ -258,7 +258,7 @@ public class PresentationModel extends Observable {
      * @param propertyChangeEvent the event to fire
      */
     public void fireProjectActivityChangedEvent(final ProjectActivity changedActivity, final PropertyChangeEvent propertyChangeEvent) {
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_CHANGED);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_CHANGED);
         event.setData(changedActivity);
         event.setPropertyChangeEvent(propertyChangeEvent);
 
@@ -309,7 +309,7 @@ public class PresentationModel extends Observable {
             this.activitiesList.add(activityOnEndDay);
 
             // Create Event for Project Activity
-            eventOnEndDay  = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_ADDED);
+            eventOnEndDay  = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
             eventOnEndDay.setData(activityOnEndDay);
         } else {
             stop = now;
@@ -332,7 +332,7 @@ public class PresentationModel extends Observable {
 
         if (notifyObservers) {
             // Create Event for Project Activity
-            WremjaEvent event  = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_ADDED);
+            WremjaEvent event  = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
             event.setData(activityOnStartDay);
             notify(event);
 
@@ -342,7 +342,7 @@ public class PresentationModel extends Observable {
             }
 
             // Create Stop Event
-            event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_STOPPED);
+            event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STOPPED);
             notify(event);
         }
     }
@@ -387,7 +387,7 @@ public class PresentationModel extends Observable {
             UserSettings.instance().setLastDescription(StringUtils.EMPTY);
 
             // 3. Broadcast project activity event.
-            final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_ADDED);
+            final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
             event.setData(activity);
             notify(event);
             
@@ -397,7 +397,7 @@ public class PresentationModel extends Observable {
         }
 
         // Fire project changed event
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_CHANGED);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_CHANGED);
         event.setData(activeProject);
         notify(event);
     }
@@ -437,7 +437,7 @@ public class PresentationModel extends Observable {
         this.dirty = true;
 
         // Fire event
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_ADDED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED, source);
         event.setData(activity);
         notify(event);
     }
@@ -459,7 +459,7 @@ public class PresentationModel extends Observable {
         this.dirty = true;
 
         // Fire event
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_REMOVED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_REMOVED, source);
         event.setData(activity);
         notify(event);
     }
@@ -488,11 +488,11 @@ public class PresentationModel extends Observable {
         // Fire events
         // TODO: because of the way the events are evaluated in the observers are evaluated
         // order of the events is currently important: first ADDED then REMOVED
-        final WremjaEvent event2 = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_ADDED, source);
+        final WremjaEvent event2 = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED, source);
         event2.setData(newActivity);
         notify(event2);
         
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.PROJECT_ACTIVITY_REMOVED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_REMOVED, source);
         event.setData(oldActivity);
         notify(event);
     }
@@ -574,7 +574,7 @@ public class PresentationModel extends Observable {
         this.data.setStartTime(start);
         
         // Fire event
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.START_CHANGED, this);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.START_CHANGED, this);
         event.setData(start);
         
         notify(event);
@@ -636,7 +636,7 @@ public class PresentationModel extends Observable {
         initialize();
 
         // Fire event
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.DATA_CHANGED, this);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.DATA_CHANGED, this);
         notify(event);
     }
 
@@ -661,7 +661,7 @@ public class PresentationModel extends Observable {
         applyFilter();
 
         // Fire event
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.FILTER_CHANGED, source);
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.FILTER_CHANGED, source);
         event.setData(filter);
 
         notify(event);

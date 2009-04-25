@@ -83,20 +83,20 @@ public class HoursByProjectReport extends Observable implements Observer  {
         final WremjaEvent event = (WremjaEvent) eventObject;
         switch (event.getType()) {
 
-            case WremjaEvent.PROJECT_ACTIVITY_ADDED:
+            case PROJECT_ACTIVITY_ADDED:
                 final ProjectActivity activity = (ProjectActivity) event.getData();
                 addHours(activity);
                 break;
 
-            case WremjaEvent.PROJECT_ACTIVITY_REMOVED:
+            case PROJECT_ACTIVITY_REMOVED:
                 calculateHours();
                 break;
                 
-            case WremjaEvent.PROJECT_ACTIVITY_CHANGED:
+            case PROJECT_ACTIVITY_CHANGED:
                 calculateHours();
                 break;
 
-            case WremjaEvent.FILTER_CHANGED:
+            case FILTER_CHANGED:
                 final Filter newFilter = (Filter) event.getData();
                 setFilter(newFilter);
                 break;

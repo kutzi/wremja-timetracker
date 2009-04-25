@@ -160,16 +160,16 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
         final WremjaEvent event = (WremjaEvent) eventObject;
 
         switch (event.getType()) {
-            case WremjaEvent.PROJECT_ACTIVITY_CHANGED:
+            case PROJECT_ACTIVITY_CHANGED:
                 tableModel.fireTableDataChanged();
                 break;
             
-            case WremjaEvent.PROJECT_ACTIVITY_ADDED:
-            case WremjaEvent.PROJECT_ACTIVITY_REMOVED:
+            case PROJECT_ACTIVITY_ADDED:
+            case PROJECT_ACTIVITY_REMOVED:
                 tableModel.fireTableDataChanged();
                 break;
     
-            case WremjaEvent.PROJECT_CHANGED:
+            case PROJECT_CHANGED:
                 tableModel.fireTableDataChanged();
                 break;
         }

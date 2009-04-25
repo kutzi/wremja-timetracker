@@ -97,7 +97,7 @@ public class DescriptionPanel extends JXPanel implements Observer {
 
         switch (event.getType()) {
 
-            case WremjaEvent.PROJECT_ACTIVITY_ADDED:
+            case PROJECT_ACTIVITY_ADDED:
                 activity = (ProjectActivity) event.getData();
                 DescriptionPanelEntry newEntryPanel = new DescriptionPanelEntry(activity, this.model);
                 entriesByActivity.put(activity, newEntryPanel);
@@ -111,14 +111,14 @@ public class DescriptionPanel extends JXPanel implements Observer {
                 }
                 break;
 
-            case WremjaEvent.PROJECT_ACTIVITY_CHANGED:
+            case PROJECT_ACTIVITY_CHANGED:
                 activity = (ProjectActivity) event.getData();
                 if (entriesByActivity.containsKey(activity)) {
                     entriesByActivity.get(activity).update();
                 }
                 break;
 
-            case WremjaEvent.PROJECT_ACTIVITY_REMOVED:
+            case PROJECT_ACTIVITY_REMOVED:
                 activity = (ProjectActivity) event.getData();
                 if (entriesByActivity.containsKey(activity)) {
                     final DescriptionPanelEntry entryPanel = entriesByActivity.get(activity);
@@ -126,13 +126,13 @@ public class DescriptionPanel extends JXPanel implements Observer {
                 }
                 break;
 
-            case WremjaEvent.PROJECT_CHANGED:
+            case PROJECT_CHANGED:
                 for (Entry<ProjectActivity, DescriptionPanelEntry> entry : entriesByActivity.entrySet()) {
                     entry.getValue().update();
                 }
                 break;
 
-            case WremjaEvent.FILTER_CHANGED:
+            case FILTER_CHANGED:
                 final Filter newFilter = (Filter) event.getData();
                 setFilter(newFilter);
                 break;

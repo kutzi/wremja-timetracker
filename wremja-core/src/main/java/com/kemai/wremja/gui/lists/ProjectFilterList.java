@@ -73,11 +73,11 @@ public class ProjectFilterList implements Observer {
 
         switch (event.getType()) {
 
-        case WremjaEvent.PROJECT_ADDED:
+        case PROJECT_ADDED:
             this.addProject((Project) event.getData());
             break;
 
-        case WremjaEvent.PROJECT_REMOVED:
+        case PROJECT_REMOVED:
             this.removeProject((Project) event.getData());
             break;
         }

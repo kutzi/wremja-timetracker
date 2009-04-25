@@ -138,11 +138,12 @@ public class EditStack implements Observer {
      * @param event the event to undo
      */
 	private void executeUndo(final WremjaEvent event) {
-		if (WremjaEvent.PROJECT_ACTIVITY_REMOVED == event.getType()) {
-			model.addActivity((ProjectActivity) event.getData(), this);
-		} else if (WremjaEvent.PROJECT_ACTIVITY_ADDED == event.getType()) {
-			model.removeActivity((ProjectActivity) event.getData(), this);
-		}
+	    switch( event.getType() ) {
+	        case PROJECT_ACTIVITY_REMOVED: model.addActivity((ProjectActivity) event.getData(), this);
+	            break;
+	        case PROJECT_ACTIVITY_ADDED: model.removeActivity((ProjectActivity) event.getData(), this);
+	            break;
+	    }
 	}
 
 	/**
@@ -150,11 +151,12 @@ public class EditStack implements Observer {
 	 * @param event the event to redo
 	 */
 	private void executeRedo(final WremjaEvent event) {
-		if (WremjaEvent.PROJECT_ACTIVITY_REMOVED == event.getType()) {
-			model.removeActivity((ProjectActivity) event.getData(), this);
-		} else if (WremjaEvent.PROJECT_ACTIVITY_ADDED == event.getType()) {
-			model.addActivity((ProjectActivity) event.getData(), this);
-		}
-	}
+	    switch( event.getType() ) {
+            case PROJECT_ACTIVITY_REMOVED: model.removeActivity((ProjectActivity) event.getData(), this);
+                break;
+            case PROJECT_ACTIVITY_ADDED: model.addActivity((ProjectActivity) event.getData(), this);
+                break;
+	    }
+    }
 
 }

@@ -150,15 +150,15 @@ public class TrayIcon implements Observer {
 
             switch (event.getType()) {
 
-                case WremjaEvent.PROJECT_ACTIVITY_STARTED:
+                case PROJECT_ACTIVITY_STARTED:
                     this.updateStart();
                     break;
 
-                case WremjaEvent.PROJECT_ACTIVITY_STOPPED:
+                case PROJECT_ACTIVITY_STOPPED:
                     this.updateStop();
                     break;
 
-                case WremjaEvent.PROJECT_CHANGED:
+                case PROJECT_CHANGED:
                     this.buildMenu();
 
                     if (model.isActive()) {
@@ -167,15 +167,15 @@ public class TrayIcon implements Observer {
                     
                     break;
 
-                case WremjaEvent.PROJECT_ADDED:
+                case PROJECT_ADDED:
                     this.buildMenu();
                     break;
 
-                case WremjaEvent.PROJECT_REMOVED:
+                case PROJECT_REMOVED:
                     this.buildMenu();
                     break;
                     
-                case WremjaEvent.START_CHANGED:
+                case START_CHANGED:
                     this.updateToolTip();
                     break;
                     

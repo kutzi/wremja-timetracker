@@ -11,42 +11,43 @@ public class WremjaEvent {
     //------------------------------------------------
     // Constants for ActivityRepository Events
     //------------------------------------------------
+    public enum Type {
+        /** A project has been changed. I.e. a new project is active now. */
+        PROJECT_CHANGED,
 
-    /** A project has been changed. I.e. a new project is active now. */
-    public static final int PROJECT_CHANGED = 0;
+        /** A project activity has been started. */
+        PROJECT_ACTIVITY_STARTED,
 
-    /** A project activity has been started. */
-    public static final int PROJECT_ACTIVITY_STARTED = 1;
+        /** A project activity has been stopped. */
+        PROJECT_ACTIVITY_STOPPED,
 
-    /** A project activity has been stopped. */
-    public static final int PROJECT_ACTIVITY_STOPPED = 2;
+        /** A project has been added. */
+        PROJECT_ADDED,
 
-    /** A project has been added. */
-    public static final int PROJECT_ADDED = 3;
+        /** A project has been removed. */
+        PROJECT_REMOVED,
 
-    /** A project has been removed. */
-    public static final int PROJECT_REMOVED = 4;
+        /** A project activity has been added. */
+        PROJECT_ACTIVITY_ADDED,
 
-    /** A project activity has been added. */
-    public static final int PROJECT_ACTIVITY_ADDED = 5;
-
-    /** A project activity has been removed. */
-    public static final int PROJECT_ACTIVITY_REMOVED = 6;
+        /** A project activity has been removed. */
+        PROJECT_ACTIVITY_REMOVED,
     
-    /** A project activity has been changed. */
-    public static final int PROJECT_ACTIVITY_CHANGED = 7;
+        /** A project activity has been changed. */
+        PROJECT_ACTIVITY_CHANGED,
 
-    /** The filter has been changed. */
-    public static final int FILTER_CHANGED = 8;
+        /** The filter has been changed. */
+        FILTER_CHANGED,
 
-    /** The data has changed. */
-    public static final int DATA_CHANGED = 9;
+        /** The data has changed. */
+        DATA_CHANGED,
 
-    /** The start time has changed. */
-    public static final int START_CHANGED = 10;
+        /** The start time has changed. */
+        START_CHANGED
+    }
 
     /** The type of the event. */
-    private final int type;
+    private final Type type;
 
     /** The data of the event. */
     private Object data;
@@ -61,7 +62,7 @@ public class WremjaEvent {
      * Constructor for a new event.
      * @param type the type of the event.
      */
-    public WremjaEvent(final int type) {
+    public WremjaEvent(final Type type) {
         this.type = type;
     }
 
@@ -70,7 +71,7 @@ public class WremjaEvent {
      * @param type the type of the event.
      * @param source the source that fired the event
      */
-    public WremjaEvent(final int type, final Object source) {
+    public WremjaEvent(final Type type, final Object source) {
         this.type = type;
         this.source = source;
     }
@@ -81,8 +82,8 @@ public class WremjaEvent {
      */
     public final boolean canBeUndone() {
         // INFO: For now only adding / removing activities can be undone.
-        return this.type == PROJECT_ACTIVITY_REMOVED 
-        || this.type == PROJECT_ACTIVITY_ADDED;
+        return this.type == Type.PROJECT_ACTIVITY_REMOVED 
+        || this.type == Type.PROJECT_ACTIVITY_ADDED;
     }
 
     /**
@@ -104,7 +105,7 @@ public class WremjaEvent {
     /**
      * @return the type
      */
-    public int getType() {
+    public Type getType() {
         return type;
     }
 

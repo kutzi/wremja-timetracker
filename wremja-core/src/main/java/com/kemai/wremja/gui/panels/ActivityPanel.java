@@ -310,25 +310,25 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
 
         switch (event.getType()) {
 
-        case WremjaEvent.PROJECT_ACTIVITY_STARTED:
+        case PROJECT_ACTIVITY_STARTED:
             this.updateStart();
             break;
 
-        case WremjaEvent.PROJECT_ACTIVITY_STOPPED:
+        case PROJECT_ACTIVITY_STOPPED:
             this.updateStop();
             break;
 
-        case WremjaEvent.PROJECT_CHANGED:
+        case PROJECT_CHANGED:
             this.updateProjectChanged(event);
             break;
 
-        case WremjaEvent.PROJECT_ADDED:
+        case PROJECT_ADDED:
             break;
 
-        case WremjaEvent.PROJECT_REMOVED:
+        case PROJECT_REMOVED:
             break;
 
-        case WremjaEvent.START_CHANGED:
+        case START_CHANGED:
             updateDuration();
             break;
         }

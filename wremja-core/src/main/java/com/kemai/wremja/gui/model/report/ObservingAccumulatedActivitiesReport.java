@@ -4,6 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import com.kemai.wremja.gui.events.WremjaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent.Type;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.filter.Filter;
@@ -35,25 +36,25 @@ public class ObservingAccumulatedActivitiesReport extends AccumulatedActivitiesR
         final WremjaEvent event = (WremjaEvent) eventObject;
         switch (event.getType()) {
 
-        case WremjaEvent.PROJECT_ACTIVITY_ADDED:
+        case PROJECT_ACTIVITY_ADDED:
             ProjectActivity activity = (ProjectActivity) event.getData();
             this.acummulateActivity(activity);
             break;
 
-        case WremjaEvent.PROJECT_ACTIVITY_REMOVED:
+        case PROJECT_ACTIVITY_REMOVED:
             this.accumulate();
             break;
 
-        case WremjaEvent.PROJECT_ACTIVITY_CHANGED:
+        case PROJECT_ACTIVITY_CHANGED:
             this.accumulate();
             break;
             
-        case WremjaEvent.FILTER_CHANGED:
+        case FILTER_CHANGED:
             final Filter newFilter = (Filter) event.getData();
             setFilter(newFilter);
             break;
 
-        case WremjaEvent.DATA_CHANGED:
+        case DATA_CHANGED:
             setData(model.getData());
             break;
         }

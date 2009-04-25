@@ -96,18 +96,18 @@ public class WeekOfYearFilterList implements Observer {
 
         switch (event.getType()) {
 
-        case WremjaEvent.PROJECT_ACTIVITY_ADDED:
+        case PROJECT_ACTIVITY_ADDED:
             this.addWeekOfYear((ProjectActivity) event.getData());
             break;
 
-        case WremjaEvent.PROJECT_ACTIVITY_CHANGED:
+        case PROJECT_ACTIVITY_CHANGED:
             final PropertyChangeEvent propertyChangeEvent = event.getPropertyChangeEvent();
             if (StringUtils.equals(ProjectActivity.PROPERTY_DATE, propertyChangeEvent.getPropertyName())) {
                 this.initialize();
             }
             break;
 
-        case WremjaEvent.PROJECT_ACTIVITY_REMOVED:
+        case PROJECT_ACTIVITY_REMOVED:
             this.initialize();
             break;
         }
