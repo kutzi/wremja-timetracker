@@ -9,8 +9,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.kemai.text.SmartTimeFormat;
-import com.kemai.text.TimeFormat;
+import com.kemai.util.SmartTimeFormat;
+import com.kemai.util.TimeFormat;
 
 /** Utility class for formatting. */
 public abstract class FormatUtils {

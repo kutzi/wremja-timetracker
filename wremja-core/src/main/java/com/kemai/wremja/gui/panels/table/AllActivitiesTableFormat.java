@@ -6,7 +6,7 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 
-import com.kemai.text.SmartTimeFormat;
+import com.kemai.util.SmartTimeFormat;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.Launcher;
