@@ -1,6 +1,6 @@
 <assembly>
 	<includeBaseDirectory>true</includeBaseDirectory>
-	<baseDirectory>Baralga-${baralga.version}</baseDirectory>
+	<baseDirectory>Wremja-${wremja.version}</baseDirectory>
 	<formats>
 		<format>zip</format>
 	</formats>
@@ -29,20 +29,20 @@
 			<unpack>false</unpack>
 			<scope>runtime</scope>
 			<excludes>
-				<exclude>com.remast.baralga:baralga-core</exclude>
-				<exclude>com.remast.baralga:baralga-installer</exclude>
+				<exclude>com.kemai.wremja:wremja-core</exclude>
+				<exclude>com.kemai.wremja:wremja-installer</exclude>
 			</excludes>
 		</dependencySet>
 		<dependencySet>
 			<outputDirectory></outputDirectory>
 			<outputFileNameMapping>
-				Baralga-${artifact.version}.${artifact.extension}
+				Wremja-${artifact.version}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<scope>runtime</scope>
 			<fileMode>0777</fileMode>
 			<includes>
-				<include>com.remast.baralga:baralga-core</include>
+				<include>com.kemai.wremja:wremja-core</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <installation version="1.0">
 	<info>
-		<appname>Baralga</appname>
-		<appversion>${baralga.version}</appversion>
+		<appname>Wremja</appname>
+		<appversion>${wremja.version}</appversion>
 		<authors>
-			<author name="${user.name}" email="baralga@geekmail.de" />
+			<author name="Christoph Kutzinski" email="kutzi@gmx.de" />
 		</authors>
 		<url>${project.url}</url>
 	</info>
@@ -54,7 +54,7 @@
 			<description>The base files of the application.</description>
 			<file src="Licence.txt" targetdir="$INSTALL_PATH" />
 			<file src="Baralga-Tray.ico" targetdir="$INSTALL_PATH" />
-			<file src="baralga-core-${baralga.version}.jar" targetdir="$INSTALL_PATH" />
+			<file src="Wremja-core-${wremja.version}.jar" targetdir="$INSTALL_PATH" />
 			<file src="lib" targetdir="$INSTALL_PATH" />
             <file src="data" targetdir="$INSTALL_PATH" />
 			<updatecheck>
