@@ -90,7 +90,7 @@ public final class Launcher {
         String version = "?";
         String revision = "?";
         try {
-            InputStream in = Launcher.class.getResourceAsStream("/org/remast/wremja/wremja.properties");
+            InputStream in = Launcher.class.getResourceAsStream("/com/kemai/wremja/wremja.properties");
             if(in != null) {
                 Properties props = new Properties();
                 props.load(in);
