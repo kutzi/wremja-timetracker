@@ -27,6 +27,8 @@ public class ChangeProjectAction extends AbstractWremjaAction {
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ChangeProjectAction.class);
 
+    private static final boolean CONFIRMATION_OVERRIDE = true;
+    
     /**
      * The project to be activated when the action is performed.
      */
@@ -72,6 +74,10 @@ public class ChangeProjectAction extends AbstractWremjaAction {
      * @return <code>true</code> if project shall be started else <code>false</code>
      */
     private boolean isStartConfirmed() {
+        if( CONFIRMATION_OVERRIDE ) {
+            return true;
+        }
+        
         // Unfortunately the systray gives no hint where it is located, so we have to guess
         // by getting the current mouse location.
         final Point currentMousePosition = MouseInfo.getPointerInfo().getLocation();

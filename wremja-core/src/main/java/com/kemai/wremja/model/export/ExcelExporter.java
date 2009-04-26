@@ -10,6 +10,7 @@ import jxl.CellView;
 import jxl.JXLException;
 import jxl.Workbook;
 import jxl.format.Colour;
+import jxl.format.UnderlineStyle;
 import jxl.write.DateFormat;
 import jxl.write.DateTime;
 import jxl.write.Label;
@@ -19,8 +20,11 @@ import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.model.ProjectActivity;
@@ -35,6 +39,8 @@ import com.kemai.wremja.model.report.AccumulatedProjectActivity;
  */
 public class ExcelExporter implements Exporter {
 
+    private static final Log log = LogFactory.getLog(ExcelExporter.class);
+    
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExcelExporter.class);
 
@@ -44,7 +50,21 @@ public class ExcelExporter implements Exporter {
 
     public final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy"); //$NON-NLS-1$
 
-    private static WritableCellFormat headingFormat;
+    private static final WritableCellFormat headingFormat;
+    static {
+        WritableFont arial16 = new WritableFont(WritableFont.ARIAL, 14, WritableFont.BOLD, true,
+                UnderlineStyle.NO_UNDERLINE, Colour.DARK_BLUE);
+        headingFormat = new WritableCellFormat(arial16);
+        try {
+            headingFormat.setBackground(Colour.GRAY_25);
+        } catch (WriteException e) {
+            log.error( "Error creating headingFormat", e );
+        }
+    }
+    
+    private static final WritableCellFormat floatFormat = new WritableCellFormat(NumberFormats.FLOAT); 
+    private static final WritableCellFormat timeFormat = new WritableCellFormat(new DateFormat("hh:mm"));//$NON-NLS-1$
+    private static final WritableCellFormat dateFormat = new WritableCellFormat(new DateFormat("DD.MM.yyyy")); //$NON-NLS-1$
 
     /**
      * Exports the given data as Microsoft Excel to the 
@@ -116,10 +136,7 @@ public class ExcelExporter implements Exporter {
     }
     
     private static void init() throws JXLException {
-        final WritableFont arial16 = new WritableFont(WritableFont.ARIAL, 14, WritableFont.BOLD, true);
-        arial16.setColour(Colour.DARK_BLUE);
-        headingFormat = new WritableCellFormat(arial16);
-        headingFormat.setBackground(Colour.GRAY_25);
+
     }
 
     private void createFilteredReport(final WritableWorkbook workbook, final ProjectView data, final Filter filter) throws JXLException {
@@ -177,19 +194,14 @@ public class ExcelExporter implements Exporter {
     }
 
     private static jxl.write.Number makeNumberCell(final int col, final int row, final double number) {
-        final WritableCellFormat floatFormat = new WritableCellFormat(NumberFormats.FLOAT); 
         return new jxl.write.Number(col, row, number, floatFormat); 
-        }
+    }
 
     private static WritableCell makeTimeCell(final int col, final int row, final Date date) {
-        final DateFormat customDateFormat = new DateFormat("hh:mm"); //$NON-NLS-1$
-        final WritableCellFormat dateFormat = new WritableCellFormat(customDateFormat);
-        return new DateTime(col, row, date, dateFormat); 
+        return new DateTime(col, row, date, timeFormat); 
     }
 
     private static DateTime makeDateCell(final int i, final int j, final Date date) {
-        final DateFormat customDateFormat = new DateFormat("DD.MM.yyyy"); //$NON-NLS-1$
-        final WritableCellFormat dateFormat = new WritableCellFormat(customDateFormat);
         return new DateTime(i, j, date, dateFormat); 
     }
 
