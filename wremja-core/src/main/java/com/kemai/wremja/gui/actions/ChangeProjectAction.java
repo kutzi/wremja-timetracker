@@ -10,6 +10,8 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.kemai.swing.util.AWTUtils;
 import com.kemai.util.TextResourceBundle;
@@ -18,12 +20,13 @@ import com.kemai.wremja.gui.model.ProjectActivityStateException;
 import com.kemai.wremja.model.Project;
 
 /**
- * Action to change the active project.
- * @author remast
+ * Action to change the active project in the systray.
  */
 @SuppressWarnings("serial") //$NON-NLS-1$
 public class ChangeProjectAction extends AbstractWremjaAction {
 
+    private static final Log log = LogFactory.getLog(ChangeProjectAction.class);
+    
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ChangeProjectAction.class);
 
@@ -53,19 +56,23 @@ public class ChangeProjectAction extends AbstractWremjaAction {
      */
     @Override
     public final void actionPerformed(final ActionEvent event) {
+        boolean projectHasChanged = false;
         // Check if the new project is different from the old one
-        if (ObjectUtils.equals(getModel().getSelectedProject(), newProject)) {
-            return;
+        if (! ObjectUtils.equals(getModel().getSelectedProject(), newProject)) {
+            getModel().changeProject(newProject);
+            projectHasChanged = true;
         }
-        
-        getModel().changeProject(newProject);
 
-        if (!getModel().isActive() && isStartConfirmed()) {
-            try {
+        try {
+            if (!getModel().isActive() && isStartConfirmed()) {
                 getModel().start();
-            } catch (ProjectActivityStateException e) {
-                // Ignore as we have already checked before that the project is active.
+            } else if( getModel().isActive() && isStopConfirmed()) {
+                if( !projectHasChanged ) {
+                    getModel().stop();
+                }
             }
+        } catch (ProjectActivityStateException e) {
+            log.warn(e, e);
         }
     }
 
@@ -102,5 +109,14 @@ public class ChangeProjectAction extends AbstractWremjaAction {
 
         return (selectedValue instanceof Integer)
         && (((Integer) selectedValue).intValue() == JOptionPane.YES_OPTION);
+    }
+    
+    private boolean isStopConfirmed() {
+        if( CONFIRMATION_OVERRIDE ) { 
+            return true;
+        } else {
+            // TODO
+            return false;
+        }
     }
 }

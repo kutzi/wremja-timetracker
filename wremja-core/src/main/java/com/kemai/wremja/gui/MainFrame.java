@@ -184,6 +184,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      * This method initializes toolBar.
      * @return javax.swing.JToolBar
      */
+    @Override
     public JToolBar getToolBar() {
         if (toolBar == null) {
             toolBar = new JToolBar();
@@ -457,6 +458,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         return importMenu;
     }
 
+    @Override
     public void windowIconified(final java.awt.event.WindowEvent e) {
         if (Launcher.getTray() != null) {
             this.setVisible(false);
@@ -464,9 +466,11 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         }
     }
 
+    @Override
     public void windowOpened(final java.awt.event.WindowEvent e) {
     }
 
+    @Override
     public void windowClosing(final java.awt.event.WindowEvent e) {
         if (Launcher.getTray() != null) {
             this.setVisible(false);
@@ -491,15 +495,19 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         }
     }
 
+    @Override
     public void windowClosed(final java.awt.event.WindowEvent e) {
     }
 
+    @Override
     public void windowDeiconified(final java.awt.event.WindowEvent e) {
     }
 
+    @Override
     public void windowActivated(final java.awt.event.WindowEvent e) {
     }
 
+    @Override
     public void windowDeactivated(final java.awt.event.WindowEvent e) {
     }
 

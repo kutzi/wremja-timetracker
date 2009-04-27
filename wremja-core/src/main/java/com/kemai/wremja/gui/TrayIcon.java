@@ -61,8 +61,13 @@ public class TrayIcon implements Observer {
 
         buildMenu();
 
-        trayIcon = new JXTrayIcon(NORMAL_ICON); //$NON-NLS-1$
-        trayIcon.setToolTip(textBundle.textFor("Global.Title"));
+        if (model.isActive()) {
+            trayIcon = new JXTrayIcon(ACTIVE_ICON);
+            trayIcon.setToolTip(textBundle.textFor("Global.Title") + " - " + model.getSelectedProject() + textBundle.textFor("MainFrame.9") + FormatUtils.formatTime(model.getStart()));
+        } else {
+            trayIcon = new JXTrayIcon(NORMAL_ICON); //$NON-NLS-1$
+            trayIcon.setToolTip(textBundle.textFor("Global.Title"));
+        }
         trayIcon.setJPopupMenu(menu);
         trayIcon.setImageAutoSize(true);
 
@@ -79,12 +84,6 @@ public class TrayIcon implements Observer {
             }
 
         });
-
-        if (model.isActive()) {
-            trayIcon.setImage(ACTIVE_ICON);
-            trayIcon.setToolTip(textBundle.textFor("Global.Title") + " - " + model.getSelectedProject() + textBundle.textFor("MainFrame.9") + FormatUtils.formatTime(model.getStart()));
-        }
-
     }
 
     /**
@@ -144,6 +143,7 @@ public class TrayIcon implements Observer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void update(final Observable source, final Object eventObject) {
         if (eventObject != null && eventObject instanceof WremjaEvent) {
             WremjaEvent event = (WremjaEvent) eventObject;
