@@ -1,30 +1,45 @@
 package com.kemai.wremja.gui.panels.report;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.MaskFormatter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.renderer.FormatStringValue;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
+
+import ca.odell.glazedlists.swing.EventComboBoxModel;
+import ca.odell.glazedlists.swing.EventListJXTableSorting;
+import ca.odell.glazedlists.swing.EventTableModel;
 
 import com.kemai.swing.util.GuiConstants;
 import com.kemai.util.TextResourceBundle;
@@ -36,15 +51,13 @@ import com.kemai.wremja.gui.panels.table.AllActivitiesTableFormat;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
-import ca.odell.glazedlists.swing.EventComboBoxModel;
-import ca.odell.glazedlists.swing.EventListJXTableSorting;
-import ca.odell.glazedlists.swing.EventTableModel;
-
 /**
  * @author remast
  */
 @SuppressWarnings("serial")//$NON-NLS-1$
 public class AllActitvitiesPanel extends JXPanel implements Observer {
+
+    private static final Log log = LogFactory.getLog(AllActitvitiesPanel.class);
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
@@ -86,7 +99,9 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
         table.getColumn(1).setCellEditor(new DatePickerCellEditor());
 
         table.getColumn(2).setCellRenderer(new DefaultTableRenderer(new FormatStringValue(FormatUtils.getTimeFormat())));
+        table.getColumn(2).setCellEditor( new MaskCellEditor() );
         table.getColumn(3).setCellRenderer(new DefaultTableRenderer(new FormatStringValue(FormatUtils.getTimeFormat())));
+        table.getColumn(3).setCellEditor( new MaskCellEditor() );
         table.getColumn(4).setCellRenderer(new DefaultTableRenderer(new FormatStringValue(FormatUtils.getDurationFormat())));
 
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -124,6 +139,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
         });
 
         table.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseReleased(final MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     JTable source = (JTable) e.getSource();
@@ -175,4 +191,63 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
         }
     }
 
+    /**
+     * see:
+     * http://java.sun.com/docs/books/tutorial/uiswing/examples/components/TableFTFEditDemoProject/src/components/IntegerEditor.java
+     */
+    private static class MaskCellEditor extends DefaultCellEditor {
+
+        private final JFormattedTextField tf;
+        
+        public MaskCellEditor() {
+            super(new JFormattedTextField());
+            tf = (JFormattedTextField)getComponent();
+            try {
+                MaskFormatter formatter = new MaskFormatter("##:##");
+                formatter.setPlaceholder("00:00");
+                formatter.setPlaceholderCharacter('0');
+                tf.setFormatterFactory(new DefaultFormatterFactory(formatter));
+
+                tf.setHorizontalAlignment(JTextField.LEFT);
+                tf.setFocusLostBehavior(JFormattedTextField.PERSIST);
+
+                // React when the user presses Enter while the editor is
+                // active. (Tab is handled as specified by
+                // JFormattedTextField's focusLostBehavior property.)
+                tf.getInputMap().put(
+                        KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "check");
+                tf.getActionMap().put("check", new AbstractAction() {
+                    public void actionPerformed(ActionEvent e) {
+                        if (!tf.isEditValid()) { // The text is invalid.
+                            if (false) { // userSaysRevert()) { //reverted
+                                tf.postActionEvent(); // inform the editor
+                            }
+                        } else
+                            try { // The text is valid,
+                                tf.commitEdit(); // so use it.
+                                tf.postActionEvent(); // stop editing
+                            } catch (java.text.ParseException exc) {
+                            }
+                    }
+                });
+
+            } catch (ParseException e) {
+                log.error(e, e);
+            }
+        }
+        
+        //Override to invoke setValue on the formatted text field.
+        @Override
+        public Component getTableCellEditorComponent(JTable table,
+                Object value, boolean isSelected,
+                int row, int column) {
+            JFormattedTextField ftf =
+                (JFormattedTextField)super.getTableCellEditorComponent(
+                    table, value, isSelected, row, column);
+            ftf.setValue(value);
+            return ftf;
+        }
+
+        
+    }
 }
