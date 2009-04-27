@@ -41,9 +41,9 @@ import ca.odell.glazedlists.swing.EventComboBoxModel;
 import ca.odell.glazedlists.swing.EventListJXTableSorting;
 import ca.odell.glazedlists.swing.EventTableModel;
 
-import com.kemai.swing.util.GuiConstants;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.Launcher;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;

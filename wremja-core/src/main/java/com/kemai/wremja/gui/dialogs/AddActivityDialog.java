@@ -25,10 +25,10 @@ import org.joda.time.DateTime;
 
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.swing.text.TextEditor;
-import com.kemai.swing.util.GuiConstants;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;

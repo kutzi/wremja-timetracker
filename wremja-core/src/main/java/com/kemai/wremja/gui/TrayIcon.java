@@ -1,7 +1,8 @@
 package com.kemai.wremja.gui;
 
+import static com.kemai.wremja.gui.GuiConstants.*;
+
 import java.awt.AWTException;
-import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,7 +10,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
@@ -39,12 +39,6 @@ public class TrayIcon implements Observer {
 
     /** The logger. */
     private static final Log log = LogFactory.getLog(TrayIcon.class);
-
-    /** The standard icon image. */
-    private static final Image NORMAL_ICON = new ImageIcon(Launcher.class.getResource("/icons/Baralga-Tray.gif")).getImage();
-
-    /** The icon image when an activity is running. */
-    private static final Image ACTIVE_ICON = new ImageIcon(Launcher.class.getResource("/icons/Baralga-Tray-Green.png")).getImage();
 
     /** The model. */
     private final PresentationModel model;

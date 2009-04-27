@@ -12,7 +12,7 @@ import javax.swing.border.TitledBorder;
 import org.jdesktop.swingx.JXPanel;
 
 import com.kemai.swing.text.TextEditor;
-import com.kemai.swing.util.GuiConstants;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
 

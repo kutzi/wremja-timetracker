@@ -35,10 +35,10 @@ import org.joda.time.Period;
 import ca.odell.glazedlists.swing.EventComboBoxModel;
 
 import com.kemai.swing.text.TextEditor;
-import com.kemai.swing.util.GuiConstants;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.MainFrame;
 import com.kemai.wremja.gui.actions.StartAction;
 import com.kemai.wremja.gui.actions.StopAction;

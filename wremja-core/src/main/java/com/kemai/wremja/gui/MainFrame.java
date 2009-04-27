@@ -1,8 +1,9 @@
 package com.kemai.wremja.gui;
 
+import static com.kemai.wremja.gui.GuiConstants.*;
+
 import info.clearthought.layout.TableLayout;
 
-import java.awt.Image;
 import java.awt.event.WindowListener;
 import java.util.Observable;
 import java.util.Observer;
@@ -43,12 +44,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(MainFrame.class);
-
-    /** The standard icon image. */
-    private static final Image NORMAL_ICON = new ImageIcon(Launcher.class.getResource("/icons/Baralga-Tray.gif")).getImage(); //$NON-NLS-1$
-
-    /** The icon image when an activity is running. */
-    private static final Image ACTIVE_ICON = new ImageIcon(Launcher.class.getResource("/icons/Baralga-Tray-Green.png")).getImage(); //$NON-NLS-1$
 
     /** The model. */
     private final PresentationModel model;

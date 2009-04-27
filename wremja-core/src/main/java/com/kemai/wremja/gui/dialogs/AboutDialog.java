@@ -16,8 +16,8 @@ import org.jdesktop.swingx.JXPanel;
 
 import com.kemai.swing.action.OpenBrowserAction;
 import com.kemai.swing.dialog.EscapeDialog;
-import com.kemai.swing.util.GuiConstants;
 import com.kemai.util.TextResourceBundle;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.Launcher;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
 

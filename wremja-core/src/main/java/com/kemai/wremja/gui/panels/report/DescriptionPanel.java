@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
 
 import org.jdesktop.swingx.JXPanel;
 
-import com.kemai.swing.util.GuiConstants;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;

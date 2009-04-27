@@ -12,8 +12,8 @@ import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.renderer.FormatStringValue;
 
-import com.kemai.swing.util.GuiConstants;
 import com.kemai.wremja.FormatUtils;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.model.report.HoursByWeek;
 import com.kemai.wremja.gui.model.report.HoursByWeekReport;
 import com.kemai.wremja.gui.panels.table.HoursByWeekTableFormat;
