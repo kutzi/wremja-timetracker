@@ -80,8 +80,7 @@
 						<manifestEntries>
 							<Implementation-Build>${buildNumber}
 							</Implementation-Build>
-							<SplashScreen-Image>icons/Baralga-Splash.png
-							</SplashScreen-Image>
+							<!-- <SplashScreen-Image>icons/Baralga-Splash.png</SplashScreen-Image>-->
 						</manifestEntries>
 					</archive>
 				</configuration>
