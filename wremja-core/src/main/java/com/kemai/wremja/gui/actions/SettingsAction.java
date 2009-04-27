@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.dialogs.SettingsDialog;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.gui.settings.UserSettings;
 
 /**
  * Shows the settings dialog of the application.
@@ -38,7 +39,7 @@ public class SettingsAction extends AbstractWremjaAction {
     @Override
     public final void actionPerformed(final ActionEvent event) {
         // Display the settings dialog
-        final SettingsDialog settingsDialog = new SettingsDialog(getOwner(), getModel());
+        final SettingsDialog settingsDialog = new SettingsDialog(getOwner(), UserSettings.instance());
         settingsDialog.setVisible(true);
     }
 

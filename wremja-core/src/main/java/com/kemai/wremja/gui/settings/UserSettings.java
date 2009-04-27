@@ -38,7 +38,7 @@ public final class UserSettings {
     /** Key for the name of the user properties file. */
     private static String USER_PROPERTIES_FILENAME = "wremja.properties";
 
-    /** Node for Baralga user preferences. */
+    /** Node for Wremja user preferences. */
     private PropertiesConfiguration userConfig;
 
     /** The singleton instance. */
@@ -243,6 +243,26 @@ public final class UserSettings {
 
     public void setShownCategory(final String shownCategory) {
         userConfig.setProperty(SHOWN_CATEGORY, shownCategory);
+    }
+    
+    private static final String EXPORTER_ANUKO_LOGIN = "exporter.anuko.login";
+    
+    public String getAnukoLogin() {
+        return doGetString(EXPORTER_ANUKO_LOGIN, "");
+    }
+    
+    public void setAnukoLogin(String login) {
+        userConfig.setProperty(EXPORTER_ANUKO_LOGIN, login);
+    }
+    
+    private static final String EXPORTER_ANUKO_PASSWORD = "exporter.anuko.password";
+    
+    public String getAnukoPassword() {
+        return doGetString(EXPORTER_ANUKO_PASSWORD, "");
+    }
+    
+    public void setAnukoPassword(String password) {
+        userConfig.setProperty(EXPORTER_ANUKO_PASSWORD, password);
     }
 
     /**

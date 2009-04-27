@@ -248,6 +248,25 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
             return ftf;
         }
 
+        //Override to check whether the edit is valid,
+        //setting the value if it is and complaining if
+        //it isn't.  If it's OK for the editor to go
+        //away, we need to invoke the superclass's version 
+        //of this method so that everything gets cleaned up.
+        @Override
+        public boolean stopCellEditing() {
+            JFormattedTextField ftf = (JFormattedTextField)getComponent();
+            if (ftf.isEditValid()) {
+                try {
+                    ftf.commitEdit();
+                } catch (java.text.ParseException exc) { }
+            
+            } else { //text is invalid
+                return false; //don't let the editor go away
+            }
+            return super.stopCellEditing();
+        }
+
         
     }
 }

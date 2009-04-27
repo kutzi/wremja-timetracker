@@ -28,6 +28,7 @@ import com.kemai.wremja.gui.actions.ExportDataAction;
 import com.kemai.wremja.gui.actions.ExportExcelAction;
 import com.kemai.wremja.gui.actions.ImportDataAction;
 import com.kemai.wremja.gui.actions.ManageProjectsAction;
+import com.kemai.wremja.gui.actions.SettingsAction;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.panels.ActivityPanel;
@@ -273,9 +274,8 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             editMenu.add(getEditProjectsMenuItem());
             editMenu.add(getAddActivityMenuItem());
 
-            //          INFO: Uncomment to enable settings menu.
-            //          editMenu.addSeparator();
-            //          editMenu.add(new JMenuItem(new SettingsAction(this, model)));
+            editMenu.addSeparator();
+            editMenu.add(new JMenuItem(new SettingsAction(this, model)));
         }
         return editMenu;
     }
