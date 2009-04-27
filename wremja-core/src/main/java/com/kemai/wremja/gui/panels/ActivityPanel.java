@@ -7,14 +7,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -28,10 +25,14 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledSeparator;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
+
+import ca.odell.glazedlists.swing.EventComboBoxModel;
 
 import com.kemai.swing.text.TextEditor;
 import com.kemai.swing.util.GuiConstants;
@@ -46,15 +47,15 @@ import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.model.Project;
 
-import ca.odell.glazedlists.swing.EventComboBoxModel;
-
 /**
  * Panel for capturing new activities.
  * @author remast
  */
 @SuppressWarnings("serial")
-public class ActivityPanel extends JPanel implements Observer, ActionListener {
+public class ActivityPanel extends JPanel implements Observer {
 
+    private static final Log log = LogFactory.getLog(ActivityPanel.class);
+    
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(MainFrame.class);
 
@@ -106,7 +107,13 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
         this.model.addObserver(this);
 
         // Fire timer event every minute
-        this.timer = new Timer(1000 * 60, this);
+        this.timer = new Timer(1000 * 60, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateDuration();
+            }
+            
+        });
 
         initialize();
     }
@@ -195,37 +202,13 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
 
         start.setEditable(true);
 
-        start.addFocusListener(new FocusListener() {
-
+        start.addPropertyChangeListener("value", new PropertyChangeListener() {
             @Override
-            public void focusGained(final FocusEvent e) {
-            }
-
-            @Override
-            public void focusLost(final FocusEvent event) {
+            public void propertyChange(PropertyChangeEvent evt) {
                 changeStartTime();
             }
-
         });
         
-        start.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if( e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    changeStartTime();
-                }
-            }
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
-        });
-
         final int borderSmall = 3;
 
         final JXPanel startPanel = new JXPanel();
@@ -310,7 +293,7 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
 
                     // 2. Clear the description.
                     if (descriptionEditor != null) {
-                        descriptionEditor.setText(StringUtils.EMPTY);
+                        descriptionEditor.setText("");
                     }
                 }
             });
@@ -373,11 +356,11 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
     private void updateStart() {
         timer.start();
 
-        descriptionEditor.setText(StringUtils.EMPTY);
+        descriptionEditor.setText("");
         descriptionEditor.setEditable(true);
 
         // Clear description in settings.
-        UserSettings.instance().setLastDescription(StringUtils.EMPTY);
+        UserSettings.instance().setLastDescription("");
 
         // Change button from start to stop
         getStartStopButton().setAction(new StopAction(this.model));
@@ -395,11 +378,11 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
     private void updateStop() {
         timer.stop();
 
-        descriptionEditor.setText(StringUtils.EMPTY);
+        descriptionEditor.setText("");
         descriptionEditor.setEditable(false);
 
         // Clear description in settings.
-        UserSettings.instance().setLastDescription(StringUtils.EMPTY);
+        UserSettings.instance().setLastDescription("");
 
         getStartStopButton().setAction(new StartAction(null, this.model));
 
@@ -414,26 +397,21 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
     }
 
     /**
-     * Timer event during running activity.
-     * @param event the timer event
-     */
-    @Override
-    public final void actionPerformed(final ActionEvent event) {
-        updateDuration();
-    }
-
-    /**
      * Updates the GUI with the current duration.
      */
     private void updateDuration() {
-        final Period period = new Period(
-                this.model.getStart(), 
-                DateUtils.getNow()
-        );
-        final String durationPrint = period.getHours() + ":" + MINUTE_FORMAT.format(period.getMinutes()) + " h";
+        try {
+            final Period period = new Period(
+                    this.model.getStart(), 
+                    DateUtils.getNow()
+            );
+            final String durationPrint = period.getHours() + ":" + MINUTE_FORMAT.format(period.getMinutes()) + " h";
 
-        // Display duration
-        duration.setText(durationPrint);
+            // Display duration
+            duration.setText(durationPrint);
+        } catch (Exception e) {
+            log.error(e, e);
+        }
     }
 
     /**
@@ -452,10 +430,10 @@ public class ActivityPanel extends JPanel implements Observer, ActionListener {
 
         // New start time must be before the current time.
         try {
-            final Date newStartTime = FormatUtils.parseTime(start.getText()).toDate();
-            final DateTime newStart = DateUtils.adjustToSameDay(
+            DateTime newStart = FormatUtils.parseTime(start.getText());
+            newStart = DateUtils.adjustToSameDay(
                     DateUtils.getNow(), 
-                    new DateTime(newStartTime), 
+                    new DateTime(newStart), 
                     false
             );
 
