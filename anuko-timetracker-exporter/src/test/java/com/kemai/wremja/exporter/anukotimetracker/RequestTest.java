@@ -38,8 +38,8 @@ public class RequestTest {
         data.addActivity(activity3);
         
         Filter filter = new Filter();
-        filter.setWeekOfYear(DateUtils.getNowAsDateTime());
-        filter.setYear(DateUtils.getNowAsDateTime());
+        filter.setWeekOfYear(DateUtils.getNow());
+        filter.setYear(DateUtils.getNow());
         
         displayExportDialog( data, filter );
     }
