@@ -18,11 +18,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Appender;
 import org.apache.log4j.DailyRollingFileAppender;
-import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.jdesktop.swingx.plaf.LookAndFeelAddons;
@@ -36,6 +33,7 @@ import com.kemai.wremja.gui.model.io.DataBackup;
 import com.kemai.wremja.gui.model.io.SaveTimer;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
 import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.io.ProTrackReader;
 
@@ -49,7 +47,7 @@ public final class Launcher {
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
 
     /** The logger. */
-    private static final Log log = LogFactory.getLog(Launcher.class);
+    private static final Logger log = Logger.getLogger(Launcher.class);
 
     //------------------------------------------------
     // Command line options
@@ -241,6 +239,7 @@ public final class Launcher {
 
                     @Override
                     public void run() {
+                        log.debug("Shutting down");
                         // 1. Stop current activity (if any)
                         if (model.isActive()) {
                             try {
@@ -260,6 +259,7 @@ public final class Launcher {
                         } finally {
                             // 3. Release lock
                             releaseLock();
+                            log.debug("Shutdown finished");
                         }
                     }
 
@@ -362,7 +362,7 @@ public final class Launcher {
         logFileName = ApplicationSettings.instance().getApplicationDataDirectory().getAbsolutePath() + File.separator + "log" + File.separator + "wremja.log";
         final Appender mainAppender = new DailyRollingFileAppender(new PatternLayout("%d{ISO8601} %-5p [%t] %c: %m%n"), logFileName, "'.'yyyy-MM-dd");
 
-        final Logger root = Logger.getRootLogger();
+        final org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
         root.addAppender(mainAppender);
     }
 
