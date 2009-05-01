@@ -7,8 +7,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Stack;
 
-import org.apache.commons.collections.CollectionUtils;
-
+import com.kemai.util.CollectionUtils;
 import com.kemai.wremja.gui.actions.RedoAction;
 import com.kemai.wremja.gui.actions.UndoAction;
 import com.kemai.wremja.gui.events.WremjaEvent;

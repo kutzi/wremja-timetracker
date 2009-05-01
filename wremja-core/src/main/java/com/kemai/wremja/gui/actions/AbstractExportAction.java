@@ -12,12 +12,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.kemai.util.IOUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.export.Exporter;
 
 /**
@@ -31,7 +29,7 @@ public abstract class AbstractExportAction extends AbstractWremjaAction {
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(AbstractExportAction.class);
 
     /** The logger. */
-    private static final Log log = LogFactory.getLog(AbstractExportAction.class);
+    private static final Logger log = Logger.getLogger(AbstractExportAction.class);
 
 
     public AbstractExportAction(Frame owner, PresentationModel model) {

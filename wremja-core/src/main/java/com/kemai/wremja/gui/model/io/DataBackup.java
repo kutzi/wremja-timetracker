@@ -13,12 +13,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.kemai.util.IOUtils;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
 import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.logging.Logger;
 
 /**
  * Misc utility methods for creating and reading backups.
@@ -27,7 +26,7 @@ import com.kemai.wremja.gui.settings.UserSettings;
 public class DataBackup {
 
     /** The logger. */
-    private static final Log log = LogFactory.getLog(DataBackup.class);
+    private static final Logger log = Logger.getLogger(DataBackup.class);
 
     /** The date format for dates used in the names of backup files. */
     private static final SimpleDateFormat BACKUP_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss");

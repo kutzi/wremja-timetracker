@@ -8,12 +8,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.kemai.swing.util.FileFilters;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.io.ProTrackReader;
 
@@ -25,7 +23,7 @@ import com.kemai.wremja.model.io.ProTrackReader;
 public class ImportDataAction extends AbstractWremjaAction {
 
     /** The logger. */
-    private static final Log log = LogFactory.getLog(ImportDataAction.class);
+    private static final Logger log = Logger.getLogger(ImportDataAction.class);
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ImportDataAction.class);

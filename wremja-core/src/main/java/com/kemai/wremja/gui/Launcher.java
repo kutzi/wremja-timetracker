@@ -17,7 +17,6 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.DailyRollingFileAppender;
 import org.apache.log4j.PatternLayout;
@@ -26,6 +25,7 @@ import org.jdesktop.swingx.plaf.LookAndFeelAddons;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.kemai.util.CollectionUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.model.ProjectActivityStateException;

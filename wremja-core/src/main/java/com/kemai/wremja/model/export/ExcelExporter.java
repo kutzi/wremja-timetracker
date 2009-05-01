@@ -23,10 +23,9 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.kemai.util.TextResourceBundle;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.ProjectView;
 import com.kemai.wremja.model.filter.Filter;
@@ -39,7 +38,7 @@ import com.kemai.wremja.model.report.AccumulatedProjectActivity;
  */
 public class ExcelExporter implements Exporter {
 
-    private static final Log log = LogFactory.getLog(ExcelExporter.class);
+    private static final Logger log = Logger.getLogger(ExcelExporter.class);
     
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExcelExporter.class);

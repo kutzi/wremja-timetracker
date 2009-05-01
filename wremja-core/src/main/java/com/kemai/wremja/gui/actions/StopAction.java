@@ -7,12 +7,10 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.ImageIcon;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.model.ProjectActivityStateException;
+import com.kemai.wremja.logging.Logger;
 
 /**
  * Stops the currently running project activity.
@@ -25,7 +23,7 @@ public class StopAction extends AbstractWremjaAction {
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(StopAction.class);
 
     /** The logger. */
-    private static final Log log = LogFactory.getLog(StopAction.class);
+    private static final Logger log = Logger.getLogger(StopAction.class);
     
     public StopAction(final PresentationModel model) {
         super(model);

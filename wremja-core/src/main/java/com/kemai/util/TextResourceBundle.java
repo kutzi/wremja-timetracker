@@ -9,8 +9,8 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import com.kemai.wremja.logging.Logger;
 
 /**
  * Provides easy access to texts from properties files. This uses the default 
@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 public final class TextResourceBundle {
     
     /** The logger. */
-    private static final Log log = LogFactory.getLog(TextResourceBundle.class);
+    private static final Logger log = Logger.getLogger(TextResourceBundle.class);
 
     /** The resource bundle. */
     private ResourceBundle resourceBundle = null;

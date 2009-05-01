@@ -1,15 +1,15 @@
 package com.kemai.wremja.model.filter;
 
-import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 
+import com.kemai.util.Predicate;
 import com.kemai.wremja.model.ProjectActivity;
 
 /**
  * Holds for all project activities of one week of the year.
  * @author remast
  */
-public class WeekOfYearPredicate implements Predicate {
+public class WeekOfYearPredicate implements Predicate<ProjectActivity> {
 
     /**
      * The week of year to check for.
@@ -30,12 +30,8 @@ public class WeekOfYearPredicate implements Predicate {
      * @return <code>true</code> if the given object is a project activity
      * of that month else <code>false</code>
      */
-    public final boolean evaluate(final Object object) {
+    public final boolean evaluate(final ProjectActivity object) {
         if (object == null) {
-            return false;
-        }
-
-        if (!(object instanceof ProjectActivity)) {
             return false;
         }
 

@@ -1,8 +1,8 @@
 package com.kemai.wremja.model.filter;
 
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ObjectUtils;
 
+import com.kemai.util.Predicate;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -10,7 +10,7 @@ import com.kemai.wremja.model.ProjectActivity;
  * Holds for all activities of one project.
  * @author remast
  */
-public class ProjectPredicate implements Predicate {
+public class ProjectPredicate implements Predicate<ProjectActivity> {
 
     /**
      * The project to check for.
@@ -31,12 +31,8 @@ public class ProjectPredicate implements Predicate {
      * @return <code>true</code> if the given object is a project activity
      * of that project else <code>false</code>
      */
-    public boolean evaluate(final Object object) {
+    public boolean evaluate(final ProjectActivity object) {
         if (object == null) {
-            return false;
-        }
-
-        if (!(object instanceof ProjectActivity)) {
             return false;
         }
 

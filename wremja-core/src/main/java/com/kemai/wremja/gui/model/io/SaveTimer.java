@@ -2,10 +2,8 @@ package com.kemai.wremja.gui.model.io;
 
 import java.util.TimerTask;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.logging.Logger;
 
 /**
  * A timer to periodically save the model.
@@ -14,7 +12,7 @@ import com.kemai.wremja.gui.model.PresentationModel;
 public class SaveTimer extends TimerTask {
     
     /** The logger. */
-    private static final Log log = LogFactory.getLog(SaveTimer.class);
+    private static final Logger log = Logger.getLogger(SaveTimer.class);
 
     /** The model. */
     private final PresentationModel model;

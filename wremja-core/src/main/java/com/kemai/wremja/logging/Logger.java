@@ -29,6 +29,10 @@ public class Logger {
     public void error(Object msg, Throwable t) {
         this.destination.log(Level.ERROR, msg, t);
     }
+    
+    public void error(String msg) {
+        this.destination.log(Level.ERROR, msg, null);
+    }
 
     public void warn(Object msg, Throwable t) {
         this.destination.log(Level.WARN, msg, t);

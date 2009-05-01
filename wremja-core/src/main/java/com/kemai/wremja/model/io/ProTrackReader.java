@@ -5,10 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.kemai.util.IOUtils;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
@@ -22,7 +20,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public class ProTrackReader {
 
     /** The logger. */
-    private static final Log log = LogFactory.getLog(ProTrackReader.class);
+    private static final Logger log = Logger.getLogger(ProTrackReader.class);
 
     /** The data read. */
     private ActivityRepository data;

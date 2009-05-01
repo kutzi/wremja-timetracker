@@ -1,6 +1,7 @@
 package com.kemai.wremja.gui;
 
-import static com.kemai.wremja.gui.GuiConstants.*;
+import static com.kemai.wremja.gui.GuiConstants.ACTIVE_ICON;
+import static com.kemai.wremja.gui.GuiConstants.NORMAL_ICON;
 
 import java.awt.AWTException;
 import java.awt.SystemTray;
@@ -14,8 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdesktop.swinghelper.tray.JXTrayIcon;
 
 import com.kemai.util.TextResourceBundle;
@@ -26,6 +25,7 @@ import com.kemai.wremja.gui.actions.StartAction;
 import com.kemai.wremja.gui.actions.StopAction;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.Project;
 
 /**
@@ -38,7 +38,7 @@ public class TrayIcon implements Observer {
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(TrayIcon.class);
 
     /** The logger. */
-    private static final Log log = LogFactory.getLog(TrayIcon.class);
+    private static final Logger log = Logger.getLogger(TrayIcon.class);
 
     /** The model. */
     private final PresentationModel model;

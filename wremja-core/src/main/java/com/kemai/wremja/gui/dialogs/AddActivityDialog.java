@@ -18,13 +18,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.text.DateFormatter;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXDatePicker;
 import org.joda.time.DateTime;
 
+import ca.odell.glazedlists.swing.EventComboBoxModel;
+
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.swing.text.TextEditor;
+import com.kemai.util.CollectionUtils;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
@@ -32,8 +34,6 @@ import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
-
-import ca.odell.glazedlists.swing.EventComboBoxModel;
 
 /**
  * Dialog for manually adding a project activity.

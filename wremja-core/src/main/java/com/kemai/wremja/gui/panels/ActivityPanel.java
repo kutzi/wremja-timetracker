@@ -25,8 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledSeparator;
 import org.joda.time.DateTime;
@@ -45,6 +43,7 @@ import com.kemai.wremja.gui.actions.StopAction;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.Project;
 
 /**
@@ -54,7 +53,7 @@ import com.kemai.wremja.model.Project;
 @SuppressWarnings("serial")
 public class ActivityPanel extends JPanel implements Observer {
 
-    private static final Log log = LogFactory.getLog(ActivityPanel.class);
+    private static final Logger log = Logger.getLogger(ActivityPanel.class);
     
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(MainFrame.class);

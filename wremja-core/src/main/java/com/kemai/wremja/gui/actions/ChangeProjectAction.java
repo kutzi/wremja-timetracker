@@ -10,13 +10,12 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.kemai.swing.util.AWTUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.model.ProjectActivityStateException;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.Project;
 
 /**
@@ -25,7 +24,7 @@ import com.kemai.wremja.model.Project;
 @SuppressWarnings("serial") //$NON-NLS-1$
 public class ChangeProjectAction extends AbstractWremjaAction {
 
-    private static final Log log = LogFactory.getLog(ChangeProjectAction.class);
+    private static final Logger log = Logger.getLogger(ChangeProjectAction.class);
     
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ChangeProjectAction.class);

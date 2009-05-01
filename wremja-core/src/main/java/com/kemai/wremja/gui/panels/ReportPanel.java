@@ -7,16 +7,16 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledSeparator;
 import org.joda.time.DateTime;
 
+import ca.odell.glazedlists.swing.EventComboBoxModel;
+
 import com.kemai.swing.util.LabeledItem;
+import com.kemai.util.CollectionUtils;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.Launcher;
@@ -26,10 +26,9 @@ import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
 import com.kemai.wremja.gui.lists.YearFilterList;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.filter.Filter;
-
-import ca.odell.glazedlists.swing.EventComboBoxModel;
 
 /**
  * Displays the reports generated from the project activities.
@@ -42,7 +41,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
 
     /** The logger. */
-    private static final Log log = LogFactory.getLog(ReportPanel.class);
+    private static final Logger log = Logger.getLogger(ReportPanel.class);
 
     /** The model. */
     private PresentationModel model;

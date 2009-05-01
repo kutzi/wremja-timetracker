@@ -28,8 +28,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
@@ -48,6 +46,7 @@ import com.kemai.wremja.gui.Launcher;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.panels.table.AllActivitiesTableFormat;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -57,7 +56,7 @@ import com.kemai.wremja.model.ProjectActivity;
 @SuppressWarnings("serial")//$NON-NLS-1$
 public class AllActitvitiesPanel extends JXPanel implements Observer {
 
-    private static final Log log = LogFactory.getLog(AllActitvitiesPanel.class);
+    private static final Logger log = Logger.getLogger(AllActitvitiesPanel.class);
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);

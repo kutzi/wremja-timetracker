@@ -6,8 +6,7 @@ import java.net.URL;
 
 import javax.swing.AbstractAction;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.kemai.wremja.logging.Logger;
 
 /**
  * Simple action for opening URLs in the Browser.
@@ -17,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
 public class OpenBrowserAction extends AbstractAction {
 
 	/** The logger. */
-	private static final Log log = LogFactory.getLog(OpenBrowserAction.class);
+	private static final Logger log = Logger.getLogger(OpenBrowserAction.class);
 
 	/** The url to be opened. */
 	private String url;

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 
+import com.kemai.util.Predicate;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -18,34 +18,34 @@ import com.kemai.wremja.model.ProjectActivity;
 public class Filter {
 
     /** The predicates of the filter. */
-    private final List<Predicate> predicates = new ArrayList<Predicate>();
+    private final List<Predicate<ProjectActivity>> predicates = new ArrayList<Predicate<ProjectActivity>>();
     
     
     /** The week of the year to filter by. */
     private DateTime weekOfYear;
 
     /** The predicate to filter by week of year. */
-    private Predicate weekOfYearPredicate;
+    private Predicate<ProjectActivity> weekOfYearPredicate;
     
     
     /** The month to filter by. */
     private DateTime month;
 
     /** The predicate to filter by month. */
-    private Predicate monthPredicate;
+    private Predicate<ProjectActivity> monthPredicate;
     
     /** The year to filter by. */
     private DateTime year;
 
     
     /** The predicate to filter by year. */
-    private Predicate yearPredicate;
+    private Predicate<ProjectActivity> yearPredicate;
 
     /** The project to filter by. */
     private Project project;
 
     /** The predicate to filter by project. */
-    private Predicate projectPredicate;
+    private Predicate<ProjectActivity> projectPredicate;
 
     /**
      * Create filter with no predicates.
@@ -62,7 +62,7 @@ public class Filter {
      */
     public List<ProjectActivity> applyFilters(final List<ProjectActivity> elements) {
         ArrayList<ProjectActivity> filteredElements = new ArrayList<ProjectActivity>(elements);
-        for (Predicate predicate : predicates) {
+        for (Predicate<ProjectActivity> predicate : predicates) {
             for (ProjectActivity activity : new ArrayList<ProjectActivity>(filteredElements)) {
                 if (!predicate.evaluate(activity))
                     filteredElements.remove(activity);
@@ -80,7 +80,7 @@ public class Filter {
      * otherwise <code>false</code>
      */
     public final boolean matchesCriteria(final ProjectActivity activity) {
-        for (Predicate predicate : predicates) {
+        for (Predicate<ProjectActivity> predicate : predicates) {
             if (!predicate.evaluate(activity)) {
                 return false;
             }
@@ -112,7 +112,7 @@ public class Filter {
             this.weekOfYearPredicate = null;
         }
 
-        final Predicate newWeekOfYearPredicate = new WeekOfYearPredicate(weekOfYear);
+        final Predicate<ProjectActivity> newWeekOfYearPredicate = new WeekOfYearPredicate(weekOfYear);
         this.weekOfYearPredicate = newWeekOfYearPredicate;
         this.predicates.add(newWeekOfYearPredicate);
     }
@@ -141,7 +141,7 @@ public class Filter {
             this.monthPredicate = null;
         }
 
-        final Predicate newMonthPredicate = new MonthPredicate(month);
+        final Predicate<ProjectActivity> newMonthPredicate = new MonthPredicate(month);
         this.monthPredicate = newMonthPredicate;
         this.predicates.add(newMonthPredicate);
     }
@@ -172,7 +172,7 @@ public class Filter {
             return;
         }
 
-        final Predicate newYearPredicate = new YearPredicate(year);
+        final Predicate<ProjectActivity> newYearPredicate = new YearPredicate(year);
         this.yearPredicate = newYearPredicate;
         this.predicates.add(newYearPredicate);
     }
@@ -194,7 +194,7 @@ public class Filter {
             return;
         }
 
-        final Predicate newProjectPredicate = new ProjectPredicate(project);
+        final Predicate<ProjectActivity> newProjectPredicate = new ProjectPredicate(project);
         this.projectPredicate = newProjectPredicate;
         this.predicates.add(newProjectPredicate);
     }
