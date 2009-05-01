@@ -2,9 +2,8 @@ package com.kemai.wremja.gui.model;
 
 import java.awt.Frame;
 
-import org.apache.commons.configuration.Configuration;
-
 import com.kemai.wremja.gui.actions.AbstractWremjaAction;
+import com.kemai.wremja.gui.settings.Configuration;
 
 public interface PluggableExporter {
     public AbstractWremjaAction getExportAction(Frame owner, PresentationModel model);

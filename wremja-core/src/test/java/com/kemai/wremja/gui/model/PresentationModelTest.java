@@ -1,16 +1,11 @@
 package com.kemai.wremja.gui.model;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import junit.framework.TestCase;
 
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
 
 import com.kemai.util.DateUtils;
-import com.kemai.wremja.gui.model.PresentationModel;
-import com.kemai.wremja.gui.model.ProjectActivityStateException;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 

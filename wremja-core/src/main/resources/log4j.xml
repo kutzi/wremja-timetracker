@@ -23,7 +23,7 @@
 
     <!-- Application specific classes to enable debugging.  -->
     <logger name="com.kemai">
-        <level value="warn" />
+        <level value="DEBUG" />
     </logger>
 
     <!-- General debugging level.  -->

@@ -179,10 +179,6 @@
 			<artifactId>looks</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.swinglabs</groupId>
 			<artifactId>swingx</artifactId>
 		</dependency>
@@ -193,10 +189,6 @@
 		<dependency>
 			<groupId>tablelayout</groupId>
 			<artifactId>TableLayout</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>

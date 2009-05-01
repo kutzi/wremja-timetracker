@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.kemai.util.IOUtils;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
 import com.kemai.wremja.gui.settings.UserSettings;
 
@@ -51,9 +51,10 @@ public class DataBackup {
         }
 
         try {
-            FileUtils.copyFile(
+            IOUtils.copyFile(
                     toBackup, 
-                    new File(UserSettings.instance().getDataFileLocation() + "." + BACKUP_DATE_FORMAT.format(new Date()))
+                    new File(UserSettings.instance().getDataFileLocation() + "." + BACKUP_DATE_FORMAT.format(new Date())),
+                    true
             );
             cleanupBackupFiles();
         } catch (Exception e) {
@@ -147,7 +148,7 @@ public class DataBackup {
      */
     public static void saveCorruptDataFile() {
         try {
-            FileUtils.copyFile(new File(UserSettings.instance().getDataFileLocation()), new File(ERROR_FILE_PATH));
+            IOUtils.copyFile(new File(UserSettings.instance().getDataFileLocation()), new File(ERROR_FILE_PATH), true);
         } catch (IOException e) {
             log.error(e, e);
         }

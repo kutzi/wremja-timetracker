@@ -169,6 +169,7 @@ public class ProjectMappingPanel extends JXPanel {
     
     public static class ComboTooltipRenderer extends DefaultListCellRenderer {
 
+        @Override
         public Component getListCellRendererComponent(JList list, Object value,
                 int index, boolean isSelected, boolean cellHasFocus) {
             JComponent comp = (JComponent) super.getListCellRendererComponent(

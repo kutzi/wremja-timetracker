@@ -1,28 +1,27 @@
 package com.kemai.wremja.gui.settings;
 
 import java.io.File;
+import java.io.IOException;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 
 import com.kemai.util.DateUtils;
 import com.kemai.wremja.gui.lists.MonthFilterList;
 import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
 import com.kemai.wremja.gui.lists.YearFilterList;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.filter.Filter;
 
 /**
  * Stores and reads all settings specific to one user.
  * @author remast
+ * @author kutzi
  */
 public final class UserSettings {
 
     /** The logger. */
-    private static final Log log = LogFactory.getLog(UserSettings.class);
+    private static final Logger log = Logger.getLogger(UserSettings.class);
 
     /** Default name of the ActivityRepository data file. */
     public static final String DEFAULT_FILE_NAME = "ProTrack.ptd"; //$NON-NLS-1$
@@ -39,10 +38,10 @@ public final class UserSettings {
     private static String USER_PROPERTIES_FILENAME = "wremja.properties";
 
     /** Node for Wremja user preferences. */
-    private PropertiesConfiguration userConfig;
+    private Configuration userConfig;
 
     /** The singleton instance. */
-    private static UserSettings instance = new UserSettings();
+    private static final UserSettings instance = new UserSettings();
 
     /**
      * Getter for singleton instance.
@@ -58,9 +57,8 @@ public final class UserSettings {
     private UserSettings() {
         final File userConfigFile = new File(ApplicationSettings.instance().getApplicationDataDirectory() + File.separator + USER_PROPERTIES_FILENAME);
         try {
-            userConfig = new PropertiesConfiguration(userConfigFile);
-            userConfig.setAutoSave(true);
-        } catch (ConfigurationException e) {
+            userConfig = new JUPropertiesConfiguration(userConfigFile);
+        } catch (IOException e) {
             log.error(e, e);
         }
     }
@@ -173,11 +171,11 @@ public final class UserSettings {
 
     public Integer getFilterSelectedMonth() {
         // Avoid ConversionException by checking the type of the property
-        final Object selectedMonthObject = userConfig.getProperty(SELECTED_MONTH);
+        final String selectedMonthObject = userConfig.getStringProperty(SELECTED_MONTH);
         
         // -- 
         // :INFO: Migrate from < 1.3 where * was used as dummy value
-        if ((selectedMonthObject instanceof String) && StringUtils.equals("*", (String) selectedMonthObject)) {
+        if (StringUtils.equals("*", (String) selectedMonthObject)) {
             setFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
         }
         // --
@@ -204,11 +202,11 @@ public final class UserSettings {
 
     public Integer getFilterSelectedYear() {
         // Avoid ConversionException by checking the type of the property
-        final Object selectedYearObject = userConfig.getProperty(SELECTED_YEAR);
+        final String selectedYearObject = userConfig.getStringProperty(SELECTED_YEAR);
         
         // -- 
         // :INFO: Migrate from < 1.3 where * was used as dummy value
-        if ((selectedYearObject instanceof String) && StringUtils.equals("*", (String) selectedYearObject)) {
+        if (StringUtils.equals("*", (String) selectedYearObject)) {
             setFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
         }
         // -- 
@@ -375,12 +373,9 @@ public final class UserSettings {
      */
     private String doGetString(final String key, final String defaultValue) {
         try {
-            return userConfig.getString(key, defaultValue);
+            return userConfig.getStringProperty(key, defaultValue);
         } catch (Exception e) {
             log.error(e, e);
-            return defaultValue;
-        } catch (Throwable t) {
-            log.error(t, t);
             return defaultValue;
         }
     }
@@ -394,12 +389,9 @@ public final class UserSettings {
      */
     private Long doGetLong(final String key, final Long defaultValue) {
         try {
-            return userConfig.getLong(key, defaultValue);
+            return userConfig.getLongProperty(key, defaultValue);
         } catch (Exception e) {
             log.error(e, e);
-            return defaultValue;
-        } catch (Throwable t) {
-            log.error(t, t);
             return defaultValue;
         }
     }
@@ -413,12 +405,9 @@ public final class UserSettings {
      */
     private Integer doGetInteger(final String key, final Integer defaultValue) {
         try {
-            return userConfig.getInteger(key, defaultValue);
+            return userConfig.getIntegerProperty(key, defaultValue);
         } catch (Exception e) {
             log.error(e, e);
-            return defaultValue;
-        } catch (Throwable t) {
-            log.error(t, t);
             return defaultValue;
         }
     }

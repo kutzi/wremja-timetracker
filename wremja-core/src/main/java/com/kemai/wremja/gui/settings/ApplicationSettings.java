@@ -1,24 +1,21 @@
 package com.kemai.wremja.gui.settings;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.NoSuchElementException;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.kemai.wremja.logging.Logger;
 
 /**
  * Stores and reads all settings specific to the whole application.
  * @author remast
+ * @author kutzi
  */
 public final class ApplicationSettings {
 
     /** The logger. */
-    private static final Log log = LogFactory.getLog(ApplicationSettings.class);
+    private static final Logger log = Logger.getLogger(ApplicationSettings.class);
 
     /** The singleton instance. */
     private static ApplicationSettings instance;
@@ -26,8 +23,8 @@ public final class ApplicationSettings {
     /** Key for the name of the application properties file. */
     private static String APPLICATION_PROPERTIES_FILENAME = "application.properties"; //$NON-NLS-1$
 
-    /** Node for Baralga application preferences. */
-    private PropertiesConfiguration applicationConfig;
+    /** Node for Wremja application preferences. */
+    private Configuration applicationConfig;
 
     //------------------------------------------------
     // Data locations
@@ -92,11 +89,8 @@ public final class ApplicationSettings {
                     APPLICATION_PROPERTIES_FILENAME
             );
 
-            applicationConfig = new PropertiesConfiguration(file);
-            applicationConfig.setAutoSave(true);
-        } catch (MalformedURLException e) {
-            log.error(e, e);
-        } catch (ConfigurationException e) {
+            applicationConfig = new JUPropertiesConfiguration(file);
+        } catch (IOException e) {
             log.error(e, e);
         } catch (URISyntaxException e) {
             log.error(e, e);
@@ -113,11 +107,7 @@ public final class ApplicationSettings {
      * directory or <code>false</code> if data is stored in default directory
      */
     public boolean isStoreDataInApplicationDirectory() {
-        try {
-            return applicationConfig.getBoolean(STORE_DATA_IN_APPLICATION_DIRECTORY);
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        return applicationConfig.getBooleanProperty(STORE_DATA_IN_APPLICATION_DIRECTORY, false);
     }
 
     /**
