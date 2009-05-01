@@ -18,7 +18,6 @@ import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
-import com.kemai.wremja.model.filter.Filter;
 
 /**
  * Display and edit the descriptions of all project activities.
@@ -33,9 +32,6 @@ public class DescriptionPanel extends JXPanel implements Observer {
     /** Cache for all entries by activity. */
     private final Map<ProjectActivity, DescriptionPanelEntry> entriesByActivity;
 
-    /** The applied filter. */
-    private Filter filter;
-
     private JPanel container;
 
     public DescriptionPanel(final PresentationModel model) {
@@ -44,8 +40,6 @@ public class DescriptionPanel extends JXPanel implements Observer {
         this.model = model;
         this.entriesByActivity = new HashMap<ProjectActivity, DescriptionPanelEntry>();
         this.model.addObserver(this);
-        this.filter = model.getFilter();
-
         initialize();
     }
 
@@ -53,12 +47,14 @@ public class DescriptionPanel extends JXPanel implements Observer {
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
-        this.add(new JScrollPane(container), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(container);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        this.add(scrollPane, BorderLayout.CENTER);
 
-        applyFilter();
+        initializeDescriptionEntries();
     }
 
-    private void applyFilter() {
+    private void initializeDescriptionEntries() {
         // clear filtered activities
         entriesByActivity.clear();
 
@@ -133,14 +129,8 @@ public class DescriptionPanel extends JXPanel implements Observer {
                 break;
 
             case FILTER_CHANGED:
-                final Filter newFilter = (Filter) event.getData();
-                setFilter(newFilter);
+                initializeDescriptionEntries();
                 break;
         }
-    }
-
-    private void setFilter(final Filter filter) {
-        this.filter = filter;
-        applyFilter();
     }
 }
