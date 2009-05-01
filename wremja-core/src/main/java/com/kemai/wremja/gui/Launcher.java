@@ -12,15 +12,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.DailyRollingFileAppender;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.jdesktop.swingx.plaf.LookAndFeelAddons;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
@@ -33,6 +32,7 @@ import com.kemai.wremja.gui.model.io.DataBackup;
 import com.kemai.wremja.gui.model.io.SaveTimer;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
 import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.logging.BetterFormatter;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.io.ProTrackReader;
@@ -133,14 +133,6 @@ public final class Launcher {
             final MainFrame mainFrame = initMainFrame(model, mainInstance);
 
             initTrayIcon(mainInstance, model, mainFrame);
-        } catch (Exception e) {
-            log.error(e, e);
-            JOptionPane.showMessageDialog(
-                    null, 
-                    textBundle.textFor("Launcher.FatalError.Message", logFileName),  //$NON-NLS-1$
-                    textBundle.textFor("Launcher.FatalError.Title"),  //$NON-NLS-1$
-                    JOptionPane.ERROR_MESSAGE
-            );
         } catch (Throwable t) {
             log.error(t, t);
             JOptionPane.showMessageDialog(
@@ -357,13 +349,24 @@ public final class Launcher {
      */
     private static void initLogger() throws IOException {
         log.debug("Initializing logger ...");
-        DOMConfigurator.configure(Launcher.class.getResource("/log4j.xml"));
 
-        logFileName = ApplicationSettings.instance().getApplicationDataDirectory().getAbsolutePath() + File.separator + "log" + File.separator + "wremja.log";
-        final Appender mainAppender = new DailyRollingFileAppender(new PatternLayout("%d{ISO8601} %-5p [%t] %c: %m%n"), logFileName, "'.'yyyy-MM-dd");
-
-        final org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
-        root.addAppender(mainAppender);
+        logFileName = ApplicationSettings.instance().getApplicationDataDirectory().getAbsolutePath() + File.separator + "log" + File.separator + "wremja.log.%g";
+        
+        FileHandler fileHandler = new FileHandler(logFileName, 50000, 3, true );
+        fileHandler.setFormatter(new BetterFormatter());
+        fileHandler.setLevel(Level.INFO);
+        
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.FINEST);
+        consoleHandler.setFormatter(new BetterFormatter());
+        
+        java.util.logging.Logger rootLogger = java.util.logging.Logger.getLogger("");
+        rootLogger.addHandler(fileHandler);
+        rootLogger.addHandler(consoleHandler);
+        rootLogger.setLevel(Level.INFO);
+        
+        java.util.logging.Logger appLogger = java.util.logging.Logger.getLogger("com.kemai");
+        appLogger.setLevel(Level.FINEST);
     }
 
     /**

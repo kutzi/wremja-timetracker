@@ -12,7 +12,7 @@ public class Logger {
     }
     
     public static Logger getLogger( Class<?> clazz ) {
-        Destination destination = new Log4jDestination( clazz );
+        Destination destination = new JULDestination( clazz );
         return new Logger(destination);
     }
     
