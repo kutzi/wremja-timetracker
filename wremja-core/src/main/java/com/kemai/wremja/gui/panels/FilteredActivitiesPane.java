@@ -10,12 +10,12 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXPanel;
 
-import com.jidesoft.swing.JideTabbedPane;
-import com.jidesoft.swing.JideToggleButton;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.Launcher;
 import com.kemai.wremja.gui.model.PresentationModel;
@@ -44,7 +44,12 @@ public class FilteredActivitiesPane extends JXPanel {
 	private String shownCategory;
 
 	/** The tab container for the categorized tabs. */
-	private JideTabbedPane tabs = new JideTabbedPane();
+	private JTabbedPane tabs = new JTabbedPane();
+	{
+	    //tabs.putClientProperty(Options.EMBEDDED_TABS_KEY,
+        //        Boolean.TRUE);
+	    //tabs.setUI(new CWTabbedPaneUI());
+	}
 
 	/** All categorized tabs. */
 	private List<CategorizedTab> categorizedTabs = new ArrayList<CategorizedTab>();
@@ -80,7 +85,7 @@ public class FilteredActivitiesPane extends JXPanel {
 
 	private JXPanel categoryButtonPanel = new JXPanel();
 
-	private JideToggleButton generalButton = new JideToggleButton(new AbstractAction(textBundle.textFor("Category.General"), new ImageIcon(getClass().getResource("/icons/gtk-dnd-multiple.png"))) {
+	private JToggleButton generalButton = new JToggleButton(new AbstractAction(textBundle.textFor("Category.General"), new ImageIcon(getClass().getResource("/icons/gtk-dnd-multiple.png"))) {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -92,7 +97,7 @@ public class FilteredActivitiesPane extends JXPanel {
 		generalButton.setToolTipText(textBundle.textFor("Category.General.ToolTipText"));
 	}
 
-	private JideToggleButton timeButton = new JideToggleButton(new AbstractAction(textBundle.textFor("Category.Time"), new ImageIcon(getClass().getResource("/icons/stock_calendar-view-day.png"))) {
+	private JToggleButton timeButton = new JToggleButton(new AbstractAction(textBundle.textFor("Category.Time"), new ImageIcon(getClass().getResource("/icons/stock_calendar-view-day.png"))) {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -104,7 +109,7 @@ public class FilteredActivitiesPane extends JXPanel {
 		timeButton.setToolTipText(textBundle.textFor("Category.Time.ToolTipText"));
 	}
 
-	private JideToggleButton projectButton = new JideToggleButton(new AbstractAction(textBundle.textFor("Category.Project"), new ImageIcon(getClass().getResource("/icons/stock_calendar-view-day.png"))) {
+	private JToggleButton projectButton = new JToggleButton(new AbstractAction(textBundle.textFor("Category.Project"), new ImageIcon(getClass().getResource("/icons/stock_calendar-view-day.png"))) {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -139,8 +144,8 @@ public class FilteredActivitiesPane extends JXPanel {
 		categoryButtonPanel.add(projectButton, "5, 1"); //$NON-NLS-1$
 		this.add(categoryButtonPanel, "0, 0"); //$NON-NLS-1$
 
-		tabs.setTabShape(JideTabbedPane.SHAPE_WINDOWS);
-		tabs.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
+		//tabs.setTabShape(JideTabbedPane.SHAPE_WINDOWS);
+		//tabs.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
 
 		shownCategory = UserSettings.instance().getShownCategory();
 
@@ -226,6 +231,7 @@ public class FilteredActivitiesPane extends JXPanel {
 		this.initToggleButtons();
 
 		this.add(tabs, "0, 1"); //$NON-NLS-1$
+		tabs.setVisible(true);
 	}
 
 	/**
@@ -290,7 +296,8 @@ public class FilteredActivitiesPane extends JXPanel {
 			return;
 		}
 
-		tabs.addTab(tab.getTitle(), tab.getIcon(), tab.getComponent(), tab.getTooltip());   
+		tabs.addTab(tab.getTitle(), tab.getIcon(), tab.getComponent(), tab.getTooltip());
+		//tabs.addTab(new TitledTab(tab.getTitle(), tab.getIcon(), (JComponent)tab.getComponent(), null));
 	}
 
 	/**

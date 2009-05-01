@@ -15,6 +15,7 @@ import java.util.Timer;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -24,7 +25,10 @@ import org.apache.log4j.DailyRollingFileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.jdesktop.swingx.plaf.LookAndFeelAddons;
 
+import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.model.ProjectActivityStateException;
@@ -369,8 +373,10 @@ public final class Launcher {
         log.debug("Initializing look and feel ...");
         try {
             // a) Try windows
-            UIManager.setLookAndFeel("com.jgoodies.looks.windows.WindowsLookAndFeel"); //$NON-NLS-1$
-        } catch (Exception e) {
+            UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
+            Plastic3DLookAndFeel.setTabStyle(PlasticLookAndFeel.TAB_STYLE_METAL_VALUE);
+            Plastic3DLookAndFeel.setHighContrastFocusColorsEnabled(true);
+        } catch (UnsupportedLookAndFeelException e) {
             // b) Try system look & feel
             try {
                 UIManager.setLookAndFeel(
@@ -379,6 +385,12 @@ public final class Launcher {
             } catch (Exception ex) {
                 log.error(ex, ex);
             }
+        }
+        String s = LookAndFeelAddons.getBestMatchAddonClassName();
+        try {
+            LookAndFeelAddons.setAddon(s);
+        } catch (Exception e) {
+            log.warn(e, e);
         }
     }
 

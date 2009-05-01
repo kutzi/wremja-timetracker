@@ -22,6 +22,7 @@ public class EscapeDialog extends JDialog {
         super(owner, true);
     }
 
+    @Override
     protected JRootPane createRootPane() {
         final JRootPane rootPane = new JRootPane();
         final KeyStroke stroke = KeyStroke.getKeyStroke("ESCAPE");

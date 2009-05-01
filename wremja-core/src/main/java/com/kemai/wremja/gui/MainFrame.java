@@ -1,7 +1,7 @@
 package com.kemai.wremja.gui;
 
-import static com.kemai.wremja.gui.GuiConstants.*;
-
+import static com.kemai.wremja.gui.GuiConstants.ACTIVE_ICON;
+import static com.kemai.wremja.gui.GuiConstants.NORMAL_ICON;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.event.WindowListener;
@@ -18,6 +18,8 @@ import javax.swing.JToolBar;
 
 import org.jdesktop.swingx.JXFrame;
 
+import com.jgoodies.looks.HeaderStyle;
+import com.jgoodies.looks.Options;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.actions.AboutAction;
@@ -171,6 +173,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             mainMenuBar.add(getFileMenu());
             mainMenuBar.add(getEditMenu());
             mainMenuBar.add(getHelpMenu());
+            mainMenuBar.putClientProperty(Options.HEADER_STYLE_KEY, HeaderStyle.BOTH);
         }
         return mainMenuBar;
     }
@@ -192,6 +195,9 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         toolBar.add(new JToolBar.Separator());
         toolBar.add(this.model.getEditStack().getUndoAction());
         toolBar.add(this.model.getEditStack().getRedoAction());
+
+        toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
+        toolBar.putClientProperty(Options.HEADER_STYLE_KEY, HeaderStyle.BOTH);
 
         return toolBar;
     }
