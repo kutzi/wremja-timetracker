@@ -14,6 +14,8 @@
 	</parent>
 	<properties>
 		<wremja.version>1.0-SNAPSHOT</wremja.version>
+	    <!-- See http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
 		<!--
@@ -68,6 +70,14 @@
 			<plugin>
 				<groupId>org.codehaus.izpack</groupId>
 				<artifactId>izpack-maven-plugin</artifactId>
+				<version>1.0-alpha-5</version>
+				<dependencies>
+				  <dependency>
+					  <groupId>org.codehaus.izpack</groupId>
+					  <artifactId>izpack-standalone-compiler</artifactId>
+					  <version>4.3.0</version>
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -75,7 +85,7 @@
 							<goal>izpack</goal>
 						</goals>
 						<configuration>
-							<izpackBasedir>target/Wremja-Portable-${wremja.version}.dir</izpackBasedir>
+							<izpackBasedir>target/Wremja-Portable-${wremja.version}</izpackBasedir>
 							<descriptorEncoding>UTF-8</descriptorEncoding>
 							<installerFile>target/Wremja-Installer-${wremja.version}.jar</installerFile>
 						</configuration>

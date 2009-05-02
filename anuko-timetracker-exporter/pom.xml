@@ -20,6 +20,17 @@
 			</roles>
 		</developer>
 	</developers>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<configuration>
+					<threshold>Normal</threshold>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 	<dependencies>
 		<dependency>
 			<groupId>com.kemai.wremja</groupId>
@@ -38,10 +49,6 @@
 		<dependency>
 		  <groupId>org.jdom</groupId>
 		  <artifactId>jdom</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
