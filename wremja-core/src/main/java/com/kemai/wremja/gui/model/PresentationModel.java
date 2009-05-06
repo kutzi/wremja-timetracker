@@ -8,9 +8,12 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.SortedList;
+
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
-import com.kemai.wremja.gui.Launcher;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.lists.MonthFilterList;
 import com.kemai.wremja.gui.lists.ProjectFilterList;
@@ -29,9 +32,6 @@ import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.filter.Filter;
 import com.kemai.wremja.model.io.ProTrackWriter;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.SortedList;
-
 /**
  * The model of the Baralga application. This is the model capturing both the state
  * of the application as well as the application logic.
@@ -41,7 +41,7 @@ import ca.odell.glazedlists.SortedList;
 public class PresentationModel extends Observable {
 
     /** The bundle for internationalized texts. */
-    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
+    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
 
     /** The list of projects. */
     private final SortedList<Project> projectList;

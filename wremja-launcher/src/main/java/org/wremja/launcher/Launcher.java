@@ -1,16 +1,13 @@
-package com.kemai.wremja.gui;
+package org.wremja.launcher;
 
-import java.awt.SystemTray;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.Timer;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -26,6 +23,7 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.kemai.util.CollectionUtils;
 import com.kemai.util.TextResourceBundle;
+import com.kemai.wremja.gui.MainFrame;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.model.ProjectActivityStateException;
 import com.kemai.wremja.gui.model.io.DataBackup;
@@ -64,9 +62,6 @@ public final class Launcher {
     // Application resources
     //------------------------------------------------
 
-    /** The Tray icon. */
-    private static TrayIcon tray;
-
     /** The lock file to avoid multiple instances of the application. */
     private static FileLock lock;
 
@@ -76,36 +71,6 @@ public final class Launcher {
     /** The absolute path name of the log file. */
     private static String logFileName;
 
-    /**
-     * Gets the tray icon. 
-     * @return The tray icon or <code>null</code> if a tray icon
-     * is not supported by the platform.
-     */
-    public static TrayIcon getTray() {
-        return tray;
-    }
-
-    private static final String versionNumber;
-    private static final String revisionNumber;
-    
-    static {
-        String version = "?";
-        String revision = "?";
-        try {
-            InputStream in = Launcher.class.getResourceAsStream("/com/kemai/wremja/wremja.properties");
-            if(in != null) {
-                Properties props = new Properties();
-                props.load(in);
-                version = props.getProperty("wremja.version", "?");
-                revision = props.getProperty("wremja.buildnumber", "?");
-            }
-        } catch (IOException e) {
-            log.warn( "Couldn't access wremja.properties", e );
-        }
-        versionNumber = version;
-        revisionNumber = revision;
-    }
-    
     /** Hide constructor. */
     private Launcher() { }
 
@@ -130,9 +95,7 @@ public final class Launcher {
 
             initShutdownHook(model);
 
-            final MainFrame mainFrame = initMainFrame(model, mainInstance);
-
-            initTrayIcon(mainInstance, model, mainFrame);
+            initMainFrame(model, mainInstance);
         } catch (Throwable t) {
             log.error(t, t);
             JOptionPane.showMessageDialog(
@@ -189,33 +152,6 @@ public final class Launcher {
             );
             log.info(textBundle.textFor("Launcher.ErrorAlreadyRunning.Message")); //$NON-NLS-1$
             System.exit(0);
-        }
-    }
-
-    /**
-     * Initializes the lock file.
-     * @param model the model to be displayed
-     * @param mainInstance the main instance
-     * @param mainFrame
-     */
-    private static void initTrayIcon(final Launcher mainInstance,
-            final PresentationModel model, final MainFrame mainFrame) {
-        log.debug("Initializing tray icon ...");
-
-        // Create try icon.
-        try {
-            if (SystemTray.isSupported()) {
-                tray = new TrayIcon(model, mainFrame);
-            } else {
-                tray = null;
-            }
-        } catch (UnsupportedOperationException e) {
-            // Tray icon not supported on the current platform.
-            tray = null;
-        }
-
-        if (tray != null && mainInstance.minimized) {
-            tray.show();
         }
     }
 
@@ -428,7 +364,7 @@ public final class Launcher {
 
             return lock != null;
         } catch (IOException e) {
-            final String error = textBundle.textFor("ProTrackMain.8"); //$NON-NLS-1$
+            final String error = textBundle.textFor("Launcher.LockFileError.Message"); //$NON-NLS-1$
             log.error(error, e);
             throw new RuntimeException(error);
         }
@@ -474,13 +410,5 @@ public final class Launcher {
 //        if (!deleteSuccessfull) {
 //            log.warn("Could not delete lock file at " + lockFile.getAbsolutePath() + ". Please delete manually.");
 //        }
-    }
-
-    public static String getVersionNumber() {
-        return versionNumber;
-    }
-
-    public static String getRevisionNumber() {
-        return revisionNumber;
     }
 }

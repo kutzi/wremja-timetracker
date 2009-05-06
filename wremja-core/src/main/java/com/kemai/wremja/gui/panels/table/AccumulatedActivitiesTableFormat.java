@@ -1,11 +1,11 @@
 package com.kemai.wremja.gui.panels.table;
 
 
-import com.kemai.util.TextResourceBundle;
-import com.kemai.wremja.gui.Launcher;
-import com.kemai.wremja.model.report.AccumulatedProjectActivity;
-
 import ca.odell.glazedlists.gui.TableFormat;
+
+import com.kemai.util.TextResourceBundle;
+import com.kemai.wremja.gui.GuiConstants;
+import com.kemai.wremja.model.report.AccumulatedProjectActivity;
 
 /**
  * Table format for accumulated activities.
@@ -15,7 +15,7 @@ import ca.odell.glazedlists.gui.TableFormat;
 public class AccumulatedActivitiesTableFormat implements TableFormat<AccumulatedProjectActivity> {
 
     /** The bundle for internationalized texts. */
-    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
+    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
 
     /**
      * Gets the number of columns for the table.

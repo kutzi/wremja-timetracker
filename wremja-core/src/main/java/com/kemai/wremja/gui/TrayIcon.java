@@ -72,9 +72,7 @@ public class TrayIcon implements Observer {
                 mainFrame.setState(JFrame.NORMAL);
                 mainFrame.requestFocus();
                 
-                if (Launcher.getTray() != null) {                    
-                    Launcher.getTray().hide();
-                }
+                mainFrame.showTray(false);
             }
 
         });

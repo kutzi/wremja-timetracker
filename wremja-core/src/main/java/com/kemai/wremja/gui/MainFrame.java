@@ -4,6 +4,7 @@ import static com.kemai.wremja.gui.GuiConstants.ACTIVE_ICON;
 import static com.kemai.wremja.gui.GuiConstants.NORMAL_ICON;
 import info.clearthought.layout.TableLayout;
 
+import java.awt.SystemTray;
 import java.awt.event.WindowListener;
 import java.util.Observable;
 import java.util.Observer;
@@ -36,6 +37,7 @@ import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.panels.ActivityPanel;
 import com.kemai.wremja.gui.panels.ReportPanel;
+import com.kemai.wremja.logging.Logger;
 
 /**
  * The main frame of the application.
@@ -47,6 +49,8 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(MainFrame.class);
 
+    private static final Logger log = Logger.getLogger(MainFrame.class);
+    
     /** The model. */
     private final PresentationModel model;
 
@@ -108,6 +112,9 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     private JMenuItem exitItem = null;
 
     private JMenuItem importItem = null;
+    
+    /** The Tray icon, if any. */
+    private TrayIcon tray;
 
     /**
      * This is the default constructor.
@@ -120,6 +127,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         this.model.addObserver(this);
 
         initialize();
+        initTrayIcon();
     }
 
     /**
@@ -155,7 +163,29 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         this.add(getCurrentActivityPanel(), "0, 1");
         this.add(getReportPanel(), "0, 2");
     }
+    
+    /**
+     * Initializes the lock file.
+     * @param model the model to be displayed
+     * @param mainInstance the main instance
+     * @param mainFrame
+     */
+    private void initTrayIcon() {
+        log.debug("Initializing tray icon ...");
 
+        // Create try icon.
+        try {
+            if (SystemTray.isSupported()) {
+                tray = new TrayIcon(model, this);
+            } else {
+                tray = null;
+            }
+        } catch (UnsupportedOperationException e) {
+            // Tray icon not supported on the current platform.
+            tray = null;
+        }
+    }
+    
     private ReportPanel getReportPanel() {
         if (reportPanel == null) {
             reportPanel = new ReportPanel(this.model);
@@ -461,21 +491,22 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
 
     @Override
     public void windowIconified(final java.awt.event.WindowEvent e) {
-        if (Launcher.getTray() != null) {
-            this.setVisible(false);
-            Launcher.getTray().show();
+        if (getTray() != null) {
+            setVisible(false);
+            showTray(true);
         }
     }
 
     @Override
     public void windowOpened(final java.awt.event.WindowEvent e) {
+        showTray(false);
     }
 
     @Override
     public void windowClosing(final java.awt.event.WindowEvent e) {
-        if (Launcher.getTray() != null) {
-            this.setVisible(false);
-            Launcher.getTray().show();
+        if (getTray() != null) {
+            setVisible(false);
+            showTray(true);
         } else {
             boolean quit = true;
 
@@ -502,6 +533,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
 
     @Override
     public void windowDeiconified(final java.awt.event.WindowEvent e) {
+        showTray(false);
     }
 
     @Override
@@ -525,4 +557,22 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         return exitItem;
     }
 
+    /**
+     * Gets the tray icon. 
+     * @return The tray icon or <code>null</code> if a tray icon
+     * is not supported by the platform.
+     */
+    public TrayIcon getTray() {
+        return this.tray;
+    }
+
+    public void showTray( boolean show ) {
+        if( this.tray != null ) {
+            if( show ) {
+                this.tray.show();
+            } else {
+                this.tray.hide();
+            }
+        }
+    }
 }

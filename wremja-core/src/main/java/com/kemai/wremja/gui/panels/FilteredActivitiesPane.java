@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXPanel;
 
 import com.kemai.util.TextResourceBundle;
-import com.kemai.wremja.gui.Launcher;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.panels.report.AccummulatedActitvitiesPanel;
 import com.kemai.wremja.gui.panels.report.AllActitvitiesPanel;
@@ -35,7 +35,7 @@ import com.kemai.wremja.gui.settings.UserSettings;
 public class FilteredActivitiesPane extends JXPanel {
 
     /** The bundle for internationalized texts. */
-    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
+    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
 
 	/** The model. */
 	private PresentationModel model;

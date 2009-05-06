@@ -6,15 +6,15 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 
+import ca.odell.glazedlists.gui.WritableTableFormat;
+
 import com.kemai.util.SmartTimeFormat;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
-import com.kemai.wremja.gui.Launcher;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
-
-import ca.odell.glazedlists.gui.WritableTableFormat;
 
 /**
  * Format for table containing all tracked project activities.
@@ -23,7 +23,7 @@ import ca.odell.glazedlists.gui.WritableTableFormat;
 public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActivity> {
 
     /** The bundle for internationalized texts. */
-    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
+    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
 
     /** The model. */
     private PresentationModel model;

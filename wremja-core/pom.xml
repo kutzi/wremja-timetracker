@@ -69,9 +69,8 @@
 				    <outputDirectory>target/deploy</outputDirectory>
 					<archive>
 						<manifest>
-							<addDefaultImplementationEntries>true
-							</addDefaultImplementationEntries>
-							<mainClass>com.kemai.wremja.gui.Launcher</mainClass>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<mainClass>org.wremja.launcher.Launcher</mainClass>
 							<packageName>com.kemai.wremja</packageName>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>

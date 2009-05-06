@@ -18,7 +18,6 @@ import com.kemai.swing.action.OpenBrowserAction;
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
-import com.kemai.wremja.gui.Launcher;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
 
 /**
@@ -87,7 +86,8 @@ public class AboutDialog extends EscapeDialog {
         
         final String versionInfo = "<html>" +
         		"<font color=blue size=\"big\"><h2>" + textBundle.textFor("Global.Version") +
-        		" " + Launcher.getVersionNumber() + " " + storageMode + "</h2></font>" +
+        		" " + GuiConstants.WREMJA_VERSION + " Revision: " + GuiConstants.WREMJA_REVISION +
+        		" " + storageMode + "</h2></font>" +
         		"</html>";
         final JLabel versionLabel = new JXLabel(versionInfo, JLabel.CENTER);
         versionLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));

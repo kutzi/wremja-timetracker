@@ -19,7 +19,7 @@ import com.kemai.swing.util.LabeledItem;
 import com.kemai.util.CollectionUtils;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
-import com.kemai.wremja.gui.Launcher;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.lists.MonthFilterList;
 import com.kemai.wremja.gui.lists.ProjectFilterList;
 import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
@@ -38,7 +38,7 @@ import com.kemai.wremja.model.filter.Filter;
 public class ReportPanel extends JXPanel implements ActionListener {
 
     /** The bundle for internationalized texts. */
-    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
+    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
 
     /** The logger. */
     private static final Logger log = Logger.getLogger(ReportPanel.class);

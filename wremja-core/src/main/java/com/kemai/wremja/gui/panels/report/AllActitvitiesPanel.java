@@ -42,7 +42,6 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
-import com.kemai.wremja.gui.Launcher;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.panels.table.AllActivitiesTableFormat;
@@ -59,7 +58,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
     private static final Logger log = Logger.getLogger(AllActitvitiesPanel.class);
 
     /** The bundle for internationalized texts. */
-    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
+    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
 
     /** The model. */
     private final PresentationModel model;
