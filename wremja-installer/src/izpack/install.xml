@@ -54,7 +54,7 @@
 			<description>The base files of the application.</description>
 			<file src="Licence.txt" targetdir="$INSTALL_PATH" />
 			<file src="Baralga-Tray.ico" targetdir="$INSTALL_PATH" />
-			<file src="Wremja-core-${wremja.version}.jar" targetdir="$INSTALL_PATH" />
+			<file src="wremja-launcher-${wremja.version}.jar" targetdir="$INSTALL_PATH" />
 			<file src="lib" targetdir="$INSTALL_PATH" />
             <file src="data" targetdir="$INSTALL_PATH" />
 			<updatecheck>

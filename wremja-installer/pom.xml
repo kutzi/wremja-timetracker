@@ -58,7 +58,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>${pom.groupId}</groupId>
-									<artifactId>wremja-core</artifactId>
+									<artifactId>wremja-launcher</artifactId>
 									<type>jar</type>
 									<outputDirectory>target</outputDirectory>
 								</artifactItem>

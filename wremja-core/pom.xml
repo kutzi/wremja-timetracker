@@ -57,34 +57,15 @@
 		    </includes>
 		  </resource>
 		</resources>
-
+		
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-				    <outputDirectory>target/deploy</outputDirectory>
-					<archive>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							<mainClass>org.wremja.launcher.Launcher</mainClass>
-							<packageName>com.kemai.wremja</packageName>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-							<addExtensions />
-						</manifest>
-						<manifestEntries>
-							<Implementation-Build>${buildNumber}</Implementation-Build>
-							<!-- <SplashScreen-Image>icons/Baralga-Splash.png</SplashScreen-Image>-->
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
+	
 	<reporting>
 		<plugins>
 			<plugin>
