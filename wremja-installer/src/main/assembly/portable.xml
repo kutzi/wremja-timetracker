@@ -1,4 +1,5 @@
 <assembly>
+    <id>portable</id>
 	<includeBaseDirectory>true</includeBaseDirectory>
 	<baseDirectory>Wremja-${wremja.version}</baseDirectory>
 	<formats>
@@ -29,20 +30,20 @@
 			<unpack>false</unpack>
 			<scope>runtime</scope>
 			<excludes>
-				<exclude>com.kemai.wremja:wremja-core</exclude>
+				<exclude>com.kemai.wremja:wremja-launcher</exclude>
 				<exclude>com.kemai.wremja:wremja-installer</exclude>
 			</excludes>
 		</dependencySet>
 		<dependencySet>
 			<outputDirectory></outputDirectory>
 			<outputFileNameMapping>
-				Wremja-${artifact.version}.${artifact.extension}
+				${artifact.artifactId}-${artifact.version}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
 			<scope>runtime</scope>
 			<fileMode>0777</fileMode>
 			<includes>
-				<include>com.kemai.wremja:wremja-core</include>
+				<include>com.kemai.wremja:wremja-launcher</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>

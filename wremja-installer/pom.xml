@@ -34,10 +34,11 @@
 					</execution>
 				</executions>
 				<configuration>
+				    <appendAssemblyId>false</appendAssemblyId>
 					<descriptors>
-                        <!-- <descriptor>
+                        <descriptor>
                             src/main/assembly/portable.xml
-                        </descriptor>-->
+                        </descriptor>
 						<descriptor>
 							src/main/assembly/installer.xml
 						</descriptor>
@@ -67,7 +68,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.codehaus.izpack</groupId>
 				<artifactId>izpack-maven-plugin</artifactId>
 				<version>1.0-alpha-5</version>
@@ -91,7 +92,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>-->
 		</plugins>
 	</build>
 	<dependencies>

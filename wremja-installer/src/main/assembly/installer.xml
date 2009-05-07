@@ -1,4 +1,5 @@
 <assembly>
+    <id>installer</id>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<formats>
 		<format>dir</format>
