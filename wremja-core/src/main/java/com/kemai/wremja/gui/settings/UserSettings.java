@@ -263,6 +263,16 @@ public final class UserSettings {
         userConfig.setProperty(EXPORTER_ANUKO_PASSWORD, password);
     }
 
+    private static final String EXPORTER_ANUKO_URL = "exporter.anuko.url";
+    
+    public String getAnukoUrl() {
+        return doGetString(EXPORTER_ANUKO_URL, "");
+    }
+    
+    public void setAnukoUrl(String url) {
+        userConfig.setProperty(EXPORTER_ANUKO_URL, url);
+    }
+    
     /**
      * Restore the current filter from the user settings.
      * @return the restored filter
