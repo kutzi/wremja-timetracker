@@ -5,11 +5,11 @@ import com.kemai.wremja.logging.Logger.Level;
 
 class Log4jDestination implements Destination {
 
-    private final Logger delegate;
-
-    public Log4jDestination(Class<?> clazz) {
-        this.delegate = null;//Logger.getLogger(clazz);
-    }
+//    private final Logger delegate;
+//
+//    public Log4jDestination(Class<?> clazz) {
+//        this.delegate = null;//Logger.getLogger(clazz);
+//    }
     
     @Override
     public void log(Level level, Object message, Throwable throwable) {
