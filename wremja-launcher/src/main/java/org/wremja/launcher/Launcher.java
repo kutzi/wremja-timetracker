@@ -84,6 +84,8 @@ public final class Launcher {
             mainInstance.parseCommandLineArguments(arguments);
 
             initLogger();
+            
+            initUncaughtExceptionHandler();
 
             initLookAndFeel();
 
@@ -305,6 +307,17 @@ public final class Launcher {
         appLogger.setLevel(Level.FINEST);
     }
 
+    private static void initUncaughtExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler( new Thread.UncaughtExceptionHandler() {
+            
+            private final Logger log = Logger.getLogger("UncaughtExceptionHandler");
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                this.log.error( "Caught exception from Thread " + t.getName(), e );
+            }
+        });
+    }
+    
     /**
      * Initialize the look & feel of the application.
      */

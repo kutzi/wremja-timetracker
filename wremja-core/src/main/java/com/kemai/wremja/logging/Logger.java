@@ -2,7 +2,7 @@ package com.kemai.wremja.logging;
 
 
 /**
- * Our (very) simple wrapper for logging.
+ * Our simple wrapper for logging.
  * 
  * @author kutzi
  */
@@ -11,8 +11,19 @@ public class Logger {
         DEBUG, INFO, WARN, ERROR, FATAL;
     }
     
+    /**
+     * Returns a new {@link Logger} for the given class.
+     */
     public static Logger getLogger( Class<?> clazz ) {
         Destination destination = new JULDestination( clazz );
+        return new Logger(destination);
+    }
+
+    /**
+     * Returns a new {@link Logger} with the given name.
+     */
+    public static Logger getLogger( String name ) {
+        Destination destination = new JULDestination( name );
         return new Logger(destination);
     }
     

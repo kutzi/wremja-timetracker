@@ -3,6 +3,9 @@ package com.kemai.wremja.util.validator;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * Validator for URLs
+ */
 public class UrlValidator implements Validator {
 
     @Override

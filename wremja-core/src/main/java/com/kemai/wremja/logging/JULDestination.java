@@ -10,7 +10,11 @@ class JULDestination implements Destination {
     private final Logger delegate;
     
     JULDestination( Class<?> clazz ) {
-        this.delegate = Logger.getLogger(clazz.getName());
+        this( clazz.getName() );
+    }
+    
+    JULDestination( String name ) {
+        this.delegate = Logger.getLogger(name);
     }
     
     @Override
