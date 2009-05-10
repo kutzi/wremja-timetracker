@@ -139,6 +139,20 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(final MouseEvent e) {
+                checkForPopup(e);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                checkForPopup(e);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                checkForPopup(e);
+            }
+            
+            private void checkForPopup(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     JTable source = (JTable) e.getSource();
                     int row = source.rowAtPoint(e.getPoint());
