@@ -18,8 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
@@ -28,6 +26,7 @@ import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.exporter.anukotimetracker.model.AnukoActivity;
 import com.kemai.wremja.exporter.anukotimetracker.model.AnukoInfo;
 import com.kemai.wremja.exporter.anukotimetracker.util.AnukoAccess;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.ProjectView;
@@ -39,7 +38,7 @@ import com.kemai.wremja.model.filter.Filter;
 @SuppressWarnings("serial")//$NON-NLS-1$
 public class ExportDialog extends EscapeDialog {
 
-    private static final Log log = LogFactory.getLog(ExportDialog.class);
+    private static final Logger log = Logger.getLogger(ExportDialog.class);
     
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExportDialog.class);

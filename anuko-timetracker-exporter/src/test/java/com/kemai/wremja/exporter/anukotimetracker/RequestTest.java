@@ -41,7 +41,7 @@ public class RequestTest {
         filter.setWeekOfYear(DateUtils.getNow());
         filter.setYear(DateUtils.getNow());
         
-        displayExportDialog( data, filter );
+        //displayExportDialog( data, filter );
     }
     
     private void displayExportDialog(ActivityRepository data, Filter filter) throws InterruptedException {
