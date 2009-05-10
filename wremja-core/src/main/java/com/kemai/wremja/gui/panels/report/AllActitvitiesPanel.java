@@ -39,9 +39,11 @@ import ca.odell.glazedlists.swing.EventComboBoxModel;
 import ca.odell.glazedlists.swing.EventListJXTableSorting;
 import ca.odell.glazedlists.swing.EventTableModel;
 
+import com.kemai.swing.util.AWTUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
+import com.kemai.wremja.gui.dialogs.AddOrEditActivityDialog;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.panels.table.AllActivitiesTableFormat;
@@ -121,7 +123,44 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
 
         });
 
+        initPopupMenu(table);
+
+        table.setPreferredScrollableViewportSize(table.getPreferredSize());
+
+        table.setHighlighters(GuiConstants.HIGHLIGHTERS);
+        table.setCellEditor(new JXTable.GenericEditor());
+
+        final TableColumn projectColumn = table.getColumn(0);
+        final TableCellEditor cellEditor = new ComboBoxCellEditor(new JComboBox(new EventComboBoxModel<Project>(model
+                .getProjectList())));
+        projectColumn.setCellEditor(cellEditor);
+
+        JScrollPane table_scroll_pane = new JScrollPane(table);
+        this.add(table_scroll_pane);
+    }
+
+
+    private void initPopupMenu(final JXTable table) {
         final JPopupMenu menu = new JPopupMenu();
+        menu.add(new AbstractAction(textBundle.textFor("AllActitvitiesPanel.Edit"), new ImageIcon(getClass().getResource("/icons/gtk-edit.png"))) { //$NON-NLS-1$
+
+            public void actionPerformed(final ActionEvent event) {
+                // Get selected activities
+                int[] selectionIndices = table.getSelectedRows();
+
+                if (selectionIndices.length == 0) {
+                    return;
+                }
+
+                // edit 1st selected activity
+                final AddOrEditActivityDialog editActivityDialog = new AddOrEditActivityDialog(
+                        AWTUtils.getFrame(AllActitvitiesPanel.this), 
+                        model, 
+                        model.getActivitiesList().get(selectionIndices[0])
+                );
+                editActivityDialog.setVisible(true);
+            }
+        });
         menu.add(new AbstractAction(textBundle.textFor("AllActitvitiesPanel.Delete"), new ImageIcon(getClass().getResource("/icons/gtk-delete.png"))) { //$NON-NLS-1$
 
             public void actionPerformed(final ActionEvent event) {
@@ -162,18 +201,6 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
                 }
             }
         });
-        table.setPreferredScrollableViewportSize(table.getPreferredSize());
-
-        table.setHighlighters(GuiConstants.HIGHLIGHTERS);
-        table.setCellEditor(new JXTable.GenericEditor());
-
-        final TableColumn projectColumn = table.getColumn(0);
-        final TableCellEditor cellEditor = new ComboBoxCellEditor(new JComboBox(new EventComboBoxModel<Project>(model
-                .getProjectList())));
-        projectColumn.setCellEditor(cellEditor);
-
-        JScrollPane table_scroll_pane = new JScrollPane(table);
-        this.add(table_scroll_pane);
     }
 
 

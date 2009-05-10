@@ -1,5 +1,7 @@
 package com.kemai.swing.util;
 
+import java.awt.Container;
+import java.awt.Frame;
 import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -36,6 +38,24 @@ public abstract class AWTUtils {
     public static void keepInScreenBounds(final Point preferredLeftTop, final Window window) {
         Rectangle preferredBounds = new Rectangle(preferredLeftTop, window.getPreferredSize());
         window.setLocation(ScreenUtils.ensureOnScreen(preferredBounds).getLocation());
+    }
+    
+    /**
+     * Looks for the parent frame in the hierarchy of the given container.
+     * @param container the container for whom to look for a frame
+     * @return the frame that is the parent of the container or 
+     * <code>null</code> if there is none
+     */
+    public static Frame getFrame(final Container container) {
+        if (container == null) {
+            return null;
+        }
+
+        if (container instanceof Frame) {
+            return (Frame) container;
+        }
+
+        return getFrame(container.getParent());
     }
 
 }

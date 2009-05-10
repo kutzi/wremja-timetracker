@@ -9,7 +9,7 @@ import javax.swing.KeyStroke;
 
 
 import com.kemai.util.TextResourceBundle;
-import com.kemai.wremja.gui.dialogs.AddActivityDialog;
+import com.kemai.wremja.gui.dialogs.AddOrEditActivityDialog;
 import com.kemai.wremja.gui.model.PresentationModel;
 
 /**
@@ -36,7 +36,7 @@ public class AddActivityAction extends AbstractWremjaAction {
     @Override
     public final void actionPerformed(final ActionEvent event) {
         // Display dialog to add activity
-        final AddActivityDialog addActivityDialog = new AddActivityDialog(getOwner(), getModel());
+        final AddOrEditActivityDialog addActivityDialog = new AddOrEditActivityDialog(getOwner(), getModel());
         addActivityDialog.setVisible(true);
     }
 
