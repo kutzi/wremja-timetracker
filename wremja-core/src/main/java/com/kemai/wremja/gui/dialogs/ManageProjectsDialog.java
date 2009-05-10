@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -20,14 +22,14 @@ import javax.swing.JTextField;
 import org.apache.commons.lang.math.RandomUtils;
 import org.jdesktop.swingx.JXTable;
 
+import ca.odell.glazedlists.swing.EventTableModel;
+
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.dialogs.table.ProjectListTableFormat;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.Project;
-
-import ca.odell.glazedlists.swing.EventTableModel;
 
 /**
  * The dialog to manage the available projects.
@@ -77,11 +79,9 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
      */
     private void initialize() {
         setLocationRelativeTo(getOwner());
-        this.setSize(300, 200);
         this.setIconImage(new ImageIcon(getClass().getResource("/icons/gtk-edit.png")).getImage()); //$NON-NLS-1$
 
         this.setModal(true);
-        this.setPreferredSize(new Dimension(350, 120));
         this.setTitle(textBundle.textFor("ManageProjectsDialog.Title")); //$NON-NLS-1$
         this.setContentPane(getJContentPane());
 
@@ -164,8 +164,8 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
             addProjectButton = new JButton(new ImageIcon(getClass().getResource("/icons/gtk-add.png")));
             addProjectButton.setText(textBundle.textFor("ManageProjectsDialog.AddProjectButton.Title")); //$NON-NLS-1$
             addProjectButton.setToolTipText(textBundle.textFor("ManageProjectsDialog.AddProjectButton.ToolTipText")); //$NON-NLS-1$
-            addProjectButton.addActionListener(new java.awt.event.ActionListener() {   
-                public void actionPerformed(final java.awt.event.ActionEvent e) {
+            addProjectButton.addActionListener(new ActionListener() {   
+                public void actionPerformed(final ActionEvent e) {
                     String projectName = getNewProjectTextField().getText();
                     model.addProject(new Project(RandomUtils.nextLong(), projectName, projectName), ManageProjectsDialog.this);
                     getNewProjectTextField().setText(""); //$NON-NLS-1$
@@ -186,8 +186,8 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
             removeProjectButton = new JButton(new ImageIcon(getClass().getResource("/icons/gtk-stop.png")));
             removeProjectButton.setText(textBundle.textFor("ManageProjectsDialog.RemoveProjectButton.Title")); //$NON-NLS-1$
             removeProjectButton.setToolTipText(textBundle.textFor("ManageProjectsDialog.RemoveProjectButton.ToolTipText")); //$NON-NLS-1$
-            removeProjectButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(final java.awt.event.ActionEvent e) {
+            removeProjectButton.addActionListener(new ActionListener() {
+                public void actionPerformed(final ActionEvent e) {
                     for (int index : getProjectList().getSelectedRows()) {
                         model.removeProject(
                                 model.getProjectList().get(index), 
@@ -208,7 +208,7 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
     private JPanel getNewProjectNamePanel() {
         if (newProjectNamePanel == null) {
             final FlowLayout flowLayout = new FlowLayout();
-            flowLayout.setAlignment(java.awt.FlowLayout.LEFT);
+            flowLayout.setAlignment(FlowLayout.LEFT);
             flowLayout.setVgap(3);
             flowLayout.setHgap(3);
             lableProjectTitle = new JLabel();

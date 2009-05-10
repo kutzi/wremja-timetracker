@@ -34,6 +34,8 @@ public class ManageProjectsAction extends AbstractWremjaAction {
     public final void actionPerformed(final ActionEvent event) {
         // Display dialog to manage projects
         final ManageProjectsDialog manageProjectsDialog = new ManageProjectsDialog(getOwner(), getModel());
+        manageProjectsDialog.pack();
+        manageProjectsDialog.setLocationRelativeTo(getOwner());
         manageProjectsDialog.setVisible(true);
     }
 

@@ -40,6 +40,8 @@ public class SettingsAction extends AbstractWremjaAction {
     public final void actionPerformed(final ActionEvent event) {
         // Display the settings dialog
         final SettingsDialog settingsDialog = new SettingsDialog(getOwner(), UserSettings.instance());
+        settingsDialog.pack();
+        settingsDialog.setLocationRelativeTo(getOwner());
         settingsDialog.setVisible(true);
     }
 

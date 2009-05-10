@@ -46,16 +46,17 @@ public class SettingsDialog extends EscapeDialog {
     private final UserSettings settings;
     
     /** Component to edit setting to remember window size and location. */
-    private JCheckBox rememberWindowSizeLocation;
+    private final JCheckBox rememberWindowSizeLocation = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.RememberWindowSizeLocation.Title"));
 
     private final JTextField urlField = new JFormattedTextField();
     {
+        urlField.setColumns(30);
         urlField.getDocument().addDocumentListener(new UrlDocumentListener(urlField));
     }
     private final JTextField loginField = new JTextField();
     private final JPasswordField passwordField = new JPasswordField();
 
-    private JButton saveButton;
+    private final JButton saveButton = new JButton();
     
     /**
      * Creates a new settings dialog.
@@ -73,8 +74,6 @@ public class SettingsDialog extends EscapeDialog {
      * Set up GUI components.
      */
     private void initialize() {
-        setLocationRelativeTo(getOwner());
-
         final double border = 5;
         final double size[][] = {
                 { border, TableLayout.PREFERRED, border, TableLayout.FILL, border }, // Columns
@@ -87,16 +86,12 @@ public class SettingsDialog extends EscapeDialog {
         final TableLayout tableLayout = new TableLayout(size);
         this.setLayout(tableLayout);
 
-        this.setSize(320, 200);
-
         this.setName("SettingsDialog"); //$NON-NLS-1$
         this.setTitle(textBundle.textFor("SettingsDialog.Title")); //$NON-NLS-1$
         this.add(new JXHeader(textBundle.textFor("SettingsDialog.ApplicationSettingsTitle"), null), "0, 0, 3, 1"); //$NON-NLS-1$ //$NON-NLS-2$
 
         
-        rememberWindowSizeLocation = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.RememberWindowSizeLocation.Title"));
         rememberWindowSizeLocation.setToolTipText(textBundle.textFor("SettingsDialog.Setting.RememberWindowSizeLocation.ToolTipText"));
-        //rememberWindowSizeLocation.addActionListener(this);
         this.add(rememberWindowSizeLocation, "1, 3, 3, 3"); //$NON-NLS-1$
         
         JLabel urlLabel = new JLabel( "Timetracker base URL" );
@@ -110,7 +105,6 @@ public class SettingsDialog extends EscapeDialog {
         this.add(passwordLabel, "1, 9");
         this.add(passwordField, "3, 9");
 
-        saveButton = new JButton();
         saveButton.setText(textBundle.textFor("SettingsDialog.SaveLabel")); //$NON-NLS-1$
         saveButton.setIcon(new ImageIcon(getClass().getResource("/icons/gtk-save.png"))); //$NON-NLS-1$
 
@@ -130,6 +124,8 @@ public class SettingsDialog extends EscapeDialog {
         saveButton.setDefaultCapable(true);
         
         this.add(saveButton, "1, 11, 3, 11");
+        
+        getRootPane().setDefaultButton(saveButton);
         
         readFromSettings();
     }
