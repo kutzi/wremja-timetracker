@@ -303,7 +303,7 @@ public final class Launcher {
         fileHandler.setLevel(Level.INFO);
         
         ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setLevel(Level.FINEST);
+        consoleHandler.setLevel(Level.WARNING);
         consoleHandler.setFormatter(new BetterFormatter());
         
         java.util.logging.Logger rootLogger = java.util.logging.Logger.getLogger("");
