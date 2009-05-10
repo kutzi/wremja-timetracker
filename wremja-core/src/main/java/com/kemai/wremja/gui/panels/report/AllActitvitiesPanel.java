@@ -158,6 +158,8 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
                         model, 
                         model.getActivitiesList().get(selectionIndices[0])
                 );
+                editActivityDialog.pack();
+                editActivityDialog.setLocationRelativeTo(AWTUtils.getFrame(menu));
                 editActivityDialog.setVisible(true);
             }
         });

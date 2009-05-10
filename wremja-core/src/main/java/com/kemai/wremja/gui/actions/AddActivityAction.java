@@ -37,6 +37,8 @@ public class AddActivityAction extends AbstractWremjaAction {
     public final void actionPerformed(final ActionEvent event) {
         // Display dialog to add activity
         final AddOrEditActivityDialog addActivityDialog = new AddOrEditActivityDialog(getOwner(), getModel());
+        addActivityDialog.pack();
+        addActivityDialog.setLocationRelativeTo(getOwner());
         addActivityDialog.setVisible(true);
     }
 

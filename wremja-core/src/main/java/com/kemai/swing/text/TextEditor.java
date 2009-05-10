@@ -1,6 +1,7 @@
 package com.kemai.swing.text;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.FocusEvent;
@@ -8,9 +9,11 @@ import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -22,6 +25,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
@@ -43,9 +47,9 @@ public class TextEditor extends JXPanel {
         void onTextChange();
     }
 
-    private List<TextChangeObserver> textObservers = new ArrayList<TextChangeObserver>();
+    private final List<TextChangeObserver> textObservers = new CopyOnWriteArrayList<TextChangeObserver>();
 
-    JTextPane textPane;
+    private final JTextPane textPane = new JTextPane();;
 
     private JToolBar toolbar;
 
@@ -59,22 +63,32 @@ public class TextEditor extends JXPanel {
 
     private HTMLEditorKit editorKit;
 
-    private List<Action> actions = new ArrayList<Action>();
+    private final List<Action> actions;
+    {
+        List<Action> tmp = new ArrayList<Action>();
+        tmp.add(new BoldAction());
+        tmp.add(new ItalicAction());
+        tmp.add(new CopyAction());
+        tmp.add(new PasteAction());
+        actions = Collections.unmodifiableList(tmp);
+    }
 
-    private static class BoldAction extends javax.swing.text.StyledEditorKit.BoldAction {
+    private static class BoldAction extends StyledEditorKit.BoldAction {
 
         public BoldAction() {
             super();
             putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/text_bold.png"))); //$NON-NLS-1$
+            putValue(SHORT_DESCRIPTION, "Bold Font");
         }
 
     }
 
-    private static class ItalicAction extends javax.swing.text.StyledEditorKit.ItalicAction {
+    private static class ItalicAction extends StyledEditorKit.ItalicAction {
 
         public ItalicAction() {
             super();
             putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/text_italic.png"))); //$NON-NLS-1$
+            putValue(SHORT_DESCRIPTION, "Italic Font");
         }
 
     }
@@ -84,6 +98,7 @@ public class TextEditor extends JXPanel {
         public CopyAction() {
             super();
             putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-copy.png"))); //$NON-NLS-1$
+            putValue(SHORT_DESCRIPTION, "Copy");
         }
 
     }
@@ -93,6 +108,7 @@ public class TextEditor extends JXPanel {
         public PasteAction() {
             super();
             putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-paste.png"))); //$NON-NLS-1$
+            putValue(SHORT_DESCRIPTION, "Paste");
         }
 
     }
@@ -123,14 +139,7 @@ public class TextEditor extends JXPanel {
     }
 
     private void initialize() {
-        actions.add(new BoldAction());
-        actions.add(new ItalicAction());
-        actions.add(new CopyAction());
-        actions.add(new PasteAction());
-
-
         this.setLayout(new BorderLayout());
-        textPane = new JTextPane();
 
         styleSheet = new StyleSheet();
         styleSheet.addRule("body {font-family: Tahoma; font-size: 11pt; font-style: normal; font-weight: normal;}");
@@ -141,6 +150,7 @@ public class TextEditor extends JXPanel {
 
         textPane.setEnabled(true);
         textPane.setEditable(true);
+        textPane.setPreferredSize(new Dimension(120, 50));
 
         setTabBehavior();
         textPane.addFocusListener(new FocusListener() {
@@ -238,18 +248,14 @@ public class TextEditor extends JXPanel {
         textPane.setText(description);
     }
 
-    public void setEditable(final boolean active) {
-        textPane.setEnabled(active);
-        textPane.setEditable(active);
-        toolbar.setEnabled(active);
+    public void setEditable(final boolean editable) {
+        textPane.setEnabled(editable);
+        textPane.setEditable(editable);
+        toolbar.setEnabled(editable);
 
         for (Action action : actions) {
-            action.setEnabled(active);
+            action.setEnabled(editable);
         }
-    }
-
-    public boolean isCollapseEditToolbar() {
-        return collapseEditToolbar;
     }
 
     public void setCollapseEditToolbar(final boolean collapseEditToolbar) {

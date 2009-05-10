@@ -146,7 +146,6 @@ public class AddOrEditActivityDialog extends EscapeDialog {
             this.setTitle(textBundle.textFor("AddOrEditActivityDialog.EditActivityLabel")); //$NON-NLS-1$
         }
 
-        this.setSize(300, 350);
         this.setModal(true);
 
         initializeLayout();
