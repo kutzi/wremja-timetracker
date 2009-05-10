@@ -87,7 +87,10 @@ public class AddOrEditActivityDialog extends EscapeDialog {
     private final JDateTimePicker datePicker = new JDateTimePicker(new DateTime());;
 
     /** The description of the activity. */
-    private TextEditor descriptionEditor;
+    private final TextEditor descriptionEditor = new TextEditor(true, false);
+    {
+        descriptionEditor.setBorder(BorderFactory.createLineBorder(GuiConstants.VERY_LIGHT_GREY));
+    }
 
     // ------------------------------------------------
     // Edit components
@@ -210,8 +213,6 @@ public class AddOrEditActivityDialog extends EscapeDialog {
         this.add(getEndField(), "3, 7");
 
         this.add(descriptionLabel, "1, 9");
-        descriptionEditor = new TextEditor(true, false);
-        descriptionEditor.setBorder(BorderFactory.createLineBorder(GuiConstants.VERY_LIGHT_GREY));
         this.add(descriptionEditor, "3, 9");
 
         this.add(getSubmitActivityButton(), "1, 11, 3, 11");
