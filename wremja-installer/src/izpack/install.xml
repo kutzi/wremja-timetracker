@@ -13,7 +13,7 @@
 	<native type="izpack" name="ShellLink.dll"/>
 
 	<!-- Gui Preferences -->
-	<guiprefs height="480" resizable="yes" width="480">
+	<guiprefs height="500" resizable="yes" width="500">
 	</guiprefs>
 	
 
@@ -34,9 +34,12 @@
 		<!-- Shortcuts -->
 		<res id="shortcutSpec.xml" src="shortcutSpec.xml" />
 		<res id="shortcutSpec.xml_deu" src="shortcutSpec.xml_deu" />
+		<!--<res id="shortcutSpec.xml_fra" src="shortcutSpec.xml_fra" />-->
+		<res id="Unix_shortcutSpec.xml" src="Unix_shortcutSpec.xml" />
 		
 		<!-- Packs internationalization -->
 		<res id="packsLang.xml_deu" src="packsLang.xml_deu" />
+		<!-- <res id="packsLang.xml_fra" src="packsLang.xml_fra" />-->
 	</resources>
 
 	<panels>
@@ -54,6 +57,7 @@
 			<description>The base files of the application.</description>
 			<file src="Licence.txt" targetdir="$INSTALL_PATH" />
 			<file src="Baralga-Tray.ico" targetdir="$INSTALL_PATH" />
+			<file src="Baralga-Tray.png" targetdir="$INSTALL_PATH" />
 			<file src="wremja-launcher-${wremja.version}.jar" targetdir="$INSTALL_PATH" />
 			<file src="lib" targetdir="$INSTALL_PATH" />
             <file src="data" targetdir="$INSTALL_PATH" />

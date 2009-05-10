@@ -287,10 +287,18 @@ public final class Launcher {
      */
     private static void initLogger() throws IOException {
         log.debug("Initializing logger ...");
-
-        logFileName = ApplicationSettings.instance().getApplicationDataDirectory().getAbsolutePath() + File.separator + "log" + File.separator + "wremja.log.%g";
         
-        FileHandler fileHandler = new FileHandler(logFileName, 50000, 3, true );
+        String logDir = ApplicationSettings.instance().getApplicationDataDirectory().getAbsolutePath() + File.separator + "log";
+        File logDirF = new File(logDir);
+        if( !logDirF.isDirectory() ) {
+            if( !logDirF.mkdirs() ) {
+                throw new IOException("Couldn't create log directory: " + logDir );
+            }
+        }
+
+        logFileName =  logDir + File.separator + "wremja.log";
+        
+        FileHandler fileHandler = new FileHandler(logFileName + ".%g", 50000, 3, true );
         fileHandler.setFormatter(new BetterFormatter());
         fileHandler.setLevel(Level.INFO);
         
@@ -368,9 +376,9 @@ public final class Launcher {
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification="Its irrelevant if lock file already existed or not.")
     private static boolean tryLock() {
-        checkOrCreateDataDir();
-        final File lockFile = new File(UserSettings.getLockFileLocation());
         try {
+            checkOrCreateDataDir();
+            final File lockFile = new File(UserSettings.getLockFileLocation());
             if (!lockFile.exists()) {
                 lockFile.createNewFile();
             }
@@ -379,7 +387,7 @@ public final class Launcher {
             lock = channel.tryLock();
 
             return lock != null;
-        } catch (IOException e) {
+        } catch (Exception e) {
             final String error = textBundle.textFor("Launcher.LockFileError.Message"); //$NON-NLS-1$
             log.error(error, e);
             throw new RuntimeException(error);

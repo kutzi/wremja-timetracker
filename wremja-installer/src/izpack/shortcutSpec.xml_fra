@@ -4,7 +4,7 @@
                 location="applications"/>
   <shortcut
     name="$APP_NAME"
-    target="$INSTALL_PATH\Wremja-core-${wremja.version}.jar"
+    target="java -jar $INSTALL_PATH\wremja-launcher-${wremja.version}.jar"
     commandLine=""
     workingDirectory="$INSTALL_PATH"
     description="Logiciel de Time Tracking de."

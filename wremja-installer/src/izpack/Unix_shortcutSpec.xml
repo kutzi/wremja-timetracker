@@ -4,20 +4,22 @@
                 location="applications"/>
   <shortcut
     name="$APP_NAME"
-    target="$INSTALL_PATH\wremja-launcher-${wremja.version}.jar"
-    commandLine=""
+    target="java"
+    commandLine="-jar &quot;$INSTALL_PATH/wremja-launcher-${wremja.version}.jar&quot;"
     workingDirectory="$INSTALL_PATH"
-    description="Zeiterfassung für Projekte."
-    iconFile="$INSTALL_PATH\Baralga-Tray.ico"
+    description="Time tracking application for projects."
+    encoding="UTF-8"
+    iconFile="$INSTALL_PATH/Baralga-Tray.png"
     iconIndex="0"
     initialState="maximized"
     programGroup="yes"
-    desktop="yes"
+    desktop="no"
     applications="no"
     startMenu="no"
-    startup="yes"
+    startup="no"
     type="Application"
     >
+    <!-- desktop="no" : Desktop-Icon doesn't work on Linux (at least not on Ubuntu) -->
 
     <createForPack name="Base"/>
   </shortcut>

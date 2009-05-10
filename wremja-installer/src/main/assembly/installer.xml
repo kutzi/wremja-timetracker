@@ -17,7 +17,7 @@
 			<outputDirectory>.</outputDirectory>
 			<includes>
 				<include>Info.txt</include>
-				<include>shortcutSpec.xml*</include>
+				<include>*shortcutSpec.xml*</include>
 				<include>packsLang.xml*</include>
 			</includes>
 			<filtered>true</filtered>
@@ -27,6 +27,7 @@
 			<outputDirectory>.</outputDirectory>
 			<includes>
 				<include>Baralga-Tray.ico</include>
+				<include>Baralga-Tray.png</include>
 			</includes>
 		</fileSet>
         <fileSet>
