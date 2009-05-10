@@ -9,6 +9,7 @@ import com.kemai.wremja.gui.model.PresentationModel;
 /**
  * Abstract base class for all Wremja actions.
  * @author remast
+ * @author kutzi
  */
 @SuppressWarnings("serial")
 public abstract class AbstractWremjaAction extends AbstractAction {
@@ -60,20 +61,21 @@ public abstract class AbstractWremjaAction extends AbstractAction {
         return owner;
     }
 
-    /**
-     * Get the mnemonic key which is the first character of the actions name.
-     * @return the mnemonic key character or '-' if the action has no name
-     */
-    public char getMnemonic() {
-        if (getValue(NAME) != null) {
-            final String name = (String) getValue(NAME);
-            try {
-                return name.charAt(0);
-            } catch (StringIndexOutOfBoundsException e) {
-                // Ignore
+    
+    @Override
+    public void putValue(String key, Object newValue) {
+        super.putValue(key, newValue);
+        
+        if( NAME.equals(key) ) {
+            // set up mnemonic key if there is no other, yet
+            if( getValue(MNEMONIC_KEY) == null ) {
+                final String name = (String) getValue(NAME);
+                try {
+                    putValue(MNEMONIC_KEY, Integer.valueOf(name.codePointAt(0)) );
+                } catch (StringIndexOutOfBoundsException e) {
+                    // Ignore
+                }
             }
         }
-
-        return '-';
     }
 }

@@ -307,7 +307,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         if (importItem == null) {
             final AbstractWremjaAction exitAction = new ImportDataAction(this, this.model);
             importItem = new JMenuItem(exitAction);
-            importItem.setMnemonic(exitAction.getMnemonic());
         }
         return importItem;
     }
@@ -344,7 +343,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         if (addActivityMenuItem == null) {
             AbstractWremjaAction addActivityAction = new AddActivityAction(this, this.model);
             addActivityMenuItem = new JMenuItem(addActivityAction);
-            addActivityMenuItem.setMnemonic(addActivityAction.getMnemonic());
         }
         return addActivityMenuItem;
     }
@@ -357,7 +355,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         if (editProjectsMenuItem == null) {
             AbstractWremjaAction manageProjectsAction = new ManageProjectsAction(this, this.model);
             editProjectsMenuItem = new JMenuItem(manageProjectsAction);
-            editProjectsMenuItem.setMnemonic(manageProjectsAction.getMnemonic());
         }
         return editProjectsMenuItem;
     }
@@ -370,7 +367,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         if (aboutMenuItem == null) {
             AbstractWremjaAction aboutAction = new AboutAction(this);
             aboutMenuItem = new JMenuItem(aboutAction);
-            aboutMenuItem.setMnemonic(aboutAction.getMnemonic());
         }
         return aboutMenuItem;
     }
@@ -449,7 +445,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         if (exportExcelItem == null) {
             final AbstractWremjaAction excelExportAction = new ExportExcelAction(this, this.model);
             exportExcelItem = new JMenuItem(excelExportAction);
-            exportExcelItem.setMnemonic(excelExportAction.getMnemonic());
         }
         return exportExcelItem;
     }
@@ -462,7 +457,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         if (exportCsvItem == null) {
             final AbstractWremjaAction csvExportAction = new ExportCsvAction(this, this.model);
             exportCsvItem = new JMenuItem(csvExportAction);
-            exportCsvItem.setMnemonic(csvExportAction.getMnemonic());
         }
         return exportCsvItem;
     }
@@ -475,7 +469,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         if (exportDataItem == null) {
             final AbstractWremjaAction exportDataAction = new ExportDataAction(this, this.model);
             exportDataItem = new JMenuItem(exportDataAction);
-            exportDataItem.setMnemonic(exportDataAction.getMnemonic());
         }
         return exportDataItem;
     }
@@ -576,7 +569,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         if (exitItem == null) {
             final AbstractWremjaAction exitAction = new ExitAction(this, this.model);
             exitItem = new JMenuItem(exitAction);
-            exitItem.setMnemonic(exitAction.getMnemonic());
         }
         return exitItem;
     }
