@@ -5,6 +5,10 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
 
+/*
+ * See http://blog.elevenworks.com/?p=5
+ */
+
 /**
  * An implementation of the TabbedPaneUI that looks like the tabs that were used in the older versions of the
  * Codewarrior IDE.
