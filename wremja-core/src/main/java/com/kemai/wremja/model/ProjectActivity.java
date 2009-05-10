@@ -6,6 +6,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
+import com.kemai.util.DateUtils;
 import com.kemai.wremja.FormatUtils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -230,13 +231,6 @@ public class ProjectActivity implements Serializable, Comparable<ProjectActivity
      * @return decimal value of the duration (e.g. for 30 minutes, 0.5 and so on)
      */    
     public final double getDuration() {
-        final long timeMilliSec = end.getMillis() - start.getMillis();
-        final long timeMin = timeMilliSec / 1000 / 60;
-        final long hours = timeMin / 60;
-
-        final long mins = timeMin % 60;
-        final double minsD = Math.round(mins * (1 + 2.0 / 3.0)) / 100.0;
-
-        return hours + minsD;
+        return DateUtils.getDurationAsFractionHours(this.start, this.end);
     }
 }

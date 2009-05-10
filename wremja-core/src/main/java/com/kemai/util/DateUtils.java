@@ -7,6 +7,7 @@ import org.joda.time.ReadableInstant;
  * Miscellaneous utility methods for dealing with dates.
  * 
  * @author remast
+ * @author kutzi
  */
 public abstract class DateUtils {
     
@@ -47,5 +48,19 @@ public abstract class DateUtils {
      */
     public static boolean isBeforeOrEqual(final ReadableInstant time1, final ReadableInstant time2) {
         return time1.isBefore(time2) || time1.isEqual(time2);
+    }
+    
+    /**
+     * Returns the duration of the period denoted by start and end in fration hours.
+     */
+    public static double getDurationAsFractionHours( ReadableInstant start, ReadableInstant end ) {
+        final long timeMilliSec = end.getMillis() - start.getMillis();
+        final long timeMin = timeMilliSec / 1000 / 60;
+        final long hours = timeMin / 60;
+
+        final long mins = timeMin % 60;
+        final double minsD = Math.round(mins * (1 + 2.0 / 3.0)) / 100.0;
+
+        return hours + minsD;
     }
 }

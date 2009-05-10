@@ -22,7 +22,6 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXPanel;
@@ -85,9 +84,6 @@ public class ActivityPanel extends JPanel implements Observer {
     /** The description editor. */
     private TextEditor descriptionEditor;
 
-    /** Timer for the time passed since activity was started. */
-    private Timer timer;
-
     /** Displays the duration of the running activity. */
     private JLabel duration;
 
@@ -104,15 +100,6 @@ public class ActivityPanel extends JPanel implements Observer {
     public ActivityPanel(final PresentationModel model) {
         this.model = model;
         this.model.addObserver(this);
-
-        // Fire timer event every minute
-        this.timer = new Timer(1000 * 60, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateDuration();
-            }
-            
-        });
 
         initialize();
     }
@@ -333,6 +320,10 @@ public class ActivityPanel extends JPanel implements Observer {
         case START_CHANGED:
             updateDuration();
             break;
+
+        case DURATION_CHANGED:
+            updateDuration();
+            break;
         }
     }
 
@@ -353,8 +344,6 @@ public class ActivityPanel extends JPanel implements Observer {
      * Executed on start event.
      */
     private void updateStart() {
-        timer.start();
-
         descriptionEditor.setText("");
         descriptionEditor.setEditable(true);
 
@@ -375,8 +364,6 @@ public class ActivityPanel extends JPanel implements Observer {
      * Executed on stop event.
      */
     private void updateStop() {
-        timer.stop();
-
         descriptionEditor.setText("");
         descriptionEditor.setEditable(false);
 

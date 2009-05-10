@@ -88,6 +88,18 @@ public class Filter {
         return true;
     }
  
+    
+    public boolean matchesNow() {
+        if( predicates.isEmpty() ) {
+            return true;
+        }
+        
+        long nowMs = System.currentTimeMillis();
+        ProjectActivity nowActivity = new ProjectActivity(
+                new DateTime( nowMs-1 ), new DateTime(nowMs), null);
+        return matchesCriteria(nowActivity);
+    }
+    
     /**
      * Getter for the week of year.
      * @return the week of year

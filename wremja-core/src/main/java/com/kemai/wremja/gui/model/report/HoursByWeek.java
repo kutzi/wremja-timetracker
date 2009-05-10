@@ -6,17 +6,14 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  * Item of the hours by week report.
  * @author remast
  */
-public class HoursByWeek implements Comparable<HoursByWeek> {
+public class HoursByWeek extends HoursByPeriod implements Comparable<HoursByWeek> {
     
     /** The week of the year. */
     private int week;
     
-    /** The amount of hours worked that week. */
-    private double hours;
-    
     public HoursByWeek(final int week, final double hours) {
+        super(hours);
         this.week = week;
-        this.hours = hours;
     }
 
     /**
@@ -26,13 +23,6 @@ public class HoursByWeek implements Comparable<HoursByWeek> {
         return week;
     }
 
-    /**
-     * @return the hours
-     */
-    public double getHours() {
-        return hours;
-    }
-    
     @Override
     public boolean equals(final Object that) {
         if (this == that) {
@@ -47,14 +37,6 @@ public class HoursByWeek implements Comparable<HoursByWeek> {
         final EqualsBuilder eqBuilder = new EqualsBuilder();
         eqBuilder.append(this.getWeek(), accAct.getWeek());
         return eqBuilder.isEquals();
-    }
-
-    /**
-     * Adds the given hours to the hours in this week.
-     * @param additionalHours the hours to add
-     */
-    public void addHours(final double additionalHours) {
-        this.hours += additionalHours;
     }
 
     @Override

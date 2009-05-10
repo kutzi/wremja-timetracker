@@ -7,18 +7,16 @@ import org.joda.time.DateTime;
 /**
  * Item of the hours by day report.
  * @author remast
+ * @author kutzi
  */
-public class HoursByDay implements Comparable<HoursByDay> {
+public class HoursByDay extends HoursByPeriod implements Comparable<HoursByDay> {
     
     /** The day of the year. */
-    private DateTime day;
-    
-    /** The amount of hours worked that week. */
-    private double hours;
+    private final DateTime day;
     
     public HoursByDay(final DateTime day, final double hours) {
+        super(hours);
         this.day = day;
-        this.hours = hours;
     }
 
     /**
@@ -28,13 +26,6 @@ public class HoursByDay implements Comparable<HoursByDay> {
         return day.toDate();
     }
 
-    /**
-     * @return the hours
-     */
-    public double getHours() {
-        return hours;
-    }
-    
     @Override
     public boolean equals(final Object that) {
         if (this == that) {
@@ -46,14 +37,6 @@ public class HoursByDay implements Comparable<HoursByDay> {
 
         final HoursByDay accAct = (HoursByDay) that;
         return this.day.getDayOfYear() == accAct.day.getDayOfYear();
-    }
-
-    /**
-     * Adds the given hours to the hours on that day.
-     * @param additionalHours the hours to add
-     */
-    public void addHours(final double additionalHours) {
-        this.hours += additionalHours;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.kemai.wremja.gui.model.report.HoursByWeek;
 
 /**
  * @author remast
+ * @author kutzi
  */
 public class HoursByWeekTableFormat implements TableFormat<HoursByWeek> {
 
@@ -28,23 +29,23 @@ public class HoursByWeekTableFormat implements TableFormat<HoursByWeek> {
      */
     public String getColumnName(final int column) {
         switch (column) {
-        case 0:
-            return textBundle.textFor("HoursByWeekTableFormat.WeekHeading"); //$NON-NLS-1$
-        case 1:
-            return textBundle.textFor("HoursByWeekTableFormat.HoursHeading"); //$NON-NLS-1$
-        default:
-            return null;
+            case 0:
+                return textBundle.textFor("HoursByWeekTableFormat.WeekHeading"); //$NON-NLS-1$
+            case 1:
+                return textBundle.textFor("HoursByWeekTableFormat.HoursHeading"); //$NON-NLS-1$
+            default:
+                throw new IllegalArgumentException(""+column);
         }
     }
 
     public Object getColumnValue(final HoursByWeek baseObject, final int column) {
         switch (column) {
-        case 0:
-            return baseObject.getWeek();
-        case 1:
-            return baseObject.getHours();
-        default:
-            return null;
+            case 0:
+                return baseObject.getWeek();
+            case 1:
+                return baseObject;
+            default:
+                throw new IllegalArgumentException(""+column);
         }
     }
 

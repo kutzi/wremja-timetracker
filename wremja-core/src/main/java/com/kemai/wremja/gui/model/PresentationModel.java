@@ -1,8 +1,12 @@
 package com.kemai.wremja.gui.model;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.Observable;
+
+import javax.swing.Timer;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -80,6 +84,11 @@ public class PresentationModel extends Observable {
     /** The stack of edit actions (for undo and redo). */
     private EditStack editStack;
 
+    /** Timer for the time passed since activity was started. */
+    private final Timer timer;
+    
+    //private final Object startStopLock = new Object();
+
     /**
      * Creates a new model.
      */
@@ -89,6 +98,18 @@ public class PresentationModel extends Observable {
         this.activitiesList = new SortedList<ProjectActivity>(new BasicEventList<ProjectActivity>());
 
         initialize();
+        
+        // Fire timer event every minute
+        this.timer = new Timer(1000 * 60, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Fire event
+                final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.DURATION_CHANGED, PresentationModel.this);
+                event.setData(getCurrentDuration());
+                
+                PresentationModel.this.notify(event);
+            }
+        });
     }
 
     /**
@@ -127,13 +148,17 @@ public class PresentationModel extends Observable {
                 // Ignore
             }
         }
+        
+        // If last activity is still active, we must restart the timer
+        if( active ) {
+            this.timer.start();
+        }
 
         // Edit stack
         if (editStack == null) {
             editStack = new EditStack(this);
             this.addObserver(editStack);
         }
-
     }
 
     private void applyFilter() {
@@ -187,8 +212,9 @@ public class PresentationModel extends Observable {
      * <em>This method is meant for unit testing only!!</em>
      * @throws ProjectActivityStateException if there is already a running project
      *   or if no project is selected, currently
+     * @throws NullPointerException if startTime is null
      */
-    public final void start(final DateTime startTime) throws ProjectActivityStateException {
+    void start(final DateTime startTime) throws ProjectActivityStateException {
         if (getSelectedProject() == null) {
             throw new ProjectActivityStateException(textBundle.textFor("PresentationModel.NoActiveProjectSelectedError")); //$NON-NLS-1$
         }
@@ -203,17 +229,11 @@ public class PresentationModel extends Observable {
         // Mark data as dirty
         this.dirty = true;
 
-        // Set start time to now if null
-        DateTime start;
-        if (startTime == null) {
-            start = DateUtils.getNow();
-        } else {
-            start = startTime;
-        }
-        
-        setStart(start);
-        getData().start(start);
+        setStart(startTime);
+        getData().start(startTime);
 
+        this.timer.start();
+        
         // Fire start event
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STARTED);
         notify(event);
@@ -325,7 +345,8 @@ public class PresentationModel extends Observable {
         UserSettings.instance().setLastDescription(StringUtils.EMPTY);
         setActive(false);
         getData().stop();
-        start = null;
+        setStart(null);
+        this.timer.stop();
 
         // Mark data as dirty
         this.dirty = true;
@@ -564,14 +585,28 @@ public class PresentationModel extends Observable {
     public DateTime getStart() {
         return start;
     }
+    
+    /**
+     * Returns the current duration of the running activity or <code>0</code>
+     * if nor activity is running.
+     */
+    public double getCurrentDuration() {
+        if( !isActive() ) {
+            return 0D;
+        } else {
+            return DateUtils.getDurationAsFractionHours(getStart(), DateUtils.getNow());
+        }
+    }
 
     /**
      * Sets the start of a new activity.
      * @param start the start to set
      */
     public void setStart(final DateTime start) {
-        this.start = start;
-        this.data.setStartTime(start);
+        // TODO: synchronized (this.startStopLock) {
+            this.start = start;
+            this.data.setStartTime(start);
+        //}
         
         // Fire event
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.START_CHANGED, this);

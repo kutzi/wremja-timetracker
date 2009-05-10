@@ -9,6 +9,7 @@ import com.kemai.wremja.gui.model.report.HoursByDay;
 
 /**
  * @author remast
+ * @author kutzi
  */
 public class HoursByDayTableFormat implements TableFormat<HoursByDay> {
 
@@ -28,23 +29,23 @@ public class HoursByDayTableFormat implements TableFormat<HoursByDay> {
      */
     public String getColumnName(final int column) {
         switch (column) {
-        case 0:
-            return textBundle.textFor("HoursByDayTableFormat.DayHeading"); //$NON-NLS-1$
-        case 1:
-            return textBundle.textFor("HoursByDayTableFormat.HoursHeading"); //$NON-NLS-1$
-        default:
-            return null;
+            case 0:
+                return textBundle.textFor("HoursByDayTableFormat.DayHeading"); //$NON-NLS-1$
+            case 1:
+                return textBundle.textFor("HoursByDayTableFormat.HoursHeading"); //$NON-NLS-1$
+            default:
+                throw new IllegalArgumentException(""+column);
         }
     }
 
     public Object getColumnValue(final HoursByDay baseObject, final int column) {
         switch (column) {
-        case 0:
-            return baseObject.getDay();
-        case 1:
-            return baseObject.getHours();
-        default:
-            return null;
+            case 0:
+                return baseObject.getDay();
+            case 1:
+                return baseObject;
+            default:
+                throw new IllegalArgumentException(""+column);
         }
     }
 

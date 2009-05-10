@@ -43,7 +43,10 @@ public class WremjaEvent {
         DATA_CHANGED,
 
         /** The start time has changed. */
-        START_CHANGED
+        START_CHANGED,
+        
+        /** The duration of the current activity changed. I.e. time has progressed one minute. */
+        DURATION_CHANGED
     }
 
     /** The type of the event. */

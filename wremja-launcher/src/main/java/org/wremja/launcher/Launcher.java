@@ -323,6 +323,9 @@ public final class Launcher {
      */
     private static void initLookAndFeel() {
         log.debug("Initializing look and feel ...");
+        
+        // enable antialiasing
+        System.setProperty("swing.aatext", "true");
         try {
             // a) Try windows
             UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
