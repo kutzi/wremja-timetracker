@@ -5,6 +5,8 @@ import static com.kemai.wremja.gui.GuiConstants.NORMAL_ICON;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.SystemTray;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowListener;
 import java.util.Observable;
 import java.util.Observer;
@@ -37,6 +39,7 @@ import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.panels.ActivityPanel;
 import com.kemai.wremja.gui.panels.ReportPanel;
+import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.logging.Logger;
 
 /**
@@ -134,8 +137,29 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      * Set up GUI components.
      */
     private void initialize() {
-        this.setSize(530, 720);
         this.setResizable(true);
+        
+        if (UserSettings.instance().isRememberWindowSizeLocation()) {
+            this.setSize(UserSettings.instance().getWindowSize());
+            this.setLocation(UserSettings.instance().getWindowLocation());
+        } else {
+            this.setSize(530, 720);
+        }
+        
+        this.addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                UserSettings.instance().setWindowLocation(MainFrame.this.getLocation());
+            }
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                UserSettings.instance().setWindowSize(MainFrame.this.getSize());
+            }
+        });
+        
+        
         this.setJMenuBar(getMainMenuBar());
 
         this.addWindowListener(this);

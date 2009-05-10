@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
@@ -43,6 +44,9 @@ public class SettingsDialog extends EscapeDialog {
 
     /** The model. */
     private final UserSettings settings;
+    
+    /** Component to edit setting to remember window size and location. */
+    private JCheckBox rememberWindowSizeLocation;
 
     private final JTextField urlField = new JFormattedTextField();
     {
@@ -75,7 +79,8 @@ public class SettingsDialog extends EscapeDialog {
         final double size[][] = {
                 { border, TableLayout.PREFERRED, border, TableLayout.FILL, border }, // Columns
                 { border, TableLayout.PREFERRED, border, TableLayout.PREFERRED, border,
-                    TableLayout.PREFERRED, border, 
+                    TableLayout.PREFERRED, border,
+                    TableLayout.PREFERRED, border,
                     TableLayout.PREFERRED, TableLayout.FILL, TableLayout.PREFERRED, border   }  // Rows
         };
 
@@ -88,6 +93,12 @@ public class SettingsDialog extends EscapeDialog {
         this.setTitle(textBundle.textFor("SettingsDialog.Title")); //$NON-NLS-1$
         this.add(new JXHeader(textBundle.textFor("SettingsDialog.ApplicationSettingsTitle"), null), "0, 0, 3, 1"); //$NON-NLS-1$ //$NON-NLS-2$
 
+        
+        rememberWindowSizeLocation = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.RememberWindowSizeLocation.Title"));
+        rememberWindowSizeLocation.setToolTipText(textBundle.textFor("SettingsDialog.Setting.RememberWindowSizeLocation.ToolTipText"));
+        //rememberWindowSizeLocation.addActionListener(this);
+        this.add(rememberWindowSizeLocation, "1, 3, 3, 3"); //$NON-NLS-1$
+        
         JLabel urlLabel = new JLabel( "Timetracker base URL" );
         this.add(urlLabel, "1, 3"); //$NON-NLS-1$
         this.add(urlField, "3, 3"); //$NON-NLS-1$
@@ -108,6 +119,7 @@ public class SettingsDialog extends EscapeDialog {
 
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent event) {
+                settings.setRememberWindowSizeLocation(rememberWindowSizeLocation.isSelected());
                 settings.setAnukoUrl(urlField.getText());
                 settings.setAnukoLogin(loginField.getText());
                 settings.setAnukoPassword(String.valueOf(passwordField.getPassword()));
@@ -126,6 +138,7 @@ public class SettingsDialog extends EscapeDialog {
      * Reads the data displayed in the dialog from the settings.
      */
     private void readFromSettings() {
+        this.rememberWindowSizeLocation.setSelected(this.settings.isRememberWindowSizeLocation());
         this.urlField.setText(this.settings.getAnukoUrl());
         this.loginField.setText(this.settings.getAnukoLogin());
         this.passwordField.setText(this.settings.getAnukoPassword());
