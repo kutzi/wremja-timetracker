@@ -87,7 +87,7 @@ public class SettingsDialog extends EscapeDialog {
         final TableLayout tableLayout = new TableLayout(size);
         this.setLayout(tableLayout);
 
-        this.setSize(300, 190);
+        this.setSize(320, 200);
 
         this.setName("SettingsDialog"); //$NON-NLS-1$
         this.setTitle(textBundle.textFor("SettingsDialog.Title")); //$NON-NLS-1$
@@ -100,15 +100,15 @@ public class SettingsDialog extends EscapeDialog {
         this.add(rememberWindowSizeLocation, "1, 3, 3, 3"); //$NON-NLS-1$
         
         JLabel urlLabel = new JLabel( "Timetracker base URL" );
-        this.add(urlLabel, "1, 3"); //$NON-NLS-1$
-        this.add(urlField, "3, 3"); //$NON-NLS-1$
+        this.add(urlLabel, "1, 5"); //$NON-NLS-1$
+        this.add(urlField, "3, 5"); //$NON-NLS-1$
         
         JLabel loginLabel = new JLabel( "Timetracker login" );
-        this.add(loginLabel, "1, 5"); //$NON-NLS-1$
-        this.add( loginField, "3, 5"); //$NON-NLS-1$
+        this.add(loginLabel, "1, 7"); //$NON-NLS-1$
+        this.add( loginField, "3, 7"); //$NON-NLS-1$
         JLabel passwordLabel = new JLabel( "Timetracker password" );
-        this.add(passwordLabel, "1, 7");
-        this.add(passwordField, "3, 7");
+        this.add(passwordLabel, "1, 9");
+        this.add(passwordField, "3, 9");
 
         saveButton = new JButton();
         saveButton.setText(textBundle.textFor("SettingsDialog.SaveLabel")); //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class SettingsDialog extends EscapeDialog {
 
         saveButton.setDefaultCapable(true);
         
-        this.add(saveButton, "1, 9, 3, 9");
+        this.add(saveButton, "1, 11, 3, 11");
         
         readFromSettings();
     }
