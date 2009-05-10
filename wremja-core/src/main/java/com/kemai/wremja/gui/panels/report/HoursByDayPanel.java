@@ -1,5 +1,10 @@
 package com.kemai.wremja.gui.panels.report;
 
+import java.text.DateFormat;
+
+import org.jdesktop.swingx.renderer.FormatStringValue;
+import org.jdesktop.swingx.renderer.StringValue;
+
 import ca.odell.glazedlists.gui.TableFormat;
 
 import com.kemai.wremja.gui.model.report.HoursByDay;
@@ -26,5 +31,10 @@ public class HoursByDayPanel extends HoursByPeriodPanel<HoursByDay, HoursByDayRe
     @Override
     protected TableFormat<? super HoursByDay> getTableFormat() {
         return new HoursByDayTableFormat();
+    }
+
+    @Override
+    protected StringValue getValueConverterFor1stColumn() {
+        return new FormatStringValue(DateFormat.getDateInstance());
     }
 }

@@ -3,7 +3,6 @@ package com.kemai.wremja.gui.panels.report;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
-import java.text.DateFormat;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -49,8 +48,6 @@ abstract class HoursByPeriodPanel<P extends HoursByPeriod, R extends HoursByPeri
      */
     private EventTableModel<P> tableModel;
     
-    private final MyTableCellRenderer renderer2 = new MyTableCellRenderer(new FormatStringValue(FormatUtils.getDurationFormat()));
-    
     /**
      * Creates a new panel for the given report of hours by day.
      * @param report the report with hours by day
@@ -67,6 +64,9 @@ abstract class HoursByPeriodPanel<P extends HoursByPeriod, R extends HoursByPeri
     
     protected abstract TableFormat<? super P> getTableFormat();
     
+    // TODO: find a better name for this method ;-)
+    protected abstract StringValue getValueConverterFor1stColumn();
+    
     /**
      * Set up GUI components.
      */
@@ -77,8 +77,8 @@ abstract class HoursByPeriodPanel<P extends HoursByPeriod, R extends HoursByPeri
         table.setHighlighters(GuiConstants.HIGHLIGHTERS);
         table.setAutoResizeMode(JXTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         
-        table.getColumn(0).setCellRenderer(new DefaultTableRenderer(new FormatStringValue(DateFormat.getDateInstance())));
-        table.getColumn(1).setCellRenderer(renderer2);
+        table.getColumn(0).setCellRenderer(new DefaultTableRenderer(getValueConverterFor1stColumn()));
+        table.getColumn(1).setCellRenderer(new MyTableCellRenderer(new FormatStringValue(FormatUtils.getDurationFormat())));
         
         JScrollPane table_scroll_pane = new JScrollPane(table);
 

@@ -1,5 +1,10 @@
 package com.kemai.wremja.gui.panels.report;
 
+import java.text.DecimalFormat;
+
+import org.jdesktop.swingx.renderer.FormatStringValue;
+import org.jdesktop.swingx.renderer.StringValue;
+
 import ca.odell.glazedlists.gui.TableFormat;
 
 import com.kemai.wremja.gui.model.report.HoursByWeek;
@@ -25,5 +30,10 @@ public class HoursByWeekPanel extends HoursByPeriodPanel<HoursByWeek, HoursByWee
     @Override
     protected TableFormat<? super HoursByWeek> getTableFormat() {
         return new HoursByWeekTableFormat();
+    }
+
+    @Override
+    protected StringValue getValueConverterFor1stColumn() {
+        return new FormatStringValue(new DecimalFormat("##00"));
     }
 }
