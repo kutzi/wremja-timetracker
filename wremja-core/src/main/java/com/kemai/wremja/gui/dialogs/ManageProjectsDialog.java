@@ -18,7 +18,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.jdesktop.swingx.JXTable;
 
@@ -29,16 +34,20 @@ import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.dialogs.table.ProjectListTableFormat;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.Project;
 
 /**
  * The dialog to manage the available projects.
  * @author remast
+ * @author kutzi
  * :TODO: Rework the dialog to use table layout.
  */
 @SuppressWarnings("serial")
 public class ManageProjectsDialog extends EscapeDialog implements Observer {
 
+	private static final Logger log = Logger.getLogger(ManageProjectsDialog.class);
+	
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ManageProjectsDialog.class);
 
@@ -127,6 +136,7 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
      * This method initializes newProjectTextField.
      * @return javax.swing.JTextField	
      */
+    // TODO: disallow leading/trailing whitespace (or simply trim it)?
     private JTextField getNewProjectTextField() {
         if (newProjectTextField == null) {
             newProjectTextField = new JTextField();
@@ -134,6 +144,42 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
             newProjectTextField.setText(textBundle.textFor("ManageProjectsDialog.NewProjectTitle.DefaultNewProjectName")); //$NON-NLS-1$
             newProjectTextField.setToolTipText(textBundle.textFor("ManageProjectsDialog.NewProjectTitle.ToolTipText")); //$NON-NLS-1$
             newProjectTextField.setPreferredSize(new Dimension(224, 19));
+            
+            newProjectTextField.getDocument().addDocumentListener(new DocumentListener() {
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					checkValidProjectName( e.getDocument() );
+				}
+
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					checkValidProjectName( e.getDocument() );
+				}
+
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					checkValidProjectName( e.getDocument() );
+				}
+				
+				/**
+				 * Checks that the document contains a valid project name and
+				 * subsequently enables/disables the add button.
+				 * 
+				 * Currently just checks that the name is not blank
+				 */
+				private void checkValidProjectName(Document document) {
+					try {
+						String name = document.getText(0, document.getLength());
+						if( StringUtils.isNotBlank(name)) {
+							addProjectButton.setEnabled(true);
+						} else {
+							addProjectButton.setEnabled(false);
+						}
+					} catch (BadLocationException e) {
+						log.error(e, e);
+					}
+				}
+            });
         }
         return newProjectTextField;
     }
@@ -172,6 +218,9 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
                 }
 
             });
+            
+            // initially disable the button until some meaningful name has been entered
+            addProjectButton.setEnabled(false);
             addProjectButton.setDefaultCapable(true);
         }
         return addProjectButton;
