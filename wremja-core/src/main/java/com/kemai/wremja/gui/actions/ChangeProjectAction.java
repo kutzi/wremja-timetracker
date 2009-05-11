@@ -34,20 +34,26 @@ public class ChangeProjectAction extends AbstractWremjaAction {
     /**
      * The project to be activated when the action is performed.
      */
-    private Project newProject;
+    private final Project newProject;
 
     public ChangeProjectAction(final PresentationModel model, final Project newProject) {
         super(model);
+        if( newProject == null ) {
+        	throw new NullPointerException("newProject must not be null!");
+        }
         this.newProject = newProject;
 
         // Highlight the currently selected project
-        String projectName = String.valueOf(newProject);
+        String projectName = newProject.getTitle();
         if (model.getSelectedProject() != null && model.getSelectedProject().equals(newProject)) {
             projectName = "* " + projectName;
         }
 
         putValue(NAME, projectName);
         putValue(SHORT_DESCRIPTION, textBundle.textFor("ChangeProjectAction.ShortDescription") + String.valueOf(newProject) + "."); //$NON-NLS-1$ //$NON-NLS-2$
+        
+        // TODO: take the first non-whitespace char!?
+        putValue(MNEMONIC_KEY, Integer.valueOf(newProject.getTitle().codePointAt(0)));
     }
 
     /**
