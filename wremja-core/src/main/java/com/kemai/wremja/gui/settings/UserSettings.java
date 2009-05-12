@@ -283,7 +283,7 @@ public final class UserSettings {
     /** The key for remembering window size and location. */
     public static final String REMEMBER_WINDOWSIZE_LOCATION = "settings.rememberWindowSizeLocation"; //$NON-NLS-1$
 
-    public Boolean isRememberWindowSizeLocation() {
+    public boolean isRememberWindowSizeLocation() {
         return doGetBoolean(REMEMBER_WINDOWSIZE_LOCATION, true);
     }
 
@@ -315,8 +315,8 @@ public final class UserSettings {
     // Window location
     //------------------------------------------------
 
-    /** The key for the shown category. */
-    public static final String WINDOW_LOCATION = "settings.windowLocation"; //$NON-NLS-1$
+    /** The key for the window location */
+    private static final String WINDOW_LOCATION = "settings.windowLocation"; //$NON-NLS-1$
 
     public Point getWindowLocation() {
         final String encodedLocation = doGetString(WINDOW_LOCATION, "0.0|0.0");
@@ -330,6 +330,16 @@ public final class UserSettings {
         final String encodedLocation = location.getX() + "|" + location.getY();
         userConfig.setProperty(WINDOW_LOCATION, encodedLocation);
     }
+    
+    private static final String WINDOW_MINIMIZED = "settings.windowMinimized"; //$NON-NLS-1$
+
+	public void setWindowMinimized(boolean minimized) {
+		userConfig.setProperty(WINDOW_MINIMIZED, minimized);
+	}
+
+	public boolean isWindowMinimized() {
+		return doGetBoolean(WINDOW_MINIMIZED, false);
+	}
     
     /**
      * Restore the current filter from the user settings.
@@ -487,7 +497,7 @@ public final class UserSettings {
      * @param defaultValue the default value of the property to get
      * @return the property value if set and correct otherwise the default value
      */
-    private Boolean doGetBoolean(final String key, final Boolean defaultValue) {
+    private boolean doGetBoolean(final String key, final boolean defaultValue) {
         try {
             return userConfig.getBooleanProperty(key, defaultValue);
         } catch (Exception e) {
@@ -495,4 +505,5 @@ public final class UserSettings {
             return defaultValue;
         }
     }
+
 }

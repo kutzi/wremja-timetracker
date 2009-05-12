@@ -52,7 +52,7 @@ public final class Launcher {
     //------------------------------------------------
 
     /** Property for command line option minimized (-m). */
-    private boolean minimized = false;
+    private Boolean minimized;
 
     /** The interval in minutes in which the data is saved to the disk. */
     private static final int SAVE_TIMER_INTERVAL = 3;
@@ -120,7 +120,7 @@ public final class Launcher {
 
         for (String argument : arguments) {
             if (argument.startsWith("-m=")) {
-                this.minimized = Boolean.parseBoolean(argument.substring("-m=".length()));
+                this.minimized = Boolean.valueOf(argument.substring("-m=".length()));
             }
         }
 
@@ -136,7 +136,20 @@ public final class Launcher {
             final Launcher mainInstance) {
         log.debug("Initializing main frame ...");
         final MainFrame mainFrame = new MainFrame(model);
-        mainFrame.setVisible(!mainInstance.minimized);
+        
+        boolean minimized = false;
+        if( mainInstance.minimized != null ) {
+        	// command line overrides preferences
+        	minimized = mainInstance.minimized.booleanValue();
+        } else {
+        	if( UserSettings.instance().isRememberWindowSizeLocation() ) {
+        		minimized = UserSettings.instance().isWindowMinimized();
+        	}
+        }
+        mainFrame.setVisible(!minimized);
+        if(  minimized ) {
+        	mainFrame.showTray(true);
+        }
         return mainFrame;
     }
 
@@ -239,7 +252,7 @@ public final class Launcher {
                         JOptionPane.showMessageDialog(null, 
                                 textBundle.textFor("Launcher.DataLoading.ErrorText", backupDateString), //$NON-NLS-1$
                                 textBundle.textFor("Launcher.DataLoading.ErrorTitle"), //$NON-NLS-1$
-                                JOptionPane.INFORMATION_MESSAGE
+                                JOptionPane.WARNING_MESSAGE
                         );
 
                         break;
@@ -334,6 +347,10 @@ public final class Launcher {
         
         // enable antialiasing
         System.setProperty("swing.aatext", "true");
+
+        // use Xrender pipeline on Linux, if available
+        System.setProperty("sun.java2d.xrender", "true");
+
         try {
             // a) Try windows
             UIManager.setLookAndFeel(new Plastic3DLookAndFeel());

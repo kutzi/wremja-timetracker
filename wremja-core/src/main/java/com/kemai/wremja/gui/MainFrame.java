@@ -187,7 +187,8 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         this.add(getCurrentActivityPanel(), "0, 1");
         this.add(getReportPanel(), "0, 2");
     }
-    
+
+
     /**
      * Initializes the lock file.
      * @param model the model to be displayed
@@ -589,6 +590,8 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             } else {
                 this.tray.hide();
             }
+            UserSettings.instance().setWindowMinimized(show);
         }
     }
+
 }
