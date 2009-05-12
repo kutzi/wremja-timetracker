@@ -21,26 +21,38 @@ package org.jdesktop.swinghelper.tray;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.TrayIcon;
+import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JPopupMenu;
+import javax.swing.RootPaneContainer;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 public class JXTrayIcon extends TrayIcon {
     private JPopupMenu menu;
-    private static final JDialog dialog;
+    private static final Window dialog;
     static {
-        dialog = new JDialog((Frame) null, "TrayDialog");
-        dialog.setUndecorated(true);
-        dialog.setAlwaysOnTop(true);
+		dialog = new JDialog((Frame) null, "TrayDialog");
+		((JDialog)dialog).setUndecorated(true);
+
+// I've read on some forum that this should fix some problems on Linux, but I've
+// not seen these problems. And worse: JWindow seems to behave worse than JDialog on Linux (e.g.window going away, when mouse button is released)		
+//		if( OS.isLinux() ) {
+//    		// avoid some problems on Linux (flickering)
+//    		dialog = new JWindow((Frame)null);
+//    	}
+    	
+    	dialog.setAlwaysOnTop(true);
     }
     
-    private static PopupMenuListener popupListener = new PopupMenuListener() {
+    private static final PopupMenuListener popupListener = new PopupMenuListener() {
         
         @Override
         public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
@@ -76,9 +88,27 @@ public class JXTrayIcon extends TrayIcon {
     private void showJPopupMenu(final MouseEvent e) {
         if (e.isPopupTrigger() && menu != null) {
             Dimension size = menu.getPreferredSize();
-            dialog.setLocation(e.getX(), e.getY() - size.height);
+            
+            // set location depending on system tray location (e.g. top or bottom)
+            Point centerPoint = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+            int x;
+            int y;
+            if(e.getY() > centerPoint.getY()) {
+            	y = e.getY() - size.height;
+            } else {
+            	y = e.getY();
+            }
+            
+            if(e.getX() > centerPoint.getX()) {
+            	x = e.getX() - size.width;
+            } else {
+            	x = e.getX();
+            }
+            
+            dialog.setLocation(x, y);
+            
             dialog.setVisible(true);
-            menu.show(dialog.getContentPane(), 0, 0);
+            menu.show(((RootPaneContainer) dialog).getContentPane(), 0, 0);
             // popup works only for focused windows
             dialog.toFront();
         }
