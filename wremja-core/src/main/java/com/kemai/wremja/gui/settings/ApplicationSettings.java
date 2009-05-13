@@ -1,8 +1,6 @@
 package com.kemai.wremja.gui.settings;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import com.kemai.wremja.logging.Logger;
@@ -15,16 +13,13 @@ import com.kemai.wremja.logging.Logger;
 public final class ApplicationSettings {
 
     /** The logger. */
-    private static final Logger log = Logger.getLogger(ApplicationSettings.class);
-
-    /** The singleton instance. */
-    private static ApplicationSettings instance;
+    private static final Logger LOG = Logger.getLogger(ApplicationSettings.class);
 
     /** Key for the name of the application properties file. */
     private static String APPLICATION_PROPERTIES_FILENAME = "application.properties"; //$NON-NLS-1$
-
+    
     /** Node for Wremja application preferences. */
-    private Configuration applicationConfig;
+    private final Configuration applicationConfig;
 
     //------------------------------------------------
     // Data locations
@@ -32,6 +27,9 @@ public final class ApplicationSettings {
 
     /** Default data directory. */
     public static final File dataDirectoryDefault = new File(System.getProperty("user.home") + File.separator + ".ProTrack"); //$NON-NLS-1$ //$NON-NLS-2$
+    
+    /** The singleton instance. */
+    private static final ApplicationSettings instance = new ApplicationSettings();
 
     /** Data directory relative to application installation. */
     public File dataDirectoryApplicationRelative = null;
@@ -41,9 +39,6 @@ public final class ApplicationSettings {
      * @return the settings singleton
      */
     public static ApplicationSettings instance() {
-        if (instance == null) {
-            instance = new ApplicationSettings();
-        }
         return instance;
     }
 
@@ -89,11 +84,10 @@ public final class ApplicationSettings {
                     APPLICATION_PROPERTIES_FILENAME
             );
 
-            applicationConfig = new JUPropertiesConfiguration(file);
-        } catch (IOException e) {
-            log.error(e, e);
-        } catch (URISyntaxException e) {
-            log.error(e, e);
+            applicationConfig = new JUPropertiesConfiguration(file, "Wremja application settings");
+        } catch (Exception e) {
+            LOG.error(e, e);
+            throw new IllegalStateException("Application settings couldn't be initialized", e);
         }
     }
 

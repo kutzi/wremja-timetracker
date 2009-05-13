@@ -23,7 +23,7 @@ import com.kemai.wremja.model.filter.Filter;
 public final class UserSettings {
 
     /** The logger. */
-    private static final Logger log = Logger.getLogger(UserSettings.class);
+    private static final Logger LOG = Logger.getLogger(UserSettings.class);
 
     /** Default name of the ActivityRepository data file. */
     public static final String DEFAULT_FILE_NAME = "ProTrack.ptd"; //$NON-NLS-1$
@@ -40,7 +40,7 @@ public final class UserSettings {
     private static String USER_PROPERTIES_FILENAME = "wremja.properties";
 
     /** Node for Wremja user preferences. */
-    private Configuration userConfig;
+    private final Configuration userConfig;
 
     /** The singleton instance. */
     private static final UserSettings instance = new UserSettings();
@@ -59,9 +59,10 @@ public final class UserSettings {
     private UserSettings() {
         final File userConfigFile = new File(ApplicationSettings.instance().getApplicationDataDirectory() + File.separator + USER_PROPERTIES_FILENAME);
         try {
-            userConfig = new JUPropertiesConfiguration(userConfigFile);
+            userConfig = new JUPropertiesConfiguration(userConfigFile, "Wremja user settings");
         } catch (IOException e) {
-            log.error(e, e);
+            LOG.error(e, e);
+            throw new IllegalStateException("User settings couldn't be initialized", e);
         }
     }
 
@@ -177,7 +178,7 @@ public final class UserSettings {
         
         // -- 
         // :INFO: Migrate from < 1.3 where * was used as dummy value
-        if (StringUtils.equals("*", (String) selectedMonthObject)) {
+        if (StringUtils.equals("*", selectedMonthObject)) {
             setFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
         }
         // --
@@ -208,7 +209,7 @@ public final class UserSettings {
         
         // -- 
         // :INFO: Migrate from < 1.3 where * was used as dummy value
-        if (StringUtils.equals("*", (String) selectedYearObject)) {
+        if (StringUtils.equals("*", selectedYearObject)) {
             setFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
         }
         // -- 
@@ -340,6 +341,24 @@ public final class UserSettings {
 	public boolean isWindowMinimized() {
 		return doGetBoolean(WINDOW_MINIMIZED, false);
 	}
+	
+    private static final String LAST_TOUCH_TIMESTAMP = "lastTouch"; //$NON-NLS-1$
+    
+    /**
+     * Sets the last touch timestamp.
+     */
+    public void setLastTouchTimestamp(DateTime lastTouch) {
+        userConfig.setProperty(LAST_TOUCH_TIMESTAMP, lastTouch.getMillis());
+    }
+
+    /**
+     * Gets the last touch timestamp.
+     */
+
+    public DateTime getLastTouchTimestamp() {
+        long timestamp = userConfig.getLongProperty(LAST_TOUCH_TIMESTAMP, System.currentTimeMillis());
+        return new DateTime(timestamp);
+    }
     
     /**
      * Restore the current filter from the user settings.
@@ -381,7 +400,7 @@ public final class UserSettings {
                 DateTime year = new DateTime().withYear(selectedYear);
                 filter.setYear(year);
             } catch (NumberFormatException e) {
-                log.error(e, e);
+                LOG.error(e, e);
             }
         }
     }
@@ -407,7 +426,7 @@ public final class UserSettings {
                 DateTime month = new DateTime().withMonthOfYear(selectedMonth);
                 filter.setMonth(month);
             } catch (NumberFormatException e) {
-                log.error(e, e);
+                LOG.error(e, e);
             }
         }
     }
@@ -433,7 +452,7 @@ public final class UserSettings {
                 DateTime weekOfYear = new DateTime().withWeekOfWeekyear(selectedWeekOfYear);
                 filter.setWeekOfYear(weekOfYear);
             } catch (NumberFormatException e) {
-                log.error(e, e);
+                LOG.error(e, e);
             }
         }
     }
@@ -453,7 +472,7 @@ public final class UserSettings {
         try {
             return userConfig.getStringProperty(key, defaultValue);
         } catch (Exception e) {
-            log.error(e, e);
+            LOG.error(e, e);
             return defaultValue;
         }
     }
@@ -469,7 +488,7 @@ public final class UserSettings {
         try {
             return userConfig.getLongProperty(key, defaultValue);
         } catch (Exception e) {
-            log.error(e, e);
+            LOG.error(e, e);
             return defaultValue;
         }
     }
@@ -485,7 +504,7 @@ public final class UserSettings {
         try {
             return userConfig.getIntegerProperty(key, defaultValue);
         } catch (Exception e) {
-            log.error(e, e);
+            LOG.error(e, e);
             return defaultValue;
         }
     }
@@ -501,9 +520,8 @@ public final class UserSettings {
         try {
             return userConfig.getBooleanProperty(key, defaultValue);
         } catch (Exception e) {
-            log.error(e, e);
+            LOG.error(e, e);
             return defaultValue;
         }
     }
-
 }

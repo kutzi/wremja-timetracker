@@ -31,9 +31,11 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 
 import com.kemai.wremja.logging.Logger;
 
@@ -154,4 +156,16 @@ public class UiUtilities {
         return im;
     }
 
+    public static int getMnemonic(String key, Locale l) {
+        String value = (String)UIManager.get(key, l);
+
+        if (value == null) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(value);
+        }
+        catch (NumberFormatException nfe) { }
+        return 0;
+    }
 }

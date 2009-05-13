@@ -13,10 +13,10 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 /**
  * Main data container of Wremja.
  * 
- * This consists mainly of project and activities for these projects.
+ * This consists mainly of project and activities in these projects.
  */
 @XStreamAlias("proTrack") //$NON-NLS-1$
-public class ActivityRepository implements ProjectView, Serializable {
+public class ActivityRepository implements ReadableRepository, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,6 +39,11 @@ public class ActivityRepository implements ProjectView, Serializable {
 
 	/** The currently active project (if any). */
 	private Project activeProject;
+	
+	/**
+	 * The last time this data record was modified.
+	 */
+	private DateTime modifiedTimeStamp;
 
 	public ActivityRepository() {
 	}
@@ -68,6 +73,7 @@ public class ActivityRepository implements ProjectView, Serializable {
 		this.projectsToBeDeleted.add(project);
 	}
 
+	// TODO: this method is called from nowhere!?
 	public synchronized void cleanup() {
 		if (this.projectsToBeDeleted == null) {
 			return;
@@ -188,5 +194,12 @@ public class ActivityRepository implements ProjectView, Serializable {
     public synchronized void replaceProject(Project oldProject, Project newProject) {
         remove(oldProject);
         add(newProject);
+    }
+
+    /**
+     * Returns the last time, when this repository modified.
+     */
+    public synchronized DateTime getModifiedTimeStamp() {
+        return this.modifiedTimeStamp;
     }
 }

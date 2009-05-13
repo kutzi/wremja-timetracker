@@ -5,9 +5,9 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 /**
- * Readable view of the model data.
+ * Read-only view of the model data.
  */
-public interface ProjectView {
+public interface ReadableRepository {
     /**
      * @return read-only view of the projects
      */

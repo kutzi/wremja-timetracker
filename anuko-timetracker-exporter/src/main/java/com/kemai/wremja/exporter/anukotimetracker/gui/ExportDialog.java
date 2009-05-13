@@ -29,7 +29,7 @@ import com.kemai.wremja.exporter.anukotimetracker.util.AnukoAccess;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
-import com.kemai.wremja.model.ProjectView;
+import com.kemai.wremja.model.ReadableRepository;
 import com.kemai.wremja.model.filter.Filter;
 
 /**
@@ -47,7 +47,7 @@ public class ExportDialog extends EscapeDialog {
     
     private AnukoInfo anukoInfo;
     
-    private final ProjectView data;
+    private final ReadableRepository data;
 
     private final Filter filter;
 
@@ -69,7 +69,7 @@ public class ExportDialog extends EscapeDialog {
      * @param model
      */
     public ExportDialog(final Frame owner, final String url,
-            final ProjectView data, final Filter filter ) {
+            final ReadableRepository data, final Filter filter ) {
         super(owner);
         if( filter == null ) {
             throw new NullPointerException("filter must not be null!");

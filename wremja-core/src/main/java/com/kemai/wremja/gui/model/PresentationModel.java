@@ -67,6 +67,7 @@ public class PresentationModel extends Observable {
      * Also - because it's volatile - acts as a memory barrier, so
      * different threads can see the changes.
      */
+    // TODO: this flag does belong better into ActivityRepository, doesn't it?
     private volatile boolean dirty = false;
 
     /** Start date of activity. */
@@ -110,6 +111,11 @@ public class PresentationModel extends Observable {
                 PresentationModel.this.notify(event);
             }
         });
+    }
+    
+    public PresentationModel(ActivityRepository data) {
+        this();
+        setData(data, false);
     }
 
     /**
@@ -299,26 +305,44 @@ public class PresentationModel extends Observable {
     }
 
     /**
-     * Stop a project activity.<br/>
+     * Stops the currently active project activity.
+     *
      * @throws ProjectActivityStateException if there is no running project
      */
     public final void stop(final boolean notifyObservers) throws ProjectActivityStateException {
+        stop(DateUtils.getNow(), notifyObservers);
+    }
+    
+    /**
+     * Stops a project activity at the given stopTime.
+     * DON'T USE THIS METHOD - unless you really know what you do.
+     * Use {{@link #stop()} instead!
+     *
+     * @return the new {@link ProjectActivity} that was created
+     * @throws ProjectActivityStateException if there is no running project
+     */
+    public final synchronized ProjectActivity stop(DateTime stopTime, final boolean notifyObservers) throws ProjectActivityStateException {
         if (!isActive()) {
             throw new ProjectActivityStateException(textBundle.textFor("PresentationModel.NoActiveProjectError")); //$NON-NLS-1$
         }
 
-        final DateTime now = DateUtils.getNow();
-
         WremjaEvent eventOnEndDay = null;
         DateTime stop2 = null;
 
+        final ProjectActivity activityOnStartDay;
+        final ProjectActivity lastActivity;
         // If start is on a different day from now end the activity at 0:00 one day after start.
         // Also make a new activity from 0:00 the next day until the stop time of the next day.
-        if (!org.apache.commons.lang.time.DateUtils.isSameDay(start.toDate(), now.toDate())) {
+        if (!org.apache.commons.lang.time.DateUtils.isSameDay(start.toDate(), stopTime.toDate())) {
             DateTime dt = new DateTime(start);
             dt = dt.plusDays(1);
 
             stop = dt.toDateMidnight().toDateTime();
+            
+            activityOnStartDay = new ProjectActivity(start, stop,
+                    getSelectedProject(), this.description);
+            getData().addActivity(activityOnStartDay);
+            this.activitiesList.add(activityOnStartDay);
 
             stop2 = DateUtils.getNow();
             final DateTime start2 = stop;
@@ -327,22 +351,23 @@ public class PresentationModel extends Observable {
                     getSelectedProject(), this.description);
             getData().addActivity(activityOnEndDay);
             this.activitiesList.add(activityOnEndDay);
+            lastActivity = activityOnEndDay;
 
             // Create Event for Project Activity
             eventOnEndDay  = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
             eventOnEndDay.setData(activityOnEndDay);
         } else {
-            stop = now;
+            stop = stopTime;
+            activityOnStartDay = new ProjectActivity(start, stop,
+                    getSelectedProject(), this.description);
+            getData().addActivity(activityOnStartDay);
+            this.activitiesList.add(activityOnStartDay);
+            lastActivity = activityOnStartDay;
         }
 
-        final ProjectActivity activityOnStartDay = new ProjectActivity(start, stop,
-                getSelectedProject(), this.description);
-        getData().addActivity(activityOnStartDay);
-        this.activitiesList.add(activityOnStartDay);
-
         // Clear old activity
-        description = StringUtils.EMPTY;
-        UserSettings.instance().setLastDescription(StringUtils.EMPTY);
+        description = "";
+        UserSettings.instance().setLastDescription(description);
         setActive(false);
         getData().stop();
         setStart(null);
@@ -366,6 +391,8 @@ public class PresentationModel extends Observable {
             event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STOPPED);
             notify(event);
         }
+        
+        return lastActivity;
     }
 
     /**
@@ -428,17 +455,20 @@ public class PresentationModel extends Observable {
      * @throws Exception on error during saving
      */
     public final void save() throws Exception {
+        // save last touch
+        UserSettings.instance().setLastTouchTimestamp(new DateTime());
+        
         // If there are no changes there's nothing to do.
         if (!dirty)  {
             return;
         }
 
-        // Save data to disk.
-        final ProTrackWriter writer = new ProTrackWriter(data);
-
+        // do a backup of the old file first
         final File proTrackFile = new File(UserSettings.instance().getDataFileLocation());
         DataBackup.createBackup(proTrackFile);
 
+        // Save changed data to disk.
+        final ProTrackWriter writer = new ProTrackWriter(data);
         writer.write(proTrackFile);        
     }
 
@@ -658,17 +688,25 @@ public class PresentationModel extends Observable {
         return data;
     }
 
+    public void setData(final ActivityRepository data) {
+        setData(data, true);
+    }
+    
     /**
      * @param data the data to set
      */
-    public void setData(final ActivityRepository data) {
+    public void setData(final ActivityRepository data, boolean setDirty) {
         if (ObjectUtils.equals(this.data, data)) {
             return;
         }
 
         this.data = data;
-
+        
         initialize();
+        
+        if(setDirty) {
+            this.dirty = true;
+        }
 
         // Fire event
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.DATA_CHANGED, this);
@@ -702,10 +740,16 @@ public class PresentationModel extends Observable {
         notify(event);
     }
 
+    /**
+     * Returns the description of the current activity.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Sets the description of the current activity.
+     */
     public void setDescription(final String description) {
         this.description = description;
     }
@@ -723,12 +767,4 @@ public class PresentationModel extends Observable {
     public final boolean isDirty() {
         return dirty;
     }
-
-    /**
-     * @param dirty the dirty to set
-     */
-    public final void setDirty(final boolean dirty) {
-        this.dirty = dirty;
-    }
-
 }

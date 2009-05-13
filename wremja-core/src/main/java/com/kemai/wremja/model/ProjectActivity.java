@@ -20,7 +20,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * 
  * @author remast
  */
-@XStreamAlias("projectActivity")//$NON-NLS-1$
+@XStreamAlias("projectActivity")
 public class ProjectActivity implements Serializable, Comparable<ProjectActivity> {
 
     /**

@@ -2,6 +2,7 @@ package com.kemai.wremja.gui.actions;
 
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -98,7 +99,7 @@ public abstract class AbstractExportAction extends AbstractWremjaAction {
     
     private static OutputStream getFileOutputStream(File f, FileFilter fileFilter, Frame owner) {
         try {
-            return new FileOutputStream(f);
+            return new BufferedOutputStream(new FileOutputStream(f));
         } catch (FileNotFoundException e) {
             log.error(e, e);
             JOptionPane.showMessageDialog(

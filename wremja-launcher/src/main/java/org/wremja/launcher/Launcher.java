@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -54,8 +55,8 @@ public final class Launcher {
     /** Property for command line option minimized (-m). */
     private Boolean minimized;
 
-    /** The interval in minutes in which the data is saved to the disk. */
-    private static final int SAVE_TIMER_INTERVAL = 3;
+    /** The interval in ms in which the data is saved to the disk. */
+    private static final long SAVE_TIMER_INTERVAL = TimeUnit.MINUTES.toMillis(1);
 
 
     //------------------------------------------------
@@ -93,11 +94,11 @@ public final class Launcher {
 
             final PresentationModel model = initModel();
 
+            initMainFrame(model, mainInstance);
+            
             initTimer(model);
 
             initShutdownHook(model);
-
-            initMainFrame(model, mainInstance);
         } catch (Throwable t) {
             log.error(t, t);
             JOptionPane.showMessageDialog(
@@ -133,7 +134,7 @@ public final class Launcher {
      * @return the initialized main frame
      */
     private static MainFrame initMainFrame(final PresentationModel model,
-            final Launcher mainInstance) {
+            final Launcher mainInstance) throws Exception {
         log.debug("Initializing main frame ...");
         final MainFrame mainFrame = new MainFrame(model);
         
@@ -146,10 +147,17 @@ public final class Launcher {
         		minimized = UserSettings.instance().isWindowMinimized();
         	}
         }
+        
+        if(model.isActive()) {
+            mainFrame.handleUnfinishedActivityOnStartup();
+        }
+        
         mainFrame.setVisible(!minimized);
-        if(  minimized ) {
+        if( minimized ) {
         	mainFrame.showTray(true);
         }
+        
+
         return mainFrame;
     }
 
@@ -382,7 +390,7 @@ public final class Launcher {
     private static void initTimer(final PresentationModel model) {
         log.debug("Initializing timer ...");
         timer = new Timer();
-        timer.scheduleAtFixedRate(new SaveTimer(model), 1000 * 60 * SAVE_TIMER_INTERVAL, 1000 * 60 * SAVE_TIMER_INTERVAL);
+        timer.scheduleAtFixedRate(new SaveTimer(model), SAVE_TIMER_INTERVAL, SAVE_TIMER_INTERVAL);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.kemai.wremja.model.io;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class ProTrackReader {
      * @throws IOException
      */
     public void read(final File file) throws IOException {
-        final InputStream fis = new FileInputStream(file);
+        final InputStream fis = new BufferedInputStream(new FileInputStream(file));
         try {
             read(fis);
         } catch(IOException e) {

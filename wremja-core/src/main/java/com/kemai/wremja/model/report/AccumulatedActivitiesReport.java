@@ -5,7 +5,7 @@ import java.util.Observable;
 
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.ProjectActivity;
-import com.kemai.wremja.model.ProjectView;
+import com.kemai.wremja.model.ReadableRepository;
 import com.kemai.wremja.model.filter.Filter;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -14,7 +14,7 @@ import ca.odell.glazedlists.EventList;
 public class AccumulatedActivitiesReport extends Observable {
 
     /** The data of the report. */
-    private ProjectView data;
+    private ReadableRepository data;
 
     /** Accumulated activities of the report. */
     private EventList<AccumulatedProjectActivity> accumulatedActivitiesByDay;
@@ -25,7 +25,7 @@ public class AccumulatedActivitiesReport extends Observable {
     /**
      * Create report from data.
      */
-    public AccumulatedActivitiesReport(final ProjectView data) {
+    public AccumulatedActivitiesReport(final ReadableRepository data) {
         this.data = data;
         this.accumulatedActivitiesByDay = new BasicEventList<AccumulatedProjectActivity>();
 

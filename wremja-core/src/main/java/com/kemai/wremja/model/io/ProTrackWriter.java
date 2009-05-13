@@ -1,5 +1,6 @@
 package com.kemai.wremja.model.io;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,7 +10,7 @@ import com.kemai.util.IOUtils;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
-import com.kemai.wremja.model.ProjectView;
+import com.kemai.wremja.model.ReadableRepository;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
@@ -20,13 +21,13 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public class ProTrackWriter {
 
     /** The data to write. */
-    private ProjectView data;
+    private ReadableRepository data;
 
     /**
      * Create a write for given data.
      * @param data the data
      */
-    public ProTrackWriter(final ProjectView data) {
+    public ProTrackWriter(final ReadableRepository data) {
         this.data = data;
     }
 
@@ -41,7 +42,7 @@ public class ProTrackWriter {
         }
 
         synchronized (data) {
-            final OutputStream fileOut = new FileOutputStream(file);
+            final OutputStream fileOut = new BufferedOutputStream(new FileOutputStream(file));
             try {
                 write(fileOut);
                 fileOut.flush();

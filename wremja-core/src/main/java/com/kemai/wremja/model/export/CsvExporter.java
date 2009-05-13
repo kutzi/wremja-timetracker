@@ -12,7 +12,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.model.ProjectActivity;
-import com.kemai.wremja.model.ProjectView;
+import com.kemai.wremja.model.ReadableRepository;
 import com.kemai.wremja.model.filter.Filter;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -56,7 +56,7 @@ public class CsvExporter implements Exporter {
      * @throws Exception exception during data export
      */
     @Override
-    public void export(final ProjectView data, final Filter filter, final OutputStream outputStream) throws Exception {
+    public void export(final ReadableRepository data, final Filter filter, final OutputStream outputStream) throws Exception {
         List<ProjectActivity> activities = data.getActivities();
         if (filter != null) {
             activities = filter.applyFilters(data.getActivities());

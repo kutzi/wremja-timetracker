@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
+
+import com.kemai.util.IOUtils;
 
 /**
  * A {@link Configuration} based on java.util.Properties
@@ -14,12 +18,21 @@ import java.util.Properties;
 public class JUPropertiesConfiguration implements Configuration {
 
     private final File file;
+    private final String name;
     private final Properties props = new Properties();
 
-    public JUPropertiesConfiguration( File propertiesFile ) throws IOException {
+    public JUPropertiesConfiguration( File propertiesFile, String name ) throws IOException {
         this.file = propertiesFile;
+        this.name = name;
         if( file.exists() ) {
-            props.load(new FileInputStream(file));
+            
+            InputStream in = null;
+            try {
+                in = new FileInputStream(file);
+                props.load(in);
+            } finally {
+                IOUtils.closeQuietly(in);
+            }
         }
     }
     
@@ -83,10 +96,16 @@ public class JUPropertiesConfiguration implements Configuration {
     }
 
     private void save() {
+        OutputStream out = null;
         try {
-            this.props.store(new FileOutputStream(this.file), null);
+            // note that Properties internally wraps the outputstream
+            // in a BufferedWriter, so we don't need to buffer it here
+            out = new FileOutputStream(this.file);
+            this.props.store(out, this.name );
         } catch (IOException e) {
             throw new RuntimeException( "Saving failed", e );
+        } finally {
+            IOUtils.closeQuietly(out);
         }
     }
 

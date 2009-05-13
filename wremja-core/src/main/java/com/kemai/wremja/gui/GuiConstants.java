@@ -72,10 +72,12 @@ public abstract class GuiConstants {
     
     public static final String WREMJA_VERSION;
     public static final String WREMJA_REVISION;
+    public static final String WREMJA_TIMESTAMP;
     
     static {
         String version = "?";
         String revision = "?";
+        String timestamp = "?";
         try {
             InputStream in = GuiConstants.class.getResourceAsStream("/com/kemai/wremja/wremja.properties");
             if(in != null) {
@@ -83,12 +85,14 @@ public abstract class GuiConstants {
                 props.load(in);
                 version = props.getProperty("wremja.version", "?");
                 revision = props.getProperty("wremja.buildnumber", "?");
+                timestamp = props.getProperty("wremja.buildTimestamp", "?");
             }
         } catch (IOException e) {
             log.warn( "Couldn't access wremja.properties", e );
         }
         WREMJA_VERSION = version;
         WREMJA_REVISION = revision;
+        WREMJA_TIMESTAMP = timestamp;
     }
 
 }

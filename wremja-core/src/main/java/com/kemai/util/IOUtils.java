@@ -33,16 +33,16 @@ public class IOUtils {
             throw new IOException("Destination '" + destFile + "' exists but is a directory");
         }
 
-        FileInputStream input = new FileInputStream(srcFile);
+        InputStream input = null;
+        OutputStream output = null;
+        
         try {
-            FileOutputStream output = new FileOutputStream(destFile);
-            try {
-                IOUtils.copy(input, output);
-            } finally {
-                IOUtils.closeQuietly(output);
-            }
+            input = new FileInputStream(srcFile);
+            output = new FileOutputStream(destFile);
+            copy(input, output);
         } finally {
-            IOUtils.closeQuietly(input);
+            closeQuietly(input);
+            closeQuietly(output);
         }
 
         if (srcFile.length() != destFile.length()) {
@@ -71,15 +71,10 @@ public class IOUtils {
      * @return the number of bytes copied
      * @throws NullPointerException if the input or output is null
      * @throws IOException if an I/O error occurs
-     * @throws ArithmeticException if the byte count is too large
-     * @since Commons IO 1.1
      */
-    public static int copy(InputStream input, OutputStream output) throws IOException {
+    public static long copy(InputStream input, OutputStream output) throws IOException {
         long count = copyLarge(input, output);
-        if (count > Integer.MAX_VALUE) {
-            return -1;
-        }
-        return (int) count;
+        return count;
     }
 
     /**
@@ -94,7 +89,6 @@ public class IOUtils {
      * @return the number of bytes copied
      * @throws NullPointerException if the input or output is null
      * @throws IOException if an I/O error occurs
-     * @since Commons IO 1.3
      */
     public static long copyLarge(InputStream input, OutputStream output)
             throws IOException {
@@ -108,6 +102,11 @@ public class IOUtils {
         return count;
     }
     
+    /**
+     * Closes any {@link Closeable} ignoring null parameters and {@link IOException}s.
+     *
+     * @param closeable The {@link Closeable}. May be null.
+     */
     public static void closeQuietly(Closeable closeable) {
         try {
             if (closeable != null) {

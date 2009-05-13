@@ -57,7 +57,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.0-beta-2</version>
+				<version>1.0-beta-3</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -67,8 +67,15 @@
 					</execution>
 				</executions>
 				<configuration>
+				    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
+					<useLastCommittedRevision>true</useLastCommittedRevision>
+					<locale>en</locale>
+					<timestampFormat>{0,date,yyyy-MM-dd HH:mm:ssZ}</timestampFormat>
+		            <!-- <providerImplementations>
+			            <svn>javasvn</svn>
+			        </providerImplementations>-->
 				</configuration>
 			</plugin>
 			<plugin>

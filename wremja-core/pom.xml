@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.kemai.wremja</groupId>
 	<artifactId>wremja-core</artifactId>
-	<name>Baralga Application</name>
+	<name>Wremja core application</name>
 	<version>1.0-SNAPSHOT</version>
 	<url>http://kenai.com/projects/wremja/pages/Home</url>
 	<issueManagement>
@@ -33,14 +33,7 @@
 		</license>
 	</licenses>
 	
-	<properties>
-	    <!-- See http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
 	<build>
-		<!--  enable this in Maven 2.1 <sourceEncoding>UTF-8</sourceEncoding> -->
-		
 		<resources>
 		  <resource>
 		    <filtering>false</filtering>

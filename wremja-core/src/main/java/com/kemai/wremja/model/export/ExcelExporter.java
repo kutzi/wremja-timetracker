@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ProjectActivity;
-import com.kemai.wremja.model.ProjectView;
+import com.kemai.wremja.model.ReadableRepository;
 import com.kemai.wremja.model.filter.Filter;
 import com.kemai.wremja.model.report.AccumulatedActivitiesReport;
 import com.kemai.wremja.model.report.AccumulatedProjectActivity;
@@ -74,7 +74,7 @@ public class ExcelExporter implements Exporter {
      * @throws Exception exception during data export
      */
     @Override
-    public void export(final ProjectView data, final Filter filter, final OutputStream outputStream) throws Exception {
+    public void export(final ReadableRepository data, final Filter filter, final OutputStream outputStream) throws Exception {
             init();
             
             final WritableWorkbook workbook = Workbook.createWorkbook(outputStream);
@@ -138,7 +138,7 @@ public class ExcelExporter implements Exporter {
 
     }
 
-    private void createFilteredReport(final WritableWorkbook workbook, final ProjectView data, final Filter filter) throws JXLException {
+    private void createFilteredReport(final WritableWorkbook workbook, final ReadableRepository data, final Filter filter) throws JXLException {
         String year = "";
         if (filter != null && filter.getYear() != null) {
             year = YEAR_FORMAT.format(filter.getYear());

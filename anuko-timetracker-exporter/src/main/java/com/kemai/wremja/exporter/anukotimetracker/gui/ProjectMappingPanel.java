@@ -32,7 +32,7 @@ import com.kemai.wremja.exporter.anukotimetracker.model.AnukoInfo;
 import com.kemai.wremja.exporter.anukotimetracker.model.AnukoProject;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
-import com.kemai.wremja.model.ProjectView;
+import com.kemai.wremja.model.ReadableRepository;
 import com.kemai.wremja.model.filter.Filter;
 
 /**
@@ -43,7 +43,7 @@ import com.kemai.wremja.model.filter.Filter;
 public class ProjectMappingPanel extends JXPanel {
 
     private final AnukoInfo info;
-    private final ProjectView wremjaData;
+    private final ReadableRepository wremjaData;
     private final Filter filter;
     private final JButton exportButton;
     private SortedSet<Project> wremjaProjects;
@@ -51,7 +51,7 @@ public class ProjectMappingPanel extends JXPanel {
     private final Map<Project, AnukoActivity> mappings = new HashMap<Project, AnukoActivity>();
 
     
-    public ProjectMappingPanel(AnukoInfo info, ProjectView wremjaData,
+    public ProjectMappingPanel(AnukoInfo info, ReadableRepository wremjaData,
             Filter filter, JButton exportButton) {
         super();
         this.info = info;

@@ -2,7 +2,7 @@ package com.kemai.wremja.model.export;
 
 import java.io.OutputStream;
 
-import com.kemai.wremja.model.ProjectView;
+import com.kemai.wremja.model.ReadableRepository;
 import com.kemai.wremja.model.filter.Filter;
 import com.kemai.wremja.model.io.ProTrackWriter;
 
@@ -20,7 +20,7 @@ public class RawDataExporter implements Exporter {
      * @throws Exception exception during data export
      */
     @Override
-    public void export(ProjectView data, Filter filter, OutputStream outputStream) throws Exception {
+    public void export(ReadableRepository data, Filter filter, OutputStream outputStream) throws Exception {
         final ProTrackWriter writer = new ProTrackWriter(data);
         writer.write(outputStream);
         outputStream.flush();

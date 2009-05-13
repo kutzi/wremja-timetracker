@@ -8,22 +8,30 @@ import java.awt.SystemTray;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowListener;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.jdesktop.swingx.JXFrame;
+import org.joda.time.DateTime;
 
 import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
 import com.kemai.util.TextResourceBundle;
+import com.kemai.util.UiUtilities;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.actions.AboutAction;
 import com.kemai.wremja.gui.actions.AbstractWremjaAction;
@@ -35,24 +43,27 @@ import com.kemai.wremja.gui.actions.ExportExcelAction;
 import com.kemai.wremja.gui.actions.ImportDataAction;
 import com.kemai.wremja.gui.actions.ManageProjectsAction;
 import com.kemai.wremja.gui.actions.SettingsAction;
+import com.kemai.wremja.gui.dialogs.AddOrEditActivityDialog;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.gui.model.ProjectActivityStateException;
 import com.kemai.wremja.gui.panels.ActivityPanel;
 import com.kemai.wremja.gui.panels.ReportPanel;
 import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.logging.Logger;
+import com.kemai.wremja.model.ProjectActivity;
 
 /**
  * The main frame of the application.
  * @author remast
  */
-@SuppressWarnings("serial")//$NON-NLS-1$
+@SuppressWarnings("serial")
 public class MainFrame extends JXFrame implements Observer, WindowListener {
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(MainFrame.class);
 
-    private static final Logger log = Logger.getLogger(MainFrame.class);
+    private static final Logger LOG = Logger.getLogger(MainFrame.class);
     
     /** The model. */
     private final PresentationModel model;
@@ -196,7 +207,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      * @param mainFrame
      */
     private void initTrayIcon() {
-        log.debug("Initializing tray icon ...");
+        LOG.debug("Initializing tray icon ...");
 
         // Create try icon.
         try {
@@ -592,6 +603,67 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             }
             UserSettings.instance().setWindowMinimized(show);
         }
+    }
+
+    public void handleUnfinishedActivityOnStartup() throws InterruptedException, InvocationTargetException {
+        setVisible(true);
+        
+        SwingUtilities.invokeAndWait(new Runnable() {
+            @Override
+            public void run() {
+                Object[] options = new Object[2];
+                Locale l = Locale.getDefault();
+                {
+                    String text = UIManager.getString("OptionPane.okButtonText", l);
+                    int mnemonic = UiUtilities.getMnemonic("OptionPane.okButtonMnemonic", l);
+                    
+                    Icon icon = UIManager.getIcon("OptionPane.okIcon");
+                    JButton button = new JButton(text);
+                    button.setMnemonic(mnemonic);
+                    button.setIcon(icon);
+                    options[0] = text;
+                }
+                
+                JButton button2 = new JButton("Edit activity first");
+                button2.setMnemonic('E');
+                options[1] = "Edit activity";
+                
+                DateTime lastTouch = UserSettings.instance().getLastTouchTimestamp();
+                String msg = "Looks like there is an unfinished activity!";
+                msg += "\nWill add a new activity from " + FormatUtils.formatDate( model.getStart())
+                    + " " + FormatUtils.formatTime( model.getStart())
+                    + " to " + FormatUtils.formatTime(lastTouch);
+                int chosen = JOptionPane.showOptionDialog(MainFrame.this, msg,
+                        "Unfinished activity", 0, JOptionPane.WARNING_MESSAGE, null,
+                        options, options[0]);
+                
+                if( chosen == 0 ) {
+                    try {
+                        model.stop(lastTouch, true);
+                    } catch (ProjectActivityStateException e1) {
+                        LOG.error(e1, e1);
+                    }
+                } else if( chosen == 1) {
+                    try {
+                        ProjectActivity addedActivity = model.stop(lastTouch, true);
+                        AddOrEditActivityDialog editActivityDialog = new AddOrEditActivityDialog(
+                                MainFrame.this, 
+                                model, 
+                                addedActivity
+                        );
+                        editActivityDialog.pack();
+                        editActivityDialog.setLocationRelativeTo(MainFrame.this);
+                        editActivityDialog.setVisible(true);
+                    } catch (ProjectActivityStateException e1) {
+                        LOG.error(e1, e1);
+                    }
+                } else if( chosen == JOptionPane.CLOSED_OPTION) {
+                    // do nothing, let activity continue
+                } else {
+                    throw new IllegalStateException("" + chosen);
+                }
+            }
+        });
     }
 
 }
