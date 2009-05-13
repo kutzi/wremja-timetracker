@@ -38,6 +38,8 @@ public class AboutAction extends AbstractWremjaAction {
     public final void actionPerformed(final ActionEvent event) {
         // Display the about dialog
         final AboutDialog aboutDialog = new AboutDialog(getOwner());
+        aboutDialog.pack();
+        aboutDialog.setLocationRelativeTo(getOwner());
         aboutDialog.setVisible(true);
     }
 

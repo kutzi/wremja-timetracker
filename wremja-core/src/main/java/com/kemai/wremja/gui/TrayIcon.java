@@ -62,6 +62,7 @@ public class TrayIcon implements Observer {
             trayIcon = new JXTrayIcon(NORMAL_ICON); //$NON-NLS-1$
             trayIcon.setToolTip(textBundle.textFor("Global.Title"));
         }
+        trayIcon.setImageAutoSize(true);
         trayIcon.setJPopupMenu(menu);
         trayIcon.setImageAutoSize(true);
 

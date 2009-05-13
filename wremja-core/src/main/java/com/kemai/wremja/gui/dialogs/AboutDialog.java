@@ -51,10 +51,9 @@ public class AboutDialog extends EscapeDialog {
      * Set up GUI components.
      */
     private void initialize() {
-        setLocationRelativeTo(getOwner());
         this.setLayout(new BorderLayout());
         
-        final JXImagePanel image = new JXImagePanel(getClass().getResource("/icons/Baralga-About.png")); //$NON-NLS-1$
+        final JXImagePanel image = new JXImagePanel(getClass().getResource("/icons/Wremja-About.png")); //$NON-NLS-1$
         image.setBackground(GuiConstants.BEIGE);
         
         final JXPanel aboutInfo = new JXPanel();
