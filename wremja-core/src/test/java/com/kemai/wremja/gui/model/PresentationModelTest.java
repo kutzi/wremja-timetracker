@@ -1,6 +1,8 @@
 package com.kemai.wremja.gui.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
@@ -120,8 +122,9 @@ public class PresentationModelTest {
         ActivityRepository rep = new ActivityRepository();
         rep.add(project1);
         rep.add(project2);
+        assertTrue(rep.isDirty());
         PresentationModel model = new PresentationModel(rep);
-        assertFalse(model.isDirty());
+        rep.setDirty(false);
         assertEquals(2, model.getProjectList().size());
         assertEquals(0, model.getActivitiesList().size());
         return model;

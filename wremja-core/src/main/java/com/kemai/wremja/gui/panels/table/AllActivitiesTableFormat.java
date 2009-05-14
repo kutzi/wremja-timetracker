@@ -2,7 +2,6 @@ package com.kemai.wremja.gui.panels.table;
 
 import java.beans.PropertyChangeEvent;
 import java.text.ParseException;
-import java.util.Date;
 
 import org.joda.time.DateTime;
 
@@ -94,10 +93,10 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
         }
         // Day and month
         else if (column == 1) {
-            final Date oldDate = activity.getEnd().toDate();
-            Date newDate = (Date) editedValue;
+            final DateTime oldDate = activity.getEnd();
+            DateTime newDate = new DateTime(editedValue);
 
-            activity.setDay(new DateTime(newDate));
+            activity.setDay(newDate);
 
             // Fire event
             final PropertyChangeEvent propertyChangeEvent = new PropertyChangeEvent(activity, ProjectActivity.PROPERTY_DATE, oldDate, newDate);
@@ -106,14 +105,14 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
         // Start time
         else if (column == 2) {
             try {
-                final Date oldStart = activity.getStart().toDate();
+                final DateTime oldStart = activity.getStart();
                 
                 int[] hoursMinutes = SmartTimeFormat.parseToHourAndMinutes((String) editedValue);
                 activity.setStartTime(hoursMinutes[0], hoursMinutes[1]);
 
                 // Fire event
                 final PropertyChangeEvent propertyChangeEvent = new PropertyChangeEvent(activity, ProjectActivity.PROPERTY_START,
-                        oldStart, activity.getStart().toDate());
+                        oldStart, activity.getStart());
                 model.fireProjectActivityChangedEvent(activity, propertyChangeEvent);
             } catch( IllegalArgumentException e ) {
                 // Ignore and don't save changes to model.
@@ -124,14 +123,14 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
         // End time
         else if (column == 3) {
             try {
-                final Date oldEnd = activity.getEnd().toDate();
+                final DateTime oldEnd = activity.getEnd();
 
                 int[] hoursMinutes = SmartTimeFormat.parseToHourAndMinutes((String) editedValue);
                 activity.setEndTime(hoursMinutes[0], hoursMinutes[1]);
                                
                 // Fire event
                 final PropertyChangeEvent propertyChangeEvent = new PropertyChangeEvent(activity, ProjectActivity.PROPERTY_END,
-                        oldEnd, activity.getEnd().toDate());
+                        oldEnd, activity.getEnd());
                 model.fireProjectActivityChangedEvent(activity, propertyChangeEvent);
             } catch( IllegalArgumentException e ) {
                 // Ignore and don't save changes to model.

@@ -344,6 +344,14 @@ public final class UserSettings {
 	
     private static final String LAST_TOUCH_TIMESTAMP = "lastTouch"; //$NON-NLS-1$
     
+    private static final String DISCARD_EMPTY_ACTIVITIES = "discard.emptyActivities";
+    public boolean isDiscardEmptyActivities() {
+        return doGetBoolean(DISCARD_EMPTY_ACTIVITIES, false);
+    }
+    public void setDiscardEmptyActivities(boolean b) {
+        userConfig.setProperty(DISCARD_EMPTY_ACTIVITIES, b);
+    }
+    
     /**
      * Sets the last touch timestamp.
      */

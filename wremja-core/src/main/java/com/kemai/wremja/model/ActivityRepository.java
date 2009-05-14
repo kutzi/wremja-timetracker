@@ -9,13 +9,14 @@ import org.joda.time.DateTime;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Main data container of Wremja.
  * 
  * This consists mainly of project and activities in these projects.
  */
-@XStreamAlias("proTrack") //$NON-NLS-1$
+@XStreamAlias("proTrack") 
 public class ActivityRepository implements ReadableRepository, Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -44,6 +45,9 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 	 * The last time this data record was modified.
 	 */
 	private DateTime modifiedTimeStamp;
+	
+	@XStreamOmitField
+	private boolean dirty = false;
 
 	public ActivityRepository() {
 	}
@@ -58,6 +62,7 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 		}
 		
 		this.activeProjects.add(project);
+		this.dirty = true;
 	}
 
 	/**
@@ -71,6 +76,7 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 		
 		this.activeProjects.remove(project);
 		this.projectsToBeDeleted.add(project);
+		this.dirty = true;
 	}
 
 	// TODO: this method is called from nowhere!?
@@ -123,10 +129,12 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 	public synchronized void start(final DateTime startTime) {
 		this.active = true;
 		this.startTime = startTime;
+		this.dirty = true;
 	}
 	
 	public synchronized void stop() {
         this.active = false;
+        this.dirty = true;
     }
 
 	public synchronized DateTime getStart() {
@@ -135,6 +143,7 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 	
     public synchronized void setStartTime(DateTime startTime) {
         this.startTime = startTime;
+        this.dirty = true;
     }
 
 	/**
@@ -149,6 +158,7 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 	 */
 	public synchronized void setActiveProject(final Project activeProject) {
 		this.activeProject = activeProject;
+		this.dirty = true;
 	}
 
 	/**
@@ -163,13 +173,19 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 	 */
 	public synchronized void addActivity(final ProjectActivity activity) {
 	    this.activities.add(activity);
+	    this.dirty = true;
 	}
 	
 	/**
      * Removes an activity.
      */
     public synchronized boolean removeActivity(final ProjectActivity activity) {
-        return this.activities.remove(activity);
+        if( this.activities.remove(activity) ) {
+            this.dirty = true;
+            return true;
+        } else {
+            return false;
+        }
     }
 
 	/**
@@ -186,6 +202,7 @@ public class ActivityRepository implements ReadableRepository, Serializable {
             ProjectActivity newActivity) {
         removeActivity(oldActivity);
         addActivity(newActivity);
+        this.dirty = true;
     }
 
     /**
@@ -194,6 +211,7 @@ public class ActivityRepository implements ReadableRepository, Serializable {
     public synchronized void replaceProject(Project oldProject, Project newProject) {
         remove(oldProject);
         add(newProject);
+        this.dirty = true;
     }
 
     /**
@@ -201,5 +219,18 @@ public class ActivityRepository implements ReadableRepository, Serializable {
      */
     public synchronized DateTime getModifiedTimeStamp() {
         return this.modifiedTimeStamp;
+    }
+    
+    public synchronized boolean isDirty() {
+        return this.dirty;
+    }
+    
+    /**
+     * Sets the dirty flag
+     * 
+     * Use with care!
+     */
+    public synchronized void setDirty(boolean b) {
+        this.dirty = b;
     }
 }
