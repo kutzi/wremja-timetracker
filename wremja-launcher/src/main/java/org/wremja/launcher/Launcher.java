@@ -191,6 +191,10 @@ public final class Launcher {
                     @Override
                     public void run() {
                         log.debug("Shutting down");
+                        // TODO: decouple this from the PresentationModel
+                        // (always causes problems, because some GUI components which
+                        // should be notified are already gone!)
+                        
                         // 1. Stop current activity (if any)
                         if (model.isActive()) {
                             try {
