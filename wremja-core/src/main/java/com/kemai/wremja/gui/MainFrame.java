@@ -9,13 +9,10 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -23,7 +20,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.jdesktop.swingx.JXFrame;
 import org.joda.time.DateTime;
@@ -31,7 +27,6 @@ import org.joda.time.DateTime;
 import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
 import com.kemai.util.TextResourceBundle;
-import com.kemai.util.UiUtilities;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.actions.AboutAction;
 import com.kemai.wremja.gui.actions.AbstractWremjaAction;
@@ -611,28 +606,17 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override
             public void run() {
-                Object[] options = new Object[2];
-                Locale l = Locale.getDefault();
-                {
-                    String text = UIManager.getString("OptionPane.okButtonText", l);
-                    int mnemonic = UiUtilities.getMnemonic("OptionPane.okButtonMnemonic", l);
-                    
-                    Icon icon = UIManager.getIcon("OptionPane.okIcon");
-                    JButton button = new JButton(text);
-                    button.setMnemonic(mnemonic);
-                    button.setIcon(icon);
-                    options[0] = text;
-                }
-                
-                JButton button2 = new JButton("Edit activity first");
-                button2.setMnemonic('E');
-                options[1] = "Edit activity";
+                Object[] options = new Object[3];
+                options[0] = "Stop";
+                options[1] = "Stop & Edit";
+                options[2] = "Continue activity";
                 
                 DateTime lastTouch = UserSettings.instance().getLastTouchTimestamp();
-                String msg = "Looks like there is an unfinished activity!";
-                msg += "\nWill add a new activity from " + FormatUtils.formatDate( model.getStart())
-                    + " " + FormatUtils.formatTime( model.getStart())
-                    + " to " + FormatUtils.formatTime(lastTouch);
+                String msg = "There is an unfinished activity from a previous run!" +
+                		"\nIt was probably still running when the computer was shut down. (Or Wremja crashed)\n";
+                msg += "\nWould you like the activity on project '" + model.getData().getActiveProject().getTitle()
+                    + "' starting at "+ FormatUtils.formatDate( model.getStart()) + " " + FormatUtils.formatTime( model.getStart())
+                    + "h to stop at " + FormatUtils.formatTime(lastTouch) + "h?";
                 int chosen = JOptionPane.showOptionDialog(MainFrame.this, msg,
                         "Unfinished activity", 0, JOptionPane.WARNING_MESSAGE, null,
                         options, options[0]);
@@ -646,18 +630,20 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
                 } else if( chosen == 1) {
                     try {
                         ProjectActivity addedActivity = model.stop(lastTouch, true);
-                        AddOrEditActivityDialog editActivityDialog = new AddOrEditActivityDialog(
-                                MainFrame.this, 
-                                model, 
-                                addedActivity
-                        );
-                        editActivityDialog.pack();
-                        editActivityDialog.setLocationRelativeTo(MainFrame.this);
-                        editActivityDialog.setVisible(true);
-                    } catch (ProjectActivityStateException e1) {
-                        LOG.error(e1, e1);
+                        if(addedActivity != null) {
+                            AddOrEditActivityDialog editActivityDialog = new AddOrEditActivityDialog(
+                                    MainFrame.this, 
+                                    model, 
+                                    addedActivity
+                            );
+                            editActivityDialog.pack();
+                            editActivityDialog.setLocationRelativeTo(MainFrame.this);
+                            editActivityDialog.setVisible(true);
+                        }
+                    } catch (ProjectActivityStateException e) {
+                        LOG.error(e, e);
                     }
-                } else if( chosen == JOptionPane.CLOSED_OPTION) {
+                } else if( chosen == 2 || chosen == JOptionPane.CLOSED_OPTION) {
                     // do nothing, let activity continue
                 } else {
                     throw new IllegalStateException("" + chosen);
