@@ -7,7 +7,7 @@
     target="$INSTALL_PATH\wremja-launcher-${wremja.version}.jar"
     commandLine=""
     workingDirectory="$INSTALL_PATH"
-    description="Zeiterfassung fÃ¼r Projekte."
+    description="Zeiterfassung für Projekte."
     iconFile="$INSTALL_PATH\Baralga-Tray.ico"
     iconIndex="0"
     initialState="maximized"
