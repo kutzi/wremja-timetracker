@@ -8,9 +8,7 @@ import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
-import com.kemai.util.DateUtils;
 import com.kemai.wremja.gui.lists.MonthFilterList;
-import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
 import com.kemai.wremja.gui.lists.YearFilterList;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.filter.Filter;
@@ -375,14 +373,14 @@ public final class UserSettings {
     public Filter restoreFromSettings() {
         final Filter filter = new Filter();
 
-        // Restore the week of the year
-        restoreWeekOfYearFilter(filter);
-
         // Restore the month
         restoreMonthFilter(filter);
 
         // Restore the year
         restoreYearFilter(filter);
+        
+        // Restore the week of the year
+        restoreWeekOfYearFilter(filter);
 
         return filter;
     }
@@ -398,19 +396,7 @@ public final class UserSettings {
             return;
         }
 
-        if (selectedYear == YearFilterList.CURRENT_YEAR_DUMMY) {
-            filter.setYear(DateUtils.getNow());
-            return;
-        } 
-
-        if (selectedYear != YearFilterList.ALL_YEARS_DUMMY) {
-            try {
-                DateTime year = new DateTime().withYear(selectedYear);
-                filter.setYear(year);
-            } catch (NumberFormatException e) {
-                LOG.error(e, e);
-            }
-        }
+        filter.setYear(selectedYear.intValue());
     }
 
     /**
@@ -424,19 +410,7 @@ public final class UserSettings {
             return;
         }
 
-        if (selectedMonth == MonthFilterList.CURRENT_MONTH_DUMMY) {
-            filter.setMonth(DateUtils.getNow());
-            return;
-        } 
-
-        if (selectedMonth != MonthFilterList.ALL_MONTHS_DUMMY) {
-            try {
-                DateTime month = new DateTime().withMonthOfYear(selectedMonth);
-                filter.setMonth(month);
-            } catch (NumberFormatException e) {
-                LOG.error(e, e);
-            }
-        }
+        filter.setMonth(selectedMonth.intValue());
     }
 
     /**
@@ -449,20 +423,8 @@ public final class UserSettings {
         if (selectedWeekOfYear == null) {
             return;
         }
-
-        if (selectedWeekOfYear == WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY) {
-            filter.setWeekOfYear(DateUtils.getNow());
-            return;
-        } 
-
-        if (selectedWeekOfYear != WeekOfYearFilterList.ALL_WEEKS_OF_YEAR_DUMMY) {
-            try {
-                DateTime weekOfYear = new DateTime().withWeekOfWeekyear(selectedWeekOfYear);
-                filter.setWeekOfYear(weekOfYear);
-            } catch (NumberFormatException e) {
-                LOG.error(e, e);
-            }
-        }
+        
+        filter.setWeekOfYear(selectedWeekOfYear.intValue());
     }
 
     //------------------------------------------------

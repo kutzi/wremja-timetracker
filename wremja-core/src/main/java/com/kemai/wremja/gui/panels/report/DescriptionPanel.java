@@ -2,6 +2,7 @@ package com.kemai.wremja.gui.panels.report;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -90,7 +91,7 @@ public class DescriptionPanel extends JXPanel implements Observer {
 
         final WremjaEvent event = (WremjaEvent) eventObject;
         ProjectActivity activity;
-
+        
         switch (event.getType()) {
 
             case PROJECT_ACTIVITY_ADDED:
@@ -115,10 +116,13 @@ public class DescriptionPanel extends JXPanel implements Observer {
                 break;
 
             case PROJECT_ACTIVITY_REMOVED:
-                activity = (ProjectActivity) event.getData();
-                if (entriesByActivity.containsKey(activity)) {
-                    final DescriptionPanelEntry entryPanel = entriesByActivity.get(activity);
-                    this.container.remove(entryPanel);
+                @SuppressWarnings("unchecked")
+                Collection<ProjectActivity> activities = (Collection<ProjectActivity>)event.getDataCollection();
+                for(ProjectActivity activity2 : activities) {
+                    if (entriesByActivity.containsKey(activity2)) {
+                        final DescriptionPanelEntry entryPanel = entriesByActivity.get(activity2);
+                        this.container.remove(entryPanel);
+                    }
                 }
                 break;
 

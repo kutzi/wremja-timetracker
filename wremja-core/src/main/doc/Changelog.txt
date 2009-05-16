@@ -3,24 +3,27 @@ Changes in Version 1.0 (Compared to Baralga 1.3.5 resp. 1.4)
 
 - overhauled UI
   - easier tray menu handling: no confirmation dialogs
-  - nicer UI (espcially on Linux)
+  - nicer UI (especially on Linux)
   - avoid absolute sizing of windows/dialogs, which should improve cross-platform usability
-  - fixed popup menus not shown on Linux
+  - fixed 'popup menus not shown' on Linux
   - new Look & Feel
   - remember main window's location and minimized state (optionally)
+  - allow deletion of multiple activities at once
 
 - improved saving algorithm
   - changes to data are now detected and saved more quickly. Therefore less data loss can occur.
 
-- reduced installer size from ~9 MB to ~7 MB without losing any functionality
+- reduced installer size from ~9 MB to ~2 MB without losing any functionality!
 
-- Linux installer
+- improved Linux installer (can now install application menu entries)
 
 - recognition of unstopped activities due to a 'dirty' previous shutdown
 
 - include current activity in the time per day/time per week calculation
 
-- discard 'empty' activity (optionally)
+- 'current' week and month filters work like they should do (IMHO). I.e. they filter previous years.
+
+- discard 'empty' activities (optionally)
 
 - lots more
 

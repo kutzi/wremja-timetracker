@@ -1,7 +1,6 @@
 package com.kemai.wremja.model.export;
 
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +22,8 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.logging.Logger;
@@ -38,16 +39,14 @@ import com.kemai.wremja.model.report.AccumulatedProjectActivity;
  */
 public class ExcelExporter implements Exporter {
 
-    private static final Logger log = Logger.getLogger(ExcelExporter.class);
+    private static final Logger LOG = Logger.getLogger(ExcelExporter.class);
     
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExcelExporter.class);
 
-    public ExcelExporter() { }
+    public static final DateTimeFormatter MONTH_FORMAT = DateTimeFormat.forPattern("MM"); //$NON-NLS-1$
 
-    public final SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("MM"); //$NON-NLS-1$
-
-    public final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy"); //$NON-NLS-1$
+    public static final DateTimeFormatter YEAR_FORMAT = DateTimeFormat.forPattern("yyyy"); //$NON-NLS-1$
 
     private static final WritableCellFormat headingFormat;
     static {
@@ -57,13 +56,15 @@ public class ExcelExporter implements Exporter {
         try {
             headingFormat.setBackground(Colour.GRAY_25);
         } catch (WriteException e) {
-            log.error( "Error creating headingFormat", e );
+            LOG.error( "Error creating headingFormat", e );
         }
     }
     
     private static final WritableCellFormat floatFormat = new WritableCellFormat(NumberFormats.FLOAT); 
     private static final WritableCellFormat timeFormat = new WritableCellFormat(new DateFormat("hh:mm"));//$NON-NLS-1$
     private static final WritableCellFormat dateFormat = new WritableCellFormat(new DateFormat("DD.MM.yyyy")); //$NON-NLS-1$
+
+    public ExcelExporter() { }
 
     /**
      * Exports the given data as Microsoft Excel to the 
@@ -75,8 +76,6 @@ public class ExcelExporter implements Exporter {
      */
     @Override
     public void export(final ReadableRepository data, final Filter filter, final OutputStream outputStream) throws Exception {
-            init();
-            
             final WritableWorkbook workbook = Workbook.createWorkbook(outputStream);
             createFilteredReport(workbook, data, filter);
             
@@ -134,19 +133,16 @@ public class ExcelExporter implements Exporter {
             workbook.close();
     }
     
-    private static void init() throws JXLException {
-
-    }
-
     private void createFilteredReport(final WritableWorkbook workbook, final ReadableRepository data, final Filter filter) throws JXLException {
         String year = "";
         if (filter != null && filter.getYear() != null) {
-            year = YEAR_FORMAT.format(filter.getYear());
+            year = YEAR_FORMAT.print(filter.getYear());
         }
         
         String month = "";
         if (filter != null && filter.getMonth() != null) {
-            month = MONTH_FORMAT.format(filter.getMonth());
+            org.joda.time.DateTime monthDt = new org.joda.time.DateTime().withMonthOfYear(filter.getMonth());
+            month = MONTH_FORMAT.print( monthDt );
         }
         
         String reportName = textBundle.textFor("ExcelExporter.SheetTitleStart"); //$NON-NLS-1$

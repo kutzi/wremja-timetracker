@@ -1,12 +1,16 @@
 package com.kemai.wremja.model.filter;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 
 import com.kemai.util.Predicate;
+import com.kemai.wremja.gui.lists.MonthFilterList;
+import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
+import com.kemai.wremja.gui.lists.YearFilterList;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -14,38 +18,39 @@ import com.kemai.wremja.model.ProjectActivity;
  * Filter for selecting only those project activities which satisfy 
  * some selected criteria.
  * @author remast
+ * @author kutzi
  */
 public class Filter {
 
     /** The predicates of the filter. */
-    private final List<Predicate<ProjectActivity>> predicates = new ArrayList<Predicate<ProjectActivity>>();
+    private final Map<String, Predicate<ProjectActivity>> predicates
+        = new HashMap<String, Predicate<ProjectActivity>>();
     
+    // Ugly HACK for the 'smart' week filter
+    private final Map<String, Predicate<ProjectActivity>> disabledPredicates
+        = new HashMap<String, Predicate<ProjectActivity>>();
     
-    /** The week of the year to filter by. */
-    private DateTime weekOfYear;
-
     /** The predicate to filter by week of year. */
-    private Predicate<ProjectActivity> weekOfYearPredicate;
+    private static final String WEEK_PREDICATE = "WEEK_PREDICATE";
     
+    /** The predicate to filter by month. */
+    private static final String MONTH_PREDICATE = "MONTH_PREDICATE";
     
     /** The month to filter by. */
-    private DateTime month;
-
-    /** The predicate to filter by month. */
-    private Predicate<ProjectActivity> monthPredicate;
+    private Integer month;
     
     /** The year to filter by. */
-    private DateTime year;
+    private Integer year;
 
     
     /** The predicate to filter by year. */
-    private Predicate<ProjectActivity> yearPredicate;
+    private static final String YEAR_PREDICATE = "YEAR_PREDICATE";
 
     /** The project to filter by. */
     private Project project;
 
     /** The predicate to filter by project. */
-    private Predicate<ProjectActivity> projectPredicate;
+    private static final String PROJECT_PREDICATE = "PROJECT_PREDICATE";
 
     /**
      * Create filter with no predicates.
@@ -62,7 +67,7 @@ public class Filter {
      */
     public List<ProjectActivity> applyFilters(final List<ProjectActivity> elements) {
         ArrayList<ProjectActivity> filteredElements = new ArrayList<ProjectActivity>(elements);
-        for (Predicate<ProjectActivity> predicate : predicates) {
+        for (Predicate<ProjectActivity> predicate : predicates.values()) {
             for (ProjectActivity activity : new ArrayList<ProjectActivity>(filteredElements)) {
                 if (!predicate.evaluate(activity))
                     filteredElements.remove(activity);
@@ -80,7 +85,7 @@ public class Filter {
      * otherwise <code>false</code>
      */
     public final boolean matchesCriteria(final ProjectActivity activity) {
-        for (Predicate<ProjectActivity> predicate : predicates) {
+        for (Predicate<ProjectActivity> predicate : predicates.values()) {
             if (!predicate.evaluate(activity)) {
                 return false;
             }
@@ -101,92 +106,112 @@ public class Filter {
     }
     
     /**
-     * Getter for the week of year.
-     * @return the week of year
-     */
-    public Date getWeekOfYear() {
-        return this.weekOfYear != null ? this.weekOfYear.toDate() : null;
-    }
-
-    /**
      * Sets the weekOfYear to filter by.
-     * @param weekOfYear the weekOfYear to set
+     * @param weekOfYear the weekOfYear to set.
      */
-    public void setWeekOfYear(final DateTime weekOfYear) {
-        this.weekOfYear = weekOfYear;
+    public void setWeekOfYear(int weekOfYear) {
+        this.predicates.remove(WEEK_PREDICATE);
 
-        if (this.weekOfYearPredicate != null) {
-            this.predicates.remove(this.weekOfYearPredicate);
+        // clear filter if 'all' is selected
+        if (weekOfYear == WeekOfYearFilterList.ALL_WEEKS_OF_YEAR_DUMMY) {
+            return;
         }
 
-        // If week is null set week predicate also to null.
-        if (this.weekOfYear == null) {
-            this.weekOfYearPredicate = null;
+        final Predicate<ProjectActivity> newWeekOfYearPredicate;
+        if(weekOfYear == WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY) {
+            newWeekOfYearPredicate = new CurrentWeekPredicate();
+        } else {
+            newWeekOfYearPredicate = new WeekOfYearPredicate(weekOfYear);
         }
-
-        final Predicate<ProjectActivity> newWeekOfYearPredicate = new WeekOfYearPredicate(weekOfYear);
-        this.weekOfYearPredicate = newWeekOfYearPredicate;
-        this.predicates.add(newWeekOfYearPredicate);
+        
+        if(newWeekOfYearPredicate instanceof CurrentWeekPredicate) {
+            Predicate<ProjectActivity> yearPred =
+                this.predicates.remove(YEAR_PREDICATE);
+            if(yearPred != null) {
+                this.disabledPredicates.put(YEAR_PREDICATE, yearPred);
+            }
+            
+            Predicate<ProjectActivity> monthPred =
+                this.predicates.remove(MONTH_PREDICATE);
+            if(yearPred != null) {
+                this.disabledPredicates.put(MONTH_PREDICATE, monthPred);
+            }
+        } else {
+            for(Map.Entry<String, Predicate<ProjectActivity>> entry : this.disabledPredicates.entrySet()) {
+                this.predicates.put(entry.getKey(), entry.getValue());
+            }
+            this.disabledPredicates.clear();
+        }
+        
+        this.predicates.put(WEEK_PREDICATE, newWeekOfYearPredicate);
     }
     
-    /**
-     * Getter for the month.
-     * @return the month
-     */
-    public Date getMonth() {
-        return this.month != null ? this.month.toDate() : null;
-    }
-
     /**
      * Sets the month to filter by.
      * @param month the month to set
      */
-    public void setMonth(final DateTime month) {
-        this.month = month;
-
-        if (this.monthPredicate != null) {
-            this.predicates.remove(this.monthPredicate);
-        }
+    public void setMonth(int month) {
+        this.predicates.remove(MONTH_PREDICATE);
 
         // If month is null set month predicate also to null.
-        if (this.month == null) {
-            this.monthPredicate = null;
+        if (month == MonthFilterList.ALL_MONTHS_DUMMY) {
+            this.month = null;
+            return;
         }
 
-        final Predicate<ProjectActivity> newMonthPredicate = new MonthPredicate(month);
-        this.monthPredicate = newMonthPredicate;
-        this.predicates.add(newMonthPredicate);
+        this.month = Integer.valueOf(month);
+        
+        final Predicate<ProjectActivity> newMonthPredicate;
+        if(month == MonthFilterList.CURRENT_MONTH_DUMMY) {
+            newMonthPredicate = new CurrentMonthPredicate();
+        } else {
+            newMonthPredicate = new MonthPredicate(month);
+        }
+        
+        if(newMonthPredicate instanceof CurrentMonthPredicate) {
+            Predicate<ProjectActivity> yearPred =
+                this.predicates.remove(YEAR_PREDICATE);
+            if(yearPred != null) {
+                this.disabledPredicates.put(YEAR_PREDICATE, yearPred);
+            }
+        } else {
+            for(Map.Entry<String, Predicate<ProjectActivity>> entry : this.disabledPredicates.entrySet()) {
+                this.predicates.put(entry.getKey(), entry.getValue());
+            }
+            this.disabledPredicates.clear();
+        }
+        
+        this.predicates.put(MONTH_PREDICATE, newMonthPredicate);
     }
 
+    public Integer getMonth() {
+        return this.month;
+    }
+    
     /**
      * Getter for the year.
      * @return the year
      */
-    public Date getYear() {
-        return this.year != null ? this.year.toDate() : null;
+    public Integer getYear() {
+        return this.year;
     }
 
     /**
      * Sets the year to filter by.
      * @param year the year to set
      */
-    public void setYear(final DateTime year) {
-        this.year = year;
-
-        if (this.yearPredicate != null) {
-            this.predicates.remove(this.yearPredicate);
-            return;
-        }
+    public void setYear(final int year) {
+        this.predicates.remove(YEAR_PREDICATE);
 
         // If year is null set year predicate also to null.
-        if (this.year == null) {
-            this.yearPredicate = null;
+        if (year == YearFilterList.ALL_YEARS_DUMMY) {
+            this.year = null;
             return;
         }
+        this.year = Integer.valueOf(year);
 
         final Predicate<ProjectActivity> newYearPredicate = new YearPredicate(year);
-        this.yearPredicate = newYearPredicate;
-        this.predicates.add(newYearPredicate);
+        this.predicates.put(YEAR_PREDICATE, newYearPredicate);
     }
 
     /**
@@ -196,19 +221,14 @@ public class Filter {
     public void setProject(final Project project) {
         this.project = project;
 
-        if (this.projectPredicate != null) {
-            this.predicates.remove(this.projectPredicate);
-        }
+        this.predicates.remove(PROJECT_PREDICATE);
 
         // If project is null set project predicate also to null.
         if (this.project == null) {
-            this.projectPredicate = null;
             return;
         }
 
         final Predicate<ProjectActivity> newProjectPredicate = new ProjectPredicate(project);
-        this.projectPredicate = newProjectPredicate;
-        this.predicates.add(newProjectPredicate);
+        this.predicates.put(PROJECT_PREDICATE, newProjectPredicate);
     }
-
 }

@@ -3,6 +3,7 @@
  */
 package com.kemai.wremja.gui.model.edit;
 
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Stack;
@@ -136,9 +137,14 @@ public class EditStack implements Observer {
      * Undoes the given event.
      * @param event the event to undo
      */
-	private void executeUndo(final WremjaEvent event) {
+	@SuppressWarnings("unchecked")
+    private void executeUndo(final WremjaEvent event) {
 	    switch( event.getType() ) {
-	        case PROJECT_ACTIVITY_REMOVED: model.addActivity((ProjectActivity) event.getData(), this);
+	        case PROJECT_ACTIVITY_REMOVED:
+	            Collection<ProjectActivity> activities = (Collection<ProjectActivity>)event.getDataCollection();
+	            for(ProjectActivity activity : activities) {
+	                model.addActivity(activity, this);
+	            }
 	            break;
 	        case PROJECT_ACTIVITY_ADDED: model.removeActivity((ProjectActivity) event.getData(), this);
 	            break;
@@ -149,9 +155,11 @@ public class EditStack implements Observer {
 	 * Redoes the given event.
 	 * @param event the event to redo
 	 */
-	private void executeRedo(final WremjaEvent event) {
+	@SuppressWarnings("unchecked")
+    private void executeRedo(final WremjaEvent event) {
 	    switch( event.getType() ) {
-            case PROJECT_ACTIVITY_REMOVED: model.removeActivity((ProjectActivity) event.getData(), this);
+            case PROJECT_ACTIVITY_REMOVED:
+                model.removeActivities((Collection<ProjectActivity>)event.getDataCollection(), this);
                 break;
             case PROJECT_ACTIVITY_ADDED: model.addActivity((ProjectActivity) event.getData(), this);
                 break;

@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.util.Collection;
 import java.util.Observable;
 
 import javax.swing.Timer;
@@ -488,14 +489,23 @@ public class PresentationModel extends Observable {
         getData().removeActivity(activity);
         this.getActivitiesList().remove(activity);
 
-        // Remove activity if there is no filter or the filter matches
-        if (this.filter == null || this.filter.matchesCriteria(activity)) {
-            this.getActivitiesList().remove(activity);
-        }
-
         // Fire event
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_REMOVED, source);
         event.setData(activity);
+        notify(event);
+    }
+    
+    /**
+     * Remove a collection of activities from the model.
+     * @param activities the activities to remove
+     */
+    public final void removeActivities(final Collection<ProjectActivity> activities, final Object source) {
+        getData().removeActivities(activities);
+        this.getActivitiesList().removeAll(activities);
+
+        // Fire event
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_REMOVED, source);
+        event.setData(activities);
         notify(event);
     }
 

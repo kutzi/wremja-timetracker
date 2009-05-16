@@ -2,6 +2,7 @@ package com.kemai.wremja.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -181,6 +182,18 @@ public class ActivityRepository implements ReadableRepository, Serializable {
      */
     public synchronized boolean removeActivity(final ProjectActivity activity) {
         if( this.activities.remove(activity) ) {
+            this.dirty = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Removes an activity.
+     */
+    public synchronized boolean removeActivities(final Collection<ProjectActivity> activities) {
+        if( this.activities.removeAll(activities) ) {
             this.dirty = true;
             return true;
         } else {

@@ -1,7 +1,5 @@
 package com.kemai.wremja.model.filter;
 
-import org.joda.time.DateTime;
-
 import com.kemai.util.Predicate;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -14,14 +12,14 @@ public class MonthPredicate implements Predicate<ProjectActivity> {
     /**
      * The month to check for.
      */
-    private final DateTime dateInMonth;
+    private final int month;
 
     /**
      * Creates a new predicate that holds for the given month.
      * @param dateInMonth the month the predicate holds for
      */
-    public MonthPredicate(final DateTime dateInMonth) {
-        this.dateInMonth = dateInMonth;
+    public MonthPredicate(int month) {
+        this.month = month;
     }
 
     /**
@@ -35,8 +33,8 @@ public class MonthPredicate implements Predicate<ProjectActivity> {
             return false;
         }
 
-        final ProjectActivity activity = (ProjectActivity) object;
-        return this.dateInMonth.getMonthOfYear() == activity.getStart().getMonthOfYear();
+        final ProjectActivity activity = object;
+        return this.month == activity.getStart().getMonthOfYear();
     }
 
 }
