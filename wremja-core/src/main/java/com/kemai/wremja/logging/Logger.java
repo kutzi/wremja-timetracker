@@ -48,6 +48,10 @@ public class Logger {
     public void warn(Object msg, Throwable t) {
         this.destination.log(Level.WARN, msg, t);
     }
+    
+    public void warn(String msg) {
+        this.destination.log(Level.WARN, msg, null);
+    }
 
     public void debug(String msg) {
         this.destination.log(Level.DEBUG, msg, null);

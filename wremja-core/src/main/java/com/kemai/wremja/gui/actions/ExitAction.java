@@ -1,27 +1,32 @@
 package com.kemai.wremja.gui.actions;
 
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-
 import com.kemai.util.TextResourceBundle;
+import com.kemai.wremja.gui.MainFrame;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.logging.Logger;
 
 /**
  * Action to exit the application.
  * @author remast
+ * @author kutzi
  */
-@SuppressWarnings("serial") //$NON-NLS-1$
+@SuppressWarnings("serial") 
 public class ExitAction extends AbstractWremjaAction {
 
+    private static final Logger LOG = Logger.getLogger(ExitAction.class);
+    
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExitAction.class);
+    private final MainFrame mainFrame;
 
-    public ExitAction(final Frame owner, final PresentationModel model) {
+    public ExitAction(final MainFrame owner, final PresentationModel model) {
         super(model);
+        this.mainFrame = owner;
 
         putValue(NAME, textBundle.textFor("ExitAction.Name")); //$NON-NLS-1$
         putValue(SHORT_DESCRIPTION, textBundle.textFor("ExitAction.ShortDescription")); //$NON-NLS-1$
@@ -43,10 +48,25 @@ public class ExitAction extends AbstractWremjaAction {
                     getOwner(), 
                     textBundle.textFor("ExitConfirmDialog.Message"),  //$NON-NLS-1$
                     textBundle.textFor("ExitConfirmDialog.Title"),  //$NON-NLS-1$
-                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.INFORMATION_MESSAGE
             );
-            quit = JOptionPane.YES_OPTION == dialogResult;
+            
+            switch(dialogResult) {
+                case JOptionPane.CANCEL_OPTION: // intentional fall-through
+                case JOptionPane.CLOSED_OPTION: quit = false; break;
+                case JOptionPane.YES_OPTION :
+                    quit = true;
+                    this.mainFrame.setStopActivityOnShutdown(true);
+                    break;
+                case JOptionPane.NO_OPTION:
+                    quit = true;
+                    this.mainFrame.setStopActivityOnShutdown(false);
+                    break;
+                default:
+                    LOG.error("Invalid dialogResult " + dialogResult );
+                    quit = false;
+            }
         } 
 
         if (quit) {

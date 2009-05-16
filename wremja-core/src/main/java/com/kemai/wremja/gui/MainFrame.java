@@ -124,6 +124,8 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     
     /** The Tray icon, if any. */
     private TrayIcon tray;
+    
+    private volatile boolean stopActivityOnShutdown = true;
 
     /**
      * This is the default constructor.
@@ -532,22 +534,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             setVisible(false);
             showTray(true);
         } else {
-            boolean quit = true;
-
-            if (model.isActive()) {
-                final int dialogResult = JOptionPane.showConfirmDialog(
-                        getOwner(), 
-                        textBundle.textFor("ExitConfirmDialog.Message"), 
-                        textBundle.textFor("ExitConfirmDialog.Title"), 
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-                quit = JOptionPane.YES_OPTION == dialogResult;
-            } 
-
-            if (quit) {
-                System.exit(0);
-            }
+            new ExitAction(this, this.model).actionPerformed(null);
         }
     }
 
@@ -588,7 +575,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     public TrayIcon getTray() {
         return this.tray;
     }
-
+    
     public void showTray( boolean show ) {
         if( this.tray != null ) {
             if( show ) {
@@ -598,6 +585,17 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             }
             UserSettings.instance().setWindowMinimized(show);
         }
+    }
+
+    /**
+     * Returns true iff a running activity should be stopped on shutdown.
+     */
+    public boolean isStopActivityOnShutdown() {
+        return this.stopActivityOnShutdown;
+    }
+
+    public void setStopActivityOnShutdown(boolean stopActivityOnShutdown) {
+        this.stopActivityOnShutdown = stopActivityOnShutdown;
     }
 
     public void handleUnfinishedActivityOnStartup() throws InterruptedException, InvocationTargetException {
@@ -612,13 +610,18 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
                 options[2] = "Continue activity";
                 
                 DateTime lastTouch = UserSettings.instance().getLastTouchTimestamp();
-                String msg = "There is an unfinished activity from a previous run!" +
-                		"\nIt was probably still running when the computer was shut down. (Or Wremja crashed)\n";
-                msg += "\nWould you like the activity on project '" + model.getData().getActiveProject().getTitle()
-                    + "' starting at "+ FormatUtils.formatDate( model.getStart()) + " " + FormatUtils.formatTime( model.getStart())
-                    + "h to stop at " + FormatUtils.formatTime(lastTouch) + "h?";
-                int chosen = JOptionPane.showOptionDialog(MainFrame.this, msg,
-                        "Unfinished activity", 0, JOptionPane.WARNING_MESSAGE, null,
+                
+                String text = ""
+                    + "There is an unfinished activity from a previous run!" +
+                      " That can result from various reasons:\n\n" +
+                      "- You chose to continue the running activity on Wremja exit\n" +
+                      "- Wremja was still running when the OS was shut down\n" +
+                      "- Wremja crashed\n" +
+                      "\nWould you like the activity on project '" + model.getData().getActiveProject().getTitle() 
+                      + "' starting at "+ FormatUtils.formatDate( model.getStart()) + " " + FormatUtils.formatTime( model.getStart()) 
+                      + "h to stop at " + FormatUtils.formatTime(lastTouch) + "h?";
+                int chosen = JOptionPane.showOptionDialog(MainFrame.this, text,
+                        "Unfinished activity", 0, JOptionPane.INFORMATION_MESSAGE, null,
                         options, options[0]);
                 
                 if( chosen == 0 ) {
