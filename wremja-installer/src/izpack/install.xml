@@ -7,6 +7,9 @@
 			<author name="Christoph Kutzinski" email="kutzi@gmx.de" />
 		</authors>
 		<url>${project.url}</url>
+		<javaversion>1.6</javaversion>
+		<requiresjdk>no</requiresjdk>
+		<pack200/>
 	</info>
 	
 	<!-- Windows binary for creating shortcuts. -->
@@ -14,6 +17,15 @@
 
 	<!-- Gui Preferences -->
 	<guiprefs height="500" resizable="yes" width="500">
+		<laf name="looks">
+			<os family="windows" />
+	        <param name="variant" value="plastic3D" />
+	    </laf>
+	
+		<laf name="looks">
+			<os family="unix" />
+	        <param name="variant" value="plastic3D" />
+	    </laf>
 	</guiprefs>
 	
 
@@ -58,7 +70,7 @@
 			<file src="Licence.txt" targetdir="$INSTALL_PATH" />
 			<file src="Baralga-Tray.ico" targetdir="$INSTALL_PATH" />
 			<file src="Baralga-Tray.png" targetdir="$INSTALL_PATH" />
-			<file src="wremja-launcher-${wremja.version}.jar" targetdir="$INSTALL_PATH" />
+			<file src="wremja-launcher.jar" targetdir="$INSTALL_PATH" />
 			<file src="lib" targetdir="$INSTALL_PATH" />
             <file src="data" targetdir="$INSTALL_PATH" />
 			<updatecheck>
