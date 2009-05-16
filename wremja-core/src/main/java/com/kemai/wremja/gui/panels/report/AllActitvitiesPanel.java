@@ -8,6 +8,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,8 +23,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.text.DefaultFormatterFactory;
@@ -54,10 +54,10 @@ import com.kemai.wremja.model.ProjectActivity;
 /**
  * @author remast
  */
-@SuppressWarnings("serial")//$NON-NLS-1$
+@SuppressWarnings("serial")
 public class AllActitvitiesPanel extends JXPanel implements Observer {
 
-    private static final Logger log = Logger.getLogger(AllActitvitiesPanel.class);
+    private static final Logger LOG = Logger.getLogger(AllActitvitiesPanel.class);
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
@@ -90,7 +90,22 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
     private void initialize() {
         tableModel = new EventTableModel<ProjectActivity>(model.getActivitiesList(),
                 new AllActivitiesTableFormat(model));
-        final JXTable table = new JXTable(tableModel);
+        final JXTable table = new JXTable(tableModel) {
+            @Override
+            public String getToolTipText() {
+                if (getSelectedRows().length == 0) {
+                    return "";
+                }
+
+                double duration = 0;
+                
+                for (int i : getSelectedRows()) {
+                    duration += tableModel.getElementAt(i).getDuration();
+                }
+
+                return textBundle.textFor("AllActivitiesPanel.tooltipDuration", FormatUtils.getDurationFormat().format(duration)); //$NON-NLS-1$
+            }
+        };
 
         // Fix sorting
         EventListJXTableSorting.install(table, model.getActivitiesList());
@@ -103,25 +118,6 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
         table.getColumn(3).setCellRenderer(new DefaultTableRenderer(new FormatStringValue(FormatUtils.getTimeFormat())));
         table.getColumn(3).setCellEditor( new MaskCellEditor() );
         table.getColumn(4).setCellRenderer(new DefaultTableRenderer(new FormatStringValue(FormatUtils.getDurationFormat())));
-
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(final ListSelectionEvent e) {
-                if (table.getSelectedRows() == null) {
-                    table.setToolTipText(null);
-                }
-
-                double duration = 0;
-                
-                for (int i : table.getSelectedRows()) {
-                    duration += model.getActivitiesList().get(i).getDuration();
-                }
-
-                table.setToolTipText(textBundle.textFor("AllActivitiesPanel.tooltipDuration", FormatUtils.getDurationFormat().format(duration))); //$NON-NLS-1$
-            }
-
-        });
 
         initPopupMenu(table);
 
@@ -142,7 +138,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
 
     private void initPopupMenu(final JXTable table) {
         final JPopupMenu menu = new JPopupMenu();
-        menu.add(new AbstractAction(textBundle.textFor("AllActitvitiesPanel.Edit"), new ImageIcon(getClass().getResource("/icons/gtk-edit.png"))) { //$NON-NLS-1$
+        final AbstractAction editAction = new AbstractAction(textBundle.textFor("AllActitvitiesPanel.Edit"), new ImageIcon(getClass().getResource("/icons/gtk-edit.png"))) { //$NON-NLS-1$
 
             public void actionPerformed(final ActionEvent event) {
                 // Get selected activities
@@ -162,17 +158,21 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
                 editActivityDialog.setLocationRelativeTo(AWTUtils.getFrame(menu));
                 editActivityDialog.setVisible(true);
             }
-        });
+        };
+        
+        menu.add(editAction);
         menu.add(new AbstractAction(textBundle.textFor("AllActitvitiesPanel.Delete"), new ImageIcon(getClass().getResource("/icons/gtk-delete.png"))) { //$NON-NLS-1$
 
             public void actionPerformed(final ActionEvent event) {
                 // 1. Get selected activities
                 int[] selectionIndices = table.getSelectedRows();
-
-                // 2. Remove all selected activities
-                for (int selectionIndex : selectionIndices) {
-                    model.removeActivity(model.getActivitiesList().get(selectionIndex), this);
+                List<ProjectActivity> selectedActivities = new ArrayList<ProjectActivity>(selectionIndices.length);
+                for(int index : selectionIndices) {
+                    selectedActivities.add(tableModel.getElementAt(index));
                 }
+                
+                // 2. Remove all selected activities
+                model.removeActivities(selectedActivities, this);
             }
 
         });
@@ -195,10 +195,21 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
             
             private void checkForPopup(MouseEvent e) {
                 if (e.isPopupTrigger()) {
-                    JTable source = (JTable) e.getSource();
-                    int row = source.rowAtPoint(e.getPoint());
-                    int column = source.columnAtPoint(e.getPoint());
-                    source.changeSelection(row, column, false, false);
+                    JTable table = (JTable) e.getSource();
+                    int[] selectionIndices = table.getSelectedRows();
+                    if(selectionIndices.length == 0) {
+                        // select cell under mouse
+                        int row = table.rowAtPoint(e.getPoint());
+                        int column = table.columnAtPoint(e.getPoint());
+                        table.changeSelection(row, column, false, false);
+                    }
+                    
+                    if(selectionIndices.length > 1) {
+                        // edit action works only on a single cell
+                        editAction.setEnabled(false);
+                    } else {
+                        editAction.setEnabled(true);
+                    }
                     menu.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
@@ -209,6 +220,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void update(final Observable source, final Object eventObject) {
         if (source == null || !(eventObject instanceof WremjaEvent)) {
             return;
@@ -273,7 +285,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
                 });
 
             } catch (ParseException e) {
-                log.error(e, e);
+                LOG.error(e, e);
             }
         }
         

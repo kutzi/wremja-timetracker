@@ -1,6 +1,8 @@
 package com.kemai.wremja.gui.events;
 
 import java.beans.PropertyChangeEvent;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Events of Wremja.
@@ -86,7 +88,7 @@ public class WremjaEvent {
     public final boolean canBeUndone() {
         // INFO: For now only adding / removing activities can be undone.
         return this.type == Type.PROJECT_ACTIVITY_REMOVED 
-        || this.type == Type.PROJECT_ACTIVITY_ADDED;
+            || this.type == Type.PROJECT_ACTIVITY_ADDED;
     }
 
     /**
@@ -95,6 +97,15 @@ public class WremjaEvent {
      */
     public Object getData() {
         return data;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Collection<?> getDataCollection() {
+        if(this.data instanceof Collection) {
+            return (Collection<Object>) this.data;
+        } else {
+            return Collections.singleton(this.data);
+        }
     }
 
     /**
