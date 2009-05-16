@@ -8,7 +8,6 @@ import java.nio.channels.FileLock;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -28,7 +27,7 @@ import com.kemai.wremja.gui.MainFrame;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.model.ProjectActivityStateException;
 import com.kemai.wremja.gui.model.io.DataBackup;
-import com.kemai.wremja.gui.model.io.SaveTimer;
+import com.kemai.wremja.gui.model.io.SaveDaemon;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
 import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.logging.BetterFormatter;
@@ -46,7 +45,7 @@ public final class Launcher {
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
 
     /** The logger. */
-    private static final Logger log = Logger.getLogger(Launcher.class);
+    private static final Logger LOG = Logger.getLogger(Launcher.class);
 
     //------------------------------------------------
     // Command line options
@@ -55,23 +54,28 @@ public final class Launcher {
     /** Property for command line option minimized (-m). */
     private Boolean minimized;
 
-    /** The interval in ms in which the data is saved to the disk. */
-    private static final long SAVE_TIMER_INTERVAL = TimeUnit.MINUTES.toMillis(1);
-
+    /** The daemon to periodically save to disk. */
+    private static SaveDaemon saveDaemon;
+    
+    /** The interval in ms in which the data is saved (at least) to the disk. */
+    private static final long SAVE_TIMER_INTERVAL = TimeUnit.MINUTES.toMillis(3);
 
     //------------------------------------------------
     // Application resources
     //------------------------------------------------
 
     /** The lock file to avoid multiple instances of the application. */
+    private static File lockFile;
     private static FileLock lock;
-
-    /** The timer to periodically save to disk. */
-    private static Timer timer;
 
     /** The absolute path name of the log file. */
     private static String logFileName;
+    
+    private static MainFrame mainFrame;
 
+    /** Set to true if the previous shutdown was likely a 'clean' one. I.e. the lock file was deleted. */
+    private static boolean cleanShutdown = false;
+    
     /** Hide constructor. */
     private Launcher() { }
 
@@ -88,19 +92,19 @@ public final class Launcher {
             
             initUncaughtExceptionHandler();
 
-            initLookAndFeel();
-
             initLockFile();
+            
+            initLookAndFeel();
 
             final PresentationModel model = initModel();
 
-            initMainFrame(model, mainInstance);
+            mainFrame = initMainFrame(model, mainInstance);
             
             initTimer(model);
 
             initShutdownHook(model);
         } catch (Throwable t) {
-            log.error(t, t);
+            LOG.error(t, t);
             JOptionPane.showMessageDialog(
                     null, 
                     textBundle.textFor("Launcher.FatalError.Message", logFileName),  //$NON-NLS-1$
@@ -135,7 +139,7 @@ public final class Launcher {
      */
     private static MainFrame initMainFrame(final PresentationModel model,
             final Launcher mainInstance) throws Exception {
-        log.debug("Initializing main frame ...");
+        LOG.debug("Initializing main frame ...");
         final MainFrame mainFrame = new MainFrame(model);
         
         boolean minimized = false;
@@ -148,7 +152,7 @@ public final class Launcher {
         	}
         }
         
-        if(model.isActive()) {
+        if( !cleanShutdown && model.isActive()) {
             mainFrame.handleUnfinishedActivityOnStartup();
         }
         
@@ -165,7 +169,7 @@ public final class Launcher {
      * Initializes the lock file.
      */
     private static void initLockFile() {
-        log.debug("Initializing lock file ...");
+        LOG.debug("Initializing lock file ...");
         if (!tryLock()) {
             JOptionPane.showMessageDialog(
                     null, 
@@ -173,7 +177,7 @@ public final class Launcher {
                     textBundle.textFor("Launcher.ErrorAlreadyRunning.Title"),  //$NON-NLS-1$
                     JOptionPane.ERROR_MESSAGE
             );
-            log.info(textBundle.textFor("Launcher.ErrorAlreadyRunning.Message")); //$NON-NLS-1$
+            LOG.info(textBundle.textFor("Launcher.ErrorAlreadyRunning.Message")); //$NON-NLS-1$
             System.exit(0);
         }
     }
@@ -183,20 +187,23 @@ public final class Launcher {
      * @param model
      */
     private static void initShutdownHook(final PresentationModel model) {
-        log.debug("Initializing shutdown hook ...");
+        LOG.debug("Initializing shutdown hook ...");
 
         Runtime.getRuntime().addShutdownHook(
-                new Thread("Baralga shutdown ...") {
+                new Thread("Wremja shutdown ...") {
 
                     @Override
                     public void run() {
-                        log.debug("Shutting down");
+                        LOG.debug("Shutting down");
                         // TODO: decouple this from the PresentationModel
                         // (always causes problems, because some GUI components which
                         // should be notified are already gone!)
                         
-                        // 1. Stop current activity (if any)
-                        if (model.isActive()) {
+                        // prevent dirty saves on shutdown
+                        saveDaemon.requestStop();
+                        
+                        // stop current activity (if necessary)
+                        if (model.isActive() && mainFrame.isStopActivityOnShutdown()) {
                             try {
                                 model.stop(false);
                             } catch (ProjectActivityStateException e) {
@@ -204,17 +211,17 @@ public final class Launcher {
                             }
                         }
 
-                        // 2. Save model
+                        // save model
                         try {
                             model.save();
                         } catch (Exception e) {
-                            log.error(e, e);
+                            LOG.error(e, e);
                         } catch (Throwable t) {
-                            log.error(t, t);
+                            LOG.error(t, t);
                         } finally {
-                            // 3. Release lock
+                            // Release file lock
                             releaseLock();
-                            log.debug("Shutdown finished");
+                            LOG.debug("Shutdown finished");
                         }
                     }
 
@@ -227,7 +234,7 @@ public final class Launcher {
      * @return the model
      */
     private static PresentationModel initModel() {
-        log.debug("Initializing model...");
+        LOG.debug("Initializing model...");
 
         // Initialize with new site
         final PresentationModel model = new PresentationModel();
@@ -269,7 +276,7 @@ public final class Launcher {
 
                         break;
                     } catch (IOException backupFileIOException) {
-                        log.error(backupFileIOException, backupFileIOException);
+                        LOG.error(backupFileIOException, backupFileIOException);
                     }
                 }
             } else {
@@ -311,7 +318,7 @@ public final class Launcher {
      * @throws IOException 
      */
     private static void initLogger() throws IOException {
-        log.debug("Initializing logger ...");
+        LOG.debug("Initializing logger ...");
         
         String logDir = ApplicationSettings.instance().getApplicationDataDirectory().getAbsolutePath() + File.separator + "log";
         File logDirF = new File(logDir);
@@ -355,7 +362,7 @@ public final class Launcher {
      * Initialize the look & feel of the application.
      */
     private static void initLookAndFeel() {
-        log.debug("Initializing look and feel ...");
+        LOG.debug("Initializing look and feel ...");
         
         // enable antialiasing
         System.setProperty("swing.aatext", "true");
@@ -375,14 +382,14 @@ public final class Launcher {
                         UIManager.getSystemLookAndFeelClassName()
                 );
             } catch (Exception ex) {
-                log.error(ex, ex);
+                LOG.error(ex, ex);
             }
         }
         String s = LookAndFeelAddons.getBestMatchAddonClassName();
         try {
             LookAndFeelAddons.setAddon(s);
         } catch (Exception e) {
-            log.warn(e, e);
+            LOG.warn(e, e);
         }
     }
 
@@ -392,9 +399,11 @@ public final class Launcher {
      * @param model the model to be saved
      */
     private static void initTimer(final PresentationModel model) {
-        log.debug("Initializing timer ...");
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new SaveTimer(model), SAVE_TIMER_INTERVAL, SAVE_TIMER_INTERVAL);
+        LOG.debug("Initializing save timer ...");
+        saveDaemon = new SaveDaemon(model, SAVE_TIMER_INTERVAL, TimeUnit.MILLISECONDS);
+        Thread t = new Thread(saveDaemon, "Wremja save daemon");
+        t.setDaemon(true);
+        t.start();
     }
 
     /**
@@ -407,9 +416,12 @@ public final class Launcher {
     private static boolean tryLock() {
         try {
             checkOrCreateDataDir();
-            final File lockFile = new File(UserSettings.getLockFileLocation());
+            lockFile = new File(UserSettings.getLockFileLocation());
             if (!lockFile.exists()) {
                 lockFile.createNewFile();
+                cleanShutdown = true;
+            } else {
+                cleanShutdown = false;
             }
 
             final FileChannel channel = new RandomAccessFile(lockFile, "rw").getChannel(); //$NON-NLS-1$
@@ -418,7 +430,7 @@ public final class Launcher {
             return lock != null;
         } catch (Exception e) {
             final String error = textBundle.textFor("Launcher.LockFileError.Message"); //$NON-NLS-1$
-            log.error(error, e);
+            LOG.error(error, e);
             throw new RuntimeException(error);
         }
     }
@@ -445,12 +457,10 @@ public final class Launcher {
             return;
         }
 
-//        final File lockFile = new File(UserSettings.getLockFileLocation());
-
         try {
             lock.release();
         } catch (IOException e) {
-            log.error(e, e);
+            LOG.error(e, e);
         } finally {
             try {
                 lock.channel().close();
@@ -459,9 +469,9 @@ public final class Launcher {
             }
         }
         
-//        final boolean deleteSuccessfull = lockFile.delete();
-//        if (!deleteSuccessfull) {
-//            log.warn("Could not delete lock file at " + lockFile.getAbsolutePath() + ". Please delete manually.");
-//        }
+        final boolean deleteSuccessfull = lockFile.delete();
+        if (!deleteSuccessfull) {
+            LOG.warn("Could not delete lock file at " + lockFile.getAbsolutePath() + ". Please delete manually.");
+        }
     }
 }
