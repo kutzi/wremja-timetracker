@@ -68,8 +68,8 @@
 		<pack name="Base" required="yes" id="base">
 			<description>The base files of the application.</description>
 			<file src="Licence.txt" targetdir="$INSTALL_PATH" />
-			<file src="Baralga-Tray.ico" targetdir="$INSTALL_PATH" />
-			<file src="Baralga-Tray.png" targetdir="$INSTALL_PATH" />
+			<file src="Wremja-Tray.ico" targetdir="$INSTALL_PATH" />
+			<file src="Wremja-Tray.png" targetdir="$INSTALL_PATH" />
 			<file src="wremja-launcher.jar" targetdir="$INSTALL_PATH" />
 			<file src="lib" targetdir="$INSTALL_PATH" />
             <file src="data" targetdir="$INSTALL_PATH" />

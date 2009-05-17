@@ -4,11 +4,11 @@
                 location="applications"/>
   <shortcut
     name="$APP_NAME"
-    target="$INSTALL_PATH\wremja-launcher-${wremja.version}.jar"
-    commandLine=""
+    target="javaw"
+    commandLine="-jar $INSTALL_PATH\wremja-launcher.jar"
     workingDirectory="$INSTALL_PATH"
     description="Zeiterfassung für Projekte."
-    iconFile="$INSTALL_PATH\Baralga-Tray.ico"
+    iconFile="$INSTALL_PATH\Wremja-Tray.ico"
     iconIndex="0"
     initialState="maximized"
     programGroup="yes"

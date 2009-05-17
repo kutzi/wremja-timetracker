@@ -5,7 +5,7 @@
   <shortcut
     name="$APP_NAME"
     target="java"
-    commandLine="-jar &quot;$INSTALL_PATH/wremja-launcher-${wremja.version}.jar&quot;"
+    commandLine="-jar &quot;$INSTALL_PATH/wremja-launcher.jar&quot;"
     workingDirectory="$INSTALL_PATH"
     description="Time tracking application for projects."
     encoding="UTF-8"

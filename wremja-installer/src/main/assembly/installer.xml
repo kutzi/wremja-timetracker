@@ -26,8 +26,7 @@
 			<directory>src/main/resources/icons</directory>
 			<outputDirectory>.</outputDirectory>
 			<includes>
-				<include>Baralga-Tray.ico</include>
-				<include>Baralga-Tray.png</include>
+				<include>*</include>
 			</includes>
 		</fileSet>
         <fileSet>
