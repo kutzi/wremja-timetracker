@@ -8,9 +8,15 @@ However, we recognize unfinished avtivities on next startup and ask the user how
 
 - Desktop icon creation doesn't work on Linux
 
+- Repeated installation on Linux creates additional main menu entries
+
 - tray icon issues on Linux
   - background of the icon is always gray
   - double-clicking on the icon doesn't work reliably
 
 - No installer for Mac OS
+
+- Activities over midnight:
+You cannot have activities lasting over midnight. Instead 2 activities are created:
+One from start to midnight and one from midnight to end.
 
