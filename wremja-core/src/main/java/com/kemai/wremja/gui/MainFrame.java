@@ -613,8 +613,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
                 
                 String text = ""
                     + "There is an unfinished activity from a previous run!" +
-                      " That can result from various reasons:\n\n" +
-                      "- You chose to continue the running activity on Wremja exit\n" +
+                      " That can result from various reasons. For example:\n\n" +
                       "- Wremja was still running when the OS was shut down\n" +
                       "- Wremja crashed\n" +
                       "\nWould you like the activity on project '" + model.getData().getActiveProject().getTitle() 
@@ -624,15 +623,18 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
                         "Unfinished activity", 0, JOptionPane.INFORMATION_MESSAGE, null,
                         options, options[0]);
                 
+                // prevent stop < start:
+                long stopTs = Math.max(lastTouch.getMillis(), model.getStart().getMillis());
+                DateTime stop = new DateTime(stopTs);
                 if( chosen == 0 ) {
                     try {
-                        model.stop(lastTouch, true);
+                        model.stop(stop, true);
                     } catch (ProjectActivityStateException e1) {
                         LOG.error(e1, e1);
                     }
                 } else if( chosen == 1) {
                     try {
-                        ProjectActivity addedActivity = model.stop(lastTouch, true);
+                        ProjectActivity addedActivity = model.stop(stop, true, true);
                         if(addedActivity != null) {
                             AddOrEditActivityDialog editActivityDialog = new AddOrEditActivityDialog(
                                     MainFrame.this, 
