@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <shortcuts>
   <skipIfNotSupported/>
   <programGroup defaultName="$APP_NAME"
@@ -7,7 +8,7 @@
     target="javaw"
     commandLine="-jar $INSTALL_PATH\wremja-launcher.jar"
     workingDirectory="$INSTALL_PATH"
-    description="Zeiterfassung für Projekte."
+    description="Zeiterfassung fuer Projekte."
     iconFile="$INSTALL_PATH\Wremja-Tray.ico"
     iconIndex="0"
     initialState="maximized"
