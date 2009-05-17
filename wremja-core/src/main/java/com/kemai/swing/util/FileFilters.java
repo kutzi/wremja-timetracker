@@ -56,7 +56,8 @@ public abstract class FileFilters {
 
         @Override
         public boolean accept(final File file) {
-            return file.isDirectory() || file.getName().endsWith(".ptd.xml"); //$NON-NLS-1$
+            return file.isDirectory() || file.getName().endsWith(".ptd.xml")
+                || file.getName().endsWith(".ptd"); //$NON-NLS-1$
         }
 
         @Override

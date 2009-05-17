@@ -170,38 +170,38 @@ public final class UserSettings {
     /** The key for the selected month of filter. */
     private static final String SELECTED_MONTH = "filter.month"; //$NON-NLS-1$
 
-    public Integer getFilterSelectedMonth() {
+    public int getFilterSelectedMonth(int defaultValue) {
         // Avoid ConversionException by checking the type of the property
         final String selectedMonthObject = userConfig.getStringProperty(SELECTED_MONTH);
         
         // -- 
-        // :INFO: Migrate from < 1.3 where * was used as dummy value
+        // :INFO: Migrate from < Baralga 1.3 where * was used as dummy value
         if (StringUtils.equals("*", selectedMonthObject)) {
             setFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
         }
         // --
-        return doGetInteger(SELECTED_MONTH, null);
+        return doGetInteger(SELECTED_MONTH, defaultValue);
     }
     
-    public void setFilterSelectedMonth(final Integer month) {
+    public void setFilterSelectedMonth(final int month) {
         userConfig.setProperty(SELECTED_MONTH, month);
     }
 
     /** The key for the selected week of filter. */
     private static final String SELECTED_WEEK_OF_YEAR = "filter.weekOfYear"; //$NON-NLS-1$
 
-    public Integer getFilterSelectedWeekOfYear() {
-        return doGetInteger(SELECTED_WEEK_OF_YEAR, null);
+    public int getFilterSelectedWeekOfYear(int defaultValue) {
+        return doGetInteger(SELECTED_WEEK_OF_YEAR, defaultValue);
     }
 
-    public void setFilterSelectedWeekOfYear(final Integer weekOfYear) {
+    public void setFilterSelectedWeekOfYear(final int weekOfYear) {
         userConfig.setProperty(SELECTED_WEEK_OF_YEAR, weekOfYear);
     }
 
     /** The key for the selected year of filter. */
     private static final String SELECTED_YEAR = "filter.year"; //$NON-NLS-1$
 
-    public Integer getFilterSelectedYear() {
+    public int getFilterSelectedYear(int defaultValue) {
         // Avoid ConversionException by checking the type of the property
         final String selectedYearObject = userConfig.getStringProperty(SELECTED_YEAR);
         
@@ -211,22 +211,22 @@ public final class UserSettings {
             setFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
         }
         // -- 
-        return doGetInteger(SELECTED_YEAR, null);
+        return doGetInteger(SELECTED_YEAR, defaultValue);
     }
 
-    public void setFilterSelectedYear(final Integer year) {
+    public void setFilterSelectedYear(final int year) {
         userConfig.setProperty(SELECTED_YEAR, year);
     }
 
     /** The key for the selected project id of filter. */
     private static final String SELECTED_PROJECT_ID = "filter.projectId"; //$NON-NLS-1$
 
-    public Long getFilterSelectedProjectId() {
-        return doGetLong(SELECTED_PROJECT_ID, null);
+    public long getFilterSelectedProjectId(long defaultValue) {
+        return doGetLong(SELECTED_PROJECT_ID, defaultValue);
     }
 
     public void setFilterSelectedProjectId(final long projectId) {
-        userConfig.setProperty(SELECTED_PROJECT_ID, Long.valueOf(projectId));
+        userConfig.setProperty(SELECTED_PROJECT_ID, projectId);
     }
 
     //------------------------------------------------
@@ -362,7 +362,8 @@ public final class UserSettings {
      */
 
     public DateTime getLastTouchTimestamp() {
-        long timestamp = userConfig.getLongProperty(LAST_TOUCH_TIMESTAMP, System.currentTimeMillis());
+        long timestamp = userConfig.getLongProperty(
+                LAST_TOUCH_TIMESTAMP, System.currentTimeMillis());
         return new DateTime(timestamp);
     }
     
@@ -390,13 +391,9 @@ public final class UserSettings {
      * @param filter the restored filter
      */
     private void restoreYearFilter(final Filter filter) {
-        final Integer selectedYear = UserSettings.instance().getFilterSelectedYear();
+        final int selectedYear = UserSettings.instance().getFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
 
-        if (selectedYear == null) {
-            return;
-        }
-
-        filter.setYear(selectedYear.intValue());
+        filter.setYear(selectedYear);
     }
 
     /**
@@ -404,13 +401,9 @@ public final class UserSettings {
      * @param filter the restored filter
      */
     private void restoreMonthFilter(final Filter filter) {
-        final Integer selectedMonth = getFilterSelectedMonth();
+        final int selectedMonth = getFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
 
-        if (selectedMonth == null) {
-            return;
-        }
-
-        filter.setMonth(selectedMonth.intValue());
+        filter.setMonth(selectedMonth);
     }
 
     /**
@@ -418,13 +411,9 @@ public final class UserSettings {
      * @param filter the restored filter
      */
     private void restoreWeekOfYearFilter(final Filter filter) {
-        final Integer selectedWeekOfYear = getFilterSelectedWeekOfYear();
+        final int selectedWeekOfYear = getFilterSelectedWeekOfYear(YearFilterList.ALL_YEARS_DUMMY);
 
-        if (selectedWeekOfYear == null) {
-            return;
-        }
-        
-        filter.setWeekOfYear(selectedWeekOfYear.intValue());
+        filter.setWeekOfYear(selectedWeekOfYear);
     }
 
     //------------------------------------------------
@@ -454,7 +443,7 @@ public final class UserSettings {
      * @param defaultValue the default value of the property to get
      * @return the property value if set and correct otherwise the default value
      */
-    private Long doGetLong(final String key, final Long defaultValue) {
+    private long doGetLong(final String key, final long defaultValue) {
         try {
             return userConfig.getLongProperty(key, defaultValue);
         } catch (Exception e) {
@@ -470,7 +459,7 @@ public final class UserSettings {
      * @param defaultValue the default value of the property to get
      * @return the property value if set and correct otherwise the default value
      */
-    private Integer doGetInteger(final String key, final Integer defaultValue) {
+    private int doGetInteger(final String key, final int defaultValue) {
         try {
             return userConfig.getIntegerProperty(key, defaultValue);
         } catch (Exception e) {

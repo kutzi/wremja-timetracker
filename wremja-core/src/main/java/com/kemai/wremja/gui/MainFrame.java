@@ -309,13 +309,13 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     }
 
     /**
-     * This method initializes exitItem.
+     * This method initializes the import item.
      * @return javax.swing.JMenuItem
      */
     private JMenuItem getImportItem() {
         if (importItem == null) {
-            final AbstractWremjaAction exitAction = new ImportDataAction(this, this.model);
-            importItem = new JMenuItem(exitAction);
+            final AbstractWremjaAction importAction = new ImportDataAction(this, this.model);
+            importItem = new JMenuItem(importAction);
         }
         return importItem;
     }

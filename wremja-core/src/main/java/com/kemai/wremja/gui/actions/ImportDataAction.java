@@ -19,7 +19,7 @@ import com.kemai.wremja.model.io.ProTrackReader;
  * Action to import data from a data file.
  * @author remast
  */
-@SuppressWarnings("serial") //$NON-NLS-1$
+@SuppressWarnings("serial") 
 public class ImportDataAction extends AbstractWremjaAction {
 
     /** The logger. */
@@ -66,13 +66,11 @@ public class ImportDataAction extends AbstractWremjaAction {
                     getModel().setData(data);
                 }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, textBundle.textFor("ImportDataAction.IOException.Message", file.getAbsolutePath()), textBundle.textFor("ImportDataAction.IOException.Heading"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                JOptionPane.showMessageDialog(null, textBundle.textFor("ImportDataAction.IOException.Message", file.getAbsolutePath()), textBundle.textFor("ImportDataAction.IOException.Heading"), //$NON-NLS-1$ //$NON-NLS-2$ 
                         JOptionPane.ERROR_MESSAGE);
                 log.error(e, e);
             }
-
         }
-
     }
 
 }

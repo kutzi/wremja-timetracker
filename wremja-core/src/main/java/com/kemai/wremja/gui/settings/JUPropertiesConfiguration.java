@@ -37,11 +37,11 @@ public class JUPropertiesConfiguration implements Configuration {
     }
     
     @Override
-    public Integer getIntegerProperty(String key, Integer defaultValue) {
+    public int getIntegerProperty(String key, int defaultValue) {
         String value = this.props.getProperty(key);
         if( value != null ) {
             try {
-                return Integer.valueOf(value);
+                return Integer.parseInt(value);
             } catch (NumberFormatException e) {
                 return defaultValue;
             }
@@ -51,11 +51,11 @@ public class JUPropertiesConfiguration implements Configuration {
     }
 
     @Override
-    public Long getLongProperty(String key, Long defaultValue) {
+    public long getLongProperty(String key, long defaultValue) {
         String value = this.props.getProperty(key);
         if( value != null ) {
             try {
-                return Long.valueOf(value);
+                return Long.parseLong(value);
             } catch (NumberFormatException e) {
                 return defaultValue;
             }

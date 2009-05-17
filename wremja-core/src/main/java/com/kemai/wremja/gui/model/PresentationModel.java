@@ -98,7 +98,8 @@ public class PresentationModel extends Observable {
             public void actionPerformed(ActionEvent e) {
                 // Fire event
                 final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.DURATION_CHANGED, PresentationModel.this);
-                event.setData(getCurrentDuration());
+                event.setData(Double.valueOf(getCurrentDuration()));
+                
                 
                 PresentationModel.this.notify(event);
             }
@@ -127,12 +128,8 @@ public class PresentationModel extends Observable {
         setFilter(UserSettings.instance().restoreFromSettings(), this);
 
         // b) restore project (can be done here only as we need to search all projects)
-        final Long selectedProjectId = UserSettings.instance().getFilterSelectedProjectId();
-        if (selectedProjectId != null) {
-            filter.setProject(
-                    this.data.findProjectById(selectedProjectId.longValue())
-            );
-        }
+        final long selectedProjectId = UserSettings.instance().getFilterSelectedProjectId(ProjectFilterList.ALL_PROJECTS_DUMMY_VALUE);
+        filter.setProject(this.data.findProjectById(selectedProjectId));
         applyFilter();
 
         this.description = UserSettings.instance().getLastDescription();

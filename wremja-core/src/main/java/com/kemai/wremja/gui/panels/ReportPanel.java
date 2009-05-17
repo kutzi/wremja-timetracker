@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledSeparator;
@@ -15,7 +14,6 @@ import org.jdesktop.swingx.JXTitledSeparator;
 import ca.odell.glazedlists.swing.EventComboBoxModel;
 
 import com.kemai.swing.util.LabeledItem;
-import com.kemai.util.CollectionUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.lists.MonthFilterList;
@@ -89,9 +87,9 @@ public class ReportPanel extends JXPanel implements ActionListener {
                         TableLayout.FILL, border } }; // Rows
         this.setLayout(new TableLayout(size));
 
-        Integer selectedYear = UserSettings.instance().getFilterSelectedYear();
-        Integer selectedMonth = UserSettings.instance().getFilterSelectedMonth();
-        Integer selectedWeek = UserSettings.instance().getFilterSelectedWeekOfYear();
+        int selectedYear = UserSettings.instance().getFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
+        int selectedMonth = UserSettings.instance().getFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
+        int selectedWeek = UserSettings.instance().getFilterSelectedWeekOfYear(WeekOfYearFilterList.ALL_WEEKS_OF_YEAR_DUMMY);
         
         JXTitledSeparator filterSep = new JXTitledSeparator(textBundle.textFor("ReportPanel.FiltersLabel")); //$NON-NLS-1$
         this.add(filterSep, "1, 1, 15, 1"); //$NON-NLS-1$
@@ -120,25 +118,17 @@ public class ReportPanel extends JXPanel implements ActionListener {
      * @param selectedMonth 
      * @return the monthFilterSelector
      */
-    private JComboBox initMonthFilterSelector(Integer selectedMonth) {
+    private JComboBox initMonthFilterSelector(int selectedMonth) {
         monthFilterList = model.getMonthFilterList();
         monthFilterSelector = new JComboBox(
                 new EventComboBoxModel<LabeledItem<Integer>>(monthFilterList.getMonthList())
         );
         monthFilterSelector.setToolTipText(textBundle.textFor("MonthFilterSelector.ToolTipText")); //$NON-NLS-1$
 
-        // Select first entry
-        if (!monthFilterList.getMonthList().isEmpty()) {
-            monthFilterSelector.setSelectedIndex(0);
-        }
-
-        // Read from Settings.
-        if (selectedMonth != null) {
-            for (LabeledItem<Integer> item : monthFilterList.getMonthList()) {
-                if (item.getItem().equals(selectedMonth)) {
-                    monthFilterSelector.setSelectedItem(item);
-                    break;
-                }
+        for (LabeledItem<Integer> item : monthFilterList.getMonthList()) {
+            if (item.getItem().intValue() == selectedMonth) {
+                monthFilterSelector.setSelectedItem(item);
+                break;
             }
         }
 
@@ -149,23 +139,16 @@ public class ReportPanel extends JXPanel implements ActionListener {
     /**
      * @return the weekFilterSelector
      */
-    private JComboBox initWeekOfYearFilterSelector(Integer selectedWeek) {
+    private JComboBox initWeekOfYearFilterSelector(int selectedWeek) {
         weekOfYearFilterList = model.getWeekFilterList();
         weekFilterSelector = new JComboBox(new EventComboBoxModel<LabeledItem<Integer>>(weekOfYearFilterList
                 .getWeekList()));
         weekFilterSelector.setToolTipText(textBundle.textFor("WeekOfYearFilterSelector.ToolTipText")); //$NON-NLS-1$
 
-        // Select first entry
-        if (!weekOfYearFilterList.getWeekList().isEmpty()) {
-            weekFilterSelector.setSelectedIndex(0);
-        }
-
-        if (selectedWeek != null) {
-            for (LabeledItem<Integer> item : weekOfYearFilterList.getWeekList()) {
-                if (item.getItem().equals(selectedWeek)) {
-                    weekFilterSelector.setSelectedItem(item);
-                    break;
-                }
+        for (LabeledItem<Integer> item : weekOfYearFilterList.getWeekList()) {
+            if (item.getItem().intValue() == selectedWeek) {
+                weekFilterSelector.setSelectedItem(item);
+                break;
             }
         }
 
@@ -184,19 +167,11 @@ public class ReportPanel extends JXPanel implements ActionListener {
             );
             projectFilterSelector.setToolTipText(textBundle.textFor("ProjectFilterSelector.ToolTipText")); //$NON-NLS-1$
 
-            // Select first entry
-            if (!projectFilterList.getProjectList().isEmpty()) {
-                projectFilterSelector.setSelectedIndex(0);
-            }
-
-            // Read from Settings.
-            final Long selectedProjectId = UserSettings.instance().getFilterSelectedProjectId();
-            if (selectedProjectId != null) {
-                for (LabeledItem<Project> item : projectFilterList.getProjectList()) {
-                    if (ObjectUtils.equals(item.getItem().getId(), selectedProjectId.longValue())) {
-                        projectFilterSelector.setSelectedItem(item);
-                        break;
-                    }
+            final long selectedProjectId = UserSettings.instance().getFilterSelectedProjectId(ProjectFilterList.ALL_PROJECTS_DUMMY_VALUE);
+            for (LabeledItem<Project> item : projectFilterList.getProjectList()) {
+                if (item.getItem().getId() == selectedProjectId) {
+                    projectFilterSelector.setSelectedItem(item);
+                    break;
                 }
             }
 
@@ -209,7 +184,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
      * @param selectedYear 
      * @return the yearFilterSelector
      */
-    private JComboBox initYearFilterSelector(Integer selectedYear) {
+    private JComboBox initYearFilterSelector(int selectedYear) {
         if (yearFilterSelector == null) {
             yearFilterList = model.getYearFilterList();
             yearFilterSelector = new JComboBox(
@@ -217,16 +192,11 @@ public class ReportPanel extends JXPanel implements ActionListener {
             );
             yearFilterSelector.setToolTipText(textBundle.textFor("YearFilterSelector.ToolTipText")); //$NON-NLS-1$
 
-            if (selectedYear != null) {
-                for (LabeledItem<Integer> item : yearFilterList.getYearList()) {
-                    if (item.getItem().equals(selectedYear)) {
-                        yearFilterSelector.setSelectedItem(item);
-                        break;
-                    }
+            for (LabeledItem<Integer> item : yearFilterList.getYearList()) {
+                if (item.getItem().intValue() == selectedYear) {
+                    yearFilterSelector.setSelectedItem(item);
+                    break;
                 }
-            } else if (!CollectionUtils.isEmpty(yearFilterList.getYearList())) {
-                // Select first entry
-                yearFilterSelector.setSelectedIndex(0);
             }
 
             yearFilterSelector.addActionListener(this);
@@ -245,7 +215,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
         // Filter for year
         {
             LabeledItem<Integer> filterItem = (LabeledItem<Integer>) this.yearFilterSelector.getSelectedItem();
-            final int selectedYear = filterItem.getItem();
+            final int selectedYear = filterItem.getItem().intValue();
     
             filter.setYear(selectedYear);
         }
@@ -254,7 +224,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
         // Filter for month
         {
             LabeledItem<Integer> filterItem = (LabeledItem<Integer>) this.monthFilterSelector.getSelectedItem();
-            selectedMonth = filterItem.getItem();
+            selectedMonth = filterItem.getItem().intValue();
             filter.setMonth(selectedMonth);
         }
 
@@ -262,7 +232,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
         // Filter for week of year
         {
             LabeledItem<Integer> filterItem = (LabeledItem<Integer>) this.weekFilterSelector.getSelectedItem();
-            selectedWeekOfYear= filterItem.getItem();
+            selectedWeekOfYear= filterItem.getItem().intValue();
             filter.setWeekOfYear(selectedWeekOfYear);
         }
         
@@ -299,17 +269,17 @@ public class ReportPanel extends JXPanel implements ActionListener {
     private void storeFilterInSettings() {
         // Store filter by month
         LabeledItem<Integer> filterItem = (LabeledItem<Integer>) this.monthFilterSelector.getSelectedItem();
-        final int selectedMonth = filterItem.getItem();
+        final int selectedMonth = filterItem.getItem().intValue();
         UserSettings.instance().setFilterSelectedMonth(selectedMonth);
 
         // Store filter by year
         filterItem = (LabeledItem<Integer>) this.yearFilterSelector.getSelectedItem();
-        final int selectedYear = filterItem.getItem();
+        final int selectedYear = filterItem.getItem().intValue();
         UserSettings.instance().setFilterSelectedYear(selectedYear);
 
         // Store filter by week of year
         filterItem = (LabeledItem<Integer>) this.weekFilterSelector.getSelectedItem();
-        final int selectedWeekOfYear = filterItem.getItem();
+        final int selectedWeekOfYear = filterItem.getItem().intValue();
         UserSettings.instance().setFilterSelectedWeekOfYear(selectedWeekOfYear);
 
         // Store filter by project
