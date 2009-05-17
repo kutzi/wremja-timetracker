@@ -82,11 +82,11 @@ public class PresentationModelTest {
 
         model.changeProject(project2);
         assertEquals(project2, model.getSelectedProject());
-        assertEquals(true, model.isDirty());
+        assertTrue(model.isDirty());
 
         model.changeProject(null);
         assertEquals(null, model.getSelectedProject());
-        assertEquals(true, model.isDirty());
+        assertTrue(model.isDirty());
     }
     
     @Test

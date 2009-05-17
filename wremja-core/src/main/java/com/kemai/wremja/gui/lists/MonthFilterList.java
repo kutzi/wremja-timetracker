@@ -8,16 +8,16 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.SortedList;
+
 import com.kemai.swing.util.LabeledItem;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.SortedList;
 
 /**
  * The list containing all months available for the filter.
@@ -38,7 +38,7 @@ public class MonthFilterList implements Observer {
 
     /** filter item for the all months dummy. */
     public static final LabeledItem<Integer> ALL_MONTHS_FILTER_ITEM = new LabeledItem<Integer>(
-            ALL_MONTHS_DUMMY,
+            Integer.valueOf(ALL_MONTHS_DUMMY),
             textBundle.textFor("MonthFilterList.AllMonthsLabel") //$NON-NLS-1$
     );
 
@@ -47,7 +47,7 @@ public class MonthFilterList implements Observer {
 
     /** filter item for the current month dummy. */
     public static final LabeledItem<Integer> CURRENT_MONTH_FILTER_ITEM = new LabeledItem<Integer>(
-            CURRENT_MONTH_DUMMY,
+            Integer.valueOf(CURRENT_MONTH_DUMMY),
             textBundle.textFor("MonthFilterList.CurrentMonthLabel", MONTH_FORMAT.print(DateUtils.getNow())) //$NON-NLS-1$
     );
 

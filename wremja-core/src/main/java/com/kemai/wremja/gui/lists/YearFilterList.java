@@ -8,16 +8,16 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.SortedList;
+
 import com.kemai.swing.util.LabeledItem;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.SortedList;
 
 /**
  * The list containing all years available for the filter.
@@ -34,20 +34,20 @@ public class YearFilterList implements Observer {
     private final PresentationModel model;
 
     /** Value for the all years dummy. */
-    public static final int ALL_YEARS_DUMMY = -10; //$NON-NLS-1$
+    public static final int ALL_YEARS_DUMMY = -10; 
 
     /** Filter item for the all years dummy. */
     public static final LabeledItem<Integer> ALL_YEARS_FILTER_ITEM = new LabeledItem<Integer>(
-            ALL_YEARS_DUMMY,
+            Integer.valueOf(ALL_YEARS_DUMMY),
             textBundle.textFor("YearFilterList.AllYearsLabel") //$NON-NLS-1$
     );
     
     /** Value for the current year dummy. */
-    public static final int CURRENT_YEAR_DUMMY = -5; //$NON-NLS-1$
+    public static final int CURRENT_YEAR_DUMMY = -5; 
 
     /** Filter item for the current year dummy. */
     public static final LabeledItem<Integer> CURRENT_YEAR_FILTER_ITEM = new LabeledItem<Integer>(
-            CURRENT_YEAR_DUMMY,
+            Integer.valueOf(CURRENT_YEAR_DUMMY),
             textBundle.textFor("YearFilterList.CurrentYearsLabel", YEAR_FORMAT.print(DateUtils.getNow())) //$NON-NLS-1$
     );
 
@@ -123,7 +123,7 @@ public class YearFilterList implements Observer {
         }
         
         final String year = YEAR_FORMAT.print(activity.getStart());
-        final LabeledItem<Integer> yearItem = new LabeledItem<Integer>(Integer.parseInt(year), year);
+        final LabeledItem<Integer> yearItem = new LabeledItem<Integer>(Integer.valueOf(year), year);
         if (!this.yearList.contains(yearItem)) {
             this.yearList.add(yearItem);
         }

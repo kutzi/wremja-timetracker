@@ -287,21 +287,28 @@ public class PresentationModel extends Observable {
         stop(DateUtils.getNow(), notifyObservers);
     }
     
+    public final synchronized void stop(DateTime stopTime, boolean notifyObservers) throws ProjectActivityStateException {
+        stop(stopTime, notifyObservers, false);
+    }
+    
     /**
      * Stops a project activity at the given stopTime.
      * DON'T USE THIS METHOD - unless you really know what you do.
      * Use {{@link #stop()} instead!
      *
+     * @param notifyObservers should observers be notified about the new activity (false during shutdown)
+     * @param force force creation of activity i.e. overriding UserSettings.instance().isDiscardEmptyActivities()
      * @return the new {@link ProjectActivity} that was created
      *   or null if the activity had zero duration and 'purge.emptyActivities' is true
      * @throws ProjectActivityStateException if there is no running project
      */
-    public final synchronized ProjectActivity stop(DateTime stopTime, final boolean notifyObservers) throws ProjectActivityStateException {
+    public final synchronized ProjectActivity stop(DateTime stopTime, boolean notifyObservers,
+            boolean force) throws ProjectActivityStateException {
         if (!isActive()) {
             throw new ProjectActivityStateException(textBundle.textFor("PresentationModel.NoActiveProjectError")); //$NON-NLS-1$
         }
 
-        if( UserSettings.instance().isDiscardEmptyActivities()) {
+        if( !force && UserSettings.instance().isDiscardEmptyActivities()) {
             if( this.start.getMinuteOfDay() == stopTime.getMinuteOfDay() ) {
                 
                 clearOldActivity(notifyObservers);

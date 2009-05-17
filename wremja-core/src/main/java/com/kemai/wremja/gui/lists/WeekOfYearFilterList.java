@@ -8,16 +8,16 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.SortedList;
+
 import com.kemai.swing.util.LabeledItem;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.SortedList;
 
 /**
  * The list containing all weeks of year available for the filter.
@@ -38,7 +38,7 @@ public class WeekOfYearFilterList implements Observer {
 
     /** Filter item for the all weeks of year dummy. */
     public static final LabeledItem<Integer> ALL_WEEKS_OF_YEAR_FILTER_ITEM = new LabeledItem<Integer>(
-            ALL_WEEKS_OF_YEAR_DUMMY, 
+            Integer.valueOf(ALL_WEEKS_OF_YEAR_DUMMY), 
             textBundle.textFor("WeekOfYearFilterList.AllWeeksOfYearLabel") //$NON-NLS-1$
     );
 
@@ -47,7 +47,7 @@ public class WeekOfYearFilterList implements Observer {
 
     /** Filter item for the current week of year dummy. */
     public static final LabeledItem<Integer> CURRENT_WEEK_OF_YEAR_FILTER_ITEM = new LabeledItem<Integer>(
-            CURRENT_WEEK_OF_YEAR_DUMMY,
+            Integer.valueOf(CURRENT_WEEK_OF_YEAR_DUMMY),
             textBundle.textFor("WeekOfYearFilterList.CurrentWeekOfYearLabel", WEEK_OF_YEAR_FORMAT.print(DateUtils.getNow())) //$NON-NLS-1$
     );
 
