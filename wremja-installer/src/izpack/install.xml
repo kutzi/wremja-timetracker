@@ -9,7 +9,7 @@
 		<url>${project.url}</url>
 		<javaversion>1.6</javaversion>
 		<requiresjdk>no</requiresjdk>
-		<pack200/>
+		<!-- <pack200/> -->
 	</info>
 	
 	<!-- Windows binary for creating shortcuts. -->
@@ -46,12 +46,12 @@
 		<!-- Shortcuts -->
 		<res id="shortcutSpec.xml" src="shortcutSpec.xml" />
 		<res id="shortcutSpec.xml_deu" src="shortcutSpec.xml_deu" />
-		<!--<res id="shortcutSpec.xml_fra" src="shortcutSpec.xml_fra" />-->
+		<res id="shortcutSpec.xml_fra" src="shortcutSpec.xml_fra" />
 		<res id="Unix_shortcutSpec.xml" src="Unix_shortcutSpec.xml" />
 		
 		<!-- Packs internationalization -->
 		<res id="packsLang.xml_deu" src="packsLang.xml_deu" />
-		<!-- <res id="packsLang.xml_fra" src="packsLang.xml_fra" />-->
+		<res id="packsLang.xml_fra" src="packsLang.xml_fra" />
 	</resources>
 
 	<panels>
