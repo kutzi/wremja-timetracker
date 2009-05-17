@@ -15,7 +15,7 @@ Changes in Version 1.0 (Compared to Baralga 1.3.5 resp. 1.4)
   - changes to data are now detected and saved more quickly. Therefore less data loss can occur.
 
 - Installer
-  - reduced installer size from ~9 MB to ~2 MB without losing any functionality!
+  - reduced installer size from ~9 MB to ~7.5 MB without losing any functionality
   - improved Linux installer (can now install application menu entries)
   - installer checks Java requirements (>= 1.6) before proceeding
 
