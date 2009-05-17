@@ -1,6 +1,6 @@
 <shortcuts>
   <skipIfNotSupported/>
-  <programGroup defaultName="$APP_NAME"
+  <programGroup defaultName="Accessories"
                 location="applications"/>
   <shortcut
     name="$APP_NAME"
@@ -9,7 +9,7 @@
     workingDirectory="$INSTALL_PATH"
     description="Time tracking application for projects."
     encoding="UTF-8"
-    iconFile="$INSTALL_PATH/Baralga-Tray.png"
+    iconFile="$INSTALL_PATH/Wremja-Tray.png"
     iconIndex="0"
     initialState="maximized"
     programGroup="yes"
@@ -18,8 +18,9 @@
     startMenu="no"
     startup="no"
     type="Application"
+    Categories="Application;Utility"
     >
-    <!-- desktop="no" : Desktop-Icon doesn't work on Linux (at least not on Ubuntu) -->
+    <!-- desktop="no" : Desktop-Icon doesn't work on Gnome (KDE should work) -->
 
     <createForPack name="Base"/>
   </shortcut>
