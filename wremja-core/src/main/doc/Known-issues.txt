@@ -1,0 +1,16 @@
+Known issues in Wremja
+======================
+
+- Activities are not stopped, when the computer is shut down
+
+There seems to be nothing we can do about it, since Java doesn't get informed about the shutdown.
+However, we recognize unfinished avtivities on next startup and ask the user how to proceed with them.
+
+- Desktop icon creation doesn't work on Linux
+
+- tray icon issues on Linux
+  - background of the icon is always gray
+  - double-clicking on the icon doesn't work reliably
+
+- No installer for Mac OS
+

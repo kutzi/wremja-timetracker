@@ -8,14 +8,16 @@ Changes in Version 1.0 (Compared to Baralga 1.3.5 resp. 1.4)
   - fixed 'popup menus not shown' on Linux
   - new Look & Feel
   - remember main window's location and minimized state (optionally)
+  - remember last select tab in the 'category' tabs
   - allow deletion of multiple activities at once
 
 - improved saving algorithm
   - changes to data are now detected and saved more quickly. Therefore less data loss can occur.
 
-- reduced installer size from ~9 MB to ~2 MB without losing any functionality!
-
-- improved Linux installer (can now install application menu entries)
+- Installer
+  - reduced installer size from ~9 MB to ~2 MB without losing any functionality!
+  - improved Linux installer (can now install application menu entries)
+  - installer checks Java requirements (>= 1.6) before proceeding
 
 - recognition of unstopped activities due to a 'dirty' previous shutdown
 
