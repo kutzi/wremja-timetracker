@@ -90,7 +90,10 @@ public class ActivityPanel extends JPanel implements Observer {
     /** Displays the start time of the running activity. */
     private JFormattedTextField start;
 
-    /** Format for minutes. */
+    /** Format for minutes.
+     * 
+     * Note: access needs not to be synchronized as this should only be used from within the EDT.
+     */
     private static NumberFormat MINUTE_FORMAT = new DecimalFormat("##00");
 
     /**
@@ -332,7 +335,7 @@ public class ActivityPanel extends JPanel implements Observer {
      * @param event the event of the project change
      */
     private void updateProjectChanged(final WremjaEvent event) {
-        getProjectSelector().setSelectedItem((Project) event.getData());
+        getProjectSelector().setSelectedItem(event.getData());
 
         if (model.isActive()) {
             start.setValue(this.model.getStart().toDate());

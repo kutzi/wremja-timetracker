@@ -2,10 +2,10 @@ package com.kemai.wremja.gui.dialogs.table;
 
 import java.beans.PropertyChangeEvent;
 
+import ca.odell.glazedlists.gui.WritableTableFormat;
+
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.Project;
-
-import ca.odell.glazedlists.gui.WritableTableFormat;
 
 /**
  * Format for table containing the projects.
@@ -14,7 +14,7 @@ import ca.odell.glazedlists.gui.WritableTableFormat;
 public class ProjectListTableFormat implements WritableTableFormat<Project> {
 
     /** The model. */
-    private PresentationModel model;
+    private final PresentationModel model;
 
     public ProjectListTableFormat(final PresentationModel model) {
         this.model = model;
