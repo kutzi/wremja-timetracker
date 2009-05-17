@@ -5,6 +5,8 @@ import info.clearthought.layout.TableLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.text.ParseException;
 
@@ -15,7 +17,11 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DateFormatter;
+import javax.swing.text.Document;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -39,7 +45,7 @@ import com.kemai.wremja.model.ProjectActivity;
  * @author remast
  * @author kutzi
  */
-@SuppressWarnings("serial")//$NON-NLS-1$
+@SuppressWarnings("serial")
 public class AddOrEditActivityDialog extends EscapeDialog {
 
     /** The bundle for internationalized texts. */
@@ -164,6 +170,8 @@ public class AddOrEditActivityDialog extends EscapeDialog {
                 if (!CollectionUtils.isEmpty(model.getProjectList())) {
                     final Project project = model.getProjectList().get(0);
                     projectSelector.setSelectedItem(project);
+                } else {
+                    this.submitActivityButton.setEnabled(false);
                 }
             } else {
                 // b) Take selected project
@@ -199,17 +207,56 @@ public class AddOrEditActivityDialog extends EscapeDialog {
         this.setLayout(tableLayout);
 
         this.projectSelector = new JComboBox(new EventComboBoxModel<Project>(model.getProjectList()));
+        this.projectSelector.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getItem() != null && e.getStateChange() == ItemEvent.SELECTED) {
+                    submitActivityButton.setEnabled(true);
+                }
+            }
+        });
         this.add(projectLabel, "1, 1");
         this.add(this.projectSelector, "3, 1");
 
         this.add(dateLabel, "1, 3");
         this.add(this.datePicker, "3, 3");
 
+        DocumentListener validDateListener = new DocumentListener() {
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                // noop                    
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                checkIfDocumentContainsValidDate(e.getDocument());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                checkIfDocumentContainsValidDate(e.getDocument());
+            }
+            
+            private void checkIfDocumentContainsValidDate(Document document) {
+                try {
+                    String text = document.getText(0, document.getLength());
+                    if(validateTime(text)) {
+                        submitActivityButton.setEnabled(true);
+                        return;
+                    }
+                } catch (BadLocationException e) {
+                    // fall through
+                }
+                submitActivityButton.setEnabled(false);
+            }
+        };
+        
         this.add(startLabel, "1, 5");
-        this.add(getStartField(), "3, 5");
+        this.add(getStartField(validDateListener), "3, 5");
 
         this.add(endLabel, "1, 7");
-        this.add(getEndField(), "3, 7");
+        this.add(getEndField(validDateListener), "3, 7");
 
         this.add(descriptionLabel, "1, 9");
         this.add(descriptionEditor, "3, 9");
@@ -281,12 +328,12 @@ public class AddOrEditActivityDialog extends EscapeDialog {
      * This method initializes startField.
      * @return javax.swing.JTextField
      */
-    private JFormattedTextField getStartField() {
+    private JFormattedTextField getStartField(DocumentListener docListener) {
         if (startField == null) {
             final DateFormatter dateFormatter = new DateFormatter(FormatUtils.getTimeFormat());
             startField = new JFormattedTextField(dateFormatter);
             dateFormatter.install(startField);
-
+            startField.getDocument().addDocumentListener(docListener);
         }
         return startField;
     }
@@ -295,11 +342,12 @@ public class AddOrEditActivityDialog extends EscapeDialog {
      * This method initializes endField.
      * @return javax.swing.JFormattedTextField
      */
-    private JFormattedTextField getEndField() {
+    private JFormattedTextField getEndField(DocumentListener docListener) {
         if (endField == null) {
             final DateFormatter dateFormatter = new DateFormatter(FormatUtils.getTimeFormat());
             endField = new JFormattedTextField(dateFormatter);
             dateFormatter.install(endField);
+            endField.getDocument().addDocumentListener(docListener);
         }
         return endField;
     }
@@ -308,31 +356,25 @@ public class AddOrEditActivityDialog extends EscapeDialog {
      * Validates the field to ensure that the entered data is valid.
      * @return
      */
-    public boolean validateFields() {
+    private boolean validateFields() {
         if (this.projectSelector.getSelectedItem() == null) {
             return false;
         }
 
-        if (StringUtils.isBlank(getStartField().getText())) {
-            return false;
-        }
-
-        if (StringUtils.isBlank(getEndField().getText())) {
-            return false;
-        }
+        validateTime(this.startField.getText());
+        validateTime(this.endField.getText());
 
         try {
-            day = this.datePicker.getDateTime();
-
-            start = FormatUtils.parseTime(getStartField().getText());
-            end = FormatUtils.parseTime(getEndField().getText());
-
-            correctDates();
+            // TODO: this parsing is redundant
+            start = FormatUtils.parseTime(this.startField.getText());
+            end = FormatUtils.parseTime(this.endField.getText());
         } catch (ParseException e) {
             // On parse error one of the dates is not valid
             return false;
         }
 
+        day = this.datePicker.getDateTime();
+        correctDates();
         project = (Project) this.projectSelector.getSelectedItem();
 
         try {
@@ -356,6 +398,22 @@ public class AddOrEditActivityDialog extends EscapeDialog {
         return true;
     }
 
+    /**
+     * Validates that text contains a valid time value (i.e. 'HH:mm')
+     */
+    private boolean validateTime(String text) {
+        if (StringUtils.isBlank(text)) {
+            return false;
+        }
+
+        try {
+            FormatUtils.parseTime(text);
+            return true;
+        } catch(ParseException e) {
+            return false;
+        }
+    }
+    
     /** 
      * Correct the start and end date so that they are on the same day in year.
      */
