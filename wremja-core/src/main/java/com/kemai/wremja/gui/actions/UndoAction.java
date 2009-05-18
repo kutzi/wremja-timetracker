@@ -24,7 +24,7 @@ import com.kemai.wremja.gui.model.edit.EditStack;
 
          putValue(NAME, textBundle.textFor("UndoAction.Name"));
          putValue(SHORT_DESCRIPTION, textBundle.textFor("UndoAction.ShortDescription")); //$NON-NLS-1$
-         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-undo-ltr.png"))); //$NON-NLS-1$
+         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/edit-undo.png"))); //$NON-NLS-1$
          putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('Z', InputEvent.CTRL_MASK));
      }
 

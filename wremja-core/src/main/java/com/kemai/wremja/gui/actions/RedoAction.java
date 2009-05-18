@@ -24,7 +24,7 @@ public class RedoAction extends AbstractEditAction {
 
         resetTooltip();
         putValue(NAME, textBundle.textFor("RedoAction.Name")); //$NON-NLS-1$
-        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-redo-ltr.png"))); //$NON-NLS-1$
+        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/edit-redo.png"))); //$NON-NLS-1$
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('Y', InputEvent.CTRL_MASK));
     }
 
