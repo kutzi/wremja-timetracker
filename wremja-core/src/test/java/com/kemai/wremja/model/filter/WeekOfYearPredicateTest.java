@@ -29,11 +29,11 @@ public class WeekOfYearPredicateTest {
         activity = new ProjectActivity(start, start.plusMinutes(1), null);
         assertTrue(predicate.evaluate(activity));
 
-        start = start.minusYears(1);
+        start = start.minusYears(1).withWeekOfWeekyear(42);
         activity = new ProjectActivity(start, start.plusMinutes(1), null);
         assertTrue(predicate.evaluate(activity));
         
-        start = start.plusYears(10);
+        start = start.plusYears(10).withWeekOfWeekyear(42);
         activity = new ProjectActivity(start, start.plusMinutes(1), null);
         assertTrue(predicate.evaluate(activity));
     }

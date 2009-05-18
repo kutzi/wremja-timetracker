@@ -32,11 +32,11 @@ public class CurrentWeekPredicateTest {
         activity = new ProjectActivity(start, start.plusMinutes(1), null);
         assertTrue(predicate.evaluate(activity));
 
-        start = start.minusYears(1);
+        start = start.minusYears(1).withWeekOfWeekyear(currentWeek);
         activity = new ProjectActivity(start, start.plusMinutes(1), null);
         assertFalse(predicate.evaluate(activity));
         
-        start = start.plusYears(10);
+        start = start.plusYears(10).withWeekOfWeekyear(currentWeek);
         activity = new ProjectActivity(start, start.plusMinutes(1), null);
         assertFalse(predicate.evaluate(activity));
     }

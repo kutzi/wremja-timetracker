@@ -14,6 +14,7 @@ public class CurrentMonthPredicateTest {
     @Test
     public void testEvaluation() {
         Predicate<ProjectActivity> predicate = new CurrentMonthPredicate();
+        int currentMonth = new DateTime().getMonthOfYear();
         
         assertFalse(predicate.evaluate(null));
         
@@ -30,12 +31,12 @@ public class CurrentMonthPredicateTest {
         assertTrue(predicate.evaluate(activity));
 
         // don't match in previous year
-        start = start.minusYears(1);
+        start = start.minusYears(1).withMonthOfYear(currentMonth);
         activity = new ProjectActivity(start, start.plusMinutes(1), null);
         assertFalse(predicate.evaluate(activity));
         
         // and also not 9 years in the future
-        start = start.plusYears(10);
+        start = start.plusYears(10).withMonthOfYear(currentMonth);
         activity = new ProjectActivity(start, start.plusMinutes(1), null);
         assertFalse(predicate.evaluate(activity));
     }
