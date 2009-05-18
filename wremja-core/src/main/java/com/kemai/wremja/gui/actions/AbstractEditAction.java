@@ -7,6 +7,7 @@ import com.kemai.wremja.gui.model.edit.EditStack;
 /**
  * Base class for edit actions that can be redone and undone.
  * @author remast
+ * @author kutzi
  */
 @SuppressWarnings("serial")
 public abstract class AbstractEditAction extends AbstractAction {
@@ -36,10 +37,8 @@ public abstract class AbstractEditAction extends AbstractAction {
         this.editStack.redo();
     }
     
-    public void setText(final String name) {
-        putValue(NAME, name);
-        putValue(SHORT_DESCRIPTION, name);
+    public void setTooltip(final String tooltip) {
+        putValue(SHORT_DESCRIPTION, tooltip);
     }
-    
-    protected abstract void resetText();
+    protected abstract void resetTooltip();
 }

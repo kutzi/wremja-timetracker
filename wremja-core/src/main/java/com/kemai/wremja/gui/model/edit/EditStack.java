@@ -20,6 +20,7 @@ import com.kemai.wremja.model.ProjectActivity;
  * the model and keeps track of undoable and redoable events.
  * @author remast
  */
+// TODO: use Swing's built-in undo/redo support instead?
 public class EditStack implements Observer {
 
 	/**
@@ -85,18 +86,18 @@ public class EditStack implements Observer {
 	private void updateActions() {
         if (CollectionUtils.isNotEmpty(undoStack)) {
             undoAction.setEnabled(true);
-            undoAction.setText(undoStack.peek().getUndoText());
+            undoAction.setTooltip(undoStack.peek().getUndoText());
         } else {
             undoAction.setEnabled(false);
-            undoAction.resetText();
+            undoAction.resetTooltip();
         }
         
         if (CollectionUtils.isNotEmpty(redoStack)) {
             redoAction.setEnabled(true);
-            redoAction.setText(redoStack.peek().getRedoText());
+            redoAction.setTooltip(redoStack.peek().getRedoText());
         } else {
             redoAction.setEnabled(false);
-            redoAction.resetText();
+            redoAction.resetTooltip();
         }
 	}
 

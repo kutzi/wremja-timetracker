@@ -37,8 +37,7 @@ import com.kemai.wremja.gui.model.edit.EditStack;
      }
 
      @Override
-     public void resetText() {
-         putValue(NAME, textBundle.textFor("UndoAction.Name")); //$NON-NLS-1$
+     public void resetTooltip() {
          putValue(SHORT_DESCRIPTION, textBundle.textFor("UndoAction.ShortDescription")); //$NON-NLS-1$
      }
  }

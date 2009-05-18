@@ -3,6 +3,7 @@ package com.kemai.wremja.gui.events;
 import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.model.ProjectActivity;
@@ -155,8 +156,9 @@ public class WremjaEvent {
         switch (this.type) {
         case PROJECT_ACTIVITY_REMOVED:
         {
-            final ProjectActivity projectActivity = (ProjectActivity) this.data;
-            return textBundle.textFor("WremjaEvent.UndoRemoveActivityText", projectActivity.toString());
+            @SuppressWarnings("unchecked")
+            List<ProjectActivity> activities = (List<ProjectActivity>) getDataCollection();
+            return textBundle.textFor("WremjaEvent.UndoRemoveActivityText", Integer.valueOf(activities.size()));
         }
         case PROJECT_ACTIVITY_ADDED:
         {
@@ -172,8 +174,9 @@ public class WremjaEvent {
         switch (this.type) {
         case PROJECT_ACTIVITY_REMOVED:
         {
-            final ProjectActivity projectActivity = (ProjectActivity) this.data;
-            return textBundle.textFor("WremjaEvent.RedoRemoveActivityText", projectActivity.toString());
+            @SuppressWarnings("unchecked")
+            List<ProjectActivity> activities = (List<ProjectActivity>) getDataCollection();
+            return textBundle.textFor("WremjaEvent.RedoRemoveActivityText", Integer.valueOf(activities.size()));
         }
         case PROJECT_ACTIVITY_ADDED:
         {
