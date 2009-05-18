@@ -80,6 +80,8 @@ public class PresentationModel extends Observable {
     /** Timer for the time passed since activity was started. */
     private final Timer timer;
     
+    private volatile boolean stopActivityOnShutdown = true;
+
     //private final Object startStopLock = new Object();
 
     /**
@@ -764,5 +766,17 @@ public class PresentationModel extends Observable {
 
     public boolean isDirty() {
         return this.data.isDirty();
+    }
+    
+
+    /**
+     * Returns true iff a running activity should be stopped on shutdown.
+     */
+    public boolean isStopActivityOnShutdown() {
+        return this.stopActivityOnShutdown;
+    }
+
+    public void setStopActivityOnShutdown(boolean stopActivityOnShutdown) {
+        this.stopActivityOnShutdown = stopActivityOnShutdown;
     }
 }

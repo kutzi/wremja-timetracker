@@ -125,8 +125,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     /** The Tray icon, if any. */
     private TrayIcon tray;
     
-    private volatile boolean stopActivityOnShutdown = true;
-
     /**
      * This is the default constructor.
      * @param model the model
@@ -585,17 +583,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             }
             UserSettings.instance().setWindowMinimized(show);
         }
-    }
-
-    /**
-     * Returns true iff a running activity should be stopped on shutdown.
-     */
-    public boolean isStopActivityOnShutdown() {
-        return this.stopActivityOnShutdown;
-    }
-
-    public void setStopActivityOnShutdown(boolean stopActivityOnShutdown) {
-        this.stopActivityOnShutdown = stopActivityOnShutdown;
     }
 
     public void handleUnfinishedActivityOnStartup() throws InterruptedException, InvocationTargetException {

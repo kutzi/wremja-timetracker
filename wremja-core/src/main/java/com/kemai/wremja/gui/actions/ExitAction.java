@@ -1,12 +1,12 @@
 package com.kemai.wremja.gui.actions;
 
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import com.kemai.util.TextResourceBundle;
-import com.kemai.wremja.gui.MainFrame;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.logging.Logger;
 
@@ -22,17 +22,15 @@ public class ExitAction extends AbstractWremjaAction {
     
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExitAction.class);
-    private final MainFrame mainFrame;
 
     /**
      * Constructor.
      *
-     * @param owner The main frame. Must not be null
+     * @param owner The owner frame.
      * @param model The {@link PresentationModel}
      */
-    public ExitAction(final MainFrame owner, final PresentationModel model) {
+    public ExitAction(final Frame owner, final PresentationModel model) {
         super(owner, model);
-        this.mainFrame = owner;
 
         putValue(NAME, textBundle.textFor("ExitAction.Name")); //$NON-NLS-1$
         putValue(SHORT_DESCRIPTION, textBundle.textFor("ExitAction.ShortDescription")); //$NON-NLS-1$
@@ -63,11 +61,11 @@ public class ExitAction extends AbstractWremjaAction {
                 case JOptionPane.CLOSED_OPTION: quit = false; break;
                 case JOptionPane.YES_OPTION :
                     quit = true;
-                    this.mainFrame.setStopActivityOnShutdown(true);
+                    getModel().setStopActivityOnShutdown(true);
                     break;
                 case JOptionPane.NO_OPTION:
                     quit = true;
-                    this.mainFrame.setStopActivityOnShutdown(false);
+                    getModel().setStopActivityOnShutdown(false);
                     break;
                 default:
                     LOG.error("Invalid dialogResult " + dialogResult );
