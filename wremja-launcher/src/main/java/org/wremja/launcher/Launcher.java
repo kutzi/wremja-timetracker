@@ -71,8 +71,6 @@ public final class Launcher {
     /** The absolute path name of the log file. */
     private static String logFileName;
     
-    private static MainFrame mainFrame;
-
     /** Set to true if the previous shutdown was likely a 'clean' one. I.e. the lock file was deleted. */
     private static boolean cleanShutdown = false;
     
@@ -98,7 +96,7 @@ public final class Launcher {
 
             final PresentationModel model = initModel();
 
-            mainFrame = initMainFrame(model, mainInstance);
+            initMainFrame(model, mainInstance);
             
             initTimer(model);
 
@@ -203,7 +201,7 @@ public final class Launcher {
                         saveDaemon.requestStop();
                         
                         // stop current activity (if necessary)
-                        if (model.isActive() && mainFrame.isStopActivityOnShutdown()) {
+                        if (model.isActive() && model.isStopActivityOnShutdown()) {
                             try {
                                 model.stop(false);
                             } catch (ProjectActivityStateException e) {
