@@ -49,9 +49,12 @@ public class TrayIcon implements Observer {
     /** The menu of the tray icon. */
     private JPopupMenu menu = new JPopupMenu();
 
+    private final MainFrame mainFrame;
+
     public TrayIcon(final PresentationModel model, final MainFrame mainFrame) {
         this.model = model;
         this.model.addObserver(this);
+        this.mainFrame = mainFrame;
 
         buildMenu();
 
@@ -59,7 +62,7 @@ public class TrayIcon implements Observer {
             trayIcon = new JXTrayIcon(ACTIVE_ICON);
             trayIcon.setToolTip(textBundle.textFor("Global.Title") + " - " + model.getSelectedProject() + textBundle.textFor("MainFrame.9") + FormatUtils.formatTime(model.getStart()));
         } else {
-            trayIcon = new JXTrayIcon(NORMAL_ICON); //$NON-NLS-1$
+            trayIcon = new JXTrayIcon(NORMAL_ICON); 
             trayIcon.setToolTip(textBundle.textFor("Global.Title"));
         }
         trayIcon.setImageAutoSize(true);
@@ -84,7 +87,7 @@ public class TrayIcon implements Observer {
      */
     private void buildMenu() {
         menu.removeAll();
-        final ExitAction exitAction = new ExitAction(null, model);
+        final ExitAction exitAction = new ExitAction(this.mainFrame, model);
         exitAction.putValue(AbstractAction.SMALL_ICON, null);
         menu.add(exitAction);
 

@@ -24,8 +24,14 @@ public class ExitAction extends AbstractWremjaAction {
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExitAction.class);
     private final MainFrame mainFrame;
 
+    /**
+     * Constructor.
+     *
+     * @param owner The main frame. Must not be null
+     * @param model The {@link PresentationModel}
+     */
     public ExitAction(final MainFrame owner, final PresentationModel model) {
-        super(model);
+        super(owner, model);
         this.mainFrame = owner;
 
         putValue(NAME, textBundle.textFor("ExitAction.Name")); //$NON-NLS-1$

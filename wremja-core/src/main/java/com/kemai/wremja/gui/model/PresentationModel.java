@@ -312,9 +312,11 @@ public class PresentationModel extends Observable {
             if( this.start.getMinuteOfDay() == stopTime.getMinuteOfDay() ) {
                 
                 clearOldActivity(notifyObservers);
-                // Create Stop Event
-                WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STOPPED);
-                notify(event);
+                if(notifyObservers) {
+                    // Create Stop Event
+                    WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STOPPED);
+                    notify(event);
+                }
                 return null;
             }
         }
