@@ -6,7 +6,6 @@ import java.awt.event.InputEvent;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
-
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.edit.EditStack;
 
@@ -23,8 +22,7 @@ public class RedoAction extends AbstractEditAction {
     public RedoAction(final EditStack editStack) {
         super(editStack);
 
-        putValue(NAME, textBundle.textFor("RedoAction.Name")); //$NON-NLS-1$
-        putValue(SHORT_DESCRIPTION, textBundle.textFor("RedoAction.ShortDescription")); //$NON-NLS-1$
+        resetText();
         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-redo-ltr.png"))); //$NON-NLS-1$
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('Y', InputEvent.CTRL_MASK));
     }
@@ -37,4 +35,9 @@ public class RedoAction extends AbstractEditAction {
         redo();
     }
 
+    @Override
+    public void resetText() {
+        putValue(NAME, textBundle.textFor("RedoAction.Name")); //$NON-NLS-1$
+        putValue(SHORT_DESCRIPTION, textBundle.textFor("RedoAction.ShortDescription")); //$NON-NLS-1$
+    }
 }

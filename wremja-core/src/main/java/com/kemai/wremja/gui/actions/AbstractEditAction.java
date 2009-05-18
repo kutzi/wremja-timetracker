@@ -12,7 +12,7 @@ import com.kemai.wremja.gui.model.edit.EditStack;
 public abstract class AbstractEditAction extends AbstractAction {
 
     /** The stack to manage edit actions. */
-    private EditStack editStack;
+    private final EditStack editStack;
 
     /**
      * Creates an AbstractEditAction for undoing and redoing edit actions.
@@ -35,4 +35,11 @@ public abstract class AbstractEditAction extends AbstractAction {
     protected final void redo() {
         this.editStack.redo();
     }
+    
+    public void setText(final String name) {
+        putValue(NAME, name);
+        putValue(SHORT_DESCRIPTION, name);
+    }
+    
+    protected abstract void resetText();
 }

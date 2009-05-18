@@ -25,12 +25,12 @@ public class EditStack implements Observer {
 	/**
 	 * The action for undoing an edit activity.
 	 */
-	private UndoAction undoAction;
+	private final UndoAction undoAction;
 
 	/**
 	 * The action for redoing an edit activity.
 	 */
-	private RedoAction redoAction;
+	private final RedoAction redoAction;
 
 	/**
 	 * The undoable edit events.
@@ -43,7 +43,7 @@ public class EditStack implements Observer {
 	private final Stack<WremjaEvent> redoStack = new Stack<WremjaEvent>();
 
 	/** The model. */
-	private PresentationModel model;
+	private final PresentationModel model;
 
 	/**
 	 * Creates a new edit stack for the given model.
@@ -83,8 +83,21 @@ public class EditStack implements Observer {
 	 * @param event 
 	 */
 	private void updateActions() {
-		undoAction.setEnabled(CollectionUtils.isNotEmpty(undoStack));
-		redoAction.setEnabled(CollectionUtils.isNotEmpty(redoStack));
+        if (CollectionUtils.isNotEmpty(undoStack)) {
+            undoAction.setEnabled(true);
+            undoAction.setText(undoStack.peek().getUndoText());
+        } else {
+            undoAction.setEnabled(false);
+            undoAction.resetText();
+        }
+        
+        if (CollectionUtils.isNotEmpty(redoStack)) {
+            redoAction.setEnabled(true);
+            redoAction.setText(redoStack.peek().getRedoText());
+        } else {
+            redoAction.setEnabled(false);
+            redoAction.resetText();
+        }
 	}
 
 	/**

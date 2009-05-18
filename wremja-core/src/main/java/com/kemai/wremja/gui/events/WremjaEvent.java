@@ -4,12 +4,18 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.kemai.util.TextResourceBundle;
+import com.kemai.wremja.model.ProjectActivity;
+
 /**
  * Events of Wremja.
  * @author remast
+ * @author kutzi
  */
 public class WremjaEvent {
 
+    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(WremjaEvent.class);
+    
     //------------------------------------------------
     // Constants for ActivityRepository Events
     //------------------------------------------------
@@ -61,7 +67,7 @@ public class WremjaEvent {
     private PropertyChangeEvent propertyChangeEvent;
 
     /** The source that fired the event. */
-    private Object source;
+    private final Object source;
 
     /**
      * Constructor for a new event.
@@ -69,6 +75,7 @@ public class WremjaEvent {
      */
     public WremjaEvent(final Type type) {
         this.type = type;
+        this.source = null;
     }
 
     /**
@@ -144,11 +151,37 @@ public class WremjaEvent {
         return source;
     }
 
-    /**
-     * @param source the source to set
-     */
-    public void setSource(final Object source) {
-        this.source = source;
+    public String getUndoText() {
+        switch (this.type) {
+        case PROJECT_ACTIVITY_REMOVED:
+        {
+            final ProjectActivity projectActivity = (ProjectActivity) this.data;
+            return textBundle.textFor("WremjaEvent.UndoRemoveActivityText", projectActivity.toString());
+        }
+        case PROJECT_ACTIVITY_ADDED:
+        {
+            final ProjectActivity projectActivity = (ProjectActivity) this.data;
+            return textBundle.textFor("WremjaEvent.UndoAddActivityText", projectActivity.toString());
+        }
+        default:
+            return "";
+        }
     }
-
+    
+    public String getRedoText() {
+        switch (this.type) {
+        case PROJECT_ACTIVITY_REMOVED:
+        {
+            final ProjectActivity projectActivity = (ProjectActivity) this.data;
+            return textBundle.textFor("WremjaEvent.RedoRemoveActivityText", projectActivity.toString());
+        }
+        case PROJECT_ACTIVITY_ADDED:
+        {
+            final ProjectActivity projectActivity = (ProjectActivity) this.data;
+            return textBundle.textFor("WremjaEvent.RedoAddActivityText", projectActivity.toString());
+        }
+        default:
+            return "";
+        }
+    }
 }

@@ -3,7 +3,6 @@ package com.kemai.wremja.gui.dialogs;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Frame;
 
 import javax.swing.BorderFactory;
@@ -42,7 +41,7 @@ public class AboutDialog extends EscapeDialog {
         this.setAlwaysOnTop(true);
         setModal(true);
         setResizable(false);
-        setBackground(Color.WHITE);
+        setBackground(GuiConstants.BEIGE);
         
         initialize();
     }
@@ -65,11 +64,11 @@ public class AboutDialog extends EscapeDialog {
         final TableLayout tableLayout = new TableLayout(size);
         aboutInfo.setLayout(tableLayout);
         
-        aboutInfo.add(new JLabel(textBundle.textFor("AboutDialog.HomepageLabel")), "1, 1"); //$NON-NLS-1$ //$NON-NLS-2$
+        aboutInfo.add(new JLabel("<html><b>" + textBundle.textFor("AboutDialog.HomepageLabel") + "</b></html>"), "1, 1"); //$NON-NLS-1$ //$NON-NLS-2$
         final JXHyperlink hyperlinkHomepage = new JXHyperlink(new OpenBrowserAction(textBundle.textFor("AboutDialog.HomepageUrl"))); //$NON-NLS-1$
         aboutInfo.add(hyperlinkHomepage, "3, 1"); //$NON-NLS-1$
 
-        aboutInfo.add(new JLabel(textBundle.textFor("AboutDialog.BugLabel")), "1, 3"); //$NON-NLS-1$ //$NON-NLS-2$
+        aboutInfo.add(new JLabel("<html><b>" + textBundle.textFor("AboutDialog.BugLabel") + "</b></html>"), "1, 3"); //$NON-NLS-1$ //$NON-NLS-2$
         final JXHyperlink hyperlinkBug = new JXHyperlink(new OpenBrowserAction(textBundle.textFor("AboutDialog.BugUrl"))); //$NON-NLS-1$
         aboutInfo.add(hyperlinkBug, "3, 3"); //$NON-NLS-1$
         
@@ -84,10 +83,12 @@ public class AboutDialog extends EscapeDialog {
         }
         
         final String versionInfo = "<html>" +
-        		"<font color=blue size=\"big\"><h2>" + textBundle.textFor("Global.Version") +
-        		" " + GuiConstants.WREMJA_VERSION + "<br>Revision: " + GuiConstants.WREMJA_REVISION +
-        		"<br>Timestamp: " + GuiConstants.WREMJA_TIMESTAMP +
-        		"<br>Storage mode: " + storageMode + "</h2></font>" +
+        		"<font color=blue size=\"big\"><h2><b>" +
+        		textBundle.textFor("Global.Version") +
+        		":</b> " + GuiConstants.WREMJA_VERSION +
+        		"<br><b>Revision:</b> " + GuiConstants.WREMJA_REVISION +
+        		"<br><b>Timestamp:</b> " + GuiConstants.WREMJA_TIMESTAMP +
+        		"<br><b>Application mode:</b> " + storageMode + "</h2></font>" +
         		"</html>";
         final JLabel versionLabel = new JXLabel(versionInfo, JLabel.CENTER);
         versionLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));

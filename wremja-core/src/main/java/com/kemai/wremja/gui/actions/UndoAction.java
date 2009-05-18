@@ -6,7 +6,6 @@ import java.awt.event.InputEvent;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
-
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.edit.EditStack;
 
@@ -14,7 +13,7 @@ import com.kemai.wremja.gui.model.edit.EditStack;
  * Undoes the last edit activity using the {@link EditStack}.
  * @author remast
  */
-@SuppressWarnings("serial") //$NON-NLS-1$
+@SuppressWarnings("serial") 
  public class UndoAction extends AbstractEditAction {
 
      /** The bundle for internationalized texts. */
@@ -37,4 +36,9 @@ import com.kemai.wremja.gui.model.edit.EditStack;
          undo();
      }
 
+     @Override
+     public void resetText() {
+         putValue(NAME, textBundle.textFor("UndoAction.Name")); //$NON-NLS-1$
+         putValue(SHORT_DESCRIPTION, textBundle.textFor("UndoAction.ShortDescription")); //$NON-NLS-1$
+     }
  }

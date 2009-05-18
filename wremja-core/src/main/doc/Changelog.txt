@@ -29,4 +29,6 @@ Changes in Version 1.0 (Compared to Baralga 1.3.5 resp. 1.4)
 
 - lots more
 
- 
+Changes in Version 1.0-RC2
+==========================
+- fixed 2 errors on shutdown, when shutdown was initiated from system tray and an activity was running 

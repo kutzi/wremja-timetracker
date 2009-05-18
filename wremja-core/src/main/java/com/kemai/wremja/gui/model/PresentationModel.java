@@ -150,10 +150,8 @@ public class PresentationModel extends Observable {
         }
 
         // Edit stack
-        if (editStack == null) {
-            editStack = new EditStack(this);
-            this.addObserver(editStack);
-        }
+        editStack = new EditStack(this);
+        this.addObserver(editStack);
     }
 
     private void applyFilter() {
