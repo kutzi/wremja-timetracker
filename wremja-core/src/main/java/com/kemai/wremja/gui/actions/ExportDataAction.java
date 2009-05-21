@@ -16,7 +16,7 @@ import com.kemai.wremja.model.export.RawDataExporter;
  * Action to export data to a data file.
  * @author remast
  */
-@SuppressWarnings("serial") //$NON-NLS-1$
+@SuppressWarnings("serial") 
 public class ExportDataAction extends AbstractExportAction {
     
     /** The bundle for internationalized texts. */
@@ -34,7 +34,7 @@ public class ExportDataAction extends AbstractExportAction {
 
         putValue(NAME, textBundle.textFor("ExportDataAction.Name")); //$NON-NLS-1$
         putValue(SHORT_DESCRIPTION, textBundle.textFor("ExportDataAction.ShortDescription")); //$NON-NLS-1$
-        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gnome-mime-text-xml.png"))); //$NON-NLS-1$
+        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/package-x-generic.png"))); //$NON-NLS-1$
     }
 
     /**

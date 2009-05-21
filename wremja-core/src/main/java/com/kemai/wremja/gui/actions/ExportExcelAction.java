@@ -17,7 +17,7 @@ import com.kemai.wremja.model.export.Exporter;
  * into a Microsoft Excel file.
  * @author remast
  */
-@SuppressWarnings("serial") //$NON-NLS-1$
+@SuppressWarnings("serial") 
 public final class ExportExcelAction extends AbstractExportAction {
 
     /** The bundle for internationalized texts. */
@@ -35,7 +35,7 @@ public final class ExportExcelAction extends AbstractExportAction {
 
         putValue(NAME, textBundle.textFor("ExcelExportAction.Name")); //$NON-NLS-1$
         putValue(SHORT_DESCRIPTION, textBundle.textFor("ExcelExportAction.ShortDescription")); //$NON-NLS-1$
-        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gnome-mime-application-vnd.ms-excel.png"))); //$NON-NLS-1$
+        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/x-office-spreadsheet.png"))); //$NON-NLS-1$
     }
 
     /**
