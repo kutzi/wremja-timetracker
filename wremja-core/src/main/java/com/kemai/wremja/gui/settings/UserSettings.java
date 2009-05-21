@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
+import com.kemai.util.OSUtils;
 import com.kemai.wremja.gui.lists.MonthFilterList;
 import com.kemai.wremja.gui.lists.YearFilterList;
 import com.kemai.wremja.logging.Logger;
@@ -340,8 +341,6 @@ public final class UserSettings {
 		return doGetBoolean(WINDOW_MINIMIZED, false);
 	}
 	
-    private static final String LAST_TOUCH_TIMESTAMP = "lastTouch"; //$NON-NLS-1$
-    
     private static final String DISCARD_EMPTY_ACTIVITIES = "discard.emptyActivities";
     public boolean isDiscardEmptyActivities() {
         return doGetBoolean(DISCARD_EMPTY_ACTIVITIES, false);
@@ -350,6 +349,7 @@ public final class UserSettings {
         userConfig.setProperty(DISCARD_EMPTY_ACTIVITIES, b);
     }
     
+    private static final String LAST_TOUCH_TIMESTAMP = "lastTouch"; //$NON-NLS-1$
     /**
      * Sets the last touch timestamp.
      */
@@ -360,11 +360,20 @@ public final class UserSettings {
     /**
      * Gets the last touch timestamp.
      */
-
     public DateTime getLastTouchTimestamp() {
         long timestamp = userConfig.getLongProperty(
                 LAST_TOUCH_TIMESTAMP, System.currentTimeMillis());
         return new DateTime(timestamp);
+    }
+    
+    private static final String USE_TRAY_ICON = "gui.useTrayIcon";
+    public boolean isUseTrayIcon() {
+    	boolean def = !OSUtils.isGnome(); // tray icon issues under Gnome
+    	return doGetBoolean(USE_TRAY_ICON, def);
+    }
+    
+    public void setUseTrayIcon(boolean b) {
+    	userConfig.setProperty(USE_TRAY_ICON, b);
     }
     
     /**

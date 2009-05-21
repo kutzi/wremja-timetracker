@@ -210,7 +210,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
 
         // Create try icon.
         try {
-            if (SystemTray.isSupported()) {
+            if (UserSettings.instance().isUseTrayIcon() && SystemTray.isSupported()) {
                 tray = new TrayIcon(model, this);
             } else {
                 tray = null;

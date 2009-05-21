@@ -54,6 +54,10 @@ public class SettingsDialog extends EscapeDialog {
     {
         purgeEmptyActivities.setToolTipText(textBundle.textFor("SettingsDialog.Setting.DiscardEmptyActivities.ToolTipText"));
     }
+    private final JCheckBox useTrayicon = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.Title"));
+    {
+        purgeEmptyActivities.setToolTipText(textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.ToolTipText"));
+    }
 
     private final JTextField urlField = new JFormattedTextField();
     {
@@ -84,11 +88,14 @@ public class SettingsDialog extends EscapeDialog {
         final double border = 5;
         final double size[][] = {
                 { border, TableLayout.PREFERRED, border, TableLayout.FILL, border }, // Columns
-                { border, TableLayout.PREFERRED, border, TableLayout.PREFERRED, border,
+                { border, TableLayout.PREFERRED, border,
+                	TableLayout.PREFERRED, border,
                     TableLayout.PREFERRED, border,
                     TableLayout.PREFERRED, border,
                     TableLayout.PREFERRED, border,
-                    TableLayout.PREFERRED, TableLayout.FILL, TableLayout.PREFERRED, border   }  // Rows
+                    TableLayout.PREFERRED, border,
+                    TableLayout.PREFERRED, TableLayout.FILL,
+                    TableLayout.PREFERRED, border   }  // Rows
         };
 
         final TableLayout tableLayout = new TableLayout(size);
@@ -99,19 +106,19 @@ public class SettingsDialog extends EscapeDialog {
         this.add(new JXHeader(textBundle.textFor("SettingsDialog.ApplicationSettingsTitle"), null), "0, 0, 3, 1"); //$NON-NLS-1$ //$NON-NLS-2$
 
         this.add(rememberWindowSizeLocation, "1, 3, 3, 3"); //$NON-NLS-1$
-        
         this.add(purgeEmptyActivities, "1, 5, 3, 5"); //$NON-NLS-1$
+        this.add(useTrayicon, "1, 7, 3, 7"); //$NON-NLS-1$
         
         JLabel urlLabel = new JLabel( "Timetracker base URL" );
-        this.add(urlLabel, "1, 7"); //$NON-NLS-1$
-        this.add(urlField, "3, 7"); //$NON-NLS-1$
+        this.add(urlLabel, "1, 9"); //$NON-NLS-1$
+        this.add(urlField, "3, 9"); //$NON-NLS-1$
         
         JLabel loginLabel = new JLabel( "Timetracker login" );
-        this.add(loginLabel, "1, 9"); //$NON-NLS-1$
-        this.add( loginField, "3, 9"); //$NON-NLS-1$
+        this.add(loginLabel, "1, 11"); //$NON-NLS-1$
+        this.add( loginField, "3, 11"); //$NON-NLS-1$
         JLabel passwordLabel = new JLabel( "Timetracker password" );
-        this.add(passwordLabel, "1, 11");
-        this.add(passwordField, "3, 11");
+        this.add(passwordLabel, "1, 13");
+        this.add(passwordField, "3, 13");
 
         saveButton.setText(textBundle.textFor("SettingsDialog.SaveLabel")); //$NON-NLS-1$
         saveButton.setIcon(new ImageIcon(getClass().getResource("/icons/gtk-save.png"))); //$NON-NLS-1$
@@ -123,6 +130,7 @@ public class SettingsDialog extends EscapeDialog {
             public void actionPerformed(final ActionEvent event) {
                 settings.setRememberWindowSizeLocation(rememberWindowSizeLocation.isSelected());
                 settings.setDiscardEmptyActivities(purgeEmptyActivities.isSelected());
+                settings.setUseTrayIcon(useTrayicon.isSelected());
                 settings.setAnukoUrl(urlField.getText());
                 settings.setAnukoLogin(loginField.getText());
                 settings.setAnukoPassword(String.valueOf(passwordField.getPassword()));
@@ -132,7 +140,7 @@ public class SettingsDialog extends EscapeDialog {
 
         saveButton.setDefaultCapable(true);
         
-        this.add(saveButton, "1, 13, 3, 13");
+        this.add(saveButton, "1, 15, 3, 15");
         
         getRootPane().setDefaultButton(saveButton);
         
@@ -145,6 +153,7 @@ public class SettingsDialog extends EscapeDialog {
     private void readFromSettings() {
         this.rememberWindowSizeLocation.setSelected(this.settings.isRememberWindowSizeLocation());
         this.purgeEmptyActivities.setSelected(this.settings.isDiscardEmptyActivities());
+        this.useTrayicon.setSelected(this.settings.isUseTrayIcon());
         this.urlField.setText(this.settings.getAnukoUrl());
         this.loginField.setText(this.settings.getAnukoLogin());
         this.passwordField.setText(this.settings.getAnukoPassword());

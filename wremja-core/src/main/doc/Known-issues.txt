@@ -12,7 +12,8 @@ However, we recognize unfinished avtivities on next startup and ask the user how
 
 - tray icon issues on Linux
   - background of the icon is always gray
-  - double-clicking on the icon doesn't work reliably
+  - double-clicking on the icon doesn't work reliably (on Gnome)
+  - therefore the tray icon is disabled per default when running under Gnome
 
 - No installer for Mac OS
 
