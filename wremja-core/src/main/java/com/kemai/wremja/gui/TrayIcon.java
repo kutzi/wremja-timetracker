@@ -6,7 +6,8 @@ import static com.kemai.wremja.gui.GuiConstants.NORMAL_ICON;
 import java.awt.AWTException;
 import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -14,11 +15,14 @@ import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 
 import org.jdesktop.swinghelper.tray.JXTrayIcon;
 
+import com.kemai.util.OSUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
+import com.kemai.wremja.gui.actions.AbstractWremjaAction;
 import com.kemai.wremja.gui.actions.ChangeProjectAction;
 import com.kemai.wremja.gui.actions.ExitAction;
 import com.kemai.wremja.gui.actions.StartAction;
@@ -51,6 +55,8 @@ public class TrayIcon implements Observer {
 
     private final MainFrame mainFrame;
 
+	private boolean shown;
+
     public TrayIcon(final PresentationModel model, final MainFrame mainFrame) {
         this.model = model;
         this.model.addObserver(this);
@@ -69,24 +75,54 @@ public class TrayIcon implements Observer {
         trayIcon.setJPopupMenu(menu);
         trayIcon.setImageAutoSize(true);
 
-        trayIcon.addActionListener(new ActionListener() {
-
-            public void actionPerformed(final ActionEvent event) {
-                mainFrame.setVisible(true);
-                mainFrame.setState(JFrame.NORMAL);
-                mainFrame.requestFocus();
-                
-                mainFrame.showTray(false);
-            }
-
+        trayIcon.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(SwingUtilities.isLeftMouseButton(e)) {
+					Thread t = new Thread(new Runnable() {
+						public void run() {
+							try {
+								Thread.sleep(200);
+							} catch (InterruptedException e) {
+								// none
+							}
+							
+							SwingUtilities.invokeLater(new Runnable() {
+								@Override
+								public void run() {
+									restoreMainFrame();
+								}
+							});
+						}
+					});
+					t.start();
+				}
+			}
         });
     }
+    
+    
 
     /**
      * Build the context menu of the tray icon.
      */
     private void buildMenu() {
         menu.removeAll();
+        
+        AbstractWremjaAction restoreAction = new AbstractWremjaAction(this.mainFrame) {
+			private static final long serialVersionUID = 1L;
+
+			{
+        		putValue(NAME, "Restore");
+                putValue(SHORT_DESCRIPTION, "Restore main window");
+        	}
+        	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				restoreMainFrame();
+			}
+        };
+        menu.add(restoreAction);
         final ExitAction exitAction = new ExitAction(this.mainFrame, model);
         exitAction.putValue(AbstractAction.SMALL_ICON, null);
         menu.add(exitAction);
@@ -117,10 +153,11 @@ public class TrayIcon implements Observer {
      * Show the tray icon.
      */
     public void show() {
-    	if (SystemTray.isSupported()) {
+    	if (!shown && SystemTray.isSupported()) {
     		SystemTray tray = SystemTray.getSystemTray(); 
     		try {
     			tray.add(trayIcon);
+    			shown = true;
     		} catch (AWTException e) {
     			log.error(e, e);
     		}
@@ -132,7 +169,8 @@ public class TrayIcon implements Observer {
      */
     public void hide() {
     	if (SystemTray.isSupported()) {
-    		SystemTray.getSystemTray().remove(trayIcon);        
+    		SystemTray.getSystemTray().remove(trayIcon);
+    		shown = false;
     	}
     }
 
@@ -207,5 +245,27 @@ public class TrayIcon implements Observer {
         updateToolTip();
         this.buildMenu();
     }
+
+
+
+	private void restoreMainFrame() {
+		if(OSUtils.isGnome()) {
+			// Gnome Swing TrayIcon hack
+			// See http://www.ip-phone-forum.de/showthread.php?p=1004262
+			mainFrame.setState(JFrame.NORMAL);
+			mainFrame.setVisible(true);
+			mainFrame.setState(JFrame.ICONIFIED);
+			mainFrame.setVisible(false);
+			mainFrame.setState(JFrame.NORMAL);
+			mainFrame.setVisible(true);
+			mainFrame.toFront();
+			mainFrame.showTray(false);
+		} else {
+			mainFrame.setState(JFrame.NORMAL);
+			mainFrame.setVisible(true);
+			mainFrame.toFront();
+			mainFrame.showTray(false);
+		}
+	}
 
 }

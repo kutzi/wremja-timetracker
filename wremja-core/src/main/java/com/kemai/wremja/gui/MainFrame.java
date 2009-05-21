@@ -13,6 +13,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -51,9 +52,12 @@ import com.kemai.wremja.model.ProjectActivity;
 /**
  * The main frame of the application.
  * @author remast
+ * @author kutzi
  */
 @SuppressWarnings("serial")
 public class MainFrame extends JXFrame implements Observer, WindowListener {
+	
+	private static final boolean DEBUG = false;
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(MainFrame.class);
@@ -515,19 +519,31 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
 
     @Override
     public void windowIconified(final java.awt.event.WindowEvent e) {
+    	if(DEBUG) {
+    		System.out.println("iconified");
+    	}
         if (getTray() != null) {
+        	//if(e.getOldState() != e.getNewState()) {
+        	//setState(JFrame.NORMAL);
             setVisible(false);
             showTray(true);
+        	//}
         }
     }
 
     @Override
     public void windowOpened(final java.awt.event.WindowEvent e) {
+    	if(DEBUG) {
+    		System.out.println("opened");
+    	}
         showTray(false);
     }
 
     @Override
     public void windowClosing(final java.awt.event.WindowEvent e) {
+    	if(DEBUG) {
+    		System.out.println("closing");
+    	}
         if (getTray() != null) {
             setVisible(false);
             showTray(true);
@@ -538,19 +554,34 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
 
     @Override
     public void windowClosed(final java.awt.event.WindowEvent e) {
+    	if(DEBUG) {
+    		System.out.println("closed");
+    	}
+    	if (getTray() != null) {
+    		setExtendedState(JFrame.NORMAL);
+    	}
     }
 
     @Override
     public void windowDeiconified(final java.awt.event.WindowEvent e) {
+    	if(DEBUG) {
+    		System.out.println("Deiconified");
+    	}
         showTray(false);
     }
 
     @Override
     public void windowActivated(final java.awt.event.WindowEvent e) {
+    	if(DEBUG) {
+    		System.out.println("activated");
+    	}
     }
 
     @Override
     public void windowDeactivated(final java.awt.event.WindowEvent e) {
+    	if(DEBUG) {
+    		System.out.println("deactivated");
+    	}
     }
 
     /**
