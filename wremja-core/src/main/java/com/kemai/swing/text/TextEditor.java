@@ -1,5 +1,8 @@
 package com.kemai.swing.text;
 
+import static javax.swing.Action.SHORT_DESCRIPTION;
+import static javax.swing.Action.SMALL_ICON;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
@@ -16,13 +19,14 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.Action;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultEditorKit;
@@ -33,26 +37,66 @@ import javax.swing.text.html.StyleSheet;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXPanel;
 
-import com.kemai.util.UiUtilities;
-
 /**
  * Simple editor for html formatted text.
  * @author remast
+ * @author kutzi
  */
 @SuppressWarnings("serial")
 public class TextEditor extends JXPanel {
 
     /**
      * A interface that allows to listen for text changes to the card side text panes. Use
-     * {@link CardPanel#addTextObserver} method to hook it to the CardPanel.
+     * {@link TextEditor#addTextObserver} method to hook it to the CardPanel.
      */
     public interface TextChangeObserver {
         void onTextChange();
     }
 
-    private final List<TextChangeObserver> textObservers = new CopyOnWriteArrayList<TextChangeObserver>();
 
-    private final JTextPane textPane = new JTextPane();;
+    private static final StyledEditorKit.BoldAction BOLD_ACTION = new StyledEditorKit.BoldAction();
+    private static final StyledEditorKit.ItalicAction ITALIC_ACTION = new StyledEditorKit.ItalicAction();
+    private static final DefaultEditorKit.CopyAction COPY_ACTION = new DefaultEditorKit.CopyAction();
+    private static final DefaultEditorKit.PasteAction PASTE_ACTION = new DefaultEditorKit.PasteAction();
+    static {
+    	BOLD_ACTION.putValue(SMALL_ICON, new ImageIcon(TextEditor.class.getResource("/icons/text_bold.png"))); //$NON-NLS-1$
+        BOLD_ACTION.putValue(SHORT_DESCRIPTION, "Bold Font");
+        BOLD_ACTION.setEnabled(false);
+        
+        ITALIC_ACTION.putValue(SMALL_ICON, new ImageIcon(TextEditor.class.getResource("/icons/text_italic.png"))); //$NON-NLS-1$
+        ITALIC_ACTION.putValue(SHORT_DESCRIPTION, "Italic Font");
+        ITALIC_ACTION.setEnabled(false);
+        
+        COPY_ACTION.putValue(SMALL_ICON, new ImageIcon(TextEditor.class.getResource("/icons/edit-copy.png"))); //$NON-NLS-1$ 
+        COPY_ACTION.putValue(SHORT_DESCRIPTION, "Copy");
+        COPY_ACTION.setEnabled(false);
+
+        PASTE_ACTION.putValue(SMALL_ICON, new ImageIcon(TextEditor.class.getResource("/icons/edit-paste.png"))); //$NON-NLS-1$ 
+        PASTE_ACTION.putValue(SHORT_DESCRIPTION, "Paste");
+        PASTE_ACTION.setEnabled(false);
+    }
+    
+    private final List<TextChangeObserver> textObservers = new CopyOnWriteArrayList<TextChangeObserver>();
+    
+    private final JTextPane textPane = new JTextPane();
+    {
+    	textPane.addCaretListener(new CaretListener() {
+
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				if(e.getMark() != e.getDot()) {
+					// there's something selected in the textpane
+					BOLD_ACTION.setEnabled(true);
+					ITALIC_ACTION.setEnabled(true);
+					COPY_ACTION.setEnabled(true);
+				} else {
+					BOLD_ACTION.setEnabled(false);
+					ITALIC_ACTION.setEnabled(false);
+					COPY_ACTION.setEnabled(false);
+				}
+			}
+    	});
+    }
 
     private JToolBar toolbar;
 
@@ -65,57 +109,11 @@ public class TextEditor extends JXPanel {
     private final List<Action> actions;
     {
         List<Action> tmp = new ArrayList<Action>();
-        tmp.add(new BoldAction());
-        tmp.add(new ItalicAction());
-        tmp.add(new CopyAction());
-        tmp.add(new PasteAction());
+        tmp.add(BOLD_ACTION);
+        tmp.add(ITALIC_ACTION);
+        tmp.add(COPY_ACTION);
+        tmp.add(PASTE_ACTION);
         actions = Collections.unmodifiableList(tmp);
-    }
-
-    private static class BoldAction extends StyledEditorKit.BoldAction {
-
-        public BoldAction() {
-            super();
-            putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/text_bold.png"))); //$NON-NLS-1$
-            putValue(SHORT_DESCRIPTION, "Bold Font");
-        }
-
-    }
-
-    private static class ItalicAction extends StyledEditorKit.ItalicAction {
-
-        public ItalicAction() {
-            super();
-            putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/text_italic.png"))); //$NON-NLS-1$
-            putValue(SHORT_DESCRIPTION, "Italic Font");
-        }
-
-    }
-
-    private static class CopyAction extends DefaultEditorKit.CopyAction {
-
-        public CopyAction() {
-            super();
-            // TODO: used correctly scaled image from the beginning
-            Icon icon = new ImageIcon(getClass().getResource("/icons/edit-copy.png")); //$NON-NLS-1$
-            icon = UiUtilities.scaleIcon(icon, 16);
-            putValue(SMALL_ICON, icon); 
-            putValue(SHORT_DESCRIPTION, "Copy");
-        }
-
-    }
-
-    private static class PasteAction extends DefaultEditorKit.PasteAction {
-
-        public PasteAction() {
-            super();
-            // TODO: used correctly scaled image from the beginning
-            Icon icon = new ImageIcon(getClass().getResource("/icons/edit-paste.png")); //$NON-NLS-1$
-            icon = UiUtilities.scaleIcon(icon, 16);
-            putValue(SMALL_ICON, icon); 
-            putValue(SHORT_DESCRIPTION, "Paste");
-        }
-
     }
 
     private void notifyTextObservers() {
@@ -189,7 +187,6 @@ public class TextEditor extends JXPanel {
             public void removeUpdate(final DocumentEvent e) {
                 notifyTextObservers();
             }
-
         });
 
         createToolbar();
@@ -258,9 +255,10 @@ public class TextEditor extends JXPanel {
         textPane.setEditable(editable);
         toolbar.setEnabled(editable);
 
-        for (Action action : actions) {
-            action.setEnabled(editable);
-        }
+//        for (Action action : actions) {
+//            action.setEnabled(editable);
+//        }
+        PASTE_ACTION.setEnabled(true);
     }
 
     public void setCollapseEditToolbar(final boolean collapseEditToolbar) {

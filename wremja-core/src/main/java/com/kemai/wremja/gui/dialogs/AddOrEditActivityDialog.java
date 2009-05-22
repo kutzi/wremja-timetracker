@@ -90,7 +90,7 @@ public class AddOrEditActivityDialog extends EscapeDialog {
     private PresentationModel model;
 
     /** Selects the date of the activity. */
-    private final JDateTimePicker datePicker = new JDateTimePicker(new DateTime());;
+    private final JDateTimePicker datePicker = new JDateTimePicker(new DateTime());
 
     /** The description of the activity. */
     private final TextEditor descriptionEditor = new TextEditor(true, false);

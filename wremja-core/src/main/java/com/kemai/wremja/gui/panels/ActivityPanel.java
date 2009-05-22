@@ -140,12 +140,11 @@ public class ActivityPanel extends JPanel implements Observer {
 
         this.setLayout(new TableLayout(size));
 
-        descriptionEditor = new TextEditor(true);
+        descriptionEditor = new TextEditor(true, false);
         descriptionEditor.setBorder(
                 BorderFactory.createLineBorder(GuiConstants.VERY_LIGHT_GREY)
         );
         descriptionEditor.setPreferredSize(new Dimension(200, 100));
-        descriptionEditor.setCollapseEditToolbar(false);
         descriptionEditor.addTextObserver(new TextEditor.TextChangeObserver() {
 
             public void onTextChange() {
