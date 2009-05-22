@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -31,6 +32,8 @@ import javax.swing.text.html.StyleSheet;
 
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXPanel;
+
+import com.kemai.util.UiUtilities;
 
 /**
  * Simple editor for html formatted text.
@@ -58,10 +61,6 @@ public class TextEditor extends JXPanel {
     private boolean collapseEditToolbar = true;
 
     private boolean scrollable = false;
-
-    private StyleSheet styleSheet;
-
-    private HTMLEditorKit editorKit;
 
     private final List<Action> actions;
     {
@@ -97,7 +96,10 @@ public class TextEditor extends JXPanel {
 
         public CopyAction() {
             super();
-            putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-copy.png"))); //$NON-NLS-1$
+            // TODO: used correctly scaled image from the beginning
+            Icon icon = new ImageIcon(getClass().getResource("/icons/edit-copy.png")); //$NON-NLS-1$
+            icon = UiUtilities.scaleIcon(icon, 16);
+            putValue(SMALL_ICON, icon); 
             putValue(SHORT_DESCRIPTION, "Copy");
         }
 
@@ -107,7 +109,10 @@ public class TextEditor extends JXPanel {
 
         public PasteAction() {
             super();
-            putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-paste.png"))); //$NON-NLS-1$
+            // TODO: used correctly scaled image from the beginning
+            Icon icon = new ImageIcon(getClass().getResource("/icons/edit-paste.png")); //$NON-NLS-1$
+            icon = UiUtilities.scaleIcon(icon, 16);
+            putValue(SMALL_ICON, icon); 
             putValue(SHORT_DESCRIPTION, "Paste");
         }
 
@@ -141,10 +146,10 @@ public class TextEditor extends JXPanel {
     private void initialize() {
         this.setLayout(new BorderLayout());
 
-        styleSheet = new StyleSheet();
+        StyleSheet styleSheet = new StyleSheet();
         styleSheet.addRule("body {font-family: Tahoma; font-size: 11pt; font-style: normal; font-weight: normal;}");
 
-        editorKit = new HTMLEditorKit();
+        HTMLEditorKit editorKit = new HTMLEditorKit();
         editorKit.setStyleSheet(styleSheet);
         textPane.setEditorKit(editorKit);
 
