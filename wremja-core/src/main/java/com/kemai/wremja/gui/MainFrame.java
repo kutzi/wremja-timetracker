@@ -523,12 +523,10 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     		System.out.println("iconified");
     	}
         if (getTray() != null) {
-        	//if(e.getOldState() != e.getNewState()) {
-        	//setState(JFrame.NORMAL);
             setVisible(false);
             showTray(true);
-        	//}
         }
+        UserSettings.instance().setWindowMinimized(true);
     }
 
     @Override
@@ -568,6 +566,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     		System.out.println("Deiconified");
     	}
         showTray(false);
+        UserSettings.instance().setWindowMinimized(false);
     }
 
     @Override
@@ -612,7 +611,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             } else {
                 this.tray.hide();
             }
-            UserSettings.instance().setWindowMinimized(show);
         }
     }
 

@@ -154,9 +154,17 @@ public final class Launcher {
             mainFrame.handleUnfinishedActivityOnStartup();
         }
         
-        mainFrame.setVisible(!minimized);
-        if( minimized ) {
-        	mainFrame.showTray(true);
+        // TODO: clean up this mess. Make handling of tray enabled vs. tray disabled easier!
+        if(mainFrame.getTray() != null) {
+        	mainFrame.setVisible(!minimized);
+        	if( minimized ) {
+        		mainFrame.showTray(true);
+        	}
+        } else {
+        	// tray icon disabled or not supported
+        	// remembering minimized state doesn't make much sense in that scenario
+        	// ergo ignore it
+        	mainFrame.setVisible(true);
         }
         
 
