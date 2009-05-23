@@ -526,7 +526,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             setVisible(false);
             showTray(true);
         }
-        UserSettings.instance().setWindowMinimized(true);
     }
 
     @Override
@@ -566,7 +565,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     		System.out.println("Deiconified");
     	}
         showTray(false);
-        UserSettings.instance().setWindowMinimized(false);
     }
 
     @Override
@@ -612,6 +610,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
                 this.tray.hide();
             }
         }
+        UserSettings.instance().setWindowMinimized(show);
     }
 
     public void handleUnfinishedActivityOnStartup() throws InterruptedException, InvocationTargetException {
