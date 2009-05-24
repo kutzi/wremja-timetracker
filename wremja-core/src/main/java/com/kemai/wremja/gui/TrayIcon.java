@@ -113,8 +113,8 @@ public class TrayIcon implements Observer {
 			private static final long serialVersionUID = 1L;
 
 			{
-        		putValue(NAME, "Restore");
-                putValue(SHORT_DESCRIPTION, "Restore main window");
+        		putValue(NAME, textBundle.textFor("Global.RestoreMainFrame.Title"));
+                putValue(SHORT_DESCRIPTION, textBundle.textFor("Global.RestoreMainFrame.ToolTipText"));
         	}
         	
 			@Override
