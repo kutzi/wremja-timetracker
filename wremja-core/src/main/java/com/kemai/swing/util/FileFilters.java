@@ -48,23 +48,40 @@ public abstract class FileFilters {
         }
 
     }
-    
+
     /**
-     * Filter for data files.
+     * Export filter for data files.
      */
-    public static final class DataFileFilter extends FileFilter {
+    public static class DataExportFileFilter extends FileFilter {
 
         @Override
         public boolean accept(final File file) {
-            return file.isDirectory() || file.getName().endsWith(".ptd.xml")
-                || file.getName().endsWith(".ptd"); //$NON-NLS-1$
+            return file.isDirectory() || file.getName().endsWith(".ptd.xml"); //$NON-NLS-1$
         }
 
         @Override
         public String getDescription() {
-            return textBundle.textFor("FileFilters.DataFile"); //$NON-NLS-1$
+            return textBundle.textFor("FileFilters.DataFile", "*.ptd.xml"); //$NON-NLS-1$
         }
+    }
+    
+    /**
+     * Import filter for data files.
+     */
+    public static final class DataImportFileFilter extends DataExportFileFilter {
 
+        @Override
+        public boolean accept(final File file) {
+            if(super.accept(file)) {
+                return true;
+            }
+            return file.getName().endsWith(".ptd"); //$NON-NLS-1$
+        }
+        
+        @Override
+        public String getDescription() {
+            return textBundle.textFor("FileFilters.DataFile", "*.ptd.xml, *.ptd"); //$NON-NLS-1$
+        }
     }
 
 }
