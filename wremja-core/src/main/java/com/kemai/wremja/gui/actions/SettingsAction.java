@@ -3,9 +3,6 @@ package com.kemai.wremja.gui.actions;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
-import javax.swing.ImageIcon;
-
-
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.dialogs.SettingsDialog;
 import com.kemai.wremja.gui.model.PresentationModel;
@@ -15,7 +12,7 @@ import com.kemai.wremja.gui.settings.UserSettings;
  * Shows the settings dialog of the application.
  * @author remast
  */
-@SuppressWarnings("serial")//$NON-NLS-1$
+@SuppressWarnings("serial")
 public class SettingsAction extends AbstractWremjaAction {
 
     /** The bundle for internationalized texts. */
@@ -29,7 +26,7 @@ public class SettingsAction extends AbstractWremjaAction {
         super(owner, model);
 
         putValue(NAME, textBundle.textFor("SettingsAction.Name")); //$NON-NLS-1$
-        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/stock_folder-properties.png"))); //$NON-NLS-1$
+        putValue(SMALL_ICON, SettingsDialog.ICON);
         putValue(SHORT_DESCRIPTION, textBundle.textFor("SettingsAction.ShortDescription")); //$NON-NLS-1$
     }
 

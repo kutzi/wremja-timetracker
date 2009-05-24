@@ -8,12 +8,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -37,10 +40,12 @@ import com.kemai.wremja.util.validator.UrlValidator;
 @SuppressWarnings("serial")
 public class SettingsDialog extends EscapeDialog {
 
-    private static final Logger log = Logger.getLogger(SettingsDialog.class);
+    private static final Logger LOG = Logger.getLogger(SettingsDialog.class);
     
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(SettingsDialog.class);
+    
+    public static final Icon ICON = new ImageIcon(SettingsDialog.class.getResource("/icons/stock_folder-properties.png")); //$NON-NLS-1$
 
     /** The model. */
     private final UserSettings settings;
@@ -86,63 +91,93 @@ public class SettingsDialog extends EscapeDialog {
      */
     private void initialize() {
         final double border = 5;
-        final double size[][] = {
-                { border, TableLayout.PREFERRED, border, TableLayout.FILL, border }, // Columns
-                { border, TableLayout.PREFERRED, border,
-                	TableLayout.PREFERRED, border,
-                    TableLayout.PREFERRED, border,
-                    TableLayout.PREFERRED, border,
-                    TableLayout.PREFERRED, border,
-                    TableLayout.PREFERRED, border,
-                    TableLayout.PREFERRED, TableLayout.FILL,
-                    TableLayout.PREFERRED, border   }  // Rows
+        double size[][] = {
+                { border, TableLayout.PREFERRED, border, TableLayout.FILL,
+                        border }, // Columns
+                { border, TableLayout.PREFERRED, border, TableLayout.FILL,
+                        border, TableLayout.PREFERRED, border } // Rows
         };
 
-        final TableLayout tableLayout = new TableLayout(size);
-        this.setLayout(tableLayout);
+        TableLayout tableLayout = new TableLayout(size);
 
         this.setName("SettingsDialog"); //$NON-NLS-1$
         this.setTitle(textBundle.textFor("SettingsDialog.Title")); //$NON-NLS-1$
-        this.add(new JXHeader(textBundle.textFor("SettingsDialog.ApplicationSettingsTitle"), null), "0, 0, 3, 1"); //$NON-NLS-1$ //$NON-NLS-2$
+        this.setLayout(tableLayout);
+        this.add(
+                new JXHeader(textBundle
+                        .textFor("SettingsDialog.ApplicationSettingsTitle"),
+                        null, ICON), "0, 0, 3, 1"); //$NON-NLS-1$
 
-        this.add(rememberWindowSizeLocation, "1, 3, 3, 3"); //$NON-NLS-1$
-        this.add(purgeEmptyActivities, "1, 5, 3, 5"); //$NON-NLS-1$
-        this.add(useTrayicon, "1, 7, 3, 7"); //$NON-NLS-1$
-        
-        JLabel urlLabel = new JLabel( "Timetracker base URL" );
-        this.add(urlLabel, "1, 9"); //$NON-NLS-1$
-        this.add(urlField, "3, 9"); //$NON-NLS-1$
-        
-        JLabel loginLabel = new JLabel( "Timetracker login" );
-        this.add(loginLabel, "1, 11"); //$NON-NLS-1$
-        this.add( loginField, "3, 11"); //$NON-NLS-1$
-        JLabel passwordLabel = new JLabel( "Timetracker password" );
-        this.add(passwordLabel, "1, 13");
-        this.add(passwordField, "3, 13");
+        JTabbedPane tabbedPane = new JTabbedPane();
+        this.add(tabbedPane, "1, 3, 3, 3");
 
         saveButton.setText(textBundle.textFor("SettingsDialog.SaveLabel")); //$NON-NLS-1$
-        saveButton.setIcon(new ImageIcon(getClass().getResource("/icons/gtk-save.png"))); //$NON-NLS-1$
+        saveButton.setIcon(new ImageIcon(getClass().getResource(
+                "/icons/gtk-save.png"))); //$NON-NLS-1$
 
         // Confirm with 'Alt' (Platform dependent) + 'Enter' key
         saveButton.setMnemonic(KeyEvent.VK_ENTER);
 
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent event) {
-                settings.setRememberWindowSizeLocation(rememberWindowSizeLocation.isSelected());
-                settings.setDiscardEmptyActivities(purgeEmptyActivities.isSelected());
+                settings
+                        .setRememberWindowSizeLocation(rememberWindowSizeLocation
+                                .isSelected());
+                settings.setDiscardEmptyActivities(purgeEmptyActivities
+                        .isSelected());
                 settings.setUseTrayIcon(useTrayicon.isSelected());
                 settings.setAnukoUrl(urlField.getText());
                 settings.setAnukoLogin(loginField.getText());
-                settings.setAnukoPassword(String.valueOf(passwordField.getPassword()));
+                settings.setAnukoPassword(String.valueOf(passwordField
+                        .getPassword()));
                 SettingsDialog.this.dispose();
             }
         });
 
         saveButton.setDefaultCapable(true);
-        
-        this.add(saveButton, "1, 15, 3, 15");
-        
+
+        this.add(saveButton, "1, 5, 3, 5");
+
+        // add general pane
+        JPanel generalPanel = new JPanel();
+        tabbedPane.addTab(textBundle.textFor("SettingsDialog.GeneralTab.Title"), null,
+                generalPanel, textBundle.textFor("SettingsDialog.GeneralTab.ToolTipText"));
+
+        size = new double[][] {
+                { border, TableLayout.PREFERRED, border, TableLayout.FILL,
+                        border }, // Columns
+                { border, TableLayout.PREFERRED, border, TableLayout.PREFERRED,
+                        border, TableLayout.PREFERRED, border,
+                        TableLayout.PREFERRED, border } // Rows
+        };
+        tableLayout = new TableLayout(size);
+        generalPanel.setLayout(tableLayout);
+
+        generalPanel.add(rememberWindowSizeLocation, "1, 1, 3, 1"); //$NON-NLS-1$
+        generalPanel.add(purgeEmptyActivities, "1, 3, 3, 3"); //$NON-NLS-1$
+        generalPanel.add(useTrayicon, "1, 5, 3, 5"); //$NON-NLS-1$
+
         getRootPane().setDefaultButton(saveButton);
+
+        // add anuko pane
+        JPanel anukoPanel = new JPanel();
+//        tabbedPane.addTab("Anuko", null, anukoPanel, "Anuko exporter is currently not usable");
+//        int index = tabbedPane.getTabCount() - 1;
+//        tabbedPane.setEnabledAt(index, false);
+        tableLayout = new TableLayout(size);
+        anukoPanel.setLayout(tableLayout);
+
+        JLabel urlLabel = new JLabel("Timetracker base URL");
+        anukoPanel.add(urlLabel, "1, 1"); //$NON-NLS-1$
+        anukoPanel.add(urlField, "3, 1"); //$NON-NLS-1$
+
+        JLabel loginLabel = new JLabel("Timetracker login");
+        anukoPanel.add(loginLabel, "1, 3"); //$NON-NLS-1$
+        anukoPanel.add(loginField, "3, 3"); //$NON-NLS-1$
+        JLabel passwordLabel = new JLabel("Timetracker password");
+        anukoPanel.add(passwordLabel, "1, 5");
+        anukoPanel.add(passwordField, "3, 5");
+
         
         readFromSettings();
     }
@@ -197,7 +232,7 @@ public class SettingsDialog extends EscapeDialog {
                     saveButton.setEnabled(false);
                 }
             } catch (BadLocationException e) {
-                log.error(e, e);
+                LOG.error(e, e);
             }
         }
         
