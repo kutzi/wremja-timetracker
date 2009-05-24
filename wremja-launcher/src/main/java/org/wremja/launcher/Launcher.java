@@ -109,6 +109,7 @@ public final class Launcher {
                     textBundle.textFor("Launcher.FatalError.Title"),  //$NON-NLS-1$
                     JOptionPane.ERROR_MESSAGE
             );
+            System.exit(-1);
         }
     }
 
@@ -293,7 +294,6 @@ public final class Launcher {
                         JOptionPane.ERROR_MESSAGE
                 );
             }
-
         }
         return model;
     }
