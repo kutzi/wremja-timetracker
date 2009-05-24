@@ -92,7 +92,7 @@ public final class UserSettings {
      * @return the location of the last Excel export
      */
     public String getLastExcelExportLocation() {
-        return doGetString(LAST_EXCEL_EXPORT_LOCATION, System.getProperty("user.home"));
+        return doGetString(LAST_EXCEL_EXPORT_LOCATION, null);
     }
 
     /**
@@ -115,7 +115,7 @@ public final class UserSettings {
      * @return the location of the last Data export
      */
     public String getLastDataExportLocation() {
-        return doGetString(LAST_DATA_EXPORT_LOCATION, System.getProperty("user.home"));
+        return doGetString(LAST_DATA_EXPORT_LOCATION, null);
     }
 
     /**
@@ -138,7 +138,7 @@ public final class UserSettings {
      * @return the location of the last Csv export
      */
     public String getLastCsvExportLocation() {
-        return doGetString(LAST_CSV_EXPORT_LOCATION, System.getProperty("user.home"));
+        return doGetString(LAST_CSV_EXPORT_LOCATION, null);
     }
 
     /**

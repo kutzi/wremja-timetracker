@@ -45,7 +45,7 @@ public abstract class AbstractExportAction extends AbstractWremjaAction {
 
     /**
      * Getter for the last export location.
-     * @return the location of the last export
+     * @return the location of the last export or <code>null</code>
      */
     protected abstract String getLastExportLocation();
 
@@ -75,7 +75,12 @@ public abstract class AbstractExportAction extends AbstractWremjaAction {
         final JFileChooser chooser = new JFileChooser();
 
         // Set selection to last export location
-        chooser.setSelectedFile(new File(getLastExportLocation()));
+        String lastExportLocation = getLastExportLocation();
+        if(lastExportLocation != null) {
+            chooser.setSelectedFile(new File(lastExportLocation));
+        } else {
+            chooser.setCurrentDirectory(null);
+        }
 
         chooser.setFileFilter(getFileFilter());
 

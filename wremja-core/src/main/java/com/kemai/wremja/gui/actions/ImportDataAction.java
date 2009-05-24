@@ -42,7 +42,7 @@ public class ImportDataAction extends AbstractWremjaAction {
     @Override
     public final void actionPerformed(final ActionEvent event) {
         final JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(new FileFilters.DataFileFilter());
+        chooser.setFileFilter(new FileFilters.DataImportFileFilter());
 
         int returnVal = chooser.showOpenDialog(getOwner());
         if (JFileChooser.APPROVE_OPTION == returnVal) {

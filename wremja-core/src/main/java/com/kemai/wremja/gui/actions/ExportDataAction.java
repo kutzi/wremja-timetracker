@@ -26,7 +26,7 @@ public class ExportDataAction extends AbstractExportAction {
     private static final String DATA_FILE_EXTENSION = ".ptd.xml";
     
     /** File filter for data files. */
-    private static final FileFilter DATA_FILE_FILTER = new FileFilters.DataFileFilter();
+    private static final FileFilter DATA_FILE_FILTER = new FileFilters.DataExportFileFilter();
 
 
     public ExportDataAction(final Frame owner, final PresentationModel model) {
