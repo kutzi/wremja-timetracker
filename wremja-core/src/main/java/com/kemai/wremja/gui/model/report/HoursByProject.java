@@ -11,7 +11,7 @@ import com.kemai.wremja.model.Project;
 public class HoursByProject implements Comparable<HoursByProject> {
     
     /** The project. */
-    private Project project;
+    private final Project project;
     
     /** The amount of hours worked that week. */
     private double hours;

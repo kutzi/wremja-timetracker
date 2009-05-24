@@ -23,9 +23,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("projectActivity")
 public class ProjectActivity implements Serializable, Comparable<ProjectActivity> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     /** Start date of this activity. */
@@ -175,6 +172,9 @@ public class ProjectActivity implements Serializable, Comparable<ProjectActivity
      * @param project the project to set
      */
     public void setProject(final Project project) {
+        if(project == null) {
+            throw new IllegalArgumentException("Null project is not allowed!");
+        }
         if (ObjectUtils.equals(this.project, project)) {
             return;
         }

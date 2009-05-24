@@ -25,7 +25,7 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
 
     /** The model. */
-    private PresentationModel model;
+    private final PresentationModel model;
 
     public AllActivitiesTableFormat(final PresentationModel model) {
         this.model = model;
@@ -34,6 +34,7 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
     /**
      * Project | Date | Start | End | Duration
      */
+    @Override
     public int getColumnCount() {
         return 5;
     }
@@ -42,6 +43,7 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
      * Gets the name of the given column.
      * @param column the number of the column
      */
+    @Override
     public String getColumnName(final int column) {
         switch (column) {
         case 0:
@@ -59,6 +61,7 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
         }
     }
 
+    @Override
     public Object getColumnValue(final ProjectActivity activity, final int column) {
         switch (column) {
         case 0:
@@ -76,14 +79,22 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
         }
     }
 
+    @Override
     public boolean isEditable(final ProjectActivity baseObject, final int column) {
         // All columns except the duration are editable
         return column != 4;
     }
 
+    @Override
     public ProjectActivity setColumnValue(final ProjectActivity activity, final Object editedValue, final int column) {
         // Project
         if (column == 0) {
+            if (editedValue == null) {
+                // nothing selected (possibly because no projects exist anymore)
+                // Leave activity unchanged
+                return activity;
+            }
+
             final Project oldProject = activity.getProject();
             activity.setProject((Project) editedValue);
 
