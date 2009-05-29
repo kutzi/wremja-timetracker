@@ -26,6 +26,7 @@ import javax.swing.text.Document;
 import org.jdesktop.swingx.JXHeader;
 
 import com.kemai.swing.dialog.EscapeDialog;
+import com.kemai.util.OSUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.logging.Logger;
@@ -61,7 +62,12 @@ public class SettingsDialog extends EscapeDialog {
     }
     private final JCheckBox useTrayicon = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.Title"));
     {
-        purgeEmptyActivities.setToolTipText(textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.ToolTipText"));
+    	String toolTip = textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.ToolTipText");
+    	if(OSUtils.isGnome()) {
+    		toolTip = "<html>" + toolTip +
+    		"<br>NOTE: since you seem to be running on Gnome, it's strongly disrecommended to enable this option!</html>";
+    	}
+    	useTrayicon.setToolTipText(toolTip);
     }
 
     private final JTextField urlField = new JFormattedTextField();
