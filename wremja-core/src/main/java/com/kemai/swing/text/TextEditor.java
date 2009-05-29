@@ -4,6 +4,7 @@ import static javax.swing.Action.SHORT_DESCRIPTION;
 import static javax.swing.Action.SMALL_ICON;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
@@ -25,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -78,7 +80,7 @@ public class TextEditor extends JXPanel {
     
     private final List<TextChangeObserver> textObservers = new CopyOnWriteArrayList<TextChangeObserver>();
     
-    private final JTextPane textPane = new JTextPane();
+    private final JTextPane textPane = new JTextPane(); //new JXEditorPane();
     {
     	textPane.addCaretListener(new CaretListener() {
 
@@ -159,12 +161,16 @@ public class TextEditor extends JXPanel {
         textPane.addFocusListener(new FocusListener() {
 
             public void focusGained(final FocusEvent e) {
+            	if(textPane.isEditable()) {
+            		PASTE_ACTION.setEnabled(true);
+            	}
                 if (collapseEditToolbar) {
                     collapsiblePane.setCollapsed(false);
                 }
             }
 
             public void focusLost(final FocusEvent e) {
+            	PASTE_ACTION.setEnabled(false);
                 if (collapseEditToolbar) {
                     if (e.getOppositeComponent() != null && e.getOppositeComponent().getParent() != toolbar) {
                         collapsiblePane.setCollapsed(true);
@@ -190,17 +196,17 @@ public class TextEditor extends JXPanel {
         });
 
         createToolbar();
-
-        collapsiblePane = new JXCollapsiblePane();
-        collapsiblePane.add(toolbar);
-
-        if (!collapseEditToolbar) {
-            collapsiblePane.setCollapsed(false);
-        } else {
-            collapsiblePane.setCollapsed(true);
+        JComponent toolbarComponent = toolbar;
+        
+        if(collapseEditToolbar) {
+        	collapsiblePane = new JXCollapsiblePane();
+        	collapsiblePane.add(toolbar);
+        	collapsiblePane.setCollapsed(collapseEditToolbar);
+        	
+        	toolbarComponent = collapsiblePane;
         }
 
-        this.add(collapsiblePane, BorderLayout.NORTH);
+        this.add(toolbarComponent, BorderLayout.NORTH);
         if (scrollable) {
             this.add(new JScrollPane(textPane), BorderLayout.CENTER);
         } else {
@@ -240,6 +246,8 @@ public class TextEditor extends JXPanel {
         for (Action action : actions) {
             toolbar.add(action);
         }
+        
+        //toolbar.add(textPane.getParagraphSelector());
     }
 
     public String getText() {
@@ -254,19 +262,16 @@ public class TextEditor extends JXPanel {
         textPane.setEnabled(editable);
         textPane.setEditable(editable);
         toolbar.setEnabled(editable);
-
-//        for (Action action : actions) {
-//            action.setEnabled(editable);
-//        }
-        PASTE_ACTION.setEnabled(true);
-    }
-
-    public void setCollapseEditToolbar(final boolean collapseEditToolbar) {
-        this.collapseEditToolbar = collapseEditToolbar;
-
-        if (!collapseEditToolbar) {
-            collapsiblePane.setCollapsed(false);
+        
+        // Use same inactive background color as a normal textfield
+        if(editable) {
+        	Color activeBackground = UIManager.getColor("TextPane.background");
+        	textPane.setBackground(activeBackground);
+        } else {
+        	Color inactiveBackground = UIManager.getColor("TextField.inactiveBackground");
+        	textPane.setBackground(inactiveBackground);
         }
+        	
+        PASTE_ACTION.setEnabled(editable);
     }
-
 }
