@@ -33,7 +33,7 @@ import com.kemai.wremja.logging.Logger;
  * @see HoursByPeriodReport
  * @author kutzi
  */
-@SuppressWarnings("serial") //$NON-NLS-1$
+@SuppressWarnings("serial") 
 abstract class HoursByPeriodPanel<P extends HoursByPeriod, R extends HoursByPeriodReport<P>> extends JXPanel implements Observer {
 
     private static final Logger log = Logger.getLogger(HoursByPeriodPanel.class);
@@ -105,7 +105,8 @@ abstract class HoursByPeriodPanel<P extends HoursByPeriod, R extends HoursByPeri
                 int column) {
             if(value instanceof HoursByPeriod) {
                 HoursByPeriod hoursByPeriod = (HoursByPeriod)value;
-                Component comp = super.getTableCellRendererComponent(table, hoursByPeriod.getHours(),
+                Component comp = super.getTableCellRendererComponent(table,
+                        Double.valueOf(hoursByPeriod.getHours()),
                         isSelected, hasFocus,  row, column);
                 Font f = comp.getFont();
                 if( hoursByPeriod.isChanging() ) {
