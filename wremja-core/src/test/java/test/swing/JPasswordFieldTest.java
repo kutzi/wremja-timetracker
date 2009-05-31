@@ -19,7 +19,9 @@ import org.junit.Ignore;
 public class JPasswordFieldTest {
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        JPasswordField field = new JPasswordField();
+        JPasswordField field = new JPasswordField(10);
+        // uncomment this to work-around the bug in Java < 1.6.0_14 on Linux:
+        //field.enableInputMethods(true);
         frame.add(field);
         
         addFieldListener(field);
