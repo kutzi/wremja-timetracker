@@ -27,6 +27,8 @@ import org.joda.time.DateTime;
 
 import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
+import com.kemai.swing.util.WMenu;
+import com.kemai.swing.util.WMenuBar;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.actions.AboutAction;
@@ -234,7 +236,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      */
     private JMenuBar getMainMenuBar() {
         if (mainMenuBar == null) {
-            mainMenuBar = new JMenuBar();
+            mainMenuBar = new WMenuBar();
             mainMenuBar.add(getFileMenu());
             mainMenuBar.add(getEditMenu());
             mainMenuBar.add(getHelpMenu());
@@ -284,7 +286,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      */
     private JMenu getHelpMenu() {
         if (helpMenu == null) {
-            helpMenu = new JMenu(textBundle.textFor("MainFrame.HelpMenu.Title"));
+            helpMenu = new WMenu(textBundle.textFor("MainFrame.HelpMenu.Title"));
             helpMenu.setMnemonic(textBundle.textFor("MainFrame.HelpMenu.Title").charAt(0));
             helpMenu.add(getAboutMenuItem());
         }
@@ -297,8 +299,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      */
     private JMenu getFileMenu() {
         if (fileMenu == null) {
-            fileMenu = new JMenu();
-            fileMenu.setText(textBundle.textFor("MainFrame.FileMenu.Title")); //$NON-NLS-1$
+            fileMenu = new WMenu(textBundle.textFor("MainFrame.FileMenu.Title")); //$NON-NLS-1$
             fileMenu.setMnemonic(textBundle.textFor("MainFrame.FileMenu.Title").charAt(0)); //$NON-NLS-1$
 
             fileMenu.add(getExportMenu());
@@ -328,8 +329,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      */
     private JMenu getEditMenu() {
         if (editMenu == null) {
-            editMenu = new JMenu();
-            editMenu.setText(textBundle.textFor("MainFrame.EditMenu.Title")); //$NON-NLS-1$
+            editMenu = new WMenu(textBundle.textFor("MainFrame.EditMenu.Title")); //$NON-NLS-1$
             editMenu.setMnemonic(textBundle.textFor("MainFrame.EditMenu.Title").charAt(0)); //$NON-NLS-1$
 
             editMenu.add(this.model.getEditStack().getRedoAction());
@@ -490,9 +490,8 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      */
     private JMenu getExportMenu() {
         if (exportMenu == null) {
-            exportMenu = new JMenu();
+            exportMenu = new WMenu(textBundle.textFor("MainFrame.ExportMenu.Title")); //$NON-NLS-1$
             exportMenu.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/document-save-as.png")));
-            exportMenu.setText(textBundle.textFor("MainFrame.ExportMenu.Title")); //$NON-NLS-1$
             exportMenu.setMnemonic(textBundle.textFor("MainFrame.ExportMenu.Title").charAt(0)); //$NON-NLS-1$
 
             exportMenu.add(getExportExcelItem());
@@ -508,9 +507,8 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      */
     private JMenu getImportMenu() {
         if (importMenu == null) {
-            importMenu = new JMenu();
+            importMenu = new WMenu(textBundle.textFor("MainFrame.ImportMenu.Title")); //$NON-NLS-1$
             importMenu.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/document-open.png")));
-            importMenu.setText(textBundle.textFor("MainFrame.ImportMenu.Title")); //$NON-NLS-1$
             importMenu.setMnemonic(textBundle.textFor("MainFrame.ImportMenu.Title").charAt(0)); //$NON-NLS-1$
             importMenu.add(getImportItem());
         }

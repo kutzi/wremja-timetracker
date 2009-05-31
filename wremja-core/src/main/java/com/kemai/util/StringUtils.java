@@ -3,6 +3,8 @@
  */
 package com.kemai.util;
 
+import java.util.Iterator;
+
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -33,5 +35,34 @@ public class StringUtils {
         // 3. Trim whitespace
         strippedXml = org.apache.commons.lang.StringUtils.trim(strippedXml);
         return strippedXml;
+    }
+    
+    // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5003547
+    public static Iterable<Integer> codePoints(final String s) {
+        return new Iterable<Integer>() {
+            public Iterator<Integer> iterator() {
+                return new Iterator<Integer>() {
+                    int nextIndex = 0;
+                    public boolean hasNext() {
+                        return nextIndex < s.length();
+                    }
+                    public Integer next() {
+                        int result = s.codePointAt(nextIndex);
+                        nextIndex += Character.charCount(result);
+                        return Integer.valueOf(result);
+                    }
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
+    }
+    
+    public static boolean isConsonant(char c) {
+    	// FIMXE: that's not i18n at all!
+    	final String CONSONANTS = "bcdfghjklmnpqrstvwxz" +
+        	"BCDFGHJKLMNPQRSTVWXZ";
+    	return CONSONANTS.indexOf(c) != -1;
     }
 }
