@@ -12,14 +12,14 @@ import com.kemai.wremja.logging.Logger;
  * Simple action for opening URLs in the Browser.
  * @author remast
  */
-@SuppressWarnings("serial")
 public class OpenBrowserAction extends AbstractAction {
 
-	/** The logger. */
-	private static final Logger log = Logger.getLogger(OpenBrowserAction.class);
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(OpenBrowserAction.class);
 
 	/** The url to be opened. */
-	private String url;
+	private final String url;
 
 	/**
 	 * Creates a new action that opens the given url.
@@ -35,7 +35,7 @@ public class OpenBrowserAction extends AbstractAction {
 		try {
 			Desktop.getDesktop().browse(new URL(url).toURI());
 		} catch (Exception ex) {
-			log.error(ex, ex);
+			LOG.error(ex, ex);
 		}
 
 	}
