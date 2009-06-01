@@ -136,12 +136,12 @@ public class ExcelExporter implements Exporter {
     private void createFilteredReport(final WritableWorkbook workbook, final ReadableRepository data, final Filter filter) throws JXLException {
         String year = "";
         if (filter != null && filter.getYear() != null) {
-            year = YEAR_FORMAT.print(filter.getYear());
+            year = YEAR_FORMAT.print(filter.getYear().longValue());
         }
         
         String month = "";
         if (filter != null && filter.getMonth() != null) {
-            org.joda.time.DateTime monthDt = new org.joda.time.DateTime().withMonthOfYear(filter.getMonth());
+            org.joda.time.DateTime monthDt = new org.joda.time.DateTime().withMonthOfYear(filter.getMonth().intValue());
             month = MONTH_FORMAT.print( monthDt );
         }
         
