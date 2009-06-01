@@ -46,6 +46,7 @@ public abstract class AbstractWAction extends AbstractAction {
     		super.putValue(NAME, name);
     	} else {
     		name = name.substring(0, index) + name.substring(index+1, name.length());
+    		super.putValue(NAME, name);
     		if( getValue(MNEMONIC_KEY) == null ) {
     			super.putValue(MNEMONIC_KEY, Integer.valueOf(name.codePointAt(index)));
     			super.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, Integer.valueOf(index));
@@ -67,7 +68,7 @@ public abstract class AbstractWAction extends AbstractAction {
     	if(o instanceof Integer) {
     		return (Integer)o;
     	} else {
-    		return Integer.valueOf((int)'\0');
+    		return Integer.valueOf('\0');
     	}
     }
     

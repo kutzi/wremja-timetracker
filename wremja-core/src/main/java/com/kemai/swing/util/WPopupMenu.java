@@ -12,6 +12,7 @@ public class WPopupMenu extends JPopupMenu {
 	@Override
 	public JMenuItem add(Action a) {
 		JMenuItem item = createActionComponent(a);
+		item.setAction(a);
 		mnemonicsContainer.addMnemonicsFor(item);
 		return super.add(item);
 	}

@@ -55,7 +55,7 @@ public class MnemonicsContainer {
 		updateMnemonicsFromName(item, item.getText(), container);
 	}
 
-//	   1. Try the first character in the string. Check to see if it is available (among other menu items in the menu or components in the window, as appropriate).
+//	   1. Try the first alphanumeric character in the string. Check to see if it is available (among other menu items in the menu or components in the window, as appropriate).
 //	   2. If that isn't available, try capitalized letters in the order in which they appear.
 //	   3. If no capitalized letters are available, try lowercase consonants.
 //	   4. If no lowercase consonants are available, try lowercase vowels.
@@ -68,10 +68,12 @@ public class MnemonicsContainer {
 		name = name.trim();
 		
 		int m = name.codePointAt(0);
-		if(container.add(m)) {
-			item.setMnemonic(m);
-			item.setDisplayedMnemonicIndex(0);
-			return;
+		if(Character.isLetterOrDigit(m)) {
+    		if(container.add(m)) {
+    			item.setMnemonic(m);
+    			item.setDisplayedMnemonicIndex(0);
+    			return;
+    		}
 		}
 		
 		// TODO: handle Unicode codepoints here!
