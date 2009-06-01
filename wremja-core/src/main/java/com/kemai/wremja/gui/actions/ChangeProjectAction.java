@@ -50,7 +50,7 @@ public class ChangeProjectAction extends AbstractWremjaAction {
         }
 
         setName(projectName);
-        putValue(SHORT_DESCRIPTION, textBundle.textFor("ChangeProjectAction.ShortDescription") + String.valueOf(newProject) + "."); //$NON-NLS-1$ //$NON-NLS-2$
+        putValue(SHORT_DESCRIPTION, textBundle.textFor("ChangeProjectAction.ShortDescription", String.valueOf(newProject))); //$NON-NLS-1$
     }
 
     /**
