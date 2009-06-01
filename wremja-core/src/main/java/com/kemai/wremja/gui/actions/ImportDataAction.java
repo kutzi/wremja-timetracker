@@ -31,8 +31,8 @@ public class ImportDataAction extends AbstractWremjaAction {
     public ImportDataAction(final Frame owner, final PresentationModel model) {
         super(owner, model);
 
-        putValue(NAME, textBundle.textFor("ImportDataAction.Name")); //$NON-NLS-1$
-        putValue(SHORT_DESCRIPTION, textBundle.textFor("ImportDataAction.ShortDescription")); //$NON-NLS-1$
+        setName(textBundle.textFor("ImportDataAction.Name")); //$NON-NLS-1$
+        setTooltip(textBundle.textFor("ImportDataAction.ShortDescription")); //$NON-NLS-1$
         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/package-x-generic.png"))); //$NON-NLS-1$
     }
 

@@ -25,9 +25,9 @@ public class SettingsAction extends AbstractWremjaAction {
     public SettingsAction(final Frame owner, final PresentationModel model) {
         super(owner, model);
 
-        putValue(NAME, textBundle.textFor("SettingsAction.Name")); //$NON-NLS-1$
+        setName(textBundle.textFor("SettingsAction.Name")); //$NON-NLS-1$
+        setTooltip(textBundle.textFor("SettingsAction.ShortDescription")); //$NON-NLS-1$
         putValue(SMALL_ICON, SettingsDialog.ICON);
-        putValue(SHORT_DESCRIPTION, textBundle.textFor("SettingsAction.ShortDescription")); //$NON-NLS-1$
     }
 
     /**

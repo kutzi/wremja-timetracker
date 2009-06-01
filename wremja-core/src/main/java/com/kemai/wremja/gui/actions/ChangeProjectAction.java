@@ -24,7 +24,7 @@ import com.kemai.wremja.model.Project;
 @SuppressWarnings("serial") //$NON-NLS-1$
 public class ChangeProjectAction extends AbstractWremjaAction {
 
-    private static final Logger log = Logger.getLogger(ChangeProjectAction.class);
+    private static final Logger LOG = Logger.getLogger(ChangeProjectAction.class);
     
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ChangeProjectAction.class);
@@ -49,11 +49,8 @@ public class ChangeProjectAction extends AbstractWremjaAction {
             projectName = "* " + projectName;
         }
 
-        putValue(NAME, projectName);
+        setName(projectName);
         putValue(SHORT_DESCRIPTION, textBundle.textFor("ChangeProjectAction.ShortDescription") + String.valueOf(newProject) + "."); //$NON-NLS-1$ //$NON-NLS-2$
-        
-        // TODO: take the first non-whitespace char!?
-        putValue(MNEMONIC_KEY, Integer.valueOf(newProject.getTitle().codePointAt(0)));
     }
 
     /**
@@ -77,7 +74,7 @@ public class ChangeProjectAction extends AbstractWremjaAction {
                 }
             }
         } catch (ProjectActivityStateException e) {
-            log.warn(e, e);
+            LOG.warn(e, e);
         }
     }
 

@@ -163,5 +163,10 @@
 		  <groupId>findbugs</groupId>
 		  <artifactId>annotations</artifactId>
 		</dependency>
+        <!-- <dependency>
+            <groupId>net.java.dev.balloontip</groupId>
+            <artifactId>balloontip</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency> -->
 	</dependencies>
 </project>

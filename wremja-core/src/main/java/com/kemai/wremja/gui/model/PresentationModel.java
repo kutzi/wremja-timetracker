@@ -37,8 +37,9 @@ import com.kemai.wremja.model.filter.Filter;
 import com.kemai.wremja.model.io.ProTrackWriter;
 
 /**
- * The model of the Baralga application. This is the model capturing both the state
+ * The model of the Wremja. This is the model capturing both the state
  * of the application as well as the application logic.
+ * 
  * For further information on the pattern see <a href="http://www.martinfowler.com/eaaDev/PresentationModel.html">presentation model</a>.
  * @author remast
  */

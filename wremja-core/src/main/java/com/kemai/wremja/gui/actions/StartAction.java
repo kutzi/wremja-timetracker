@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.model.ProjectActivityStateException;
@@ -24,8 +23,8 @@ public class StartAction extends AbstractWremjaAction {
     public StartAction(final Frame owner, final PresentationModel model) {
         super(owner, model);
 
-        putValue(NAME, textBundle.textFor("StartAction.Name")); //$NON-NLS-1$
-        putValue(SHORT_DESCRIPTION, textBundle.textFor("StartAction.ShortDescription")); //$NON-NLS-1$
+        setName(textBundle.textFor("StartAction.Name")); //$NON-NLS-1$
+        setTooltip(textBundle.textFor("StartAction.ShortDescription")); //$NON-NLS-1$
         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-ok.png"))); //$NON-NLS-1$
     }
 
@@ -33,7 +32,8 @@ public class StartAction extends AbstractWremjaAction {
      * {@inheritDoc}
      */
     @Override
-    public final void actionPerformed(final ActionEvent arg0) {
+    public final void actionPerformed(final ActionEvent event) {
+    	System.out.println("Start performed");
         try {
             getModel().start();
         } catch (ProjectActivityStateException exception) {

@@ -32,8 +32,8 @@ public final class ExportCsvAction extends AbstractExportAction {
     public ExportCsvAction(final Frame owner, final PresentationModel model) {
         super(owner, model);
 
-        putValue(NAME, textBundle.textFor("CsvExportAction.Name")); //$NON-NLS-1$
-        putValue(SHORT_DESCRIPTION, textBundle.textFor("CsvExportAction.ShortDescription")); //$NON-NLS-1$
+        setName(textBundle.textFor("CsvExportAction.Name")); //$NON-NLS-1$
+        setTooltip(textBundle.textFor("CsvExportAction.ShortDescription")); //$NON-NLS-1$
         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gnome-mime-text.png"))); //$NON-NLS-1$
     }
 

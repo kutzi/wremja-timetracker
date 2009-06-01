@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 
 import org.jdesktop.swinghelper.tray.JXTrayIcon;
 
+import com.kemai.swing.util.WPopupMenu;
 import com.kemai.util.OSUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
@@ -51,7 +52,7 @@ public class TrayIcon implements Observer {
     private JXTrayIcon trayIcon;
 
     /** The menu of the tray icon. */
-    private JPopupMenu menu = new JPopupMenu();
+    private final JPopupMenu menu = new WPopupMenu();
 
     private final MainFrame mainFrame;
 

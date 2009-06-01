@@ -33,8 +33,8 @@ public final class ExportExcelAction extends AbstractExportAction {
     public ExportExcelAction(final Frame owner, final PresentationModel model) {
         super(owner, model);
 
-        putValue(NAME, textBundle.textFor("ExcelExportAction.Name")); //$NON-NLS-1$
-        putValue(SHORT_DESCRIPTION, textBundle.textFor("ExcelExportAction.ShortDescription")); //$NON-NLS-1$
+        setName(textBundle.textFor("ExcelExportAction.Name")); //$NON-NLS-1$
+        setTooltip(textBundle.textFor("ExcelExportAction.ShortDescription")); //$NON-NLS-1$
         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/x-office-spreadsheet.png"))); //$NON-NLS-1$
     }
 

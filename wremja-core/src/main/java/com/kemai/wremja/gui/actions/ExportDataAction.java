@@ -32,8 +32,8 @@ public class ExportDataAction extends AbstractExportAction {
     public ExportDataAction(final Frame owner, final PresentationModel model) {
         super(owner, model);
 
-        putValue(NAME, textBundle.textFor("ExportDataAction.Name")); //$NON-NLS-1$
-        putValue(SHORT_DESCRIPTION, textBundle.textFor("ExportDataAction.ShortDescription")); //$NON-NLS-1$
+        setName(textBundle.textFor("ExportDataAction.Name")); //$NON-NLS-1$
+        setTooltip(textBundle.textFor("ExportDataAction.ShortDescription")); //$NON-NLS-1$
         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/package-x-generic.png"))); //$NON-NLS-1$
     }
 

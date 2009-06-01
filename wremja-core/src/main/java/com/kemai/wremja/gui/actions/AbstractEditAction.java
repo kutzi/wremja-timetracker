@@ -1,6 +1,6 @@
 package com.kemai.wremja.gui.actions;
 
-import javax.swing.AbstractAction;
+import java.awt.Frame;
 
 import com.kemai.wremja.gui.model.edit.EditStack;
 
@@ -10,7 +10,7 @@ import com.kemai.wremja.gui.model.edit.EditStack;
  * @author kutzi
  */
 @SuppressWarnings("serial")
-public abstract class AbstractEditAction extends AbstractAction {
+public abstract class AbstractEditAction extends AbstractWremjaAction {
 
     /** The stack to manage edit actions. */
     private final EditStack editStack;
@@ -20,6 +20,7 @@ public abstract class AbstractEditAction extends AbstractAction {
      * @param editStack the actions to be undone and redone
      */
     public AbstractEditAction(final EditStack editStack) {
+    	super((Frame)null);
         this.editStack = editStack;
     }
 
@@ -37,8 +38,5 @@ public abstract class AbstractEditAction extends AbstractAction {
         this.editStack.redo();
     }
     
-    public void setTooltip(final String tooltip) {
-        putValue(SHORT_DESCRIPTION, tooltip);
-    }
     protected abstract void resetTooltip();
 }

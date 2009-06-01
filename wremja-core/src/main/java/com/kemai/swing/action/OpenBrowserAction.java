@@ -4,15 +4,13 @@ import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.net.URL;
 
-import javax.swing.AbstractAction;
-
 import com.kemai.wremja.logging.Logger;
 
 /**
  * Simple action for opening URLs in the Browser.
  * @author remast
  */
-public class OpenBrowserAction extends AbstractAction {
+public class OpenBrowserAction extends AbstractWAction {
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,8 +24,9 @@ public class OpenBrowserAction extends AbstractAction {
 	 * @param url the url to be opened when the action is performed
 	 */
 	public OpenBrowserAction(final String url) {
-		super(url);
+		super(url, false);
 		this.url = url;
+		setTooltip("Open URL in a browser");
 	}
 
 	@Override
@@ -37,7 +36,6 @@ public class OpenBrowserAction extends AbstractAction {
 		} catch (Exception ex) {
 			LOG.error(ex, ex);
 		}
-
 	}
 
 }

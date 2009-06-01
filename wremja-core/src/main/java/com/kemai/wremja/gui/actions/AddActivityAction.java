@@ -7,7 +7,6 @@ import java.awt.event.InputEvent;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
-
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.dialogs.AddOrEditActivityDialog;
 import com.kemai.wremja.gui.model.PresentationModel;
@@ -25,7 +24,7 @@ public class AddActivityAction extends AbstractWremjaAction {
     public AddActivityAction(final Frame owner, final PresentationModel model) {
         super(owner, model);
         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-add.png"))); //$NON-NLS-1$
-        putValue(NAME, textBundle.textFor("AddActivityAction.Name")); //$NON-NLS-1$
+        setName(textBundle.textFor("AddActivityAction.Name")); //$NON-NLS-1$
         putValue(SHORT_DESCRIPTION, textBundle.textFor("AddActivityAction.ShortDescription")); //$NON-NLS-1$
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('N', InputEvent.CTRL_MASK));
     }

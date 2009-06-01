@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -15,6 +16,8 @@ import java.text.ParseException;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,6 +25,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXPanel;
@@ -52,7 +56,7 @@ import com.kemai.wremja.model.Project;
 @SuppressWarnings("serial")
 public class ActivityPanel extends JPanel implements Observer {
 
-    private static final Logger log = Logger.getLogger(ActivityPanel.class);
+    private static final Logger LOG = Logger.getLogger(ActivityPanel.class);
     
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(MainFrame.class);
@@ -60,11 +64,11 @@ public class ActivityPanel extends JPanel implements Observer {
     /** Big font for labels. */
     private static final Font FONT_BIG = new Font("Sans Serif", Font.PLAIN, 14);
 
+    /** Big bold font for labels. */
+    private static final Font FONT_BIG_BOLD = FONT_BIG.deriveFont(Font.BOLD);
+    
     /** Color for highlighted time and duration. */
     private static final Color HIGHLIGHT_COLOR = new Color(51, 0, 102);
-
-    /** Big bold font for labels. */
-    private static final Font FONT_BIG_BOLD = new Font("Sans Serif", Font.BOLD, 14);
 
     /** Text for inactive start field. */
     private static final String START_INACTIVE = "--:--";
@@ -76,7 +80,7 @@ public class ActivityPanel extends JPanel implements Observer {
     private final PresentationModel model;
 
     /** Starts/stops the active project. */
-    private JButton startStopButton = null;
+    private final JButton startStopButton;
 
     /** The list of projects. The selected project is the currently active project. */
     private JComboBox projectSelector = null;
@@ -94,7 +98,7 @@ public class ActivityPanel extends JPanel implements Observer {
      * 
      * Note: access needs not to be synchronized as this should only be used from within the EDT.
      */
-    private static NumberFormat MINUTE_FORMAT = new DecimalFormat("##00");
+    private static final NumberFormat MINUTE_FORMAT = new DecimalFormat("##00");
 
     /**
      * Create a new panel for the given model.
@@ -103,6 +107,8 @@ public class ActivityPanel extends JPanel implements Observer {
     public ActivityPanel(final PresentationModel model) {
         this.model = model;
         this.model.addObserver(this);
+        
+        startStopButton = new JButton(new StartAction(null, this.model));
 
         initialize();
     }
@@ -113,9 +119,9 @@ public class ActivityPanel extends JPanel implements Observer {
     private void initialize() {
         // 1. Init start-/stop-Buttons
         if (this.model.isActive()) {
-            getStartStopButton().setAction(new StopAction(this.model));
+            startStopButton.setAction(new StopAction(this.model));
         } else {
-            getStartStopButton().setAction(new StartAction(null, this.model));
+            startStopButton.setAction(new StartAction(null, this.model));
         }
 
         // 2. Restore selected project if set.
@@ -170,7 +176,7 @@ public class ActivityPanel extends JPanel implements Observer {
 
         buttonPanel.setLayout(new TableLayout(buttonPanelSize));
 
-        buttonPanel.add(getStartStopButton(), "1, 1, 3, 1"); //$NON-NLS-1$
+        buttonPanel.add(startStopButton, "1, 1, 3, 1"); //$NON-NLS-1$
         buttonPanel.add(getProjectSelector(), "1, 3, 3, 3"); //$NON-NLS-1$
 
         start = new JFormattedTextField(FormatUtils.getTimeFormat());
@@ -249,18 +255,25 @@ public class ActivityPanel extends JPanel implements Observer {
         this.add(new JXTitledSeparator(textBundle.textFor("ActivityPanel.ActivityLabel")), "1, 1, 3, 1"); //$NON-NLS-1$ $NON-NLS-2$
         this.add(buttonPanel, "1, 3"); //$NON-NLS-1$
         this.add(descriptionEditor, "3, 3"); //$NON-NLS-1$
+
+        addKeyAccelerator();
     }
 
     /**
-     * This method initializes startStopButton.
-     * @return javax.swing.JButton
+     * Assigns CTRL+ENTER as a keyboard accelerator for the start/stop button.
      */
-    private JButton getStartStopButton() {
-        if (startStopButton == null) {
-            startStopButton = new JButton(new StartAction(null, this.model));
-        }
-        return startStopButton;
-    }
+	private void addKeyAccelerator() {
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_MASK);
+        Action action = new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				startStopButton.getAction().actionPerformed(e);
+			}
+        };
+        
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(stroke, "doStartOrStop");
+        getActionMap().put("doStartOrStop", action);
+	}
 
     /**
      * This method initializes projectSelector.
@@ -353,7 +366,7 @@ public class ActivityPanel extends JPanel implements Observer {
         UserSettings.instance().setLastDescription("");
 
         // Change button from start to stop
-        getStartStopButton().setAction(new StopAction(this.model));
+        startStopButton.setAction(new StopAction(this.model));
 
         start.setValue(this.model.getStart().toDate());
         start.setEnabled(true);
@@ -372,7 +385,7 @@ public class ActivityPanel extends JPanel implements Observer {
         // Clear description in settings.
         UserSettings.instance().setLastDescription("");
 
-        getStartStopButton().setAction(new StartAction(null, this.model));
+        startStopButton.setAction(new StartAction(null, this.model));
 
         // Reset start time
         start.setValue(null);
@@ -398,7 +411,7 @@ public class ActivityPanel extends JPanel implements Observer {
             // Display duration
             duration.setText(durationPrint);
         } catch (Exception e) {
-            log.error(e, e);
+            LOG.error(e, e);
         }
     }
 

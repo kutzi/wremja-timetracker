@@ -26,6 +26,7 @@ import javax.swing.text.Document;
 import org.jdesktop.swingx.JXHeader;
 
 import com.kemai.swing.dialog.EscapeDialog;
+import com.kemai.swing.util.WPasswordField;
 import com.kemai.util.OSUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.settings.UserSettings;
@@ -76,7 +77,7 @@ public class SettingsDialog extends EscapeDialog {
         urlField.getDocument().addDocumentListener(new UrlDocumentListener(urlField));
     }
     private final JTextField loginField = new JTextField();
-    private final JPasswordField passwordField = new JPasswordField();
+    private final JPasswordField passwordField = new WPasswordField();
 
     private final JButton saveButton = new JButton();
     
@@ -167,7 +168,7 @@ public class SettingsDialog extends EscapeDialog {
 
         // add anuko pane
         JPanel anukoPanel = new JPanel();
-//        tabbedPane.addTab("Anuko", null, anukoPanel, "Anuko exporter is currently not usable");
+        tabbedPane.addTab("Anuko", null, anukoPanel, "Anuko exporter is currently not usable");
 //        int index = tabbedPane.getTabCount() - 1;
 //        tabbedPane.setEnabledAt(index, false);
         tableLayout = new TableLayout(size);

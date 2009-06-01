@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.ImageIcon;
 
-
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.dialogs.ManageProjectsDialog;
 import com.kemai.wremja.gui.model.PresentationModel;
@@ -22,8 +21,8 @@ public class ManageProjectsAction extends AbstractWremjaAction {
 
     public ManageProjectsAction(final Frame owner, final PresentationModel model) {
         super(owner, model);
-        putValue(NAME, textBundle.textFor("ManageProjectsAction.Name")); //$NON-NLS-1$
-        putValue(SHORT_DESCRIPTION, textBundle.textFor("ManageProjectsAction.ShortDescription")); //$NON-NLS-1$
+        setName(textBundle.textFor("ManageProjectsAction.Name")); //$NON-NLS-1$
+        setTooltip(textBundle.textFor("ManageProjectsAction.ShortDescription")); //$NON-NLS-1$
         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-edit.png"))); //$NON-NLS-1$
     }
 

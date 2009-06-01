@@ -28,8 +28,8 @@ public class StopAction extends AbstractWremjaAction {
     public StopAction(final PresentationModel model) {
         super(model);
         
-        putValue(NAME, textBundle.textFor("StopAction.Name")); //$NON-NLS-1$
-        putValue(SHORT_DESCRIPTION, textBundle.textFor("StopAction.ShortDescription")); //$NON-NLS-1$
+        setName(textBundle.textFor("StopAction.Name")); //$NON-NLS-1$
+        setTooltip(textBundle.textFor("StopAction.ShortDescription")); //$NON-NLS-1$
         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-stop.png"))); //$NON-NLS-1$
     }
 
@@ -38,6 +38,7 @@ public class StopAction extends AbstractWremjaAction {
      */
     @Override
     public final void actionPerformed(final ActionEvent event) {
+    	System.out.println("Stop performed");
         try {
             getModel().stop();
         } catch (ProjectActivityStateException e) {

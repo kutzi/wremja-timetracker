@@ -1,19 +1,13 @@
 package com.kemai.swing.util;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import com.kemai.wremja.gui.actions.AbstractWremjaAction;
-
-public class WMenu extends JMenu implements MnemonicsContainer {
+public class WMenu extends JMenu {
 
 	private static final long serialVersionUID = 1L;
 
-	private final Set<Integer> usedMnemonics = new HashSet<Integer>();
+	private final MnemonicsContainer mnemonicsContainer = new MnemonicsContainer();
 	
 	public WMenu(String text) {
 		super(text);
@@ -21,23 +15,8 @@ public class WMenu extends JMenu implements MnemonicsContainer {
 	
 	@Override
 	public JMenuItem add(JMenuItem menuItem) {
-		Action a = menuItem.getAction();
-		if(a instanceof AbstractWremjaAction) {
-			MnemonicHelper.updateMnemonicsFromAction(menuItem, (AbstractWremjaAction)menuItem.getAction(), this);
-		} else {
-			MnemonicHelper.updateMnemonicsFromMenuItem(menuItem, this);
-		}
+		mnemonicsContainer.addMnemonicsFor(menuItem);
 		
 		return super.add(menuItem);
-	}
-	
-	@Override
-	public boolean contains(int mnemonic) {
-		return this.usedMnemonics.contains(Integer.valueOf(mnemonic));
-	}
-
-	@Override
-	public boolean add(int mnemonic) {
-		return this.usedMnemonics.add(Integer.valueOf(mnemonic));
 	}
 }

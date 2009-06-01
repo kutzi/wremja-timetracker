@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.ImageIcon;
 
-
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.dialogs.AboutDialog;
 
@@ -26,7 +25,7 @@ public class AboutAction extends AbstractWremjaAction {
     public AboutAction(final Frame owner) {
         super(owner);
 
-        putValue(NAME, textBundle.textFor("AboutAction.Name")); //$NON-NLS-1$
+        setName(textBundle.textFor("AboutAction.Name")); //$NON-NLS-1$
         putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-about.png"))); //$NON-NLS-1$
         putValue(SHORT_DESCRIPTION, textBundle.textFor("AboutAction.ShortDescription")); //$NON-NLS-1$
     }

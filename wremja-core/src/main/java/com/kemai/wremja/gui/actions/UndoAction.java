@@ -22,7 +22,7 @@ import com.kemai.wremja.gui.model.edit.EditStack;
      public UndoAction(final EditStack editStack) {
          super(editStack);
 
-         putValue(NAME, textBundle.textFor("UndoAction.Name"));
+         setName(textBundle.textFor("UndoAction.Name"));
          putValue(SHORT_DESCRIPTION, textBundle.textFor("UndoAction.ShortDescription")); //$NON-NLS-1$
          putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/edit-undo.png"))); //$NON-NLS-1$
          putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('Z', InputEvent.CTRL_MASK));
@@ -38,6 +38,6 @@ import com.kemai.wremja.gui.model.edit.EditStack;
 
      @Override
      public void resetTooltip() {
-         putValue(SHORT_DESCRIPTION, textBundle.textFor("UndoAction.ShortDescription")); //$NON-NLS-1$
+         setTooltip(textBundle.textFor("UndoAction.ShortDescription")); //$NON-NLS-1$
      }
  }
