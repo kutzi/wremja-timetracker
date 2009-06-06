@@ -7,6 +7,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -14,10 +15,12 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -29,6 +32,7 @@ import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.swing.util.WPasswordField;
 import com.kemai.util.OSUtils;
 import com.kemai.util.TextResourceBundle;
+import com.kemai.util.UiUtilities;
 import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.util.validator.UrlValidator;
@@ -80,6 +84,13 @@ public class SettingsDialog extends EscapeDialog {
     private final JPasswordField passwordField = new WPasswordField();
 
     private final JButton saveButton = new JButton();
+    {
+        saveButton.setText(textBundle.textFor("SettingsDialog.SaveLabel")); //$NON-NLS-1$
+        saveButton.setIcon(new ImageIcon(getClass().getResource("/icons/gtk-save.png"))); //$NON-NLS-1$
+
+        // Confirm with 'Alt' (Platform dependent) + 'Enter' key
+        saveButton.setMnemonic(KeyEvent.VK_ENTER);
+    }
     
     /**
      * Creates a new settings dialog.
@@ -98,9 +109,10 @@ public class SettingsDialog extends EscapeDialog {
      */
     private void initialize() {
         final double border = 5;
-        double size[][] = {
-                { border, TableLayout.PREFERRED, border, TableLayout.FILL,
-                        border }, // Columns
+        double[][] size = {
+                { border, TableLayout.PREFERRED, border,
+                	TableLayout.PREFERRED, border
+                	 }, // Columns
                 { border, TableLayout.PREFERRED, border, TableLayout.FILL,
                         border, TableLayout.PREFERRED, border } // Rows
         };
@@ -118,17 +130,9 @@ public class SettingsDialog extends EscapeDialog {
         JTabbedPane tabbedPane = new JTabbedPane();
         this.add(tabbedPane, "1, 3, 3, 3");
 
-        saveButton.setText(textBundle.textFor("SettingsDialog.SaveLabel")); //$NON-NLS-1$
-        saveButton.setIcon(new ImageIcon(getClass().getResource(
-                "/icons/gtk-save.png"))); //$NON-NLS-1$
-
-        // Confirm with 'Alt' (Platform dependent) + 'Enter' key
-        saveButton.setMnemonic(KeyEvent.VK_ENTER);
-
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent event) {
-                settings
-                        .setRememberWindowSizeLocation(rememberWindowSizeLocation
+                settings.setRememberWindowSizeLocation(rememberWindowSizeLocation
                                 .isSelected());
                 settings.setDiscardEmptyActivities(purgeEmptyActivities
                         .isSelected());
@@ -137,13 +141,30 @@ public class SettingsDialog extends EscapeDialog {
                 settings.setAnukoLogin(loginField.getText());
                 settings.setAnukoPassword(String.valueOf(passwordField
                         .getPassword()));
+                
+                JOptionPane.showMessageDialog(SettingsDialog.this, textBundle.textFor("SettingsDialog.SaveInfo.Message"),
+                		textBundle.textFor("SettingsDialog.SaveInfo.Title"), JOptionPane.INFORMATION_MESSAGE);
+                
                 SettingsDialog.this.dispose();
             }
         });
 
         saveButton.setDefaultCapable(true);
 
-        this.add(saveButton, "1, 5, 3, 5");
+        this.add(saveButton, "1, 5, 1, 5");
+        
+        JButton cancelButton = new JButton();
+        cancelButton.setText(UIManager.getString("OptionPane.cancelButtonText", Locale.getDefault())); //$NON-NLS-1$
+        cancelButton.setMnemonic(UiUtilities.getMnemonic("OptionPane.cancelButtonMnemonic", Locale.getDefault())); //$NON-NLS-1$
+        cancelButton.setIcon(new ImageIcon(getClass().getResource("/icons/dialog-cancel.png"))); //$NON-NLS-1$
+
+        cancelButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SettingsDialog.this.dispose();
+			}
+        });
+        this.add(cancelButton, "3, 5, 3, 5");
 
         // add general pane
         JPanel generalPanel = new JPanel();
