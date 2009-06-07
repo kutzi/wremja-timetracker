@@ -92,8 +92,7 @@
                         <doUpdate>false</doUpdate>
                         <useLastCommittedRevision>true</useLastCommittedRevision>
                         <locale>en</locale>
-                        <timestampFormat>{0,date,yyyy-MM-dd
-                            HH:mm:ssZ}</timestampFormat>
+                        <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ssZ}</timestampFormat>
                         <!--
                             <providerImplementations> <svn>javasvn</svn>
                             </providerImplementations>

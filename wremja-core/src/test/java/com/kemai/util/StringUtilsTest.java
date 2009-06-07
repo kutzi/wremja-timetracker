@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -44,6 +45,7 @@ public class StringUtilsTest {
 	}
     
     @Test
+    @Ignore
     public void testStringToCodepoints() throws IOException {
         {
             String s = "הצü\uD840\uDC00";
