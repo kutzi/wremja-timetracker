@@ -3,13 +3,13 @@ package com.kemai.wremja.model.report;
 import java.util.List;
 import java.util.Observable;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.SortedList;
+
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.ReadableRepository;
 import com.kemai.wremja.model.filter.Filter;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
 
 public class AccumulatedActivitiesReport extends Observable {
 
@@ -17,7 +17,7 @@ public class AccumulatedActivitiesReport extends Observable {
     private ReadableRepository data;
 
     /** Accumulated activities of the report. */
-    private EventList<AccumulatedProjectActivity> accumulatedActivitiesByDay;
+    private SortedList<AccumulatedProjectActivity> accumulatedActivitiesByDay;
 
     /** The filter by which the tracked data is filtered. */
     protected Filter filter;
@@ -27,7 +27,8 @@ public class AccumulatedActivitiesReport extends Observable {
      */
     public AccumulatedActivitiesReport(final ReadableRepository data) {
         this.data = data;
-        this.accumulatedActivitiesByDay = new BasicEventList<AccumulatedProjectActivity>();
+        this.accumulatedActivitiesByDay = new SortedList<AccumulatedProjectActivity>(
+                new BasicEventList<AccumulatedProjectActivity>());
 
         accumulate();
     }
@@ -89,7 +90,7 @@ public class AccumulatedActivitiesReport extends Observable {
     /**
      * @return the accumulatedActivitiesByDay
      */
-    public EventList<AccumulatedProjectActivity> getAccumulatedActivitiesByDay() {
+    public SortedList<AccumulatedProjectActivity> getAccumulatedActivitiesByDay() {
         return accumulatedActivitiesByDay;
     }
 

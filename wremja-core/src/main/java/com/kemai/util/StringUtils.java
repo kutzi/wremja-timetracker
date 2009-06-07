@@ -59,9 +59,20 @@ public class StringUtils {
         };
     }
     
+    public static int[] stringToCodepoints(String s) {
+        int codePoints = s.codePointCount(0, s.length());
+        int[] result = new int[codePoints];
+        
+        for(int i=0, nextIndex=0; i<result.length; i++) {
+            result[i] = s.codePointAt(nextIndex);
+            nextIndex += Character.charCount(result[i]);
+        }
+        return result;
+    }
+    
     public static boolean isConsonant(char c) {
-    	// FIMXE: that's not i18n at all!
-    	final String CONSONANTS = "bcdfghjklmnpqrstvwxz" +
+    	// FIXME: that's not i18n at all!
+    	final String CONSONANTS = "bcdfghjklmnpqrstvwxzß" +
         	"BCDFGHJKLMNPQRSTVWXZ";
     	return CONSONANTS.indexOf(c) != -1;
     }

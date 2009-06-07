@@ -48,7 +48,7 @@ public class AccumulatedActivitiesTableFormat implements TableFormat<Accumulated
             case 1:
                 return accActivity.getProject();
             case 2:
-                return accActivity.getTime();
+                return Double.valueOf(accActivity.getTime());
             default:
                 return ""; //$NON-NLS-1$
         }

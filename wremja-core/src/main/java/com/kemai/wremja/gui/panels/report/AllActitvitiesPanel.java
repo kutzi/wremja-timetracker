@@ -36,7 +36,6 @@ import org.jdesktop.swingx.renderer.FormatStringValue;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 
 import ca.odell.glazedlists.swing.EventComboBoxModel;
-import ca.odell.glazedlists.swing.EventListJXTableSorting;
 import ca.odell.glazedlists.swing.EventTableModel;
 
 import com.kemai.swing.util.AWTUtils;
@@ -107,9 +106,6 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
             }
         };
 
-        // Fix sorting
-        EventListJXTableSorting.install(table, model.getActivitiesList());
-
         table.getColumn(1).setCellRenderer(new DefaultTableRenderer(new FormatStringValue(DateFormat.getDateInstance())));
         table.getColumn(1).setCellEditor(new DatePickerCellEditor());
 
@@ -147,12 +143,14 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
                 if (selectionIndices.length == 0) {
                     return;
                 }
+                
+                int modelIndex = table.convertRowIndexToModel(selectionIndices[0]);
 
                 // edit 1st selected activity
                 final AddOrEditActivityDialog editActivityDialog = new AddOrEditActivityDialog(
                         AWTUtils.getFrame(AllActitvitiesPanel.this), 
                         model, 
-                        model.getActivitiesList().get(selectionIndices[0])
+                        model.getActivitiesList().get(modelIndex)
                 );
                 editActivityDialog.pack();
                 editActivityDialog.setLocationRelativeTo(AWTUtils.getFrame(menu));
@@ -166,9 +164,11 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
             public void actionPerformed(final ActionEvent event) {
                 // 1. Get selected activities
                 int[] selectionIndices = table.getSelectedRows();
+                
                 List<ProjectActivity> selectedActivities = new ArrayList<ProjectActivity>(selectionIndices.length);
                 for(int index : selectionIndices) {
-                    selectedActivities.add(tableModel.getElementAt(index));
+                    int modelIndex = table.convertRowIndexToModel(index);
+                    selectedActivities.add(tableModel.getElementAt(modelIndex));
                 }
                 
                 // 2. Remove all selected activities
