@@ -99,7 +99,8 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
                 double duration = 0;
                 
                 for (int i : getSelectedRows()) {
-                    duration += tableModel.getElementAt(i).getDuration();
+                	int modelIndex = convertRowIndexToModel(i);
+                    duration += tableModel.getElementAt(modelIndex).getDuration();
                 }
 
                 return textBundle.textFor("AllActivitiesPanel.tooltipDuration", FormatUtils.getDurationFormat().format(duration)); //$NON-NLS-1$
