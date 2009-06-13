@@ -4,6 +4,7 @@
 package com.kemai.util;
 
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -14,7 +15,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 public class StringUtils {
 
     /** Regular expression for xml tags. */
-    private static final String XML_TAG_PATTERN = "<[^<>]+>";
+    private static final Pattern XML_TAG_PATTERN = Pattern.compile("<[^<>]+>");
     
     /**
      * Strip all xml tags from given String and unescape xml characters.
@@ -27,13 +28,13 @@ public class StringUtils {
         }
         
         // 1. Remove xml tags
-        String strippedXml = xml.replaceAll(XML_TAG_PATTERN, org.apache.commons.lang.StringUtils.EMPTY);
+        String strippedXml = XML_TAG_PATTERN.matcher(xml).replaceAll("");
         
-        // 2. Unescape xml
+        // 2. Unescape xml entities
         strippedXml = StringEscapeUtils.unescapeXml(strippedXml);
         
         // 3. Trim whitespace
-        strippedXml = org.apache.commons.lang.StringUtils.trim(strippedXml);
+        strippedXml = strippedXml.trim();
         return strippedXml;
     }
     
@@ -72,7 +73,7 @@ public class StringUtils {
     
     public static boolean isConsonant(char c) {
     	// FIXME: that's not i18n at all!
-    	final String CONSONANTS = "bcdfghjklmnpqrstvwxzﬂ" +
+    	final String CONSONANTS = "bcdfghjklmnpqrstvwxz√ü" +
         	"BCDFGHJKLMNPQRSTVWXZ";
     	return CONSONANTS.indexOf(c) != -1;
     }

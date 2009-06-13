@@ -14,6 +14,7 @@ import org.junit.Test;
 /**
  * Tests the class {@link StringUtils}.
  * @author remast
+ * @author kutzi
  * @see StringUtils
  */
 public class StringUtilsTest {
@@ -48,7 +49,7 @@ public class StringUtilsTest {
     @Ignore
     public void testStringToCodepoints() throws IOException {
         {
-            String s = "äöü\uD840\uDC00";
+            String s = "Ã¤Ã¶Ã¼\uD840\uDC00";
             assertEquals(5, s.length());
             display(s);
             int[] codePoints = StringUtils.stringToCodepoints(s);
