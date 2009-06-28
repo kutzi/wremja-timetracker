@@ -7,6 +7,12 @@ import org.joda.time.DateTime;
 
 import com.kemai.wremja.model.Project;
 
+/**
+ * An activity which represents the accumulated time for all activities
+ * in a given project on a single day.
+ * 
+ * @author kutzi
+ */
 public class AccumulatedProjectActivity implements Comparable<AccumulatedProjectActivity> {
 
     private final DateTime day;
@@ -36,7 +42,9 @@ public class AccumulatedProjectActivity implements Comparable<AccumulatedProject
     }
 
     /**
-     * @return the time
+     * Returns the total time spent on this accumulated activity.
+     * 
+     * @return the time in fraction hours
      */
     public double getTime() {
         return time;
