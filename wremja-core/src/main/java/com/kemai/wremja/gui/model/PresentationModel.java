@@ -397,7 +397,7 @@ public class PresentationModel extends Observable {
      * Changes to the given project.
      * @param activeProject the new active project
      */
-    public final void changeProject(final Project activeProject) {
+    public synchronized final void changeProject(final Project activeProject) {
         // If there's no change we're done.
         if (ObjectUtils.equals(getSelectedProject(), activeProject)) {
             return;
@@ -634,7 +634,7 @@ public class PresentationModel extends Observable {
         setStart(start, true);
     }
     
-    private void setStart(final DateTime start, boolean notify) {
+    private synchronized void setStart(final DateTime start, boolean notify) {
         // TODO: synchronized (this.startStopLock) {
             this.start = start;
             this.data.setStartTime(start);
@@ -747,14 +747,14 @@ public class PresentationModel extends Observable {
     /**
      * Returns the description of the current activity.
      */
-    public String getDescription() {
+    public synchronized String getDescription() {
         return description;
     }
 
     /**
      * Sets the description of the current activity.
      */
-    public void setDescription(final String description) {
+    public synchronized void setDescription(final String description) {
         this.description = description;
     }
 

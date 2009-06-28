@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 /**
  * Based on commons IO
  * 
@@ -28,6 +30,7 @@ public class IOUtils {
      * @param preserveFileDate  whether to preserve the file date
      * @throws IOException if an error occurs
      */
+    @SuppressWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
     public static void copyFile(File srcFile, File destFile, boolean preserveFileDate) throws IOException {
         if (destFile.exists() && destFile.isDirectory()) {
             throw new IOException("Destination '" + destFile + "' exists but is a directory");

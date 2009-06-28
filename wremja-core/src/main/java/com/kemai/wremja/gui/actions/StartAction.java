@@ -33,7 +33,6 @@ public class StartAction extends AbstractWremjaAction {
      */
     @Override
     public final void actionPerformed(final ActionEvent event) {
-    	System.out.println("Start performed");
         try {
             getModel().start();
         } catch (ProjectActivityStateException exception) {
