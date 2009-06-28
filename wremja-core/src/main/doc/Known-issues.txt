@@ -17,6 +17,8 @@ However, Wremja recognizes unfinished activities on next startup and asks how to
 
 - No installer for Mac OS
 
+- Installer doesn't work under OpenJDK6
+
 - Activities over midnight:
 You cannot have activities lasting over midnight. Instead 2 activities are created:
 One from start to midnight and one from midnight to end.

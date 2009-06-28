@@ -1,3 +1,7 @@
+Changes in Version 1.0
+==========================
+- update to JGoodies Looks 2.2.2
+
 Changes in Version 1.0-RC3
 ==========================
 - fixed: wrong activities being edited/deleted when all-activities table was sorted
