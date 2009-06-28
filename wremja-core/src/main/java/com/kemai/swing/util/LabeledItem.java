@@ -65,7 +65,7 @@ public class LabeledItem<E extends Comparable<E>> implements Comparable<LabeledI
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof LabeledItem)) {
+        if (obj == null || !(obj instanceof LabeledItem<?>)) {
             return false;
         }
 

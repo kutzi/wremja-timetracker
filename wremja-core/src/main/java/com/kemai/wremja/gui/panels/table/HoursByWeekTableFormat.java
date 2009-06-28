@@ -41,7 +41,7 @@ public class HoursByWeekTableFormat implements TableFormat<HoursByWeek> {
     public Object getColumnValue(final HoursByWeek baseObject, final int column) {
         switch (column) {
             case 0:
-                return baseObject.getWeek();
+                return Integer.valueOf(baseObject.getWeek());
             case 1:
                 return baseObject;
             default:

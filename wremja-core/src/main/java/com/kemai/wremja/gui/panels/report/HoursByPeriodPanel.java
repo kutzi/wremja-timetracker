@@ -86,7 +86,7 @@ abstract class HoursByPeriodPanel<P extends HoursByPeriod, R extends HoursByPeri
     }
 
     public void update(final Observable o, final Object arg) {
-        if (o != null && o instanceof HoursByPeriodReport) {
+        if (o != null && o instanceof HoursByPeriodReport<?>) {
             tableModel.fireTableDataChanged();
         } else {
             log.error("Unexpected Observable: " + o);

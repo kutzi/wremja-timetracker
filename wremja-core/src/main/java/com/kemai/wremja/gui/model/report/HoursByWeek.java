@@ -39,7 +39,8 @@ public class HoursByWeek extends HoursByPeriod implements Comparable<HoursByWeek
         return eqBuilder.isEquals();
     }
 
-    @Override
+    @SuppressWarnings("boxing")
+	@Override
     public int compareTo(HoursByWeek that) {
         if (that == null) {
             return 0;

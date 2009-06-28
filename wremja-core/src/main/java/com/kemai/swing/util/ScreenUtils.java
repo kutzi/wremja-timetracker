@@ -1,10 +1,19 @@
 package com.kemai.swing.util;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JApplet;
 
 /**
  * A helper class for screen related stuff.
@@ -317,7 +326,7 @@ public class ScreenUtils {
         }
 
         Rectangle bounds = new Rectangle(containgScreen);
-        if (considerInsets) {
+        if (considerInsets && insets != null) {
             bounds.x += insets.left;
             bounds.y += insets.top;
             bounds.width -= insets.left + insets.right;

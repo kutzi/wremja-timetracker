@@ -5,7 +5,6 @@ import junit.framework.TestCase;
 import org.joda.time.DateTime;
 
 import com.kemai.util.DateUtils;
-import com.kemai.wremja.model.ProjectActivity;
 
 public class ProjectActivityTest extends TestCase {
 
@@ -14,13 +13,13 @@ public class ProjectActivityTest extends TestCase {
         DateTime startTime = DateUtils.getNow();
 
         act = new ProjectActivity(startTime, startTime.plusMinutes(45), null);
-        assertEquals(0.75, act.getDuration());
+        assertEquals(0.75, act.getDuration(), 0.001);
 
         act = new ProjectActivity(startTime, startTime.plusMinutes(30), null);
-        assertEquals(0.5, act.getDuration());
+        assertEquals(0.5, act.getDuration(), 0.001);
 
         act = new ProjectActivity(startTime, startTime.plusHours(1).plusMinutes(30), null);
-        assertEquals(1.5, act.getDuration());
+        assertEquals(1.5, act.getDuration(), 0.001);
     }
 
     /**
