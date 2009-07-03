@@ -1,7 +1,6 @@
 package com.kemai.wremja;
 
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
@@ -60,7 +59,7 @@ public abstract class FormatUtils {
     private static final ThreadLocal<NumberFormat> durationFormat = new ThreadLocal<NumberFormat>() {
         @Override
         protected NumberFormat initialValue() {
-            return new DecimalFormat("#0.00"); //$NON-NLS-1$
+            return new DurationFormat(); // XXX: as durationformat is thread-safe Thread-Local isn't necessary anymore
         }
     };
 }

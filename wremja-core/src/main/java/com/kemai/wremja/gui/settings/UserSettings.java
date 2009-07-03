@@ -157,7 +157,7 @@ public final class UserSettings {
     private static final String LAST_DESCRIPTION = "description"; //$NON-NLS-1$
 
     public String getLastDescription() {
-        return doGetString(LAST_DESCRIPTION, StringUtils.EMPTY);
+        return doGetString(LAST_DESCRIPTION, "");
     }
 
     public void setLastDescription(final String lastDescription) {
@@ -374,6 +374,16 @@ public final class UserSettings {
     
     public void setUseTrayIcon(boolean b) {
     	userConfig.setProperty(USE_TRAY_ICON, b);
+    }
+    
+    private static final String DURATION_FORMAT = "durationFormat";
+    
+    public String getDurationFormat() {
+        return doGetString(DURATION_FORMAT, "#0.00");
+    }
+    
+    public void setDurationFormat(String format) {
+        userConfig.setProperty(DURATION_FORMAT, format);
     }
     
     /**

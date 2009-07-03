@@ -3,23 +3,29 @@ package com.kemai.wremja.gui.dialogs;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -74,7 +80,43 @@ public class SettingsDialog extends EscapeDialog {
     	}
     	useTrayicon.setToolTipText(toolTip);
     }
+    
+    private final JComboBox durationFormat = new JComboBox(new Object[] {"#0.00", "#0:00"});
 
+    private Map<String, String> durationTexts = new HashMap<String, String>();
+    {
+        durationTexts.put("#0.00", "hours.fractions");
+        durationTexts.put("#0:00", "hours:minutes");
+    }
+
+    {
+        ListCellRenderer renderer = new ListCellRenderer() {
+            
+            private final JLabel label = new JLabel();
+            
+            @Override
+            public Component getListCellRendererComponent(JList list,
+                    Object value, int index, boolean isSelected,
+                    boolean cellHasFocus) {
+
+                if (isSelected) {
+                    label.setBackground(list.getSelectionBackground());
+                    label.setForeground(list.getSelectionForeground());
+                } else {
+                    label.setBackground(list.getBackground());
+                    label.setForeground(list.getForeground());
+                }
+
+                String description = durationTexts.get(value);
+                label.setText(description != null ? description : "");
+                label.setFont(list.getFont());
+
+                return label;
+            }
+        };
+        durationFormat.setRenderer(renderer);
+    }
+    
     private final JTextField urlField = new JFormattedTextField();
     {
         urlField.setColumns(30);
@@ -137,6 +179,7 @@ public class SettingsDialog extends EscapeDialog {
                 settings.setDiscardEmptyActivities(purgeEmptyActivities
                         .isSelected());
                 settings.setUseTrayIcon(useTrayicon.isSelected());
+                settings.setDurationFormat(durationFormat.getSelectedItem().toString());
                 settings.setAnukoUrl(urlField.getText());
                 settings.setAnukoLogin(loginField.getText());
                 settings.setAnukoPassword(String.valueOf(passwordField
@@ -176,6 +219,7 @@ public class SettingsDialog extends EscapeDialog {
                         border }, // Columns
                 { border, TableLayout.PREFERRED, border, TableLayout.PREFERRED,
                         border, TableLayout.PREFERRED, border,
+                        TableLayout.PREFERRED, border,
                         TableLayout.PREFERRED, border } // Rows
         };
         tableLayout = new TableLayout(size);
@@ -184,6 +228,11 @@ public class SettingsDialog extends EscapeDialog {
         generalPanel.add(rememberWindowSizeLocation, "1, 1, 3, 1"); //$NON-NLS-1$
         generalPanel.add(purgeEmptyActivities, "1, 3, 3, 3"); //$NON-NLS-1$
         generalPanel.add(useTrayicon, "1, 5, 3, 5"); //$NON-NLS-1$
+        JPanel durationFormatPanel = new JPanel();
+        durationFormatPanel.add(new JLabel("Duration Format:"));
+        durationFormatPanel.add(durationFormat);
+        
+        generalPanel.add(durationFormatPanel, "1, 7, 3, 7"); //$NON-NLS-1$
 
         getRootPane().setDefaultButton(saveButton);
 
@@ -217,6 +266,7 @@ public class SettingsDialog extends EscapeDialog {
         this.rememberWindowSizeLocation.setSelected(this.settings.isRememberWindowSizeLocation());
         this.purgeEmptyActivities.setSelected(this.settings.isDiscardEmptyActivities());
         this.useTrayicon.setSelected(this.settings.isUseTrayIcon());
+        this.durationFormat.setSelectedItem(this.settings.getDurationFormat());
         this.urlField.setText(this.settings.getAnukoUrl());
         this.loginField.setText(this.settings.getAnukoLogin());
         this.passwordField.setText(this.settings.getAnukoPassword());
