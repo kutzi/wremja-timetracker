@@ -1,3 +1,9 @@
+Changes in Version 1.1
+==========================
+- Bug: Accumulated activities are not accumulated (http://kenai.com/jira/browse/WREMJA-19)
+- New Feature: Optionally disallow overlapping activities (http://kenai.com/jira/browse/WREMJA-5)
+- New Feature: Make 'hours' format configurable http://kenai.com/jira/browse/WREMJA-15)
+
 Changes in Version 1.0
 ==========================
 - update to JGoodies Looks 2.2.2
