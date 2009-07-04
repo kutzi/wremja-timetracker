@@ -246,4 +246,15 @@ public class ActivityRepository implements ReadableRepository, Serializable {
     public synchronized void setDirty(boolean b) {
         this.dirty = b;
     }
+    
+    public ProjectActivity getIntersection(ProjectActivity newActivity, ProjectActivity original) {
+    	for(ProjectActivity activity : activities) {
+    		if(!activity.equals(original)) {
+    			if(activity.hasIntersection(newActivity)) {
+    				return activity;
+    			}
+    		}
+    	}
+    	return null;
+    }
 }

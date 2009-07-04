@@ -3,6 +3,9 @@ package com.kemai.wremja.gui.actions;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.dialogs.SettingsDialog;
 import com.kemai.wremja.gui.model.PresentationModel;
@@ -14,6 +17,8 @@ import com.kemai.wremja.gui.settings.UserSettings;
  */
 @SuppressWarnings("serial")
 public class SettingsAction extends AbstractWremjaAction {
+
+	public static final Icon ICON = new ImageIcon(SettingsDialog.class.getResource("/icons/stock_folder-properties.png")); //$NON-NLS-1$
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(SettingsAction.class);
@@ -27,7 +32,7 @@ public class SettingsAction extends AbstractWremjaAction {
 
         setName(textBundle.textFor("SettingsAction.Name")); //$NON-NLS-1$
         setTooltip(textBundle.textFor("SettingsAction.ShortDescription")); //$NON-NLS-1$
-        putValue(SMALL_ICON, SettingsDialog.ICON);
+        putValue(SMALL_ICON, ICON);
     }
 
     /**

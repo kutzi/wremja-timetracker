@@ -4,12 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.beans.PropertyChangeEvent;
+
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
 import org.junit.Test;
 
 import com.kemai.util.DateUtils;
+import com.kemai.wremja.AbstractWremjaTestCase;
 import com.kemai.wremja.model.ActivityRepository;
+import com.kemai.wremja.model.OverlappingActivitiesException;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -19,14 +23,14 @@ import com.kemai.wremja.model.ProjectActivity;
  * @author kutzi
  * @see PresentationModel
  */
-public class PresentationModelTest {
+public class PresentationModelTest extends AbstractWremjaTestCase {
 
     /** First test project. */
     private static Project project1 = new Project(1, "Project1", "Project 1");
 
     /** Second test project. */
     private static Project project2 = new Project(2, "Project2", "Project 2");
-
+    
     /**
      * Test for an activity that goes on until after midnight.
      * @throws ProjectActivityStateException should never be thrown if test is ok
@@ -116,6 +120,31 @@ public class PresentationModelTest {
         } catch( ProjectActivityStateException e ) {
             // ok, expected
         }
+    }
+    
+    @Test
+    public void testProjectRename() throws OverlappingActivitiesException {
+    	PresentationModel model = getTestModel();
+    	
+    	Project project = new Project(4711, "TestProject", "TestProject");
+    	model.addProject(project, this);
+    	
+    	DateTime start = new DateTime(0);
+    	
+    	ProjectActivity a1 = new ProjectActivity(start, start.plusHours(1), project);
+    	ProjectActivity a2 = new ProjectActivity(start, start.plusHours(2), project);
+    	model.addActivity(a1, this);
+    	model.addActivity(a2, this);
+
+    	assertEquals(2, model.getActivitiesList().size());
+
+    	project.setTitle("Project");
+    	PropertyChangeEvent propertyChangeEvent = new PropertyChangeEvent(project, Project.PROPERTY_TITLE, "TestProject", "Project");
+    	model.fireProjectChangedEvent(project, propertyChangeEvent);
+    	
+    	// check that activities are still attached to the same project:
+    	assertEquals(project, a1.getProject());
+    	assertEquals(project, a2.getProject());
     }
     
     private PresentationModel getTestModel() {

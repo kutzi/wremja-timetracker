@@ -4,6 +4,7 @@ import info.clearthought.layout.TableLayout;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +13,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -39,6 +39,7 @@ import com.kemai.swing.util.WPasswordField;
 import com.kemai.util.OSUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.util.UiUtilities;
+import com.kemai.wremja.gui.actions.SettingsAction;
 import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.util.validator.UrlValidator;
@@ -57,38 +58,45 @@ public class SettingsDialog extends EscapeDialog {
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(SettingsDialog.class);
     
-    public static final Icon ICON = new ImageIcon(SettingsDialog.class.getResource("/icons/stock_folder-properties.png")); //$NON-NLS-1$
-
     /** The model. */
     private final UserSettings settings;
     
     /** Component to edit setting to remember window size and location. */
-    private final JCheckBox rememberWindowSizeLocation = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.RememberWindowSizeLocation.Title"));
+    private final JCheckBox rememberWindowSizeLocation = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.RememberWindowSizeLocation.Title")); //$NON-NLS-1$
     {
-        rememberWindowSizeLocation.setToolTipText(textBundle.textFor("SettingsDialog.Setting.RememberWindowSizeLocation.ToolTipText"));
+        rememberWindowSizeLocation.setToolTipText(textBundle.textFor("SettingsDialog.Setting.RememberWindowSizeLocation.ToolTipText")); //$NON-NLS-1$
     }
-    private final JCheckBox purgeEmptyActivities = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.DiscardEmptyActivities.Title"));
+
+    private final JCheckBox purgeEmptyActivities = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.DiscardEmptyActivities.Title")); //$NON-NLS-1$
     {
-        purgeEmptyActivities.setToolTipText(textBundle.textFor("SettingsDialog.Setting.DiscardEmptyActivities.ToolTipText"));
+        purgeEmptyActivities.setToolTipText(textBundle.textFor("SettingsDialog.Setting.DiscardEmptyActivities.ToolTipText")); //$NON-NLS-1$
     }
-    private final JCheckBox useTrayicon = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.Title"));
+    
+    private final JCheckBox allowOverlappingActivities = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.AllowOverlappingActivities.Title")); //$NON-NLS-1$
     {
-    	String toolTip = textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.ToolTipText");
+    	allowOverlappingActivities.setToolTipText(textBundle.textFor("SettingsDialog.Setting.AllowOverlappingActivities.ToolTipText")); //$NON-NLS-1$
+    }
+    
+    private final JCheckBox useTrayicon = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.Title")); //$NON-NLS-1$
+    {
+    	String toolTip = textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.ToolTipText"); //$NON-NLS-1$
     	if(OSUtils.isGnome()) {
-    		toolTip = "<html>" + toolTip +
-    		"<br>NOTE: since you seem to be running on Gnome, it's strongly disrecommended to enable this option!</html>";
+    		toolTip = "<html>" + toolTip + //$NON-NLS-1$
+    		"<br>" + //$NON-NLS-1$
+    		textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.ToolTipGnomeWarning") + //$NON-NLS-1$
+    		"</html>"; //$NON-NLS-1$
     	}
     	useTrayicon.setToolTipText(toolTip);
     }
+
+    private static final Map<String, String> durationTexts = new HashMap<String, String>() {
+	    {
+	        put("#0.00", textBundle.textFor("SettingsDialog.Setting.DurationFormat.HoursAndFractions")); //$NON-NLS-1$ //$NON-NLS-2$
+	        put("#0:00", textBundle.textFor("SettingsDialog.Setting.DurationFormat.HoursAndMinutes")); //$NON-NLS-1$ //$NON-NLS-2$
+	    }
+    };
     
-    private final JComboBox durationFormat = new JComboBox(new Object[] {"#0.00", "#0:00"});
-
-    private Map<String, String> durationTexts = new HashMap<String, String>();
-    {
-        durationTexts.put("#0.00", "hours.fractions");
-        durationTexts.put("#0:00", "hours:minutes");
-    }
-
+    private final JComboBox durationFormat = new JComboBox(new Object[] {"#0.00", "#0:00"}); //$NON-NLS-1$
     {
         ListCellRenderer renderer = new ListCellRenderer() {
             
@@ -132,6 +140,7 @@ public class SettingsDialog extends EscapeDialog {
 
         // Confirm with 'Alt' (Platform dependent) + 'Enter' key
         saveButton.setMnemonic(KeyEvent.VK_ENTER);
+        saveButton.setEnabled(false);
     }
     
     /**
@@ -167,7 +176,7 @@ public class SettingsDialog extends EscapeDialog {
         this.add(
                 new JXHeader(textBundle
                         .textFor("SettingsDialog.ApplicationSettingsTitle"),
-                        null, ICON), "0, 0, 3, 1"); //$NON-NLS-1$
+                        null, SettingsAction.ICON), "0, 0, 3, 1"); //$NON-NLS-1$
 
         JTabbedPane tabbedPane = new JTabbedPane();
         this.add(tabbedPane, "1, 3, 3, 3");
@@ -176,9 +185,9 @@ public class SettingsDialog extends EscapeDialog {
             public void actionPerformed(final ActionEvent event) {
                 settings.setRememberWindowSizeLocation(rememberWindowSizeLocation
                                 .isSelected());
-                settings.setDiscardEmptyActivities(purgeEmptyActivities
-                        .isSelected());
+                settings.setDiscardEmptyActivities(purgeEmptyActivities.isSelected());
                 settings.setUseTrayIcon(useTrayicon.isSelected());
+                settings.setAllowOverlappingActivities(allowOverlappingActivities.isSelected());
                 settings.setDurationFormat(durationFormat.getSelectedItem().toString());
                 settings.setAnukoUrl(urlField.getText());
                 settings.setAnukoLogin(loginField.getText());
@@ -220,6 +229,7 @@ public class SettingsDialog extends EscapeDialog {
                 { border, TableLayout.PREFERRED, border, TableLayout.PREFERRED,
                         border, TableLayout.PREFERRED, border,
                         TableLayout.PREFERRED, border,
+                        TableLayout.PREFERRED, border,
                         TableLayout.PREFERRED, border } // Rows
         };
         tableLayout = new TableLayout(size);
@@ -227,20 +237,21 @@ public class SettingsDialog extends EscapeDialog {
 
         generalPanel.add(rememberWindowSizeLocation, "1, 1, 3, 1"); //$NON-NLS-1$
         generalPanel.add(purgeEmptyActivities, "1, 3, 3, 3"); //$NON-NLS-1$
-        generalPanel.add(useTrayicon, "1, 5, 3, 5"); //$NON-NLS-1$
-        JPanel durationFormatPanel = new JPanel();
+        generalPanel.add(allowOverlappingActivities, "1, 5, 3, 5"); //$NON-NLS-1$
+        generalPanel.add(useTrayicon, "1, 7, 3, 7"); //$NON-NLS-1$
+        JPanel durationFormatPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         durationFormatPanel.add(new JLabel("Duration Format:"));
         durationFormatPanel.add(durationFormat);
         
-        generalPanel.add(durationFormatPanel, "1, 7, 3, 7"); //$NON-NLS-1$
+        generalPanel.add(durationFormatPanel, "1, 9, 3, 9"); //$NON-NLS-1$
 
-        getRootPane().setDefaultButton(saveButton);
+        //getRootPane().setDefaultButton(saveButton);
 
         // add anuko pane
         JPanel anukoPanel = new JPanel();
         tabbedPane.addTab("Anuko", null, anukoPanel, "Anuko exporter is currently not usable");
-//        int index = tabbedPane.getTabCount() - 1;
-//        tabbedPane.setEnabledAt(index, false);
+        int index = tabbedPane.getTabCount() - 1;
+        tabbedPane.setEnabledAt(index, false);
         tableLayout = new TableLayout(size);
         anukoPanel.setLayout(tableLayout);
 
@@ -255,9 +266,42 @@ public class SettingsDialog extends EscapeDialog {
         anukoPanel.add(passwordLabel, "1, 5");
         anukoPanel.add(passwordField, "3, 5");
 
-        
         readFromSettings();
+        
+        addSaveEnabler();
+        
+    	
+    	allowOverlappingActivities.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!allowOverlappingActivities.isSelected()) {
+					JOptionPane.showMessageDialog(SettingsDialog.this,
+	                		"Note that disabling this option should be considered experimental!\nPress 'Cancel' if you're not sure.",
+	                		 "Warning", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
+
     }
+
+	private void addSaveEnabler() {
+		ActionListener saveEnabler = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveButton.setEnabled(true);
+			}
+		};
+        
+        rememberWindowSizeLocation.addActionListener(saveEnabler);
+        purgeEmptyActivities.addActionListener(saveEnabler);
+        allowOverlappingActivities.addActionListener(saveEnabler);
+        useTrayicon.addActionListener(saveEnabler);
+        durationFormat.addActionListener(saveEnabler);
+        
+        urlField.addActionListener(saveEnabler);
+        loginField.addActionListener(saveEnabler);
+        passwordField.addActionListener(saveEnabler);
+	}
 
     /**
      * Reads the data displayed in the dialog from the settings.
@@ -265,6 +309,7 @@ public class SettingsDialog extends EscapeDialog {
     private void readFromSettings() {
         this.rememberWindowSizeLocation.setSelected(this.settings.isRememberWindowSizeLocation());
         this.purgeEmptyActivities.setSelected(this.settings.isDiscardEmptyActivities());
+        this.allowOverlappingActivities.setSelected(this.settings.isAllowOverlappingActivities());
         this.useTrayicon.setSelected(this.settings.isUseTrayIcon());
         this.durationFormat.setSelectedItem(this.settings.getDurationFormat());
         this.urlField.setText(this.settings.getAnukoUrl());

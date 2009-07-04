@@ -1,6 +1,7 @@
 package com.kemai.swing.action;
 
 import javax.swing.AbstractAction;
+import javax.swing.Icon;
 
 public abstract class AbstractWAction extends AbstractAction {
 
@@ -57,6 +58,10 @@ public abstract class AbstractWAction extends AbstractAction {
     
     public void setTooltip(final String tooltip) {
         putValue(SHORT_DESCRIPTION, tooltip);
+    }
+    
+    public void setIcon(Icon icon) {
+    	putValue(SMALL_ICON, icon);
     }
     
     public boolean hasMnemonicSet() {

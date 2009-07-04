@@ -31,6 +31,7 @@ import com.kemai.wremja.gui.model.report.HoursByWeekReport;
 import com.kemai.wremja.gui.model.report.ObservingAccumulatedActivitiesReport;
 import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.model.ActivityRepository;
+import com.kemai.wremja.model.OverlappingActivitiesException;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.filter.Filter;
@@ -472,9 +473,17 @@ public class PresentationModel extends Observable {
 
     /**
      * Add a new activity to the model.
+     * 
      * @param activity the activity to add
+     * @param source the source of the add
+     * @throws OverlappingActivitiesException if the changed activity overlaps with an existing one AND overlapping activities are not allowed
      */
-    public final void addActivity(final ProjectActivity activity, final Object source) {
+    public final void addActivity(final ProjectActivity activity, final Object source) throws OverlappingActivitiesException {
+    	ProjectActivity overlappingActivity = getOverlappingActivity(activity, null);
+    	if(overlappingActivity != null) {
+    		throw new OverlappingActivitiesException(activity, overlappingActivity);
+    	}
+    	
         getData().addActivity(activity);
 
         // Add activity if there is no filter or the filter matches
@@ -501,6 +510,25 @@ public class PresentationModel extends Observable {
         event.setData(activity);
         notify(event);
     }
+    
+    /**
+     * Changes an activity - i.e. replaces its attributes with that of a new activity.
+     *
+     * @param originalActivity the activity to be changed
+     * @param activity the activity with the changed attributes
+     * @param source the source of the change
+     * @throws OverlappingActivitiesException if the changed activity overlaps with an existing one AND overlapping activities are not allowed
+     */
+	public void changeActivity(ProjectActivity originalActivity, ProjectActivity activity,
+			Object source) throws OverlappingActivitiesException {
+    	ProjectActivity overlappingActivity = getOverlappingActivity(activity, originalActivity);
+    	if(overlappingActivity != null) {
+    		throw new OverlappingActivitiesException(activity, overlappingActivity);
+    	}
+		
+		removeActivity(originalActivity, source);
+		addActivity(activity, source);
+	}
     
     /**
      * Remove a collection of activities from the model.
@@ -779,5 +807,13 @@ public class PresentationModel extends Observable {
 
     public void setStopActivityOnShutdown(boolean stopActivityOnShutdown) {
         this.stopActivityOnShutdown = stopActivityOnShutdown;
+    }
+    
+    public ProjectActivity getOverlappingActivity(ProjectActivity newActivity, ProjectActivity original) {
+    	if(UserSettings.instance().isAllowOverlappingActivities()) {
+    		return null;
+    	}
+    	
+    	return getData().getIntersection(newActivity, original);
     }
 }

@@ -13,12 +13,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * An activity for a project.
  * 
- * Invariants of this class (not enforced, yet):
+ * Invariants of this class:
  * - start time must not be after end time
- * - start and end date of an activity must always be on the same day
+ * - start and end date of an activity must always be on the same day  (not enforced, yet)
  * unless end date is at 0:00h. In that situation end date is on the following date to the start date.
  * 
  * @author remast
+ * @author kutzi
  */
 @XStreamAlias("projectActivity")
 public class ProjectActivity implements Serializable, Comparable<ProjectActivity> {
@@ -71,6 +72,16 @@ public class ProjectActivity implements Serializable, Comparable<ProjectActivity
         this.end = end;
         this.project = project;
         this.description = description;
+    }
+    
+    /**
+     * Copy constructor.
+     */
+    public ProjectActivity(ProjectActivity o) {
+    	this.start = o.start;
+    	this.end = o.end;
+    	this.project = o.project;
+    	this.description = o.description;
     }
     
     /**
@@ -232,5 +243,23 @@ public class ProjectActivity implements Serializable, Comparable<ProjectActivity
      */    
     public final double getDuration() {
         return DateUtils.getDurationAsFractionHours(this.start, this.end);
+    }
+
+	public boolean hasIntersection(ProjectActivity o) {
+		
+		if(o.getStart().getMillis() >= getStart().getMillis()
+		   && o.getStart().getMillis() < getEnd().getMillis()) {
+			return true;
+		} else if(o.getEnd().getMillis() > getStart().getMillis()
+				  && o.getEnd().getMillis() <= getEnd().getMillis()) {
+			return true;
+		}
+		
+		// last option this is completely included in o
+		if(getStart().getMillis() >= o.getStart().getMillis()
+		   && getEnd().getMillis() <= o.getEnd().getMillis()) {
+			return true;
+		}
+		return false;
     }
 }

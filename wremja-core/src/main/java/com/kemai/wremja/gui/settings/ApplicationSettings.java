@@ -19,7 +19,7 @@ public final class ApplicationSettings {
     private static String APPLICATION_PROPERTIES_FILENAME = "application.properties"; //$NON-NLS-1$
     
     /** Node for Wremja application preferences. */
-    private final Configuration applicationConfig;
+    private Configuration applicationConfig;
 
     //------------------------------------------------
     // Data locations
@@ -89,6 +89,13 @@ public final class ApplicationSettings {
             LOG.error(e, e);
             throw new IllegalStateException("Application settings couldn't be initialized", e);
         }
+    }
+    
+    /**
+     * @deprecated use this only in tests!
+     */
+    public void setConfig(Configuration config) {
+    	this.applicationConfig = config;
     }
 
     /** Key for storage mode. */

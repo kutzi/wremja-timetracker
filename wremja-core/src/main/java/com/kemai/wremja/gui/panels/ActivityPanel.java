@@ -48,10 +48,13 @@ import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.Project;
+import com.kemai.wremja.model.ProjectActivity;
 
 /**
  * Panel for capturing new activities.
+ *
  * @author remast
+ * @author kutzi
  */
 @SuppressWarnings("serial")
 public class ActivityPanel extends JPanel implements Observer {
@@ -83,7 +86,7 @@ public class ActivityPanel extends JPanel implements Observer {
     private final JButton startStopButton;
 
     /** The list of projects. The selected project is the currently active project. */
-    private JComboBox projectSelector = null;
+    private JComboBox projectSelector;
 
     /** The description editor. */
     private TextEditor descriptionEditor;
@@ -444,6 +447,18 @@ public class ActivityPanel extends JPanel implements Observer {
             );
 
             if (correct) {
+            	// check for overlap
+        		ProjectActivity tmp = new ProjectActivity(newStart, DateUtils.getNow(), null);
+        		if(model.getOverlappingActivity(tmp, null) != null) {
+        			JOptionPane.showMessageDialog(
+                            ActivityPanel.this, 
+                            "Overlaps with an existing activity!",
+                            "Overlap",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+        			return;
+        		}
+        		
                 model.setStart(newStart);
             } else {
                 JOptionPane.showMessageDialog(

@@ -37,6 +37,7 @@ import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.model.OverlappingActivitiesException;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -297,25 +298,34 @@ public class AddOrEditActivityDialog extends EscapeDialog {
                             descriptionEditor.getText()
                     );
 
-                    // Check if we're in edit or add mode
-                    if (oldActivity == null) {
-                        model.addActivity(activity, this);
-                    } else {
-                        final ProjectActivity oldActivity = AddOrEditActivityDialog.this.oldActivity;
+                    try {
+	                    // Check if we're in edit or add mode
+	                    if (oldActivity == null) {
+	                        model.addActivity(activity, this);
+	                    } else {
+	                        final ProjectActivity oldActivity = AddOrEditActivityDialog.this.oldActivity;
+	
+	                        final boolean activitiesEqual = activity.getStart().equals(oldActivity.getStart()) 
+	                        && activity.getEnd().equals(oldActivity.getEnd())
+	                        && activity.getProject().equals(oldActivity.getProject())
+	                        && activity.getDescription().equals(oldActivity.getDescription());
+	                        
+	                        if (!activitiesEqual) {
+	                            model.changeActivity(oldActivity, activity, AddOrEditActivityDialog.this);
+	                        }
+	                    }
+	                    AddOrEditActivityDialog.this.dispose();
+                    } catch(OverlappingActivitiesException e) {
+                        final String title = "Overlap!";//textBundle.textFor("AddOrEditActivityDialog.Error.Title");
+                        final String message = "Overlapping activities detected!";//textBundle.textFor("AddOrEditActivityDialog.Error.InvalidStartEnd");
 
-                        final boolean activitiesEqual = activity.getStart().equals(oldActivity.getStart()) 
-                        && activity.getEnd().equals(oldActivity.getEnd())
-                        && activity.getProject().equals(oldActivity.getProject())
-                        && activity.getDescription().equals(oldActivity.getDescription());
-                        
-                        if (!activitiesEqual) {
-                            // Delete old activity and add new one (easier than changing everything)
-                            model.removeActivity(oldActivity, AddOrEditActivityDialog.this);
-                            model.addActivity(activity, AddOrEditActivityDialog.this);
-                        }
+                        JOptionPane.showMessageDialog(
+                                AddOrEditActivityDialog.this, 
+                                message,
+                                title, 
+                                JOptionPane.ERROR_MESSAGE
+                        );
                     }
-
-                    AddOrEditActivityDialog.this.dispose();
                 }
             });
 

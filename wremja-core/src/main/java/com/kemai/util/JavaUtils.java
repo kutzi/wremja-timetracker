@@ -34,10 +34,6 @@ public class JavaUtils {
 		MAINTENANCE_VERSION = maintenanceNr;
 	}
 	
-	public static boolean isJava1Dot6() {
-		return compareTo(160, 0) >= 0;
-	}
-	
 	public static boolean isGreaterOrEqual(int mainNr, int maintenanceNr) {
 		return compareTo(mainNr, maintenanceNr) >= 0;
 	}

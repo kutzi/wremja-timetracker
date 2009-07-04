@@ -13,6 +13,8 @@ import com.kemai.wremja.gui.actions.RedoAction;
 import com.kemai.wremja.gui.actions.UndoAction;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.logging.Logger;
+import com.kemai.wremja.model.OverlappingActivitiesException;
 import com.kemai.wremja.model.ProjectActivity;
 
 /**
@@ -22,6 +24,8 @@ import com.kemai.wremja.model.ProjectActivity;
  */
 // TODO: use Swing's built-in undo/redo support instead?
 public class EditStack implements Observer {
+
+	private static final Logger LOG = Logger.getLogger(EditStack.class);
 
 	/**
 	 * The action for undoing an edit activity.
@@ -157,7 +161,11 @@ public class EditStack implements Observer {
 	        case PROJECT_ACTIVITY_REMOVED:
 	            Collection<ProjectActivity> activities = (Collection<ProjectActivity>)event.getDataCollection();
 	            for(ProjectActivity activity : activities) {
-	                model.addActivity(activity, this);
+	                try {
+	                    model.addActivity(activity, this);
+                    } catch (OverlappingActivitiesException e) {
+	                    LOG.error("Overlapping activities on undo", e);
+                    }
 	            }
 	            break;
 	        case PROJECT_ACTIVITY_ADDED: model.removeActivity((ProjectActivity) event.getData(), this);
@@ -175,7 +183,12 @@ public class EditStack implements Observer {
             case PROJECT_ACTIVITY_REMOVED:
                 model.removeActivities((Collection<ProjectActivity>)event.getDataCollection(), this);
                 break;
-            case PROJECT_ACTIVITY_ADDED: model.addActivity((ProjectActivity) event.getData(), this);
+            case PROJECT_ACTIVITY_ADDED:
+            	try {
+	            	model.addActivity((ProjectActivity) event.getData(), this);
+	            } catch (OverlappingActivitiesException e) {
+	            	LOG.error("Overlapping activities on redo", e);
+	            }
                 break;
 	    }
     }

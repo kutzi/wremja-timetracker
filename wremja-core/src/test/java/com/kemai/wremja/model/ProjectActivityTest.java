@@ -1,13 +1,19 @@
 package com.kemai.wremja.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.joda.time.DateTime;
+import org.junit.Test;
 
 import com.kemai.util.DateUtils;
+import com.kemai.wremja.AbstractWremjaTestCase;
 
-public class ProjectActivityTest extends TestCase {
+public class ProjectActivityTest extends AbstractWremjaTestCase {
 
+	@Test
     public void testCalculateDuration() {
         ProjectActivity act = new ProjectActivity(new DateTime(0L), new DateTime(1000L * 60 * 60 * 30), null);
         DateTime startTime = DateUtils.getNow();
@@ -26,6 +32,7 @@ public class ProjectActivityTest extends TestCase {
      * Tests that start and end times are on the same day,
      * unless end time is at 0:00h in which case end date is on the next day.
      */
+	@Test
     public void testStartAndEndOnSameDay() {
         ProjectActivity act = new ProjectActivity(new DateTime(2009, 1, 1, 0, 0, 0, 0),
                 new DateTime(2009, 1, 1, 23, 0, 0 ,0 ), null);
@@ -57,6 +64,7 @@ public class ProjectActivityTest extends TestCase {
      * Tests that an exception is thrown when someone tries to set
      * end < start.
      */
+	@Test
     public void testStartNotAfterEnd() {
         try {
             new ProjectActivity(new DateTime(2009, 1, 1, 13, 0, 0 ,0),
@@ -87,6 +95,7 @@ public class ProjectActivityTest extends TestCase {
     /**
      * Tests the setDay method.
      */
+	@Test
     public void testSetDay() {
         {
             ProjectActivity act = new ProjectActivity(
@@ -138,5 +147,73 @@ public class ProjectActivityTest extends TestCase {
             assertEquals(0, end.getHourOfDay());
             assertEquals(0, end.getMinuteOfHour());
         }
+    }
+    
+	@Test
+    public void testIntersection() {
+    	DateTime start = new DateTime(2009, 1, 1, 12, 0, 0, 0);
+		DateTime end = new DateTime(2009, 1, 1, 13, 0, 0, 0);
+		ProjectActivity a = new ProjectActivity(start,
+    			end, null);
+		assertTrue(a.hasIntersection(a));
+		
+		{
+			ProjectActivity o = new ProjectActivity(start, end, null);
+			assertTrue(a.hasIntersection(o));
+			assertTrue(o.hasIntersection(a));
+		}
+		
+		{
+			ProjectActivity o = new ProjectActivity(
+					start.minusHours(1),
+					start, null);
+			assertFalse(a.hasIntersection(o));
+			assertFalse(o.hasIntersection(a));
+		}
+		
+		{
+			ProjectActivity o = new ProjectActivity(end,
+					end.plusHours(1),
+					null);
+			assertFalse(a.hasIntersection(o));
+			assertFalse(o.hasIntersection(a));
+		}
+		
+		{
+			ProjectActivity o = new ProjectActivity(
+					start.plusMinutes(30),
+					start.plusMinutes(30),
+					null);
+			assertTrue(a.hasIntersection(o));
+			assertTrue(o.hasIntersection(a));
+		}
+		
+		{
+			ProjectActivity o = new ProjectActivity(
+					start.plusMinutes(30),
+					start.plusMinutes(30),
+					null);
+			assertTrue(a.hasIntersection(o));
+			assertTrue(o.hasIntersection(a));
+		}
+
+		{
+			ProjectActivity o = new ProjectActivity(
+					start.plusMinutes(10),
+					end.plusMinutes(10),
+					null);
+			assertTrue(a.hasIntersection(o));
+			assertTrue(o.hasIntersection(a));
+		}
+		
+		{
+			ProjectActivity o = new ProjectActivity(
+					start.minusMinutes(10),
+					end.minusMinutes(10),
+					null);
+			assertTrue(a.hasIntersection(o));
+			assertTrue(o.hasIntersection(a));
+		}
+		
     }
 }

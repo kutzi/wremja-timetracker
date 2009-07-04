@@ -39,7 +39,7 @@ public final class UserSettings {
     private static String USER_PROPERTIES_FILENAME = "wremja.properties";
 
     /** Node for Wremja user preferences. */
-    private final Configuration userConfig;
+    private Configuration userConfig;
 
     /** The singleton instance. */
     private static final UserSettings instance = new UserSettings();
@@ -63,6 +63,13 @@ public final class UserSettings {
             LOG.error(e, e);
             throw new IllegalStateException("User settings couldn't be initialized", e);
         }
+    }
+    
+    /**
+     * @deprecated use this only in tests!
+     */
+    public void setConfig(Configuration config) {
+    	this.userConfig = config;
     }
 
     //------------------------------------------------
@@ -384,6 +391,16 @@ public final class UserSettings {
     
     public void setDurationFormat(String format) {
         userConfig.setProperty(DURATION_FORMAT, format);
+    } //$NON-NLS-1$
+    
+    private static final String ALLOW_OVERLAPPING_ACTIVITIES = "allow.overlapping.activities";
+    
+    public boolean isAllowOverlappingActivities() {
+    	return doGetBoolean(ALLOW_OVERLAPPING_ACTIVITIES, true);
+    }
+    
+    public void setAllowOverlappingActivities(boolean allow) {
+    	userConfig.setProperty(ALLOW_OVERLAPPING_ACTIVITIES, allow);
     }
     
     /**

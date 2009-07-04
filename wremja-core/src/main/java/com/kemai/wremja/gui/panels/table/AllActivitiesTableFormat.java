@@ -3,6 +3,8 @@ package com.kemai.wremja.gui.panels.table;
 import java.beans.PropertyChangeEvent;
 import java.text.ParseException;
 
+import javax.swing.JOptionPane;
+
 import org.joda.time.DateTime;
 
 import ca.odell.glazedlists.gui.WritableTableFormat;
@@ -107,6 +109,18 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
             final DateTime oldDate = activity.getEnd();
             DateTime newDate = new DateTime(editedValue);
 
+            ProjectActivity tmp = new ProjectActivity(activity);
+            tmp.setDay(newDate);
+            if( model.getOverlappingActivity(tmp, activity) != null ) {
+    			JOptionPane.showMessageDialog(
+                        null, 
+                        "Overlaps with an existing activity!",
+                        "Overlap",
+                        JOptionPane.ERROR_MESSAGE
+                );
+    			return activity;
+            }
+            
             activity.setDay(newDate);
 
             // Fire event
@@ -119,6 +133,19 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
                 final DateTime oldStart = activity.getStart();
                 
                 int[] hoursMinutes = SmartTimeFormat.parseToHourAndMinutes((String) editedValue);
+                
+                ProjectActivity tmp = new ProjectActivity(activity);
+                tmp.setStartTime(hoursMinutes[0], hoursMinutes[1]);
+                if( model.getOverlappingActivity(tmp, activity) != null ) {
+        			JOptionPane.showMessageDialog(
+                            null, 
+                            "Overlaps with an existing activity!",
+                            "Overlap",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+        			return activity;
+                }
+                
                 activity.setStartTime(hoursMinutes[0], hoursMinutes[1]);
 
                 // Fire event
@@ -137,6 +164,17 @@ public class AllActivitiesTableFormat implements WritableTableFormat<ProjectActi
                 final DateTime oldEnd = activity.getEnd();
 
                 int[] hoursMinutes = SmartTimeFormat.parseToHourAndMinutes((String) editedValue);
+                ProjectActivity tmp = new ProjectActivity(activity);
+                tmp.setEndTime(hoursMinutes[0], hoursMinutes[1]);
+                if( model.getOverlappingActivity(tmp, activity) != null ) {
+        			JOptionPane.showMessageDialog(
+                            null, 
+                            "Overlaps with an existing activity!",
+                            "Overlap",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+        			return activity;
+                }
                 activity.setEndTime(hoursMinutes[0], hoursMinutes[1]);
                                
                 // Fire event
