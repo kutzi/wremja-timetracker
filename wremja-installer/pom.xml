@@ -3,16 +3,16 @@
 	<groupId>com.kemai.wremja</groupId>
 	<artifactId>wremja-installer</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.1</version>
 	<name>Wremja Installer</name>
 	<url>http://kemai.com/projects/wremja/pages/Home</url>
 	<parent>
 		<groupId>com.kemai.wremja</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.1-SNAPSHOT</version>
+		<version>1.1</version>
 	</parent>
 	<properties>
-		<wremja.version>1.1-SNAPSHOT</wremja.version>
+		<wremja.version>1.1</wremja.version>
 	    <!-- See http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
