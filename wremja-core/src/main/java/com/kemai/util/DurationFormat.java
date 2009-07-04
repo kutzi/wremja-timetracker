@@ -1,4 +1,4 @@
-package com.kemai.wremja;
+package com.kemai.util;
 
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
@@ -6,25 +6,24 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.Locale;
 
-import com.kemai.wremja.gui.settings.UserSettings;
-
+/**
+ * A {@link NumberFormat} which formats duration hours (representation as doubles) depending on a {@link Style}.
+ * 
+ * @author kutzi
+ */
 public class DurationFormat extends NumberFormat {
 
     private static final long serialVersionUID = 1L;
     
-    private final boolean hourMinuteFormat;
+    public enum Style {
+    	HOURS_FRACTIONS, HOURS_MINUTES;
+    }
+
+    private final Style style;
     private final char decimalSep;
 
-    public DurationFormat() {
-        String format = UserSettings.instance().getDurationFormat();
-        if("#0.00".equals(format)) {
-            hourMinuteFormat = false;
-        } else if("#0:00".equals(format)) {
-            hourMinuteFormat = true;
-        } else {
-            throw new IllegalStateException("Unknown format: " + format);
-        }
-        
+    public DurationFormat(Style style) {
+    	this.style = style;
         this.decimalSep = new DecimalFormatSymbols(Locale.getDefault()).getDecimalSeparator();
     }
     
@@ -35,8 +34,8 @@ public class DurationFormat extends NumberFormat {
         long hours = (long)number;
         double fractions = number - hours;
         
-        if(hourMinuteFormat) {
-            long minutes = (long)(60 * fractions);
+        if(this.style == Style.HOURS_MINUTES) {
+            long minutes = Math.round(60 * fractions);
             final String minutesStr;
             if(minutes < 10) {
                 minutesStr = "0" + minutes;
@@ -46,7 +45,7 @@ public class DurationFormat extends NumberFormat {
             
             toAppendTo.append(hours).append(":").append(minutesStr);
         } else {
-            long fractionsF = (long)(fractions * 100);
+            long fractionsF = Math.round(fractions * 100);
             final String fractionsStr;
             if(fractionsF < 10) {
                 fractionsStr = "0" + fractionsF;
