@@ -25,8 +25,9 @@ public class AccumulatedActivitiesReport extends Observable {
     /**
      * Create report from data.
      */
-    public AccumulatedActivitiesReport(final ReadableRepository data) {
+    public AccumulatedActivitiesReport(final ReadableRepository data, Filter filter) {
         this.data = data;
+        this.filter = filter;
         this.accumulatedActivitiesByDay = new SortedList<AccumulatedProjectActivity>(
                 new BasicEventList<AccumulatedProjectActivity>());
 
@@ -88,6 +89,8 @@ public class AccumulatedActivitiesReport extends Observable {
     }
 
     /**
+     * Returns the accumulated activities sorted by day (descending).
+     *
      * @return the accumulatedActivitiesByDay
      */
     public SortedList<AccumulatedProjectActivity> getAccumulatedActivitiesByDay() {

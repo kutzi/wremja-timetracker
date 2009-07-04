@@ -57,7 +57,7 @@ public class AccumulatedProjectActivity implements Comparable<AccumulatedProject
 
     @Override
     public String toString() {
-        return this.project.toString() + " " + this.time; //$NON-NLS-1$
+        return this.project.toString() + ", " + this.getDay() + ", " + this.time + "h"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     @Override
@@ -90,9 +90,17 @@ public class AccumulatedProjectActivity implements Comparable<AccumulatedProject
         if (activity == null) {
             return 0;
         }
-
-        // Sort by start date but the other way round. That way the latest
+        
+        // Sort by day in decreasing order. That way the latest
         // activity is always on top.
-        return this.getDay().compareTo(activity.getDay()) * -1;
+        int thisDay = this.day.getDayOfYear();
+        int thatDay = activity.day.getDayOfYear();
+        if(thisDay < thatDay) {
+        	return 1;
+        } else if(thisDay > thatDay) {
+        	return -1;
+        }
+        
+        return this.getProject().compareTo(activity.getProject());
     }
 }
