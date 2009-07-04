@@ -44,7 +44,7 @@ public class AccumulatedActivitiesTableFormat implements TableFormat<Accumulated
     public Object getColumnValue(final AccumulatedProjectActivity accActivity, final int col) {
         switch (col) {
             case 0:
-                return accActivity.getDay();
+                return accActivity.getDateTime();
             case 1:
                 return accActivity.getProject();
             case 2:

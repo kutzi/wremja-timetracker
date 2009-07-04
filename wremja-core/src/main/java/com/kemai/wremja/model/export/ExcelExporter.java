@@ -2,7 +2,6 @@ package com.kemai.wremja.model.export;
 
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import jxl.CellView;
@@ -22,6 +21,7 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.base.AbstractInstant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -101,10 +101,10 @@ public class ExcelExporter implements Exporter {
             
             for (ProjectActivity actitivity : activities) {
                 sheet.addCell(new Label(col++, row, actitivity.getProject().getTitle()));
-                sheet.addCell(makeDateCell(col++, row, actitivity.getStart().toDate()));
-                sheet.addCell(makeTimeCell(col++, row, actitivity.getStart().toDate()));
+                sheet.addCell(makeDateCell(col++, row, actitivity.getStart()));
+                sheet.addCell(makeTimeCell(col++, row, actitivity.getStart()));
                 
-                WritableCell c = makeTimeCell(col++, row, actitivity.getEnd().toDate());
+                WritableCell c = makeTimeCell(col++, row, actitivity.getEnd());
                 sheet.addCell(c);
                 sheet.addCell(makeNumberCell(col++, row, actitivity.getDuration()));
 
@@ -169,7 +169,7 @@ public class ExcelExporter implements Exporter {
 
         final List<AccumulatedProjectActivity> accumulatedActivitiesByDay = report.getAccumulatedActivitiesByDay();
         for (AccumulatedProjectActivity activity : accumulatedActivitiesByDay) {
-            sheet.addCell(makeDateCell(col++, row, activity.getDay()));
+            sheet.addCell(makeDateCell(col++, row, activity.getDateTime()));
             sheet.addCell(new Label(col++, row, activity.getProject().getTitle()));
             sheet.addCell(makeNumberCell(col++, row, activity.getTime()));
 
@@ -191,12 +191,12 @@ public class ExcelExporter implements Exporter {
         return new jxl.write.Number(col, row, number, floatFormat); 
     }
 
-    private static WritableCell makeTimeCell(final int col, final int row, final Date date) {
-        return new DateTime(col, row, date, timeFormat); 
+    private static WritableCell makeTimeCell(final int col, final int row, final AbstractInstant date) {
+        return new DateTime(col, row, date.toDate(), timeFormat); 
     }
 
-    private static DateTime makeDateCell(final int i, final int j, final Date date) {
-        return new DateTime(i, j, date, dateFormat); 
+    private static DateTime makeDateCell(final int i, final int j, final AbstractInstant date) {
+        return new DateTime(i, j, date.toDate(), dateFormat); 
     }
 
 }

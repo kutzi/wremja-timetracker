@@ -2,7 +2,6 @@ package com.kemai.wremja.gui.panels.report;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.text.DateFormat;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -12,6 +11,12 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.renderer.FormatStringValue;
+import org.jdesktop.swingx.renderer.StringValue;
+import org.joda.time.ReadableInstant;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import ca.odell.glazedlists.swing.EventTableModel;
 
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
@@ -20,13 +25,11 @@ import com.kemai.wremja.gui.panels.table.AccumulatedActivitiesTableFormat;
 import com.kemai.wremja.model.report.AccumulatedActivitiesReport;
 import com.kemai.wremja.model.report.AccumulatedProjectActivity;
 
-import ca.odell.glazedlists.swing.EventTableModel;
-
 /**
  * Panel containing the accumulated hours spent on each project on one day.
  * @author remast
  */
-@SuppressWarnings("serial") //$NON-NLS-1$
+@SuppressWarnings("serial") 
 public class AccummulatedActitvitiesPanel extends JXPanel implements Observer {
 
     private AccumulatedActivitiesReport report;
@@ -52,7 +55,15 @@ public class AccummulatedActitvitiesPanel extends JXPanel implements Observer {
         final JXTable table = new JXTable(tableModel);
         table.setHighlighters(GuiConstants.HIGHLIGHTERS);
 
-        table.getColumn(0).setCellRenderer(new DefaultTableRenderer(new FormatStringValue(DateFormat.getDateInstance())));
+        StringValue dateTimeConverter = new StringValue() {
+            private final DateTimeFormatter dtf = DateTimeFormat.mediumDate();
+            @Override
+            public String getString(Object value) {
+                ReadableInstant instant = (ReadableInstant)value;
+                return dtf.print(instant);
+            }
+        };
+        table.getColumn(0).setCellRenderer(new DefaultTableRenderer(dateTimeConverter));
         table.getColumn(2).setCellRenderer(new DefaultTableRenderer(new FormatStringValue(FormatUtils.getDurationFormat())));
 
         table.setAutoResizeMode(JXTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);

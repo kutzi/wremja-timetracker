@@ -81,4 +81,55 @@ public class AccumulatedActivitiesReportTest extends AbstractWremjaTestCase {
 			assertEquals(5, aa.getTime(), 0.001);
 		}
 	}
+	
+    @Test
+    public void testAccumulationWithOtherYears() {
+
+        Project projectA = new Project(1, "A", "A");
+        this.repository.add(projectA);
+
+        DateTime start = new DateTime(2009, 1, 1, 0, 0, 0, 0);
+        ProjectActivity a = new ProjectActivity(start, start.plusHours(1),
+                projectA);
+        this.repository.addActivity(a);
+
+        DateTime start2 = new DateTime(2008, 1, 1, 0, 0, 0, 0);
+        ProjectActivity a2 = new ProjectActivity(start2, start2.plusHours(1),
+                projectA);
+        this.repository.addActivity(a2);
+
+        {
+            AccumulatedActivitiesReport report = new AccumulatedActivitiesReport(
+                    this.repository, null);
+
+            assertEquals(2, report.getAccumulatedActivitiesByDay().size());
+            AccumulatedProjectActivity aa = report
+                    .getAccumulatedActivitiesByDay().get(0);
+            assertEquals(1, aa.getTime(), 0.001);
+            
+            aa = report.getAccumulatedActivitiesByDay().get(1);
+            assertEquals(1, aa.getTime(), 0.001);
+        }
+        
+        DateTime start3 = new DateTime(2010, 1, 1, 0, 0, 0, 0);
+        ProjectActivity a3 = new ProjectActivity(start3, start3.plusHours(1),
+                projectA);
+        this.repository.addActivity(a3);
+        {
+            AccumulatedActivitiesReport report = new AccumulatedActivitiesReport(
+                    this.repository, null);
+
+            assertEquals(3, report.getAccumulatedActivitiesByDay().size());
+            AccumulatedProjectActivity aa = report
+                    .getAccumulatedActivitiesByDay().get(0);
+            assertEquals(1, aa.getTime(), 0.001);
+            
+            aa = report.getAccumulatedActivitiesByDay().get(1);
+            assertEquals(1, aa.getTime(), 0.001);
+            
+            aa = report.getAccumulatedActivitiesByDay().get(2);
+            assertEquals(1, aa.getTime(), 0.001);
+        }
+        
+    }
 }
