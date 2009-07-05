@@ -26,6 +26,13 @@ public abstract class DateUtils {
     }
 
     /**
+     * Returns <code>true</code> iff the 2 dates are on the same day.
+     */
+    public static boolean isSameDay(DateTime dt1, DateTime dt2) {
+        return dt1.toDateMidnight().equals(dt2.toDateMidnight());
+    }
+
+    /**
      * Sets <code>timeToAdjust</code> to the same year and week-of-year as <code>day</code>.
      * 
      * @param midnightOnNextDay if <code>true</code> treats midnight (0:00h) as belonging to the next day.

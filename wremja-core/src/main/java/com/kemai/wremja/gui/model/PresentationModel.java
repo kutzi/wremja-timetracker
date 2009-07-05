@@ -324,28 +324,27 @@ public class PresentationModel extends Observable {
         }
         
         WremjaEvent eventOnEndDay = null;
-        DateTime stop2 = null;
 
         final ProjectActivity activityOnStartDay;
         final ProjectActivity lastActivity;
         // If start is on a different day from now end the activity at 0:00 one day after start.
         // Also make a new activity from 0:00 the next day until the stop time of the next day.
-        if (!org.apache.commons.lang.time.DateUtils.isSameDay(start.toDate(), stopTime.toDate())) {
+        if (!DateUtils.isSameDay(start, stopTime)) {
             // FIXME: this probably doesn't work if start is not yesterday, but maybe 3 days ago!
             DateTime dt = new DateTime(start);
             dt = dt.plusDays(1);
 
-            stop = dt.toDateMidnight().toDateTime();
+            DateTime stop1 = dt.toDateMidnight().toDateTime();
             
-            activityOnStartDay = new ProjectActivity(start, stop,
+            activityOnStartDay = new ProjectActivity(start, stop1,
                     getSelectedProject(), this.description);
             getData().addActivity(activityOnStartDay);
             this.activitiesList.add(activityOnStartDay);
 
-            stop2 = DateUtils.getNow();
-            final DateTime start2 = stop;
+            stop = DateUtils.getNow();
+            final DateTime start2 = stop1;
 
-            final ProjectActivity activityOnEndDay = new ProjectActivity(start2, stop2,
+            final ProjectActivity activityOnEndDay = new ProjectActivity(start2, stop,
                     getSelectedProject(), this.description);
             getData().addActivity(activityOnEndDay);
             this.activitiesList.add(activityOnEndDay);
@@ -373,7 +372,6 @@ public class PresentationModel extends Observable {
 
             if (eventOnEndDay != null)  {
                 notify(eventOnEndDay);
-                stop = stop2;
             }
 
             // Create Stop Event

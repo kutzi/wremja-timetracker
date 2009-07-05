@@ -34,7 +34,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
     /**
      * Test for an activity that goes on until after midnight.
      * @throws ProjectActivityStateException should never be thrown if test is ok
-     * @see Issue <a href="http://wremja.origo.ethz.ch/node/87">#17</a>
+     * @see Issue <a href="http://baralga.origo.ethz.ch/node/87">#17</a>
      */
     @Test
     public void testAcitivityOverMidnight() throws ProjectActivityStateException {
@@ -70,6 +70,47 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
         // 2. Check today activity
         assertEquals(midnight, todaysActivity.getStart());
         assertEquals(now, todaysActivity.getEnd());
+    }
+
+    /**
+     * Test for an activity that goes on until after midnight.
+     */
+    @Test
+    public void testAcitivityOverMidnight2() throws ProjectActivityStateException {
+        PresentationModel model = getTestModel();
+        final DateTime threeDaysAgo = DateUtils.getNow().minusMinutes(5).minusDays(3);
+
+        final ReadableInstant midnight = threeDaysAgo.plusDays(1).toDateMidnight();
+
+        // Set active project
+        model.changeProject(project1);
+
+        // Start activity on threeDaysAgo
+        model.start(threeDaysAgo);
+
+        // End activity today
+        final DateTime now = DateUtils.getNow();
+        model.stop();
+
+        // Verify outcome
+        assertEquals(4, model.getActivitiesList().size());
+
+        for (ProjectActivity activity : model.getActivitiesList()) {
+            assertEquals(project1, activity.getProject());
+        }
+
+        final ProjectActivity todaysActivity = model.getActivitiesList().get(0);
+        final ProjectActivity thirdActivity = model.getActivitiesList().get(1);
+        final ProjectActivity secondActivity = model.getActivitiesList().get(2);
+        final ProjectActivity firstActivity = model.getActivitiesList().get(3);
+
+        // 1. Check 1st activity
+        assertEquals(threeDaysAgo, firstActivity.getStart());
+        assertEquals(midnight, firstActivity.getEnd());
+
+        // 2. Check today activity
+        //assertEquals(midnight, todaysActivity.getStart());
+        //assertEquals(now, todaysActivity.getEnd());
     }
 
     /**
