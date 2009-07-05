@@ -255,6 +255,24 @@ public final class Launcher {
 
                 // Reading data file was successful.
                 model.setData(data);
+            } else {
+                File baralgaDir = new File(System.getProperty("user.home"), ".ProTrack");
+                File baralgaData = new File(baralgaDir, "ProTrack.ptd");
+                if(baralgaData.isFile()) {
+                    int result = JOptionPane.showConfirmDialog(null, 
+                            textBundle.textFor("Launcher.DataLoading.FromBaralga.Text", baralgaData.getAbsolutePath()), //$NON-NLS-1$
+                            textBundle.textFor("Launcher.DataLoading.FromBaralga.Title"), //$NON-NLS-1$
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE
+                    );
+                    
+                    if(result == JOptionPane.YES_OPTION) {
+                        ActivityRepository data = readData(baralgaData);
+
+                        // Reading data file was successful.
+                        model.setData(data);
+                    }
+                }
             }
         } catch (IOException dataFileIOException) {
             // Make a backup copy of the corrupt file
