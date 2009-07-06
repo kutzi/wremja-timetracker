@@ -4,7 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Observable;
 
 import javax.swing.Timer;
@@ -19,6 +21,7 @@ import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.events.WremjaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent.Type;
 import com.kemai.wremja.gui.lists.MonthFilterList;
 import com.kemai.wremja.gui.lists.ProjectFilterList;
 import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
@@ -277,20 +280,11 @@ public class PresentationModel extends Observable {
      */
     public final void stop() throws ProjectActivityStateException {
         // Stop with notifying observers.
-        stop(true);
+        stop(DateUtils.getNow());
     }
 
-    /**
-     * Stops the currently active project activity.
-     *
-     * @throws ProjectActivityStateException if there is no running project
-     */
-    public final void stop(final boolean notifyObservers) throws ProjectActivityStateException {
-        stop(DateUtils.getNow(), notifyObservers);
-    }
-    
-    public final synchronized void stop(DateTime stopTime, boolean notifyObservers) throws ProjectActivityStateException {
-        stop(stopTime, notifyObservers, false);
+    public final synchronized void stop(DateTime stopTime) throws ProjectActivityStateException {
+        stop(stopTime, false);
     }
     
     /**
@@ -298,13 +292,12 @@ public class PresentationModel extends Observable {
      * DON'T USE THIS METHOD - unless you really know what you do.
      * Use {{@link #stop()} instead!
      *
-     * @param notifyObservers should observers be notified about the new activity (false during shutdown)
      * @param force force creation of activity i.e. overriding UserSettings.instance().isDiscardEmptyActivities()
      * @return the new {@link ProjectActivity} that was created
      *   or null if the activity had zero duration and 'purge.emptyActivities' is true
      * @throws ProjectActivityStateException if there is no running project
      */
-    public final synchronized ProjectActivity stop(DateTime stopTime, boolean notifyObservers,
+    public final synchronized ProjectActivity stop(DateTime stopTime,
             boolean force) throws ProjectActivityStateException {
         if (!isActive()) {
             throw new ProjectActivityStateException(textBundle.textFor("PresentationModel.NoActiveProjectError")); //$NON-NLS-1$
@@ -313,82 +306,71 @@ public class PresentationModel extends Observable {
         if( !force && UserSettings.instance().isDiscardEmptyActivities()) {
             if( this.start.getMinuteOfDay() == stopTime.getMinuteOfDay() ) {
                 
-                clearOldActivity(notifyObservers);
-                if(notifyObservers) {
-                    // Create Stop Event
-                    WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STOPPED);
-                    notify(event);
-                }
+                clearOldActivity();
+                // Create Stop Event
+                WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STOPPED);
+                notify(event);
                 return null;
             }
         }
         
-        WremjaEvent eventOnEndDay = null;
-
-        final ProjectActivity activityOnStartDay;
-        final ProjectActivity lastActivity;
-        // If start is on a different day from now end the activity at 0:00 one day after start.
-        // Also make a new activity from 0:00 the next day until the stop time of the next day.
-        if (!DateUtils.isSameDay(start, stopTime)) {
-            // FIXME: this probably doesn't work if start is not yesterday, but maybe 3 days ago!
-            DateTime dt = new DateTime(start);
-            dt = dt.plusDays(1);
-
-            DateTime stop1 = dt.toDateMidnight().toDateTime();
+        List<ProjectActivity> activities = createActivities(this.start, stopTime, this.description,
+                getSelectedProject());
+        
+        for(ProjectActivity activity : activities) {
+            getData().addActivity(activity);
+            activitiesList.add(activity);
             
-            activityOnStartDay = new ProjectActivity(start, stop1,
-                    getSelectedProject(), this.description);
-            getData().addActivity(activityOnStartDay);
-            this.activitiesList.add(activityOnStartDay);
-
-            stop = DateUtils.getNow();
-            final DateTime start2 = stop1;
-
-            final ProjectActivity activityOnEndDay = new ProjectActivity(start2, stop,
-                    getSelectedProject(), this.description);
-            getData().addActivity(activityOnEndDay);
-            this.activitiesList.add(activityOnEndDay);
-            lastActivity = activityOnEndDay;
-
-            // Create Event for Project Activity
-            eventOnEndDay  = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
-            eventOnEndDay.setData(activityOnEndDay);
-        } else {
-            stop = stopTime;
-            activityOnStartDay = new ProjectActivity(start, stop,
-                    getSelectedProject(), this.description);
-            getData().addActivity(activityOnStartDay);
-            this.activitiesList.add(activityOnStartDay);
-            lastActivity = activityOnStartDay;
-        }
-
-        clearOldActivity(notifyObservers);
-
-        if (notifyObservers) {
             // Create Event for Project Activity
             WremjaEvent event  = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
-            event.setData(activityOnStartDay);
-            notify(event);
-
-            if (eventOnEndDay != null)  {
-                notify(eventOnEndDay);
-            }
-
-            // Create Stop Event
-            event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STOPPED);
+            event.setData(activity);
             notify(event);
         }
-        
+
+        this.stop = stopTime;
+
+        clearOldActivity();
+
+        // Create Stop Event
+        WremjaEvent event = new WremjaEvent(Type.PROJECT_ACTIVITY_STOPPED);
+        notify(event);
+
+        ProjectActivity lastActivity = activities.get(activities.size()-1);
         return lastActivity;
     }
+    
+    /**
+     * Creates a list of activities for the time range between start and end.
+     */
+    private static List<ProjectActivity> createActivities(DateTime start, DateTime end, String description,
+            Project project) {
+        List<ProjectActivity> result = new ArrayList<ProjectActivity>();
+        
+        createActivities(start, end, description, project, result);
+        return result;
+    }
 
-    private void clearOldActivity(boolean notifyObservers) {
+    private static void createActivities(DateTime start, DateTime end,
+            String description, Project project,
+            List<ProjectActivity> list) {
+        // Create a new activities for each day between start and end:
+        if(DateUtils.isSameDay(start, end)) {
+            list.add(new ProjectActivity(start, end,
+                    project, description));
+        } else {
+            DateTime firstMidnightAfterStart = start.plusDays(1).toDateMidnight().toDateTime();
+            list.add(new ProjectActivity(start, firstMidnightAfterStart, project, description));
+            createActivities(firstMidnightAfterStart, end, description, project, list);
+        }
+    }
+
+    private void clearOldActivity() {
         // Clear old activity
-        description = "";
-        UserSettings.instance().setLastDescription(description);
+        this.description = "";
+        UserSettings.instance().setLastDescription(this.description);
         setActive(false);
         getData().stop();
-        setStart(null, notifyObservers);
+        setStart(null);
         this.timer.stop();
     }
 
@@ -656,23 +638,17 @@ public class PresentationModel extends Observable {
      * Sets the start of a new activity.
      * @param start the start to set
      */
-    public void setStart(final DateTime start) {
-        setStart(start, true);
-    }
-    
-    private synchronized void setStart(final DateTime start, boolean notify) {
+    public synchronized void setStart(final DateTime start) {
         // TODO: synchronized (this.startStopLock) {
             this.start = start;
             this.data.setStartTime(start);
         //}
         
-        if(notify) {
-            // Fire event
-            final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.START_CHANGED, this);
-            event.setData(start);
+        // Fire event
+        final WremjaEvent event = new WremjaEvent(Type.START_CHANGED, this);
+        event.setData(start);
             
-            notify(event);
-        }
+        notify(event);
     }
 
     /**
@@ -739,7 +715,7 @@ public class PresentationModel extends Observable {
         }
 
         // Fire event
-        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.DATA_CHANGED, this);
+        final WremjaEvent event = new WremjaEvent(Type.DATA_CHANGED, this);
         notify(event);
     }
 

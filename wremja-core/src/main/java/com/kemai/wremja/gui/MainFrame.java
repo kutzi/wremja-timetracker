@@ -646,8 +646,9 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
                         LOG.error(e1, e1);
                     }
                 } else if( chosen == 1) {
+                    // TODO: for activities over multiple days, this only edits the last of these
                     try {
-                        ProjectActivity addedActivity = model.stop(stop, true, true);
+                        ProjectActivity addedActivity = model.stop(stop, true);
                         if(addedActivity != null) {
                             AddOrEditActivityDialog editActivityDialog = new AddOrEditActivityDialog(
                                     MainFrame.this, 

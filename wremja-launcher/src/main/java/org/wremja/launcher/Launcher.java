@@ -211,8 +211,11 @@ public final class Launcher {
                         
                         // stop current activity (if necessary)
                         if (model.isActive() && model.isStopActivityOnShutdown()) {
+                            // remove all observers to prevent side effect, because of
+                            // already dead observers
+                            model.deleteObservers();
                             try {
-                                model.stop(false);
+                                model.stop();
                             } catch (ProjectActivityStateException e) {
                                 // ignore
                             }

@@ -5,6 +5,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.beans.PropertyChangeEvent;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
@@ -12,6 +15,8 @@ import org.junit.Test;
 
 import com.kemai.util.DateUtils;
 import com.kemai.wremja.AbstractWremjaTestCase;
+import com.kemai.wremja.gui.events.WremjaEvent;
+import com.kemai.wremja.gui.events.WremjaEvent.Type;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.OverlappingActivitiesException;
 import com.kemai.wremja.model.Project;
@@ -37,8 +42,8 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
      * @see Issue <a href="http://baralga.origo.ethz.ch/node/87">#17</a>
      */
     @Test
-    public void testAcitivityOverMidnight() throws ProjectActivityStateException {
-        PresentationModel model = getTestModel();
+    public void testActivityOverMidnight() throws ProjectActivityStateException {
+        PresentationModel model = getNewTestModel();
         final DateTime yesterday = DateUtils.getNow().minusMinutes(5).minusDays(1);
 
         final ReadableInstant midnight = yesterday.plusDays(1).toDateMidnight();
@@ -49,12 +54,26 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
         // Start activity on yesterday
         model.start(yesterday);
 
+        final AtomicInteger activityAddedEventCount = new AtomicInteger(0);
+        model.addObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                if(arg instanceof WremjaEvent) {
+                    WremjaEvent event = (WremjaEvent) arg;
+                    if(event.getType() == Type.PROJECT_ACTIVITY_ADDED) {
+                        activityAddedEventCount.incrementAndGet();
+                    }
+                }
+            }
+        });
         // End activity today
         final DateTime now = DateUtils.getNow();
         model.stop();
 
         // Verify outcome
         assertEquals(2, model.getActivitiesList().size());
+        
+        assertEquals(2, activityAddedEventCount.get());
 
         for (ProjectActivity activity : model.getActivitiesList()) {
             assertEquals(project1, activity.getProject());
@@ -77,10 +96,10 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
      */
     @Test
     public void testAcitivityOverMidnight2() throws ProjectActivityStateException {
-        PresentationModel model = getTestModel();
+        PresentationModel model = getNewTestModel();
         final DateTime threeDaysAgo = DateUtils.getNow().minusMinutes(5).minusDays(3);
 
-        final ReadableInstant midnight = threeDaysAgo.plusDays(1).toDateMidnight();
+        final DateTime midnight = threeDaysAgo.plusDays(1).toDateMidnight().toDateTime();
 
         // Set active project
         model.changeProject(project1);
@@ -88,12 +107,25 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
         // Start activity on threeDaysAgo
         model.start(threeDaysAgo);
 
+        final AtomicInteger activityAddedEventCount = new AtomicInteger(0);
+        model.addObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                if(arg instanceof WremjaEvent) {
+                    WremjaEvent event = (WremjaEvent) arg;
+                    if(event.getType() == Type.PROJECT_ACTIVITY_ADDED) {
+                        activityAddedEventCount.incrementAndGet();
+                    }
+                }
+            }
+        });
         // End activity today
         final DateTime now = DateUtils.getNow();
         model.stop();
 
         // Verify outcome
         assertEquals(4, model.getActivitiesList().size());
+        assertEquals(4, activityAddedEventCount.get());
 
         for (ProjectActivity activity : model.getActivitiesList()) {
             assertEquals(project1, activity.getProject());
@@ -107,10 +139,18 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
         // 1. Check 1st activity
         assertEquals(threeDaysAgo, firstActivity.getStart());
         assertEquals(midnight, firstActivity.getEnd());
+        
+        // 2. Check 2nd activity
+        assertEquals(midnight, secondActivity.getStart());
+        assertEquals(midnight.plusDays(1), secondActivity.getEnd());
+        
+        // 3. Check 3rd activity
+        assertEquals(midnight.plusDays(1), thirdActivity.getStart());
+        assertEquals(midnight.plusDays(2), thirdActivity.getEnd());
 
-        // 2. Check today activity
-        //assertEquals(midnight, todaysActivity.getStart());
-        //assertEquals(now, todaysActivity.getEnd());
+        // 4. Check today activity
+        assertEquals(midnight.plusDays(2), todaysActivity.getStart());
+        assertEquals(now, todaysActivity.getEnd());
     }
 
     /**
@@ -119,7 +159,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
      */
     @Test
     public void testChangeProject() {
-        PresentationModel model = getTestModel();
+        PresentationModel model = getNewTestModel();
         
         model.changeProject(project1);
         assertEquals(project1, model.getSelectedProject());
@@ -136,7 +176,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
     
     @Test
     public void testChangeData() {
-        PresentationModel model = getTestModel();
+        PresentationModel model = getNewTestModel();
         
         ActivityRepository newData = new ActivityRepository();
         model.setData(newData);
@@ -147,7 +187,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
 
     @Test
     public void testExceptionOnDoubleStart() throws ProjectActivityStateException {
-        PresentationModel model = getTestModel();
+        PresentationModel model = getNewTestModel();
 
         model.changeProject(project1);
         model.start();
@@ -165,7 +205,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
     
     @Test
     public void testProjectRename() throws OverlappingActivitiesException {
-    	PresentationModel model = getTestModel();
+    	PresentationModel model = getNewTestModel();
     	
     	Project project = new Project(4711, "TestProject", "TestProject");
     	model.addProject(project, this);
@@ -188,7 +228,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
     	assertEquals(project, a2.getProject());
     }
     
-    private PresentationModel getTestModel() {
+    private PresentationModel getNewTestModel() {
         ActivityRepository rep = new ActivityRepository();
         rep.add(project1);
         rep.add(project2);
