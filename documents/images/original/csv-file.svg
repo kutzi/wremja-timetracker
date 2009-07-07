@@ -17,7 +17,10 @@
    sodipodi:docbase="/home/silvestre/Desktop/Neu/scalable/mimetypes"
    sodipodi:docname="text-x-generic.svg"
    version="1.0"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="C:\work\wremja\maven.1241611126765\wremja-core\src\main\resources\icons\cvs-file.png"
+   inkscape:export-xdpi="45"
+   inkscape:export-ydpi="45">
   <defs
      id="defs4">
     <linearGradient
@@ -315,14 +318,18 @@
        sodipodi:nodetypes="cccc" />
     <text
        xml:space="preserve"
-       style="font-size:4px;font-style:normal;font-weight:normal;opacity:1;fill:#2123ed;fill-opacity:0.73755658;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="5"
-       y="14.25"
-       id="text5664"><tspan
+       style="font-size:8.05241299000000050px;font-style:normal;font-weight:normal;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="8.2993994"
+       y="25.819197"
+       id="text5664"
+       transform="scale(0.8266156,1.2097522)"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45"
+       inkscape:export-filename="C:\work\wremja\maven.1241611126765\wremja-core\src\main\resources\icons\cvs-file.png"><tspan
          sodipodi:role="line"
          id="tspan5666"
-         x="5"
-         y="14.25"
-         style="font-size:8px;fill:#2123ed;fill-opacity:0.73755658;stroke:none;stroke-opacity:1">CSV</tspan></text>
+         x="8.2993994"
+         y="25.819197"
+         style="font-size:16.10482597000000000px;fill:#000000;fill-opacity:1;stroke:none;stroke-opacity:1">CSV</tspan></text>
   </g>
 </svg>
