@@ -17,7 +17,7 @@ import com.kemai.wremja.model.export.Exporter;
  * @author kutzi
  * @author remast
  */
-@SuppressWarnings("serial") //$NON-NLS-1$
+@SuppressWarnings("serial") 
 public final class ExportCsvAction extends AbstractExportAction {
 
     /** The bundle for internationalized texts. */
@@ -34,7 +34,7 @@ public final class ExportCsvAction extends AbstractExportAction {
 
         setName(textBundle.textFor("CsvExportAction.Name")); //$NON-NLS-1$
         setTooltip(textBundle.textFor("CsvExportAction.ShortDescription")); //$NON-NLS-1$
-        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gnome-mime-text.png"))); //$NON-NLS-1$
+        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/csv-file.png"))); //$NON-NLS-1$
     }
 
     /**

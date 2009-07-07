@@ -70,7 +70,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     private final PresentationModel model;
 
     /** The tool bar. */
-    private JToolBar toolBar = null;
+    private final JToolBar toolBar = new JToolBar();
 
     /**
      * The panel with details about the current activity. Like the current project and description.
@@ -195,7 +195,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
 
         TableLayout tableLayout = new TableLayout(size);
         this.setLayout(tableLayout);
-        this.add(getToolBar(), "0, 0");
+        this.add(initToolBar(), "0, 0");
         this.add(getCurrentActivityPanel(), "0, 1");
         this.add(getReportPanel(), "0, 2");
     }
@@ -249,21 +249,22 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      * This method initializes toolBar.
      * @return javax.swing.JToolBar
      */
-    @Override
-    public JToolBar getToolBar() {
-        if (toolBar == null) {
-            toolBar = new JToolBar();
-            toolBar.setFloatable(false);
-        }
+    public JToolBar initToolBar() {
+        toolBar.setFloatable(false);
 
         toolBar.add(new ManageProjectsAction(this, this.model));
-        toolBar.add(new ExportExcelAction(this, this.model));
+        
         toolBar.add(new AddActivityAction(this, this.model));
+        toolBar.add(new JToolBar.Separator());
+        toolBar.add(new ExportExcelAction(this, this.model));
+        toolBar.add(new ExportCsvAction(this, this.model));
         toolBar.add(new JToolBar.Separator());
         toolBar.add(this.model.getEditStack().getUndoAction());
         toolBar.add(this.model.getEditStack().getRedoAction());
 
+        // enable 'rollover' buttons in toolbar
         toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
+        // 
         toolBar.putClientProperty(Options.HEADER_STYLE_KEY, HeaderStyle.BOTH);
 
         return toolBar;
