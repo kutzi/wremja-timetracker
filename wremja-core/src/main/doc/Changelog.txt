@@ -1,3 +1,8 @@
+Changes in Version 1.1.1
+==========================
+- Bug: Activity accumulation doesn't work correctly across multiple years (http://kenai.com/jira/browse/WREMJA-20)
+- New Feature: Offer to import from Baralga on very first start  (http://kenai.com/jira/browse/WREMJA-18)
+
 Changes in Version 1.1
 ==========================
 - Bug: Accumulated activities are not accumulated (http://kenai.com/jira/browse/WREMJA-19)
