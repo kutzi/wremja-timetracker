@@ -67,6 +67,7 @@
                     <version>2.0-beta-9</version>
                     <configuration>
                         <preparationGoals>clean verify</preparationGoals>
+                        <tag>${project.version}</tag>
                     </configuration>
                 </plugin>
                 <plugin>
