@@ -141,16 +141,6 @@ public class PresentationModel extends Observable {
 
         this.description = UserSettings.instance().getLastDescription();
 
-        // If there is a active project that has been started on another day,
-        // we end it here.
-        if (active && start.getDayOfYear() != DateUtils.getNow().getDayOfYear() ) {
-            try {
-                stop();
-            } catch (ProjectActivityStateException e) {
-                // Ignore
-            }
-        }
-        
         // If last activity is still active, we must restart the timer
         if( active ) {
             this.timer.start();
