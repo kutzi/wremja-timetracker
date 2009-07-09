@@ -96,13 +96,21 @@ public class JUPropertiesConfiguration implements Configuration {
     }
 
     private void save() {
+
+    	File bakFile = new File(this.file.getName() + ".bak");
+    	this.file.renameTo(bakFile);
+    	
         OutputStream out = null;
         try {
             // note that Properties internally wraps the outputstream
             // in a BufferedWriter, so we don't need to buffer it here
             out = new FileOutputStream(this.file);
             this.props.store(out, this.name );
+            // FIXME: delete bak file?
         } catch (IOException e) {
+        	
+        	// FIXME: restore from bak file
+        	
             throw new RuntimeException( "Saving failed", e );
         } finally {
             IOUtils.closeQuietly(out);
