@@ -6,12 +6,12 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
 
 import com.kemai.util.OSUtils;
 import com.kemai.wremja.gui.lists.MonthFilterList;
 import com.kemai.wremja.gui.lists.YearFilterList;
 import com.kemai.wremja.logging.Logger;
+import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.filter.Filter;
 
 /**
@@ -21,10 +21,9 @@ import com.kemai.wremja.model.filter.Filter;
  */
 public final class UserSettings {
 
-    /** The logger. */
     private static final Logger LOG = Logger.getLogger(UserSettings.class);
 
-    /** Default name of the ActivityRepository data file. */
+    /** Default name of the {@link ActivityRepository} data file. */
     public static final String DEFAULT_FILE_NAME = "ProTrack.ptd"; //$NON-NLS-1$
 
     /**
@@ -56,7 +55,7 @@ public final class UserSettings {
      * Constructor for the settings.
      */
     private UserSettings() {
-        final File userConfigFile = new File(ApplicationSettings.instance().getApplicationDataDirectory() + File.separator + USER_PROPERTIES_FILENAME);
+        final File userConfigFile = new File(ApplicationSettings.instance().getApplicationDataDirectory(), USER_PROPERTIES_FILENAME);
         try {
             userConfig = new JUPropertiesConfiguration(userConfigFile, "Wremja user settings");
         } catch (IOException e) {
@@ -356,23 +355,6 @@ public final class UserSettings {
         userConfig.setProperty(DISCARD_EMPTY_ACTIVITIES, b);
     }
     
-    private static final String LAST_TOUCH_TIMESTAMP = "lastTouch"; //$NON-NLS-1$
-    /**
-     * Sets the last touch timestamp.
-     */
-    public void setLastTouchTimestamp(DateTime lastTouch) {
-        userConfig.setProperty(LAST_TOUCH_TIMESTAMP, lastTouch.getMillis());
-    }
-
-    /**
-     * Gets the last touch timestamp.
-     */
-    public DateTime getLastTouchTimestamp() {
-        long timestamp = userConfig.getLongProperty(
-                LAST_TOUCH_TIMESTAMP, System.currentTimeMillis());
-        return new DateTime(timestamp);
-    }
-    
     private static final String USE_TRAY_ICON = "gui.useTrayIcon";
     public boolean isUseTrayIcon() {
     	boolean def = !OSUtils.isGnome(); // tray icon issues under Gnome
@@ -391,7 +373,7 @@ public final class UserSettings {
     
     public void setDurationFormat(String format) {
         userConfig.setProperty(DURATION_FORMAT, format);
-    } //$NON-NLS-1$
+    } 
     
     private static final String ALLOW_OVERLAPPING_ACTIVITIES = "allow.overlapping.activities";
     

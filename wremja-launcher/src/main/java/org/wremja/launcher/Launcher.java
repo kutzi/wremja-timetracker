@@ -58,7 +58,7 @@ public final class Launcher {
     private static SaveDaemon saveDaemon;
     
     /** The interval in ms in which the data is saved (at least) to the disk. */
-    private static final long SAVE_TIMER_INTERVAL = TimeUnit.MINUTES.toMillis(3);
+    private static final long SAVE_TIMER_INTERVAL = TimeUnit.MINUTES.toMillis(2);
 
     //------------------------------------------------
     // Application resources
@@ -67,6 +67,11 @@ public final class Launcher {
     /** The lock file to avoid multiple instances of the application. */
     private static File lockFile;
     private static FileLock lock;
+    
+    /** Changing the last-modified date on a locked file doesn't work (at least on Windows).
+     * Therefore we need an additional file to lockFile.
+     */
+    private static File lastTouchFile;
 
     /** The absolute path name of the log file. */
     private static String logFileName;
@@ -74,6 +79,9 @@ public final class Launcher {
     /** Set to true if the previous shutdown was likely a 'clean' one. I.e. the lock file was deleted. */
     private static boolean cleanShutdown = false;
     
+    /** last modified time of the previous run if it was a 'dirty' shutdown. Only set if cleanShutdown == false */
+    private static long lastModified;
+
     /** Hide constructor. */
     private Launcher() { }
 
@@ -152,7 +160,7 @@ public final class Launcher {
         }
         
         if( !cleanShutdown && model.isActive()) {
-            mainFrame.handleUnfinishedActivityOnStartup();
+            mainFrame.handleUnfinishedActivityOnStartup(lastModified);
         }
         
         // TODO: clean up this mess. Make handling of tray enabled vs. tray disabled easier!
@@ -247,7 +255,7 @@ public final class Launcher {
         LOG.debug("Initializing model...");
 
         // Initialize with new site
-        final PresentationModel model = new PresentationModel();
+        final PresentationModel model = new PresentationModel(lastTouchFile);
 
         final String dataFileLocation = UserSettings.instance().getDataFileLocation();
         final File file = new File(dataFileLocation);
@@ -444,11 +452,17 @@ public final class Launcher {
         try {
             checkOrCreateDataDir();
             lockFile = new File(UserSettings.getLockFileLocation());
+            lastTouchFile = new File(lockFile.getParentFile(), "lastTouch");
             if (!lockFile.exists()) {
                 lockFile.createNewFile();
                 cleanShutdown = true;
             } else {
                 cleanShutdown = false;
+                lastModified = lastTouchFile.lastModified();
+            }
+            
+            if(!lastTouchFile.exists()) {
+                lastTouchFile.createNewFile();
             }
 
             final FileChannel channel = new RandomAccessFile(lockFile, "rw").getChannel(); //$NON-NLS-1$

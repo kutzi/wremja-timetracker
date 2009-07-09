@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.beans.PropertyChangeEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -233,7 +235,15 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
         rep.add(project1);
         rep.add(project2);
         assertTrue(rep.isDirty());
-        PresentationModel model = new PresentationModel(rep);
+        File tmp = null;
+        try {
+            tmp = File.createTempFile("wremja-test", null);
+            tmp.deleteOnExit();
+        } catch (IOException e) {
+            fail(e.toString());
+        }
+        PresentationModel model = new PresentationModel(tmp);
+        model.setData(rep, false);
         rep.setDirty(false);
         assertEquals(2, model.getProjectList().size());
         assertEquals(0, model.getActivitiesList().size());

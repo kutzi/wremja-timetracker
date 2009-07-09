@@ -97,7 +97,7 @@ public class JUPropertiesConfiguration implements Configuration {
 
     private void save() {
 
-    	File bakFile = new File(this.file.getName() + ".bak");
+    	File bakFile = new File(this.file.getParentFile(), this.file.getName() + ".bak");
     	this.file.renameTo(bakFile);
     	
         OutputStream out = null;
@@ -106,10 +106,13 @@ public class JUPropertiesConfiguration implements Configuration {
             // in a BufferedWriter, so we don't need to buffer it here
             out = new FileOutputStream(this.file);
             this.props.store(out, this.name );
-            // FIXME: delete bak file?
+            
+            bakFile.delete();
         } catch (IOException e) {
-        	
-        	// FIXME: restore from bak file
+
+        	// restore from bak file
+            this.file.delete();
+            bakFile.renameTo(this.file);
         	
             throw new RuntimeException( "Saving failed", e );
         } finally {

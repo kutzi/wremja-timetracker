@@ -612,8 +612,10 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         UserSettings.instance().setWindowMinimized(show);
     }
 
-    public void handleUnfinishedActivityOnStartup() throws InterruptedException, InvocationTargetException {
+    public void handleUnfinishedActivityOnStartup(long lastModified) throws InterruptedException, InvocationTargetException {
         setVisible(true);
+        
+        final DateTime lastTouch = new DateTime(lastModified);
         
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override
@@ -622,8 +624,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
                 options[0] = "Stop";
                 options[1] = "Stop & Edit";
                 options[2] = "Continue activity";
-                
-                DateTime lastTouch = UserSettings.instance().getLastTouchTimestamp();
                 
                 String text = ""
                     + "There is an unfinished activity from a previous run!" +

@@ -33,6 +33,7 @@ import com.kemai.wremja.gui.model.report.HoursByProjectReport;
 import com.kemai.wremja.gui.model.report.HoursByWeekReport;
 import com.kemai.wremja.gui.model.report.ObservingAccumulatedActivitiesReport;
 import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.OverlappingActivitiesException;
 import com.kemai.wremja.model.Project;
@@ -46,8 +47,11 @@ import com.kemai.wremja.model.io.ProTrackWriter;
  * 
  * For further information on the pattern see <a href="http://www.martinfowler.com/eaaDev/PresentationModel.html">presentation model</a>.
  * @author remast
+ * @author kutzi
  */
 public class PresentationModel extends Observable {
+    
+    private static final Logger LOG = Logger.getLogger(PresentationModel.class);
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
@@ -87,12 +91,15 @@ public class PresentationModel extends Observable {
     
     private volatile boolean stopActivityOnShutdown = true;
 
+    private final File lastTouchFile;
+
     //private final Object startStopLock = new Object();
 
     /**
      * Creates a new model.
      */
-    public PresentationModel() {
+    public PresentationModel(File lastTouchFile) {
+        this.lastTouchFile = lastTouchFile;
         this.data = new ActivityRepository();
         this.projectList = new SortedList<Project>(new BasicEventList<Project>());
         this.activitiesList = new SortedList<ProjectActivity>(new BasicEventList<ProjectActivity>());
@@ -113,11 +120,6 @@ public class PresentationModel extends Observable {
         });
     }
     
-    public PresentationModel(ActivityRepository data) {
-        this();
-        setData(data, false);
-    }
-
     /**
      * Initializes the model.
      */
@@ -424,8 +426,10 @@ public class PresentationModel extends Observable {
      */
     public final void save() throws Exception {
         // save last touch
-        UserSettings.instance().setLastTouchTimestamp(new DateTime());
-        
+        boolean success = this.lastTouchFile.setLastModified(System.currentTimeMillis());
+        if(!success) {
+            LOG.error("Couldn't update last-modified of " + this.lastTouchFile.getAbsolutePath());
+        }
         // If there are no changes there's nothing to do.
         if (!data.isDirty())  {
             return;
