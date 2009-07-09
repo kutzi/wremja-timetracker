@@ -17,11 +17,14 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 /**
  * Writer for ActivityRepository data files.
  * @author remast
+ * @author kutzi
  */
 public class ProTrackWriter {
 
+	private static final Object SAVE_LOCK = new Object();
+	
     /** The data to write. */
-    private ReadableRepository data;
+    private final ReadableRepository data;
 
     /**
      * Create a write for given data.
@@ -41,7 +44,7 @@ public class ProTrackWriter {
             return;
         }
 
-        synchronized (data) {
+        synchronized (SAVE_LOCK) {
             final OutputStream fileOut = new BufferedOutputStream(new FileOutputStream(file));
             try {
                 write(fileOut);

@@ -59,7 +59,7 @@ public class SaveDaemon implements Runnable, Observer {
             try {
                 saveCondition.await(saveInterval, timeUnit);
                 try {
-                    // prevent to frequent saves:
+                    // prevent too frequent saves:
                     // TODO: that could be probably handled more sophisticated
                     if(System.currentTimeMillis() - this.lastSaveTime >= 1000) {
                         this.model.save();
