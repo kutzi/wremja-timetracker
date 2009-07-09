@@ -201,7 +201,7 @@ public final class Launcher {
 
                     @Override
                     public void run() {
-                        LOG.debug("Shutting down");
+                        LOG.info("Shutting down");
                         // TODO: decouple this from the PresentationModel
                         // (always causes problems, because some GUI components which
                         // should be notified are already gone!)
@@ -231,7 +231,7 @@ public final class Launcher {
                         } finally {
                             // Release file lock
                             releaseLock();
-                            LOG.debug("Shutdown finished");
+                            LOG.info("Shutdown finished");
                         }
                     }
 
