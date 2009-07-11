@@ -29,6 +29,7 @@ import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
 import com.kemai.swing.util.WMenu;
 import com.kemai.swing.util.WMenuBar;
+import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.actions.AboutAction;
@@ -179,13 +180,10 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         // 1. Init start-/stop-Buttons
         if (this.model.isActive()) {
             this.setIconImage(ACTIVE_ICON);
-            this.setTitle(
-                    textBundle.textFor("Global.Title") + " - " + this.model.getSelectedProject() + textBundle.textFor("MainFrame.9") + FormatUtils.formatTime(this.model.getStart()) //$NON-NLS-1$ //$NON-NLS-2$
-            );
         } else {
             this.setIconImage(NORMAL_ICON);
-            this.setTitle(textBundle.textFor("Global.Title")); //$NON-NLS-1$
         }
+        updateTitle();
 
         // 3. Set layout
         final double[][] size = { 
@@ -396,17 +394,17 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         switch (event.getType()) {
 
         case PROJECT_ACTIVITY_STARTED:
-            this.updateStart();
+            updateStart();
             break;
 
         case PROJECT_ACTIVITY_STOPPED:
-            this.updateStop();
+            updateStop();
             break;
 
         case PROJECT_CHANGED:
             // If there is no active project leave everything as is
             if (model.isActive()) {
-                this.updateTitle();
+                updateTitle();
             }
             break;
 
@@ -417,7 +415,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             break;
 
         case START_CHANGED:
-            this.updateTitle();
+            updateTitle();
             break;
         }
     }
@@ -426,11 +424,23 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      * Executed on events that change the title.
      */
     private void updateTitle() {
+    	String title;
+    	final DateTime date;
         if (this.model.isActive()) {
-            this.setTitle(textBundle.textFor("Global.Title") + " - " + this.model.getSelectedProject() + textBundle.textFor("MainFrame.9") + FormatUtils.formatTime(this.model.getStart())); //$NON-NLS-1$ //$NON-NLS-2$
+        	date = this.model.getStart();
+            title = textBundle.textFor("Global.Title") + " - " +
+            		this.model.getSelectedProject() + textBundle.textFor("MainFrame.9") +
+            		FormatUtils.formatTime(date); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-            this.setTitle(textBundle.textFor("Global.Title") + " " + textBundle.textFor("MainFrame.12") + FormatUtils.formatTime(this.model.getStop())); //$NON-NLS-1$
+        	date = this.model.getStop();
+            title = textBundle.textFor("Global.Title") + " " + textBundle.textFor("MainFrame.12") +
+            		FormatUtils.formatTime(date); //$NON-NLS-1$
         }
+        
+        if(!DateUtils.isSameDay(date, DateUtils.getNow())) {
+        	title += " (" + FormatUtils.formatDate(date) + ")";
+        }
+        setTitle(title);
     }
 
     /**
