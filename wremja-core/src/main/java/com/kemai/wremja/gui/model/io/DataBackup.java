@@ -26,7 +26,7 @@ import com.kemai.wremja.logging.Logger;
 public class DataBackup {
 
     /** The logger. */
-    private static final Logger log = Logger.getLogger(DataBackup.class);
+    private static final Logger LOG = Logger.getLogger(DataBackup.class);
 
     /** The date format for dates used in the names of backup files. */
     private static final SimpleDateFormat BACKUP_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -38,27 +38,45 @@ public class DataBackup {
     private static final String ERROR_FILE_NAME = UserSettings.DEFAULT_FILE_NAME + ".Error";
 
     /** The number of backup files to keep. */
-    private static final int NUMBER_OF_BACKUPS = 3;
+    private static final int NUMBER_OF_BACKUPS = 5;
 
     /**
      * Create a backup from given file.
      * @param toBackup the file to be backed up
      */
-    public static void createBackup(final File toBackup) {
-        if (toBackup == null || !toBackup.exists()) {
+//    public static void createBackup(final File toBackup) {
+//        if (toBackup == null || !toBackup.exists()) {
+//            return;
+//        }
+//
+//        try {
+//            IOUtils.copyFile(
+//                    toBackup, 
+//                    new File(UserSettings.instance().getDataFileLocation() + "." + BACKUP_DATE_FORMAT.format(new Date())),
+//                    true
+//            );
+//            cleanupBackupFiles();
+//        } catch (Exception e) {
+//            LOG.error(e, e);
+//        }
+//    }
+    
+    /**
+     * Renames the argument to a backup file.
+     * 
+     * @param file the file
+     */
+    public static void toBackup(File file) {
+    	if (file == null || !file.exists()) {
             return;
         }
-
-        try {
-            IOUtils.copyFile(
-                    toBackup, 
-                    new File(UserSettings.instance().getDataFileLocation() + "." + BACKUP_DATE_FORMAT.format(new Date())),
-                    true
-            );
-            cleanupBackupFiles();
-        } catch (Exception e) {
-            log.error(e, e);
-        }
+    	
+    	File backupFile = new File(UserSettings.instance().getDataFileLocation() + "." + BACKUP_DATE_FORMAT.format(new Date()));
+    	if(file.renameTo(backupFile)) {
+    		cleanupBackupFiles();
+    	} else {
+    		LOG.error("Couldn't rename to " + backupFile.getAbsolutePath());
+    	}
     }
 
     /**
@@ -73,7 +91,7 @@ public class DataBackup {
                 final File toDelete = backupFiles.get(backupFiles.size() - i);
                 final boolean successfull = toDelete.delete();
                 if (!successfull) {
-                    log.error("Could not delete file " + toDelete.getAbsolutePath() + ".");
+                    LOG.error("Could not delete file " + toDelete.getAbsolutePath() + ".");
                 }
             }
         }
@@ -111,7 +129,7 @@ public class DataBackup {
             	final Date backupDate = BACKUP_DATE_FORMAT.parse(backupFile.substring(UserSettings.DEFAULT_FILE_NAME.length()+1));
                 sortedBackupFiles.put(backupDate, new File(ApplicationSettings.instance().getApplicationDataDirectory() + File.separator + backupFile));
             } catch (ParseException e) {
-                log.error(e, e);
+                // ignore
             }
         }
 
@@ -137,7 +155,7 @@ public class DataBackup {
         try {
             return BACKUP_DATE_FORMAT.parse(backupFile.getName().substring(UserSettings.DEFAULT_FILE_NAME.length()+1));
         } catch (Exception e) {
-            log.error(e, e);
+            LOG.error(e, e);
             return null;
         }
     }
@@ -149,7 +167,7 @@ public class DataBackup {
         try {
             IOUtils.copyFile(new File(UserSettings.instance().getDataFileLocation()), new File(ERROR_FILE_PATH), true);
         } catch (IOException e) {
-            log.error(e, e);
+            LOG.error(e, e);
         }
     }
 }

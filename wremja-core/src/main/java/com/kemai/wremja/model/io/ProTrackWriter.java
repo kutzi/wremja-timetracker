@@ -6,7 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.jfree.util.Log;
+
 import com.kemai.util.IOUtils;
+import com.kemai.wremja.gui.model.io.DataBackup;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
@@ -43,12 +46,18 @@ public class ProTrackWriter {
         if (file == null) {
             return;
         }
-
+        
         synchronized (SAVE_LOCK) {
-            final OutputStream fileOut = new BufferedOutputStream(new FileOutputStream(file));
+        	File tmpFile = new File(file.getParentFile(), file.getName() + ".tmp");
+            final OutputStream fileOut = new BufferedOutputStream(new FileOutputStream(tmpFile));
             try {
                 write(fileOut);
-                fileOut.flush();
+                fileOut.close();
+                
+                DataBackup.toBackup(file);
+                if( !tmpFile.renameTo(file)) {
+                	Log.error("Couldn't rename tmp file to " + file.getAbsolutePath());
+                }
             } finally {
                 IOUtils.closeQuietly(fileOut);
             }

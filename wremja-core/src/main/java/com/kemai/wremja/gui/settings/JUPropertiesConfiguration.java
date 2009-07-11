@@ -124,7 +124,7 @@ public class JUPropertiesConfiguration implements Configuration {
             this.props.store(out, this.name );
             out.close();
 
-            if(!file.delete()) {
+            if(this.file.exists() && !this.file.delete()) {
             	LOG.error("Couldn't delete file " + this.file.getAbsolutePath());
             }
             if(!tmpFile.renameTo(this.file)) {

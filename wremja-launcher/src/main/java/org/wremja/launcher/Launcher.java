@@ -54,6 +54,8 @@ public final class Launcher {
     /** Property for command line option minimized (-m). */
     private Boolean minimized;
 
+	private static boolean firstStart;
+
     /** The daemon to periodically save to disk. */
     private static SaveDaemon saveDaemon;
     
@@ -93,6 +95,8 @@ public final class Launcher {
         try {
             final Launcher mainInstance = new Launcher();
             mainInstance.parseCommandLineArguments(arguments);
+            
+            mainInstance.initDir();
 
             initLogger();
             
@@ -119,6 +123,16 @@ public final class Launcher {
             );
             System.exit(-1);
         }
+    }
+    
+    private void initDir() {
+    	File wremjaDataDir = ApplicationSettings.instance().getApplicationDataDirectory();
+    	if(!wremjaDataDir.exists()) {
+    		firstStart = true;
+    		if(!wremjaDataDir.mkdir()) {
+    			throw new IllegalStateException("Couldn't create data directory " + wremjaDataDir);
+    		}
+    	}
     }
 
     /**
@@ -254,8 +268,37 @@ public final class Launcher {
     private static PresentationModel initModel() {
         LOG.debug("Initializing model...");
 
-        // Initialize with new site
         final PresentationModel model = new PresentationModel(lastTouchFile);
+        if(firstStart) {
+        	//look if there is a Baralga file
+            File baralgaDir = new File(System.getProperty("user.home"), ".ProTrack");
+            File baralgaData = new File(baralgaDir, "ProTrack.ptd");
+            if(baralgaData.isFile()) {
+                int result = JOptionPane.showConfirmDialog(null, 
+                        textBundle.textFor("Launcher.DataLoading.FromBaralga.Text", baralgaData.getAbsolutePath()), //$NON-NLS-1$
+                        textBundle.textFor("Launcher.DataLoading.FromBaralga.Title"), //$NON-NLS-1$
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                
+                if(result == JOptionPane.YES_OPTION) {
+                	LOG.info("Reading data from Baralga file " + baralgaData);
+                    try {
+	                    ActivityRepository data = readData(baralgaData);
+
+	                    // Reading data file was successful.
+	                    model.setData(data);
+                    } catch (IOException e) {
+                    	LOG.error("Error reading Baralga file", e);
+                        JOptionPane.showMessageDialog(null, 
+                                textBundle.textFor("Launcher.DataLoading.ErrorTextGeneric"), //$NON-NLS-1$
+                                textBundle.textFor("Launcher.DataLoading.ErrorTitle"), //$NON-NLS-1$
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                }
+            }
+        }
 
         final String dataFileLocation = UserSettings.instance().getDataFileLocation();
         final File file = new File(dataFileLocation);
@@ -267,25 +310,15 @@ public final class Launcher {
                 // Reading data file was successful.
                 model.setData(data);
             } else {
-                File baralgaDir = new File(System.getProperty("user.home"), ".ProTrack");
-                File baralgaData = new File(baralgaDir, "ProTrack.ptd");
-                if(baralgaData.isFile()) {
-                    int result = JOptionPane.showConfirmDialog(null, 
-                            textBundle.textFor("Launcher.DataLoading.FromBaralga.Text", baralgaData.getAbsolutePath()), //$NON-NLS-1$
-                            textBundle.textFor("Launcher.DataLoading.FromBaralga.Title"), //$NON-NLS-1$
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE
-                    );
-                    
-                    if(result == JOptionPane.YES_OPTION) {
-                        ActivityRepository data = readData(baralgaData);
+            	// look if there are backup files
+                final List<File> backupFiles = DataBackup.getBackupFiles();
 
-                        // Reading data file was successful.
-                        model.setData(data);
-                    }
+                if (CollectionUtils.isNotEmpty(backupFiles)) {
+                    loadFromBackup(model, backupFiles);
                 }
             }
         } catch (IOException dataFileIOException) {
+        	LOG.error("Data file corrupt, trying to read from backup", dataFileIOException);
             // Make a backup copy of the corrupt file
             DataBackup.saveCorruptDataFile();
 
@@ -293,28 +326,7 @@ public final class Launcher {
             final List<File> backupFiles = DataBackup.getBackupFiles();
 
             if (CollectionUtils.isNotEmpty(backupFiles)) {
-                for (File backupFile : backupFiles) {
-                    try {
-                        final ActivityRepository data = readData(backupFile);
-                        model.setData(data);
-
-                        final Date backupDate = DataBackup.getDateOfBackup(backupFile);
-                        String backupDateString = backupFile.getName();
-                        if (backupDate != null)  {
-                            backupDateString = DateFormat.getDateTimeInstance().format(backupDate);
-                        }
-
-                        JOptionPane.showMessageDialog(null, 
-                                textBundle.textFor("Launcher.DataLoading.ErrorText", backupDateString), //$NON-NLS-1$
-                                textBundle.textFor("Launcher.DataLoading.ErrorTitle"), //$NON-NLS-1$
-                                JOptionPane.WARNING_MESSAGE
-                        );
-
-                        break;
-                    } catch (IOException backupFileIOException) {
-                        LOG.error(backupFileIOException, backupFileIOException);
-                    }
-                }
+                loadFromBackup(model, backupFiles);
             } else {
                 // Data corrupt and no backup file found
                 JOptionPane.showMessageDialog(null, 
@@ -325,6 +337,32 @@ public final class Launcher {
             }
         }
         return model;
+    }
+
+	private static void loadFromBackup(final PresentationModel model, final List<File> backupFiles) {
+	    for (File backupFile : backupFiles) {
+	        try {
+	            final ActivityRepository data = readData(backupFile);
+	            model.setData(data);
+	            LOG.info("Loaded data from backup file " + backupFile);
+
+	            final Date backupDate = DataBackup.getDateOfBackup(backupFile);
+	            String backupDateString = backupFile.getName();
+	            if (backupDate != null)  {
+	                backupDateString = DateFormat.getDateTimeInstance().format(backupDate);
+	            }
+
+	            JOptionPane.showMessageDialog(null, 
+	                    textBundle.textFor("Launcher.DataLoading.ErrorText", backupDateString), //$NON-NLS-1$
+	                    textBundle.textFor("Launcher.DataLoading.ErrorTitle"), //$NON-NLS-1$
+	                    JOptionPane.WARNING_MESSAGE
+	            );
+
+	            break;
+	        } catch (IOException backupFileIOException) {
+	            LOG.error(backupFileIOException, backupFileIOException);
+	        }
+	    }
     }
 
     /**

@@ -311,7 +311,7 @@ public class AddOrEditActivityDialog extends EscapeDialog {
 	                        && activity.getDescription().equals(oldActivity.getDescription());
 	                        
 	                        if (!activitiesEqual) {
-	                            model.changeActivity(oldActivity, activity, AddOrEditActivityDialog.this);
+	                            model.replaceActivity(oldActivity, activity, AddOrEditActivityDialog.this);
 	                        }
 	                    }
 	                    AddOrEditActivityDialog.this.dispose();

@@ -6,6 +6,7 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 
@@ -27,7 +28,6 @@ import com.kemai.wremja.gui.lists.ProjectFilterList;
 import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
 import com.kemai.wremja.gui.lists.YearFilterList;
 import com.kemai.wremja.gui.model.edit.EditStack;
-import com.kemai.wremja.gui.model.io.DataBackup;
 import com.kemai.wremja.gui.model.report.HoursByDayReport;
 import com.kemai.wremja.gui.model.report.HoursByProjectReport;
 import com.kemai.wremja.gui.model.report.HoursByWeekReport;
@@ -55,7 +55,7 @@ public class PresentationModel extends Observable {
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
-
+    
     /** The list of projects. */
     private final SortedList<Project> projectList;
 
@@ -123,7 +123,7 @@ public class PresentationModel extends Observable {
     /**
      * Initializes the model.
      */
-    private void initialize() {
+    private synchronized void initialize() {
         this.active = this.data.isActive();
         this.start = this.data.getStart();
         this.selectedProject = this.data.getActiveProject();
@@ -169,8 +169,10 @@ public class PresentationModel extends Observable {
      * @param source the source of the edit activity
      */
     public final void addProject(final Project project, final Object source) {
-        getData().add(project);
-        this.projectList.add(project);
+    	synchronized (this) {
+    		getData().add(project);
+            this.projectList.add(project);
+        }
 
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ADDED, source);
         event.setData(project);
@@ -184,8 +186,10 @@ public class PresentationModel extends Observable {
      * @param source the source of the edit activity
      */
     public final void removeProject(final Project project, final Object source) {
-        getData().remove(project);
-        this.projectList.remove(project);
+    	synchronized(this) {
+    		getData().remove(project);
+    		this.projectList.remove(project);
+    	}
 
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_REMOVED, source);
         event.setData(project);
@@ -201,20 +205,21 @@ public class PresentationModel extends Observable {
      * @throws NullPointerException if startTime is null
      */
     void start(final DateTime startTime) throws ProjectActivityStateException {
-        if (getSelectedProject() == null) {
-            throw new ProjectActivityStateException(textBundle.textFor("PresentationModel.NoActiveProjectSelectedError")); //$NON-NLS-1$
-        }
-        
-        if (isActive()) {
-            throw new ProjectActivityStateException("There is already an activity running"); // TODO L10N
-        }
-
-        // Mark as active
-        setActive(true);
-
-        setStart(startTime);
-        getData().start(startTime);
-
+    	synchronized (this) {
+			if (getSelectedProject() == null) {
+	            throw new ProjectActivityStateException(textBundle.textFor("PresentationModel.NoActiveProjectSelectedError")); //$NON-NLS-1$
+	        }
+	        
+	        if (isActive()) {
+	            throw new ProjectActivityStateException("There is already an activity running"); // TODO L10N
+	        }
+	
+	        // Mark as active
+	        setActive(true);
+	
+	        setStart(startTime);
+	        getData().start(startTime);
+    	}
         this.timer.start();
         
         // Fire start event
@@ -275,7 +280,7 @@ public class PresentationModel extends Observable {
         stop(DateUtils.getNow());
     }
 
-    public final synchronized void stop(DateTime stopTime) throws ProjectActivityStateException {
+    public final void stop(DateTime stopTime) throws ProjectActivityStateException {
         stop(stopTime, false);
     }
     
@@ -289,40 +294,47 @@ public class PresentationModel extends Observable {
      *   or null if the activity had zero duration and 'purge.emptyActivities' is true
      * @throws ProjectActivityStateException if there is no running project
      */
-    public final synchronized ProjectActivity stop(DateTime stopTime,
-            boolean force) throws ProjectActivityStateException {
-        if (!isActive()) {
-            throw new ProjectActivityStateException(textBundle.textFor("PresentationModel.NoActiveProjectError")); //$NON-NLS-1$
-        }
+    public final ProjectActivity stop(DateTime stopTime, boolean force) throws ProjectActivityStateException {
+    	final List<ProjectActivity> activities;
+    	List<WremjaEvent> events = Collections.emptyList();
+    	synchronized (this) {
+	        if (!isActive()) {
+	            throw new ProjectActivityStateException(textBundle.textFor("PresentationModel.NoActiveProjectError")); //$NON-NLS-1$
+	        }
+	
+	        if( !force && UserSettings.instance().isDiscardEmptyActivities()) {
+	            if( this.start.getMinuteOfDay() == stopTime.getMinuteOfDay() ) {
+	                
+	                clearOldActivity();
+	                // Create Stop Event
+	                WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STOPPED);
+	                notify(event);
+	                return null;
+	            }
+	        }
+	        
+	        activities = createActivities(this.start, stopTime, this.description,
+	                getSelectedProject());
+	        events = new ArrayList<WremjaEvent>(activities.size());
+	        for(ProjectActivity activity : activities) {
+	            getData().addActivity(activity);
+	            activitiesList.add(activity);
+	            
+	            // Create Event for Project Activity
+	            WremjaEvent event  = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
+	            event.setData(activity);
+	            events.add(event);
+	        }
+	
+	        this.stop = stopTime;
+	
+	        clearOldActivity();
+    	}
 
-        if( !force && UserSettings.instance().isDiscardEmptyActivities()) {
-            if( this.start.getMinuteOfDay() == stopTime.getMinuteOfDay() ) {
-                
-                clearOldActivity();
-                // Create Stop Event
-                WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_STOPPED);
-                notify(event);
-                return null;
-            }
-        }
-        
-        List<ProjectActivity> activities = createActivities(this.start, stopTime, this.description,
-                getSelectedProject());
-        
-        for(ProjectActivity activity : activities) {
-            getData().addActivity(activity);
-            activitiesList.add(activity);
-            
-            // Create Event for Project Activity
-            WremjaEvent event  = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
-            event.setData(activity);
-            notify(event);
-        }
-
-        this.stop = stopTime;
-
-        clearOldActivity();
-
+    	for(WremjaEvent event : events) {
+    		notify(event);
+    	}
+    	
         // Create Stop Event
         WremjaEvent event = new WremjaEvent(Type.PROJECT_ACTIVITY_STOPPED);
         notify(event);
@@ -370,49 +382,51 @@ public class PresentationModel extends Observable {
      * Changes to the given project.
      * @param activeProject the new active project
      */
-    public synchronized final void changeProject(final Project activeProject) {
-        // If there's no change we're done.
-        if (ObjectUtils.equals(getSelectedProject(), activeProject)) {
-            return;
-        }
-
-        // Store previous project
-        final Project previousProject = getSelectedProject();
-
-        // Set selected project to new project
-        this.selectedProject = activeProject;
-
-        // Set active project to new project
-        this.data.setActiveProject(activeProject);
-
-        final DateTime now = DateUtils.getNow();
-
-        // If a project is currently running we create a new project activity.
-        if (isActive()) {
-            // 1. Stop the running project.
-            setStop(now);
-
-            // 2. Track recorded project activity.
-            if( stop.getMinuteOfDay() != start.getMinuteOfDay()
-                || !UserSettings.instance().isDiscardEmptyActivities() ) {
-                final ProjectActivity activity = new ProjectActivity(start, stop, previousProject, description);
-    
-                getData().addActivity(activity);
-                this.activitiesList.add(activity);
-                
-                // 3. Broadcast project activity event.
-                final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
-                event.setData(activity);
-                notify(event);
-            }
-
-            // Clear description
-            description = "";
-            UserSettings.instance().setLastDescription(description);
-
-            // Set start time to now.
-            setStart(now);
-        }
+    public final void changeProject(final Project activeProject) {
+    	synchronized(this) {
+	        // If there's no change we're done.
+	        if (ObjectUtils.equals(getSelectedProject(), activeProject)) {
+	            return;
+	        }
+	
+	        // Store previous project
+	        final Project previousProject = getSelectedProject();
+	
+	        // Set selected project to new project
+	        this.selectedProject = activeProject;
+	
+	        // Set active project to new project
+	        this.data.setActiveProject(activeProject);
+	
+	        final DateTime now = DateUtils.getNow();
+	
+	        // If a project is currently running we create a new project activity.
+	        if (isActive()) {
+	            // 1. Stop the running project.
+	            setStop(now);
+	
+	            // 2. Track recorded project activity.
+	            if( stop.getMinuteOfDay() != start.getMinuteOfDay()
+	                || !UserSettings.instance().isDiscardEmptyActivities() ) {
+	                final ProjectActivity activity = new ProjectActivity(start, stop, previousProject, description);
+	    
+	                getData().addActivity(activity);
+	                this.activitiesList.add(activity);
+	                
+	                // 3. Broadcast project activity event.
+	                final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
+	                event.setData(activity);
+	                notify(event);
+	            }
+	
+	            // Clear description
+	            description = "";
+	            UserSettings.instance().setLastDescription(description);
+	
+	            // Set start time to now.
+	            setStart(now);
+	        }
+    	}
 
         // Fire project changed event
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_CHANGED);
@@ -424,8 +438,8 @@ public class PresentationModel extends Observable {
      * Save the model.
      * @throws Exception on error during saving
      */
-    public final void save() throws Exception {
-        // save last touch
+    public synchronized final void save() throws Exception {
+		// save last touch
         boolean success = this.lastTouchFile.setLastModified(System.currentTimeMillis());
         if(!success) {
             LOG.error("Couldn't update last-modified of " + this.lastTouchFile.getAbsolutePath());
@@ -435,9 +449,9 @@ public class PresentationModel extends Observable {
             return;
         }
 
-        // do a backup of the old file first
         final File proTrackFile = new File(UserSettings.instance().getDataFileLocation());
-        DataBackup.createBackup(proTrackFile);
+        // backup is now done inside ProTrackWriter
+        //DataBackup.createBackup(proTrackFile);
 
         // Save changed data to disk.
         final ProTrackWriter writer = new ProTrackWriter(data);
@@ -453,17 +467,19 @@ public class PresentationModel extends Observable {
      * @throws OverlappingActivitiesException if the changed activity overlaps with an existing one AND overlapping activities are not allowed
      */
     public final void addActivity(final ProjectActivity activity, final Object source) throws OverlappingActivitiesException {
-    	ProjectActivity overlappingActivity = getOverlappingActivity(activity, null);
-    	if(overlappingActivity != null) {
-    		throw new OverlappingActivitiesException(activity, overlappingActivity);
+    	synchronized(this) {
+	    	ProjectActivity overlappingActivity = getOverlappingActivity(activity, null);
+	    	if(overlappingActivity != null) {
+	    		throw new OverlappingActivitiesException(activity, overlappingActivity);
+	    	}
+	    	
+	        getData().addActivity(activity);
+	
+	        // Add activity if there is no filter or the filter matches
+	        if (this.filter == null || this.filter.matchesCriteria(activity)) {
+	            this.getActivitiesList().add(activity);
+	        }
     	}
-    	
-        getData().addActivity(activity);
-
-        // Add activity if there is no filter or the filter matches
-        if (this.filter == null || this.filter.matchesCriteria(activity)) {
-            this.getActivitiesList().add(activity);
-        }
 
         // Fire event
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED, source);
@@ -476,8 +492,10 @@ public class PresentationModel extends Observable {
      * @param activity the activity to remove
      */
     public final void removeActivity(final ProjectActivity activity, final Object source) {
-        getData().removeActivity(activity);
-        this.getActivitiesList().remove(activity);
+    	synchronized(this) {
+    		getData().removeActivity(activity);
+    		this.getActivitiesList().remove(activity);
+    	}
 
         // Fire event
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_REMOVED, source);
@@ -493,24 +511,26 @@ public class PresentationModel extends Observable {
      * @param source the source of the change
      * @throws OverlappingActivitiesException if the changed activity overlaps with an existing one AND overlapping activities are not allowed
      */
-	public void changeActivity(ProjectActivity originalActivity, ProjectActivity activity,
-			Object source) throws OverlappingActivitiesException {
-    	ProjectActivity overlappingActivity = getOverlappingActivity(activity, originalActivity);
-    	if(overlappingActivity != null) {
-    		throw new OverlappingActivitiesException(activity, overlappingActivity);
-    	}
-		
-		removeActivity(originalActivity, source);
-		addActivity(activity, source);
-	}
+//	public void changeActivity(ProjectActivity originalActivity, ProjectActivity activity,
+//			Object source) throws OverlappingActivitiesException {
+//    	ProjectActivity overlappingActivity = getOverlappingActivity(activity, originalActivity);
+//    	if(overlappingActivity != null) {
+//    		throw new OverlappingActivitiesException(activity, overlappingActivity);
+//    	}
+//		
+//		removeActivity(originalActivity, source);
+//		addActivity(activity, source);
+//	}
     
     /**
      * Remove a collection of activities from the model.
      * @param activities the activities to remove
      */
     public final void removeActivities(final Collection<ProjectActivity> activities, final Object source) {
-        getData().removeActivities(activities);
-        this.getActivitiesList().removeAll(activities);
+    	synchronized(this) {
+    		getData().removeActivities(activities);
+    		this.getActivitiesList().removeAll(activities);
+    	}
 
         // Fire event
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_REMOVED, source);
@@ -524,20 +544,19 @@ public class PresentationModel extends Observable {
      */
     public final void replaceActivity(final ProjectActivity oldActivity, final ProjectActivity newActivity,
             final Object source) {
-        getData().replaceActivity(oldActivity, newActivity);
-
-        // Remove activity if there is no filter or the filter matches
-        if (this.filter == null || this.filter.matchesCriteria(oldActivity)) {
-            this.getActivitiesList().remove(oldActivity);
-        }
-        
-        // Add activity if there is no filter or the filter matches
-        if (this.filter == null || this.filter.matchesCriteria(newActivity)) {
-            this.getActivitiesList().add(newActivity);
-        }
+    	synchronized(this) {
+	        getData().replaceActivity(oldActivity, newActivity);
+	
+	        this.getActivitiesList().remove(oldActivity);
+	        
+	        // Add activity if there is no filter or the filter matches
+	        if (this.filter == null || this.filter.matchesCriteria(newActivity)) {
+	            this.getActivitiesList().add(newActivity);
+	        }
+    	}
 
         // Fire events
-        // TODO: because of the way the events are evaluated in the observers are evaluated
+        // TODO: because of the way the events are evaluated in the observers,
         // order of the events is currently important: first ADDED then REMOVED
         final WremjaEvent event2 = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED, source);
         event2.setData(newActivity);
@@ -612,7 +631,7 @@ public class PresentationModel extends Observable {
      * Gets the start of the current activity.
      * @return the start
      */
-    public DateTime getStart() {
+    public synchronized DateTime getStart() {
         return start;
     }
     
@@ -632,11 +651,11 @@ public class PresentationModel extends Observable {
      * Sets the start of a new activity.
      * @param start the start to set
      */
-    public synchronized void setStart(final DateTime start) {
-        // TODO: synchronized (this.startStopLock) {
+    public void setStart(final DateTime start) {
+    	synchronized (this) {
             this.start = start;
             this.data.setStartTime(start);
-        //}
+    	}
         
         // Fire event
         final WremjaEvent event = new WremjaEvent(Type.START_CHANGED, this);
@@ -648,7 +667,7 @@ public class PresentationModel extends Observable {
     /**
      * @return the stop
      */
-    public DateTime getStop() {
+    public synchronized DateTime getStop() {
         return stop;
     }
 
@@ -696,17 +715,19 @@ public class PresentationModel extends Observable {
      * @param data the data to set
      */
     public void setData(final ActivityRepository data, boolean setDirty) {
-        if (ObjectUtils.equals(this.data, data)) {
-            return;
-        }
-
-        this.data = data;
-        
-        initialize();
-        
-        if(setDirty) {
-            this.data.setDirty( true );
-        }
+    	synchronized(this) {
+	        if (ObjectUtils.equals(this.data, data)) {
+	            return;
+	        }
+	
+	        this.data = data;
+	        
+	        initialize();
+	        
+	        if(setDirty) {
+	            this.data.setDirty( true );
+	        }
+    	}
 
         // Fire event
         final WremjaEvent event = new WremjaEvent(Type.DATA_CHANGED, this);
@@ -725,13 +746,15 @@ public class PresentationModel extends Observable {
      * @param source the source of the new filter
      */
     public void setFilter(final Filter filter, final Object source) {
-        if (ObjectUtils.equals(this.filter, filter)) {
-            return;
-        }
-        // Store filter
-        this.filter = filter;
-
-        applyFilter();
+    	synchronized(this) {
+	        if (ObjectUtils.equals(this.filter, filter)) {
+	            return;
+	        }
+	        // Store filter
+	        this.filter = filter;
+	
+	        applyFilter();
+    	}
 
         // Fire event
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.FILTER_CHANGED, source);
