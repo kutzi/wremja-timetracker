@@ -1,3 +1,10 @@
+Changes in Version 1.1.2
+==========================
+- Bug: detection of unfinished activities from previous days didn't work
+- Improvement: enhanced robustness and data integrity checks
+- Improvement: Use sequence for project ids
+- Improvement: trim project names
+
 Changes in Version 1.1.1
 ==========================
 - Bug: Activity accumulation doesn't work correctly across multiple years (http://kenai.com/jira/browse/WREMJA-20)
