@@ -21,8 +21,8 @@ public class RawDataExporter implements Exporter {
      */
     @Override
     public void export(ReadableRepository data, Filter filter, OutputStream outputStream) throws Exception {
-        final ProTrackWriter writer = new ProTrackWriter(data);
-        writer.write(outputStream);
+        final ProTrackWriter writer = ProTrackWriter.instance();
+        writer.write(data, outputStream);
         outputStream.flush();
     }
 

@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import org.jfree.util.Log;
 
@@ -26,23 +28,36 @@ public class ProTrackWriter {
 
 	private static final Object SAVE_LOCK = new Object();
 	
-    /** The data to write. */
-    private final ReadableRepository data;
+	private final XStream xstream;
+	
+	private static final ProTrackWriter INSTANCE = new ProTrackWriter();
+	
+	public static ProTrackWriter instance() {
+		return INSTANCE;
+	}
 
     /**
-     * Create a write for given data.
-     * @param data the data
+     * Creates a writer.
      */
-    public ProTrackWriter(final ReadableRepository data) {
-        this.data = data;
+    private ProTrackWriter() {
+        this.xstream = new XStream(new DomDriver(IOConstants.FILE_ENCODING));
+        this.xstream.processAnnotations(
+                new Class[] {ActivityRepository.class, Project.class, ProjectActivity.class}
+        );
+        this.xstream.autodetectAnnotations(true);
+
+        this.xstream.setMode(XStream.ID_REFERENCES);
+        this.xstream.registerConverter(new DateTimeConverter());
     }
 
     /**
-     * Write the data to the given file.
+     * Writes the data to the given file.
+     * 
+     * @param data the data to write
      * @param file the file to write to
      * @throws IOException on write error
      */
-    public final void write(final File file) throws IOException {
+    public final void write(ReadableRepository data, File file) throws IOException {
         if (file == null) {
             return;
         }
@@ -51,7 +66,7 @@ public class ProTrackWriter {
         	File tmpFile = new File(file.getParentFile(), file.getName() + ".tmp");
             final OutputStream fileOut = new BufferedOutputStream(new FileOutputStream(tmpFile));
             try {
-                write(fileOut);
+                write(data, fileOut);
                 fileOut.close();
                 
                 DataBackup.toBackup(file);
@@ -65,19 +80,15 @@ public class ProTrackWriter {
     }
     
     /**
-     * Write the data to the given {@link OutputStream}.
+     * Writes the data to the given {@link OutputStream}.
+     * 
+     * @param data the data to write
      * @param outputStream the outputStream to write to
      * @throws IOException on write error
      */
-    public final void write(final OutputStream outputStream) throws IOException {
-        final XStream xstream = new XStream(new DomDriver(IOConstants.FILE_ENCODING));
-        xstream.processAnnotations(
-                new Class[] {ActivityRepository.class, Project.class, ProjectActivity.class}
-        );
-        xstream.autodetectAnnotations(true);
+    public final void write(ReadableRepository data, OutputStream outputStream) throws IOException {
 
-        xstream.setMode(XStream.ID_REFERENCES);
-        xstream.registerConverter(new DateTimeConverter());
-        xstream.toXML(data, outputStream);
+        Writer w = new OutputStreamWriter(outputStream, IOConstants.FILE_ENCODING);
+        xstream.toXML(data, w);
     }
 }

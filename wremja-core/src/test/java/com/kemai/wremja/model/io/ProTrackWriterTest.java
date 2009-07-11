@@ -35,8 +35,8 @@ public class ProTrackWriterTest extends TestCase {
         data.addActivity(activity);
         
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ProTrackWriter writer = new ProTrackWriter(data);
-        writer.write(baos);
+        ProTrackWriter writer = ProTrackWriter.instance();
+        writer.write(data, baos);
         
         String written = baos.toString(IOConstants.FILE_ENCODING);
         String expected = "<proTrack id=\"1\" active=\"true\" startTime=\"2009-03-14 18:00:00.0 CET\">\n" + 
