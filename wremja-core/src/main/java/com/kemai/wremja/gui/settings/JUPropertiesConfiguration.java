@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 import com.kemai.util.IOUtils;
+import com.kemai.wremja.logging.Logger;
 
 /**
  * A {@link Configuration} based on java.util.Properties
@@ -16,6 +17,10 @@ import com.kemai.util.IOUtils;
  * @author kutzi
  */
 public class JUPropertiesConfiguration implements Configuration {
+	
+	public static final String TMP_FILE_POSTFIX = ".tmp";
+	
+	private static final Logger LOG = Logger.getLogger(JUPropertiesConfiguration.class);
 
     private final File file;
     private final String name;
@@ -24,15 +29,27 @@ public class JUPropertiesConfiguration implements Configuration {
     public JUPropertiesConfiguration( File propertiesFile, String name ) throws IOException {
         this.file = propertiesFile;
         this.name = name;
-        if( file.exists() ) {
-            
-            InputStream in = null;
-            try {
-                in = new FileInputStream(file);
-                props.load(in);
-            } finally {
-                IOUtils.closeQuietly(in);
+        
+        InputStream in = null;
+        if(this.file.exists() ) {
+        	in = new FileInputStream(this.file);
+        } else {
+            // There is a small time window in save() where the 'real' file is already deleted,
+            // but the tmp file not yet renamed.
+            // Check if that maybe happened
+            File tmpFile = new File(this.file.getParentFile(), this.file.getName() + TMP_FILE_POSTFIX);
+            if(tmpFile.exists()) {
+            	in = new FileInputStream(tmpFile);
             }
+        }
+        
+        
+        if(in != null) {
+	        try {
+	            props.load(in);
+	        } finally {
+	            IOUtils.closeQuietly(in);
+	        }
         }
     }
     
@@ -97,23 +114,23 @@ public class JUPropertiesConfiguration implements Configuration {
 
     private void save() {
 
-    	File bakFile = new File(this.file.getParentFile(), this.file.getName() + ".bak");
-    	this.file.renameTo(bakFile);
+    	File tmpFile = new File(this.file.getParentFile(), this.file.getName() + TMP_FILE_POSTFIX);
     	
         OutputStream out = null;
         try {
             // note that Properties internally wraps the outputstream
             // in a BufferedWriter, so we don't need to buffer it here
-            out = new FileOutputStream(this.file);
+            out = new FileOutputStream(tmpFile);
             this.props.store(out, this.name );
-            
-            bakFile.delete();
-        } catch (IOException e) {
+            out.close();
 
-        	// restore from bak file
-            this.file.delete();
-            bakFile.renameTo(this.file);
-        	
+            if(!file.delete()) {
+            	LOG.error("Couldn't delete file " + this.file.getAbsolutePath());
+            }
+            if(!tmpFile.renameTo(this.file)) {
+            	LOG.error("Couldn't rename tmp file to file");
+            }
+        } catch (IOException e) {
             throw new RuntimeException( "Saving failed", e );
         } finally {
             IOUtils.closeQuietly(out);
