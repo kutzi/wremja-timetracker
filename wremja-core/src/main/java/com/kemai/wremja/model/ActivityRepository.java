@@ -12,6 +12,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 /**
  * Main data container of Wremja.
  * 
@@ -41,11 +43,10 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 
 	/** The currently active project (if any). */
 	private Project activeProject;
+
+	public static final long UNINITIALIZED = 0;
 	
-	/**
-	 * The last time this data record was modified.
-	 */
-	private DateTime modifiedTimeStamp;
+	private long projectIdSequence = 1;
 	
 	@XStreamOmitField
 	private boolean dirty = false;
@@ -64,6 +65,12 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 		
 		this.activeProjects.add(project);
 		this.dirty = true;
+		
+		if(project.getId() >= this.projectIdSequence) {
+			this.projectIdSequence = project.getId();
+		} else {
+			throw new IllegalArgumentException("project id " + project.getId() + " < " + this.projectIdSequence);
+		}
 	}
 
 	/**
@@ -227,13 +234,6 @@ public class ActivityRepository implements ReadableRepository, Serializable {
         this.dirty = true;
     }
 
-    /**
-     * Returns the last time, when this repository modified.
-     */
-    public synchronized DateTime getModifiedTimeStamp() {
-        return this.modifiedTimeStamp;
-    }
-    
     public synchronized boolean isDirty() {
         return this.dirty;
     }
@@ -257,4 +257,24 @@ public class ActivityRepository implements ReadableRepository, Serializable {
     	}
     	return null;
     }
+
+	/**
+	 * Returns the LAST value of the sequence.
+	 */
+    @SuppressWarnings("IS2_INCONSISTENT_SYNC")
+	public long getProjectIdSequence() {
+	    return projectIdSequence;
+    }
+	
+	private Object readResolve() {
+		if(this.projectIdSequence == UNINITIALIZED) {
+			// determine max id of 'legacy' projects - where ids were random longs
+			long maxId = Long.MIN_VALUE;
+			for(Project p : this.activeProjects) {
+				maxId = Math.max(maxId, p.getId());
+			}
+			this.projectIdSequence = maxId;
+		}
+		return this;
+	}
 }

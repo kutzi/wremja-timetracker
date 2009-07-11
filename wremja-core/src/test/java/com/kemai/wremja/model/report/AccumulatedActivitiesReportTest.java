@@ -26,7 +26,7 @@ public class AccumulatedActivitiesReportTest extends AbstractWremjaTestCase {
 		
 		Project projectA  = new Project(1, "A", "A");
 		this.repository.add(projectA);
-		Project projectB  = new Project(1, "B", "B");
+		Project projectB  = new Project(2, "B", "B");
 		this.repository.add(projectB);
 		
 		DateTime start = new DateTime(2009, 1, 1, 0, 0, 0, 0);

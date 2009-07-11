@@ -3,15 +3,13 @@ package com.kemai.wremja.model.io;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import junit.framework.TestCase;
+
 import org.joda.time.DateTime;
 
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
-import com.kemai.wremja.model.io.IOConstants;
-import com.kemai.wremja.model.io.ProTrackWriter;
-
-import junit.framework.TestCase;
 
 public class ProTrackWriterTest extends TestCase {
     
@@ -24,8 +22,8 @@ public class ProTrackWriterTest extends TestCase {
      */
     public void testProTrackWriting() throws IOException {
         ActivityRepository data = new ActivityRepository();
-        Project a = new Project(4711, "foobar", "foo!");
-        Project b = new Project(42, "The Answer", "To the question");
+        Project a = new Project(42, "foobar", "foo!");
+        Project b = new Project(4711, "The Answer", "To the question");
         data.add(a);
         data.add(b);
         
@@ -44,12 +42,12 @@ public class ProTrackWriterTest extends TestCase {
         String expected = "<proTrack id=\"1\" active=\"true\" startTime=\"2009-03-14 18:00:00.0 CET\">\n" + 
         		"  <activeProjects id=\"2\">\n" + 
         		"    <project id=\"3\">\n" + 
-        		"      <id>4711</id>\n" + 
+        		"      <id>42</id>\n" + 
         		"      <title>foobar</title>\n" + 
         		"      <description>foo!</description>\n" + 
         		"    </project>\n" + 
         		"    <project id=\"4\">\n" + 
-        		"      <id>42</id>\n" + 
+        		"      <id>4711</id>\n" + 
         		"      <title>The Answer</title>\n" + 
         		"      <description>To the question</description>\n" + 
         		"    </project>\n" + 
@@ -62,7 +60,8 @@ public class ProTrackWriterTest extends TestCase {
         		"      <project reference=\"3\"/>\n" + 
         		"    </projectActivity>\n" + 
         		"  </activities>\n" + 
-        		"  <activeProject reference=\"4\"/>\n" + 
+        		"  <activeProject reference=\"4\"/>\n" +
+        		"  <projectIdSequence>4711</projectIdSequence>\n" +
         		"</proTrack>";
         
         // TODO: ignore line ends and formatting when comparing the strings!

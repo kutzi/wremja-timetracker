@@ -23,7 +23,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import org.apache.commons.lang.math.RandomUtils;
 import org.jdesktop.swingx.JXTable;
 
 import ca.odell.glazedlists.swing.EventTableModel;
@@ -211,7 +210,7 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
             addProjectButton.addActionListener(new ActionListener() {   
                 public void actionPerformed(final ActionEvent e) {
                     String projectName = getNewProjectTextField().getText().trim();
-                    model.addProject(new Project(RandomUtils.nextLong(), projectName, projectName), ManageProjectsDialog.this);
+                    model.addProject(new Project(model.nextProjectId(), projectName, projectName), ManageProjectsDialog.this);
                     getNewProjectTextField().setText(""); //$NON-NLS-1$
                 }
 

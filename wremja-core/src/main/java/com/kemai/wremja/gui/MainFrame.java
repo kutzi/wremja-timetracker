@@ -437,7 +437,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             		FormatUtils.formatTime(date); //$NON-NLS-1$
         }
         
-        if(!DateUtils.isSameDay(date, DateUtils.getNow())) {
+        if(date != null && !DateUtils.isSameDay(date, DateUtils.getNow())) {
         	title += " (" + FormatUtils.formatDate(date) + ")";
         }
         setTitle(title);

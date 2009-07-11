@@ -76,8 +76,11 @@ public class ProTrackReaderTest extends TestCase {
         assertEquals(3, data.getProjects().size());
         assertEquals("Testing", data.getActiveProject().getTitle());
         assertFalse(data.isActive());
-        DateTime startTime = new DateTime(2009, 1, 28, 19, 24, 0, 0);
-        assertEquals(startTime, data.getStart());
+        DateTime expectedStartTime = new DateTime(2009, 1, 28, 19, 24, 0, 0);
+        assertEquals(expectedStartTime, data.getStart());
+        
+        long expectedProjectSequence = 8407415082569172992L;
+        assertEquals(expectedProjectSequence, data.getProjectIdSequence());
         
         assertEquals(5, data.getActivities().size());
         

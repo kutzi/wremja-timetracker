@@ -19,6 +19,7 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.SortedList;
 
 import com.kemai.util.DateUtils;
+import com.kemai.util.IdGenerator;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.events.WremjaEvent;
@@ -93,6 +94,8 @@ public class PresentationModel extends Observable {
 
     private final File lastTouchFile;
 
+	private IdGenerator idGenerator;
+
     //private final Object startStopLock = new Object();
 
     /**
@@ -129,7 +132,9 @@ public class PresentationModel extends Observable {
         this.selectedProject = this.data.getActiveProject();
 
         this.projectList.clear();
-        this.projectList.addAll(this.data.getProjects());        
+        this.projectList.addAll(this.data.getProjects());
+        
+        this.idGenerator = new ModelIdGenerator(this.data);
 
         this.activitiesList.clear();
 
@@ -806,5 +811,9 @@ public class PresentationModel extends Observable {
     	}
     	
     	return getData().getIntersection(newActivity, original);
+    }
+    
+    public long nextProjectId() {
+    	return this.idGenerator.nextId();
     }
 }
