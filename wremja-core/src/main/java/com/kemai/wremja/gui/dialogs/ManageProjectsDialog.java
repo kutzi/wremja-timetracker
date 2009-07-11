@@ -23,7 +23,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.jdesktop.swingx.JXTable;
 
@@ -41,7 +40,6 @@ import com.kemai.wremja.model.Project;
  * The dialog to manage the available projects.
  * @author remast
  * @author kutzi
- * :TODO: Rework the dialog to use table layout.
  */
 @SuppressWarnings("serial")
 public class ManageProjectsDialog extends EscapeDialog implements Observer {
@@ -170,7 +168,7 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
 				private void checkValidProjectName(Document document) {
 					try {
 						String name = document.getText(0, document.getLength());
-						if( StringUtils.isNotBlank(name)) {
+						if( Project.validateProjectName(name)) {
 							addProjectButton.setEnabled(true);
 						} else {
 							addProjectButton.setEnabled(false);
@@ -212,7 +210,7 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
             addProjectButton.setToolTipText(textBundle.textFor("ManageProjectsDialog.AddProjectButton.ToolTipText")); //$NON-NLS-1$
             addProjectButton.addActionListener(new ActionListener() {   
                 public void actionPerformed(final ActionEvent e) {
-                    String projectName = getNewProjectTextField().getText();
+                    String projectName = getNewProjectTextField().getText().trim();
                     model.addProject(new Project(RandomUtils.nextLong(), projectName, projectName), ManageProjectsDialog.this);
                     getNewProjectTextField().setText(""); //$NON-NLS-1$
                 }

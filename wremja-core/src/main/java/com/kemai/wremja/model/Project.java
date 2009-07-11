@@ -114,4 +114,9 @@ public class Project implements Serializable, Comparable<Project>{
         hashCodeBuilder.append(this.getId());
         return hashCodeBuilder.toHashCode();
     }
+    
+    public static boolean validateProjectName(String name) {
+    	return StringUtils.isNotBlank(name);
+    }
+    
 }

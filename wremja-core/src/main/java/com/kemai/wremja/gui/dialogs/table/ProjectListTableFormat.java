@@ -28,12 +28,15 @@ public class ProjectListTableFormat implements WritableTableFormat<Project> {
             final int column) {
         if (column == 0) {
             final String oldTitle = project.getTitle();
-            final String newTitle = (String) value;
-            project.setTitle(newTitle);
+            final String newTitle = ((String) value).trim();
 
-            // Fire event
-            final PropertyChangeEvent propertyChangeEvent = new PropertyChangeEvent(project, Project.PROPERTY_TITLE, oldTitle, newTitle);
-            model.fireProjectChangedEvent(project, propertyChangeEvent);
+            if(Project.validateProjectName(newTitle)) {
+	            project.setTitle(newTitle);
+	
+	            // Fire event
+	            final PropertyChangeEvent propertyChangeEvent = new PropertyChangeEvent(project, Project.PROPERTY_TITLE, oldTitle, newTitle);
+	            model.fireProjectChangedEvent(project, propertyChangeEvent);
+            }
         }
         
         return project;
