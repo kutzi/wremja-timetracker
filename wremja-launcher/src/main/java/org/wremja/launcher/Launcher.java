@@ -45,7 +45,7 @@ public final class Launcher {
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(Launcher.class);
 
     /** The logger. */
-    private static final Logger LOG = Logger.getLogger(Launcher.class);
+    private static volatile Logger LOG;
 
     //------------------------------------------------
     // Command line options
@@ -391,8 +391,6 @@ public final class Launcher {
      * @throws IOException 
      */
     private static void initLogger() throws IOException {
-        LOG.debug("Initializing logger ...");
-        
         String logDir = ApplicationSettings.instance().getApplicationDataDirectory().getAbsolutePath() + File.separator + "log";
         File logDirF = new File(logDir);
         if( !logDirF.isDirectory() ) {
@@ -417,7 +415,9 @@ public final class Launcher {
         rootLogger.setLevel(Level.INFO);
         
         java.util.logging.Logger appLogger = java.util.logging.Logger.getLogger("com.kemai");
-        appLogger.setLevel(Level.FINEST);
+        appLogger.setLevel(Level.INFO);
+        
+        LOG = Logger.getLogger(Launcher.class);
     }
 
     private static void initUncaughtExceptionHandler() {
