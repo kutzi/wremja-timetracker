@@ -1,9 +1,17 @@
 package com.elevenworks.swing.tab;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+
+import javax.swing.JComponent;
+import javax.swing.JTabbedPane;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import java.awt.*;
 
 /*
  * See http://blog.elevenworks.com/?p=4
@@ -158,6 +166,10 @@ public class PSTabbedPaneUI extends BasicTabbedPaneUI
     {
         Rectangle selectedRect = selectedIndex < 0 ? null : getTabBounds(selectedIndex, calcRect);
 
+        if(selectedRect == null) {
+        	return;
+        }
+        
         selectedRect.width = selectedRect.width + (selectedRect.height / 2) - 1;
 
         g.setColor(Color.BLACK);
