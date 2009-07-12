@@ -74,6 +74,7 @@ public class ExitAction extends AbstractWremjaAction {
         } 
 
         if (quit) {
+            LOG.info("Shutting down");
             System.exit(0);
         }
     }

@@ -2,19 +2,20 @@ package com.kemai.wremja.logging;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
+
+import org.joda.time.MutableDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * 'Better' formatter for java.util.logging 
  */
 public class BetterFormatter extends Formatter {
 
-    private final Date dat = new Date();
-    private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final MutableDateTime dat = new MutableDateTime();
+    private final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
     private static final String lineSeparator = System.getProperty("line.separator");
 
     /**
@@ -23,12 +24,12 @@ public class BetterFormatter extends Formatter {
      * @return a formatted log record
      */
     @Override
-    public synchronized String format(LogRecord record) {
+    public String format(LogRecord record) {
         StringBuilder sb = new StringBuilder();
         // Minimize memory allocations here.
-        dat.setTime(record.getMillis());
+        dat.setMillis(record.getMillis());
         
-        sb.append(formatter.format(dat));
+        sb.append(formatter.print(dat));
         sb.append(" ");
 	    sb.append(record.getLoggerName());
 	    sb.append(" ");

@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -218,12 +219,13 @@ public final class Launcher {
     private static void initShutdownHook(final PresentationModel model) {
         LOG.debug("Initializing shutdown hook ...");
 
+        // Note: that logging in the shutdown hook doesn't work, as
+        // probably the LogManager is already destroyed
         Runtime.getRuntime().addShutdownHook(
                 new Thread("Wremja shutdown ...") {
 
                     @Override
                     public void run() {
-                        LOG.info("Shutting down");
                         // TODO: decouple this from the PresentationModel
                         // (always causes problems, because some GUI components which
                         // should be notified are already gone!)
@@ -246,17 +248,13 @@ public final class Launcher {
                         // save model
                         try {
                             model.save();
-                        } catch (Exception e) {
-                            LOG.error(e, e);
                         } catch (Throwable t) {
-                            LOG.error(t, t);
+                            System.err.println(t);
                         } finally {
                             // Release file lock
                             releaseLock();
-                            LOG.info("Shutdown finished");
                         }
                     }
-
                 }
         );
     }
@@ -282,9 +280,10 @@ public final class Launcher {
                 );
                 
                 if(result == JOptionPane.YES_OPTION) {
-                	LOG.info("Reading data from Baralga file " + baralgaData);
                     try {
 	                    ActivityRepository data = readData(baralgaData);
+	                    LOG.info("Importing data from Baralga file " + baralgaData +
+	                            ".\n" + data.getProjects().size() + " projects and " + data.getActivities().size() + " activities.");
 
 	                    // Reading data file was successful.
 	                    model.setData(data);
@@ -292,7 +291,7 @@ public final class Launcher {
                     	LOG.error("Error reading Baralga file", e);
                         JOptionPane.showMessageDialog(null, 
                                 textBundle.textFor("Launcher.DataLoading.ErrorTextGeneric"), //$NON-NLS-1$
-                                textBundle.textFor("Launcher.DataLoading.ErrorTitle"), //$NON-NLS-1$
+                                textBundle.textFor("Launcher.DataLoading.ErrorTitle"), 
                                 JOptionPane.ERROR_MESSAGE
                         );
                     }
@@ -306,6 +305,8 @@ public final class Launcher {
         try {
             if (file.exists()) {
                 final ActivityRepository data = readData(file);
+                LOG.info("Loaded data from file " + file +
+                        ".\n" + data.getProjects().size() + " projects and " + data.getActivities().size() + " activities.");
 
                 // Reading data file was successful.
                 model.setData(data);
@@ -331,7 +332,7 @@ public final class Launcher {
                 // Data corrupt and no backup file found
                 JOptionPane.showMessageDialog(null, 
                         textBundle.textFor("Launcher.DataLoading.ErrorTextNoBackup"), //$NON-NLS-1$
-                        textBundle.textFor("Launcher.DataLoading.ErrorTitle"), //$NON-NLS-1$
+                        textBundle.textFor("Launcher.DataLoading.ErrorTitle"), 
                         JOptionPane.ERROR_MESSAGE
                 );
             }
@@ -344,7 +345,8 @@ public final class Launcher {
 	        try {
 	            final ActivityRepository data = readData(backupFile);
 	            model.setData(data);
-	            LOG.info("Loaded data from backup file " + backupFile);
+	            LOG.info("Loaded data from backup file " + backupFile +
+	                    ".\n" + data.getProjects().size() + " projects and " + data.getActivities().size() + " activities.");
 
 	            final Date backupDate = DataBackup.getDateOfBackup(backupFile);
 	            String backupDateString = backupFile.getName();
@@ -354,7 +356,7 @@ public final class Launcher {
 
 	            JOptionPane.showMessageDialog(null, 
 	                    textBundle.textFor("Launcher.DataLoading.ErrorText", backupDateString), //$NON-NLS-1$
-	                    textBundle.textFor("Launcher.DataLoading.ErrorTitle"), //$NON-NLS-1$
+	                    textBundle.textFor("Launcher.DataLoading.ErrorTitle"), 
 	                    JOptionPane.WARNING_MESSAGE
 	            );
 
@@ -400,6 +402,8 @@ public final class Launcher {
         }
 
         logFileName =  logDir + File.separator + "wremja.log";
+
+        LogManager.getLogManager().reset();
         
         FileHandler fileHandler = new FileHandler(logFileName + ".%g", 50000, 3, true );
         fileHandler.setFormatter(new BetterFormatter());
