@@ -8,7 +8,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-@XStreamAlias("project") //$NON-NLS-1$
+@XStreamAlias("project") 
 public class Project implements Serializable, Comparable<Project>{
     
     /**
@@ -17,7 +17,7 @@ public class Project implements Serializable, Comparable<Project>{
     private static final long serialVersionUID = 1L;
 
     /** The unique identifier of the project. */
-    private final long id;
+    private long id;
     
     /** The title of the project. */
     private String title;
@@ -55,6 +55,13 @@ public class Project implements Serializable, Comparable<Project>{
     public long getId() {
         return id;
     }
+    
+    /**
+     * @deprecated only to be used in XStream deserialization
+     */
+    public void setId(long id) {
+        this.id = id;
+    }
 
     /**
      * Getter for the title.
@@ -70,9 +77,6 @@ public class Project implements Serializable, Comparable<Project>{
      */
     public void setTitle(final String title) {
         this.title = title;
-        
-        // Use title also as description for the moment.
-        this.description = title;
     }
 
     @Override

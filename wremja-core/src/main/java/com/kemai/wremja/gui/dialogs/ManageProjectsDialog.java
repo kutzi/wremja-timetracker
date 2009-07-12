@@ -210,7 +210,7 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
             addProjectButton.addActionListener(new ActionListener() {   
                 public void actionPerformed(final ActionEvent e) {
                     String projectName = getNewProjectTextField().getText().trim();
-                    model.addProject(new Project(model.nextProjectId(), projectName, projectName), ManageProjectsDialog.this);
+                    model.addProject(new Project(model.nextProjectId(), projectName, ""), ManageProjectsDialog.this);
                     getNewProjectTextField().setText(""); //$NON-NLS-1$
                 }
 

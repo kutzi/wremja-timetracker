@@ -46,7 +46,7 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 
 	public static final long UNINITIALIZED = 0;
 	
-	private long projectIdSequence = 1;
+	private long projectIdSequence = 0;
 	
 	@XStreamOmitField
 	private boolean dirty = false;
@@ -66,10 +66,10 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 		this.activeProjects.add(project);
 		this.dirty = true;
 		
-		if(project.getId() >= this.projectIdSequence) {
+		if(project.getId() > this.projectIdSequence) {
 			this.projectIdSequence = project.getId();
 		} else {
-			throw new IllegalArgumentException("project id " + project.getId() + " < " + this.projectIdSequence);
+			throw new IllegalArgumentException("project id " + project.getId() + " <= " + this.projectIdSequence);
 		}
 	}
 
@@ -85,28 +85,6 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 		this.activeProjects.remove(project);
 		this.projectsToBeDeleted.add(project);
 		this.dirty = true;
-	}
-
-	// TODO: this method is called from nowhere!?
-	public synchronized void cleanup() {
-		if (this.projectsToBeDeleted == null) {
-			return;
-		}
-
-		final List<Project> referencedProjects = new ArrayList<Project>();        
-		for(ProjectActivity projectActivity : this.activities) {
-			Project project = projectActivity.getProject();
-			referencedProjects.add(project);
-		}
-
-		final List<Project> removableProjects = new ArrayList<Project>();
-		for (Project oldProject : this.projectsToBeDeleted) {
-			if (!referencedProjects.contains(oldProject)) {
-				removableProjects.add(oldProject);
-			}
-		}
-
-		this.projectsToBeDeleted.removeAll(removableProjects);
 	}
 
 	/**
@@ -266,14 +244,18 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 	    return projectIdSequence;
     }
 	
+    @java.lang.SuppressWarnings("deprecation")
 	private Object readResolve() {
 		if(this.projectIdSequence == UNINITIALIZED) {
-			// determine max id of 'legacy' projects - where ids were random longs
-			long maxId = Long.MIN_VALUE;
+			// clean-up max id of 'legacy' projects - where ids were random longs
+			this.projectIdSequence = 0;
 			for(Project p : this.activeProjects) {
-				maxId = Math.max(maxId, p.getId());
+				p.setId(++this.projectIdSequence);
 			}
-			this.projectIdSequence = maxId;
+			
+			for(Project p : this.projectsToBeDeleted) {
+                p.setId(++this.projectIdSequence);
+            }
 		}
 		return this;
 	}
