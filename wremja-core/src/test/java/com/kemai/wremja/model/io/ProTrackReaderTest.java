@@ -22,11 +22,9 @@ public class ProTrackReaderTest extends TestCase {
         assertNotNull(in);
         
         ProTrackReader reader = new ProTrackReader();
-        reader.read(in);
-        assertNotNull(reader.getData());
+        ActivityRepository data = reader.read(in);
+        assertNotNull(data);
         
-        ActivityRepository data = reader.getData();
-        System.out.println(data);
         assertEquals(3, data.getProjects().size());
         assertEquals("Testing", data.getActiveProject().getTitle());
         assertFalse(data.isActive());
@@ -68,18 +66,17 @@ public class ProTrackReaderTest extends TestCase {
         assertNotNull(in);
         
         ProTrackReader reader = new ProTrackReader();
-        reader.read(in);
-        assertNotNull(reader.getData());
+        ActivityRepository data = reader.read(in);
+        assertNotNull(data);
         
-        ActivityRepository data = reader.getData();
-        System.out.println(data);
         assertEquals(3, data.getProjects().size());
+        assertEquals(6, data.getDeletedProjects().size());
         assertEquals("Testing", data.getActiveProject().getTitle());
         assertFalse(data.isActive());
         DateTime expectedStartTime = new DateTime(2009, 1, 28, 19, 24, 0, 0);
         assertEquals(expectedStartTime, data.getStart());
         
-        long expectedProjectSequence = 8407415082569172992L;
+        long expectedProjectSequence = data.getProjects().size() + data.getDeletedProjects().size();
         assertEquals(expectedProjectSequence, data.getProjectIdSequence());
         
         assertEquals(5, data.getActivities().size());

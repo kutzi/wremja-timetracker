@@ -44,7 +44,6 @@ public class ProTrackWriter {
         this.xstream.processAnnotations(
                 new Class[] {ActivityRepository.class, Project.class, ProjectActivity.class}
         );
-        this.xstream.autodetectAnnotations(true);
 
         this.xstream.setMode(XStream.ID_REFERENCES);
         this.xstream.registerConverter(new DateTimeConverter());

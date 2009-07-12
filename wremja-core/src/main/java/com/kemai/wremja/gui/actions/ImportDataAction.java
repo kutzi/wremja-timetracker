@@ -49,8 +49,7 @@ public class ImportDataAction extends AbstractWremjaAction {
             final File file = chooser.getSelectedFile();
             final ProTrackReader reader = new ProTrackReader();
             try {
-                reader.read(file);
-                final ActivityRepository data = reader.getData();
+                final ActivityRepository data = reader.read(file);
 
                 boolean doImport = true;
                 final int dialogResult = JOptionPane.showConfirmDialog(

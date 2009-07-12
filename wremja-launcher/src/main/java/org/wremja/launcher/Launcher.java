@@ -379,8 +379,7 @@ public final class Launcher {
             ProTrackReader reader;
             try {
                 reader = new ProTrackReader();
-                reader.read(file);
-                return reader.getData();
+                return reader.read(file);
             } catch (Exception e) {
                 throw new IOException(e);
             }

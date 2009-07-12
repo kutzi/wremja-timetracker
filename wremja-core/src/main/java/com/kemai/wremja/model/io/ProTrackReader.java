@@ -15,27 +15,34 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
- * Reader for ActivityRepository data files.
+ * Reader for {@link ActivityRepository} data files.
  * @author remast
+ * @author kutzi
  */
 public class ProTrackReader {
 
-    /** The logger. */
-    private static final Logger log = Logger.getLogger(ProTrackReader.class);
+    private static final Logger LOG = Logger.getLogger(ProTrackReader.class);
 
-    /** The data read. */
-    private ActivityRepository data;
-
+    private static final XStream xstream;
+    static {
+        xstream = new XStream(new DomDriver(IOConstants.FILE_ENCODING));
+        xstream.setMode(XStream.ID_REFERENCES);
+        xstream.registerConverter(new DateTimeConverter());
+        xstream.processAnnotations(
+                new Class[] {ActivityRepository.class, Project.class, ProjectActivity.class}
+        );
+    }
+    
     /**
      * Actually read the data from file.
      * @throws IOException
      */
-    public void read(final File file) throws IOException {
+    public ActivityRepository read(final File file) throws IOException {
         final InputStream fis = new BufferedInputStream(new FileInputStream(file));
         try {
-            read(fis);
+            return read(fis);
         } catch(IOException e) {
-            throw new IOException("The file " + (file != null ? file.getName() : "<null>") + " does not contain valid Baralga data.", e);
+            throw new IOException("The file " + (file != null ? file.toString() : "<null>") + " does not contain valid Baralga data.", e);
         } finally {
             IOUtils.closeQuietly(fis);
         }
@@ -45,37 +52,14 @@ public class ProTrackReader {
      * Read the data from an {@link InputStream}.
      * @throws IOException
      */
-    public void read(final InputStream in) throws IOException {
-        final XStream xstream = new XStream(new DomDriver(IOConstants.FILE_ENCODING));
-        xstream.setMode(XStream.ID_REFERENCES);
-        xstream.registerConverter(new DateTimeConverter());
-        xstream.processAnnotations(
-                new Class[] {ActivityRepository.class, Project.class, ProjectActivity.class}
-        );
-        xstream.autodetectAnnotations(true);
-
+    public ActivityRepository read(final InputStream in) throws IOException {
         Object o = null;
         try {
             o = xstream.fromXML(in);
-        } catch (Exception e)  {
-            log.error(e, e);
-            throw new IOException("The input stream does not contain valid Baralga data.", e);
-        }
-
-        try {
-            data = (ActivityRepository) o;
-        } catch (ClassCastException e) {
-            log.error(e, e);
-            throw new IOException("The file input stream does not contain valid Baralga data.", e);
+            return (ActivityRepository) o;
+        } catch (Exception e) {
+            LOG.error(e, e);
+            throw new IOException("The file input stream does not contain valid Wremja data.", e);
         }
     }
-
-    /**
-     * Getter for the data read.
-     * @return the proTrack
-     */
-    public ActivityRepository getData() {
-        return data;
-    }
-
 }

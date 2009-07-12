@@ -194,6 +194,13 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 	}
 
 	/**
+	 * @return list of the projects marked as 'deleted'
+	 */
+	public synchronized List<Project> getDeletedProjects() {
+		return Collections.unmodifiableList(this.projectsToBeDeleted);
+	}
+	
+	/**
 	 * Replaces an old activity with a new, updated activity.
 	 */
     public synchronized void replaceActivity(ProjectActivity oldActivity,
