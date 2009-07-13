@@ -388,6 +388,7 @@ public class PresentationModel extends Observable {
      * @param activeProject the new active project
      */
     public final void changeProject(final Project activeProject) {
+    	final DateTime now = DateUtils.getNow();
     	synchronized(this) {
 	        // If there's no change we're done.
 	        if (ObjectUtils.equals(getSelectedProject(), activeProject)) {
@@ -402,8 +403,6 @@ public class PresentationModel extends Observable {
 	
 	        // Set active project to new project
 	        this.data.setActiveProject(activeProject);
-	
-	        final DateTime now = DateUtils.getNow();
 	
 	        // If a project is currently running we create a new project activity.
 	        if (isActive()) {
@@ -427,11 +426,13 @@ public class PresentationModel extends Observable {
 	            // Clear description
 	            description = "";
 	            UserSettings.instance().setLastDescription(description);
-	
-	            // Set start time to now.
-	            setStart(now);
 	        }
     	}
+    	
+    	
+        // Set start time to now.
+    	// XXX: must be currently done outside the synchronized block as it sends an event.
+        setStart(now);
 
         // Fire project changed event
         final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_CHANGED);
