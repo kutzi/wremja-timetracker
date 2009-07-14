@@ -2,10 +2,9 @@ package com.kemai.wremja.gui.model.io;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
@@ -31,14 +30,13 @@ public class SaveDaemon implements Runnable, Observer {
     /** The model. */
     private final PresentationModel model;
     
-    private final Lock saveLock = new ReentrantLock();
-    private final Condition saveCondition = saveLock.newCondition();
-
     private final long saveInterval;
     private final TimeUnit timeUnit;
     
     private long lastSaveTime;
     private volatile boolean stopRequested = false;
+    
+    private final BlockingQueue<WremjaEvent> queue = new LinkedBlockingQueue<WremjaEvent>();
 
     /**
      * Create a time which periodically saves the model.
@@ -52,12 +50,11 @@ public class SaveDaemon implements Runnable, Observer {
     }
 
     @Override
-    @SuppressWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
+    @SuppressWarnings("RV_RETURN_VALUE_IGNORED")
     public void run() {
         while(!stopRequested) {
-            saveLock.lock();
             try {
-                saveCondition.await(saveInterval, timeUnit);
+            	queue.poll(saveInterval, timeUnit);
                 try {
                     // prevent too frequent saves:
                     // TODO: that could be probably handled more sophisticated
@@ -72,8 +69,6 @@ public class SaveDaemon implements Runnable, Observer {
                 }
             } catch (InterruptedException e) {
                 // ignore
-            } finally {
-                saveLock.unlock();
             }
         }
     }
@@ -84,7 +79,6 @@ public class SaveDaemon implements Runnable, Observer {
             LOG.error("Unexpected event object " + eventObject);
             return;
         }
-
         final WremjaEvent event = (WremjaEvent) eventObject;
         switch(event.getType()) {
         case DATA_CHANGED :
@@ -97,11 +91,12 @@ public class SaveDaemon implements Runnable, Observer {
         case PROJECT_CHANGED:
         case PROJECT_REMOVED:
         case START_CHANGED:
-            saveLock.lock();
             try {
-                saveCondition.signal();
-            } finally {
-                saveLock.unlock();
+	            queue.put(event);
+            } catch (InterruptedException e) {
+	            // restore interrupted state
+            	Thread.currentThread().interrupt();
+	            break;
             }
             break;
         case DURATION_CHANGED:
