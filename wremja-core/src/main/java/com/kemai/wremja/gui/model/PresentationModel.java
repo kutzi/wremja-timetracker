@@ -463,6 +463,7 @@ public class PresentationModel extends Observable {
         final ProTrackWriter writer = ProTrackWriter.instance();
         writer.write(data, proTrackFile);        
         this.data.setDirty(false);
+        LOG.debug("Saved data");
     }
 
     /**

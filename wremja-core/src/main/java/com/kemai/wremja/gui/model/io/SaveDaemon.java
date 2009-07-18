@@ -2,22 +2,19 @@ package com.kemai.wremja.gui.model.io;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.logging.Logger;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 /**
  * A daemon to save the model.
  * 
  * This daemon saves the data
  * a) when a change is detected
- * b) periodically at configurable periods to prevent the problem of maybe forgotten change events 
+ * b) periodically at a configurable period to prevent the problem of maybe forgotten change events 
  * 
  * @author kutzi
  * @author remast
@@ -36,7 +33,7 @@ public class SaveDaemon implements Runnable, Observer {
     private long lastSaveTime;
     private volatile boolean stopRequested = false;
     
-    private final BlockingQueue<WremjaEvent> queue = new LinkedBlockingQueue<WremjaEvent>();
+    private final Semaphore semaphore = new Semaphore(0);
 
     /**
      * Create a time which periodically saves the model.
@@ -50,11 +47,10 @@ public class SaveDaemon implements Runnable, Observer {
     }
 
     @Override
-    @SuppressWarnings("RV_RETURN_VALUE_IGNORED")
     public void run() {
         while(!stopRequested) {
             try {
-            	queue.poll(saveInterval, timeUnit);
+            	waitForNextSaveableChange();
                 try {
                     // prevent too frequent saves:
                     // TODO: that could be probably handled more sophisticated
@@ -71,6 +67,11 @@ public class SaveDaemon implements Runnable, Observer {
                 // ignore
             }
         }
+    }
+    
+    private void waitForNextSaveableChange() throws InterruptedException {
+        this.semaphore.tryAcquire(this.saveInterval, this.timeUnit);
+        this.semaphore.drainPermits();
     }
 
     @Override
@@ -91,13 +92,7 @@ public class SaveDaemon implements Runnable, Observer {
         case PROJECT_CHANGED:
         case PROJECT_REMOVED:
         case START_CHANGED:
-            try {
-	            queue.put(event);
-            } catch (InterruptedException e) {
-	            // restore interrupted state
-            	Thread.currentThread().interrupt();
-	            break;
-            }
+            this.semaphore.release();
             break;
         case DURATION_CHANGED:
         case FILTER_CHANGED:
