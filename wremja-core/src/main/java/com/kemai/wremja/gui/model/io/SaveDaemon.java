@@ -70,8 +70,9 @@ public class SaveDaemon implements Runnable, Observer {
     }
     
     private void waitForNextSaveableChange() throws InterruptedException {
-        this.semaphore.tryAcquire(this.saveInterval, this.timeUnit);
-        this.semaphore.drainPermits();
+        if(this.semaphore.tryAcquire(this.saveInterval, this.timeUnit)) {
+            this.semaphore.drainPermits();
+        }
     }
 
     @Override
