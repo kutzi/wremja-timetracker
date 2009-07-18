@@ -55,6 +55,8 @@ public final class Launcher {
     /** Property for command line option minimized (-m). */
     private Boolean minimized;
 
+    private boolean debug = false;
+
 	private static boolean firstStart;
 
     /** The daemon to periodically save to disk. */
@@ -99,7 +101,7 @@ public final class Launcher {
             
             mainInstance.initDir();
 
-            initLogger();
+            mainInstance.initLogger();
             
             initUncaughtExceptionHandler();
 
@@ -148,6 +150,8 @@ public final class Launcher {
         for (String argument : arguments) {
             if (argument.startsWith("-m=")) {
                 this.minimized = Boolean.valueOf(argument.substring("-m=".length()));
+            } else if (argument.startsWith("--debug")) {
+                this.debug  = true;
             }
         }
 
@@ -391,7 +395,7 @@ public final class Launcher {
      * Initialize the logger of the application.
      * @throws IOException 
      */
-    private static void initLogger() throws IOException {
+    private void initLogger() throws IOException {
         String logDir = ApplicationSettings.instance().getApplicationDataDirectory().getAbsolutePath() + File.separator + "log";
         File logDirF = new File(logDir);
         if( !logDirF.isDirectory() ) {
@@ -419,6 +423,11 @@ public final class Launcher {
         
         java.util.logging.Logger appLogger = java.util.logging.Logger.getLogger("com.kemai");
         appLogger.setLevel(Level.INFO);
+        
+        if(this.debug) {
+            consoleHandler.setLevel(Level.FINEST);
+            appLogger.setLevel(Level.FINEST);
+        }
         
         LOG = Logger.getLogger(Launcher.class);
     }
