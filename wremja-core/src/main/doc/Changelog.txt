@@ -2,8 +2,9 @@ Changes in Version 1.1.2
 ==========================
 - Bug: detection of unfinished activities from previous days didn't work
 - Improvement: enhanced robustness and data integrity checks
-- Improvement: Use sequence for project ids
+- Improvement: Use a sequence for project ids
 - Improvement: trim project names
+- Improvement: some GUI text changes
 
 Changes in Version 1.1.1
 ==========================
