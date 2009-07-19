@@ -2,13 +2,13 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>com.kemai.wremja</groupId>
-    <version>1.1.2</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.kemai.wremja</groupId>
   <artifactId>wremja-launcher</artifactId>
   <name>wremja-launcher</name>
-  <version>1.1.2</version>
+  <version>1.2-SNAPSHOT</version>
   <url>http://kemai.com/projects/wremja/pages/Home</url>
   
   <build>
@@ -51,12 +51,12 @@
     <dependency>
     	<groupId>com.kemai.wremja</groupId>
     	<artifactId>wremja-core</artifactId>
-    	<version>1.1.2</version>
+    	<version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
     	<groupId>com.kemai.wremja</groupId>
     	<artifactId>anuko-timetracker-exporter</artifactId>
-    	<version>1.1.2</version>
+    	<version>1.2-SNAPSHOT</version>
     </dependency>
 	<dependency>
 	  <groupId>findbugs</groupId>

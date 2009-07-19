@@ -3,13 +3,13 @@
 	<groupId>com.kemai.wremja</groupId>
 	<artifactId>wremja-installer</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1.2</version>
+	<version>1.2-SNAPSHOT</version>
 	<name>Wremja Installer</name>
 	<url>http://kemai.com/projects/wremja/pages/Home</url>
 	<parent>
 		<groupId>com.kemai.wremja</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.1.2</version>
+		<version>1.2-SNAPSHOT</version>
 	</parent>
 	<properties>
 		<wremja.version>${project.version}</wremja.version>
@@ -98,12 +98,12 @@
 		<dependency>
 			<groupId>com.kemai.wremja</groupId>
 			<artifactId>wremja-core</artifactId>
-			<version>1.1.2</version>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.kemai.wremja</groupId>
 			<artifactId>wremja-launcher</artifactId>
-			<version>1.1.2</version>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
