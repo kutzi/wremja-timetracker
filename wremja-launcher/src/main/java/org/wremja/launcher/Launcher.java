@@ -105,9 +105,9 @@ public final class Launcher {
             
             initUncaughtExceptionHandler();
 
-            initLockFile();
-            
             initLookAndFeel();
+
+            initLockFile();
 
             final PresentationModel model = initModel();
 
