@@ -19,6 +19,8 @@ import com.kemai.util.DateUtils;
 import com.kemai.wremja.AbstractWremjaTestCase;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.events.WremjaEvent.Type;
+import com.kemai.wremja.gui.settings.IUserSettings;
+import com.kemai.wremja.gui.settings.UserSettingsAdapter;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.OverlappingActivitiesException;
 import com.kemai.wremja.model.Project;
@@ -215,7 +217,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
     	DateTime start = new DateTime(0);
     	
     	ProjectActivity a1 = new ProjectActivity(start, start.plusHours(1), project);
-    	ProjectActivity a2 = new ProjectActivity(start, start.plusHours(2), project);
+    	ProjectActivity a2 = new ProjectActivity(start.plusHours(1), start.plusHours(2), project);
     	model.addActivity(a1, this);
     	model.addActivity(a2, this);
 
@@ -230,11 +232,141 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
     	assertEquals(project, a2.getProject());
     }
     
+    @Test
+    public void testDisallowOverlappingActivities() {
+        {
+            IUserSettings settings = new UserSettingsAdapter() {
+                @Override
+                public boolean isAllowOverlappingActivities() {
+                    return false;
+                }
+            };
+            PresentationModel model = new PresentationModel(settings, getNewLastTouchFile());
+            DateTime start = new DateTime(0);
+            
+            Project project = new Project(4711, "TestProject", "TestProject");
+            model.addProject(project, this);
+            
+            ProjectActivity a1 = new ProjectActivity(start, start.plusHours(1), project);
+            ProjectActivity a2 = new ProjectActivity(start, start.plusHours(2), project);
+            try {
+                model.addActivity(a1, this);
+                model.addActivity(a2, this);
+                fail(OverlappingActivitiesException.class.getName() + " expected");
+            } catch (OverlappingActivitiesException e) {
+                // okay
+            }
+        }
+        
+        {
+            IUserSettings settings = new UserSettingsAdapter() {
+                @Override
+                public boolean isAllowOverlappingActivities() {
+                    return true;
+                }
+            };
+            PresentationModel model = new PresentationModel(settings, getNewLastTouchFile());
+            DateTime start = new DateTime(0);
+            
+            Project project = new Project(4711, "TestProject", "TestProject");
+            model.addProject(project, this);
+            
+            ProjectActivity a1 = new ProjectActivity(start, start.plusHours(1), project);
+            ProjectActivity a2 = new ProjectActivity(start, start.plusHours(2), project);
+            try {
+                model.addActivity(a1, this);
+                model.addActivity(a2, this);
+            } catch (OverlappingActivitiesException e) {
+                fail(e.toString());
+            }
+        }
+    }
+    
+    @Test
+    public void testDisallowEmptyActivities() throws OverlappingActivitiesException, ProjectActivityStateException {
+        {
+            IUserSettings settings = new UserSettingsAdapter() {
+                @Override
+                public boolean isDiscardEmptyActivities() {
+                    return true;
+                }
+            };
+            PresentationModel model = new PresentationModel(settings, getNewLastTouchFile());
+            DateTime start = new DateTime(0);
+            
+            Project project = new Project(1, "TestProject", "");
+            model.addProject(project, this);
+            model.changeProject(project);
+            DateTime now = DateUtils.getNow();
+            model.start(now);
+            model.stop(now);
+            assertTrue(model.getActivitiesList().isEmpty());
+            
+            
+            // test project change:
+            Project projectB = new Project(2, "Project B", "");
+            model.addProject(projectB, this);
+            model.start();
+            model.changeProject(projectB);
+            model.stop();
+            assertTrue(model.getActivitiesList().isEmpty());
+            
+            // explicitly added empty activities are still okay 
+            ProjectActivity a1 = new ProjectActivity(start, start, project);
+            model.addActivity(a1, this);
+
+            assertEquals(1, model.getActivitiesList().size());
+        }
+        
+        {
+            IUserSettings settings = new UserSettingsAdapter() {
+                @Override
+                public boolean isDiscardEmptyActivities() {
+                    return false;
+                }
+            };
+            PresentationModel model = new PresentationModel(settings, getNewLastTouchFile());
+            DateTime start = new DateTime(0);
+            
+            Project project = new Project(1, "TestProject", "");
+            model.addProject(project, this);
+            model.changeProject(project);
+            DateTime now = DateUtils.getNow();
+            model.start(now);
+            model.stop(now);
+            assertEquals(1, model.getActivitiesList().size());
+            
+            
+            // test project change:
+            Project projectB = new Project(2, "Project B", "");
+            model.addProject(projectB, this);
+            model.start();
+            model.changeProject(projectB);
+            model.stop();
+            assertEquals(3, model.getActivitiesList().size());
+            
+            // explicitly added empty activities are still okay 
+            ProjectActivity a1 = new ProjectActivity(start, start, project);
+            model.addActivity(a1, this);
+            
+            assertEquals(4, model.getActivitiesList().size());
+        }
+    }
+    
     private PresentationModel getNewTestModel() {
         ActivityRepository rep = new ActivityRepository();
         rep.add(project1);
         rep.add(project2);
         assertTrue(rep.isDirty());
+        PresentationModel model = new PresentationModel(new UserSettingsAdapter(), getNewLastTouchFile());
+        model.setData(rep, false);
+        rep.setDirty(false);
+        assertEquals(2, model.getProjectList().size());
+        assertEquals(0, model.getActivitiesList().size());
+        return model;
+    }
+    
+    private File getNewLastTouchFile() {
         File tmp = null;
         try {
             tmp = File.createTempFile("wremja-test", null);
@@ -242,11 +374,6 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
         } catch (IOException e) {
             fail(e.toString());
         }
-        PresentationModel model = new PresentationModel(tmp);
-        model.setData(rep, false);
-        rep.setDirty(false);
-        assertEquals(2, model.getProjectList().size());
-        assertEquals(0, model.getActivitiesList().size());
-        return model;
+        return tmp;
     }
 }

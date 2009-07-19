@@ -30,6 +30,7 @@ import com.kemai.wremja.gui.model.ProjectActivityStateException;
 import com.kemai.wremja.gui.model.io.DataBackup;
 import com.kemai.wremja.gui.model.io.SaveDaemon;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.logging.BetterFormatter;
 import com.kemai.wremja.logging.Logger;
@@ -109,9 +110,11 @@ public final class Launcher {
 
             initLockFile();
 
-            final PresentationModel model = initModel();
+            @SuppressWarnings("deprecation")
+            IUserSettings settings = UserSettings.instance();
+            final PresentationModel model = initModel(settings);
 
-            initMainFrame(model, mainInstance);
+            mainInstance.initMainFrame(model, settings);
             
             initTimer(model);
 
@@ -163,18 +166,17 @@ public final class Launcher {
      * @param mainInstance the main instance
      * @return the initialized main frame
      */
-    private static MainFrame initMainFrame(final PresentationModel model,
-            final Launcher mainInstance) throws Exception {
+    private MainFrame initMainFrame(PresentationModel model, IUserSettings settings) throws Exception {
         LOG.debug("Initializing main frame ...");
-        final MainFrame mainFrame = new MainFrame(model);
+        final MainFrame mainFrame = new MainFrame(model, settings);
         
         boolean minimized = false;
-        if( mainInstance.minimized != null ) {
+        if( this.minimized != null ) {
         	// command line overrides preferences
-        	minimized = mainInstance.minimized.booleanValue();
+        	minimized = this.minimized.booleanValue();
         } else {
-        	if( UserSettings.instance().isRememberWindowSizeLocation() ) {
-        		minimized = UserSettings.instance().isWindowMinimized();
+        	if( settings.isRememberWindowSizeLocation() ) {
+        		minimized = settings.isWindowMinimized();
         	}
         }
         
@@ -265,12 +267,13 @@ public final class Launcher {
 
     /**
      * Initializes the model from the stored data file or creates a new one.
+     * @param settings 
      * @return the model
      */
-    private static PresentationModel initModel() {
+    private static PresentationModel initModel(IUserSettings settings) {
         LOG.debug("Initializing model...");
 
-        final PresentationModel model = new PresentationModel(lastTouchFile);
+        final PresentationModel model = new PresentationModel(settings, lastTouchFile);
         if(firstStart) {
         	//look if there is a Baralga file
             File baralgaDir = new File(System.getProperty("user.home"), ".ProTrack");
@@ -303,7 +306,7 @@ public final class Launcher {
             }
         }
 
-        final String dataFileLocation = UserSettings.instance().getDataFileLocation();
+        final String dataFileLocation = settings.getDataFileLocation();
         final File file = new File(dataFileLocation);
 
         try {

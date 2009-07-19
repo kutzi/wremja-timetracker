@@ -19,16 +19,15 @@ import com.kemai.wremja.model.filter.Filter;
  * @author remast
  * @author kutzi
  */
-public final class UserSettings {
+public final class UserSettings implements IUserSettings {
 
     private static final Logger LOG = Logger.getLogger(UserSettings.class);
 
     /** Default name of the {@link ActivityRepository} data file. */
     public static final String DEFAULT_FILE_NAME = "ProTrack.ptd"; //$NON-NLS-1$
 
-    /**
-     * Get the location of the data file.
-     * @return the path of the data file
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getDataFileLocation()
      */
     public String getDataFileLocation() {
         return ApplicationSettings.instance().getApplicationDataDirectory().getPath() + File.separator + DEFAULT_FILE_NAME;
@@ -46,7 +45,9 @@ public final class UserSettings {
     /**
      * Getter for singleton instance.
      * @return the settings singleton
+     * @deprecated please use an injected {@link IUserSettings} instead!
      */
+    @Deprecated
     public static UserSettings instance() {
         return instance;
     }
@@ -93,17 +94,15 @@ public final class UserSettings {
     /** Key for the location of last Excel export. */
     private static final String LAST_EXCEL_EXPORT_LOCATION = "export.excel"; //$NON-NLS-1$
 
-    /**
-     * Gets the location of the last Excel export.
-     * @return the location of the last Excel export
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getLastExcelExportLocation()
      */
     public String getLastExcelExportLocation() {
         return doGetString(LAST_EXCEL_EXPORT_LOCATION, null);
     }
 
-    /**
-     * Sets the location of the last Excel export.
-     * @param excelExportLocation the location of the last Excel export to set
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setLastExcelExportLocation(java.lang.String)
      */
     public void setLastExcelExportLocation(final String excelExportLocation) {
         userConfig.setProperty(LAST_EXCEL_EXPORT_LOCATION, excelExportLocation);
@@ -116,17 +115,15 @@ public final class UserSettings {
     /** Key for the location of last Data export. */
     private static final String LAST_DATA_EXPORT_LOCATION = "export.data"; //$NON-NLS-1$
 
-    /**
-     * Gets the location of the last Data export.
-     * @return the location of the last Data export
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getLastDataExportLocation()
      */
     public String getLastDataExportLocation() {
         return doGetString(LAST_DATA_EXPORT_LOCATION, null);
     }
 
-    /**
-     * Sets the location of the last Data export.
-     * @param dataExportLocation the location of the last data export to set
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setLastDataExportLocation(java.lang.String)
      */
     public void setLastDataExportLocation(final String dataExportLocation) {
         userConfig.setProperty(LAST_DATA_EXPORT_LOCATION, dataExportLocation);
@@ -139,17 +136,15 @@ public final class UserSettings {
     /** Key for the location of last Csv export. */
     private static final String LAST_CSV_EXPORT_LOCATION = "export.csv"; //$NON-NLS-1$
 
-    /**
-     * Gets the location of the last Csv export.
-     * @return the location of the last Csv export
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getLastCsvExportLocation()
      */
     public String getLastCsvExportLocation() {
         return doGetString(LAST_CSV_EXPORT_LOCATION, null);
     }
 
-    /**
-     * Sets the location of the last Csv export.
-     * @param csvExportLocation the location of the last Csv export to set
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setLastCsvExportLocation(java.lang.String)
      */
     public void setLastCsvExportLocation(final String csvExportLocation) {
         userConfig.setProperty(LAST_CSV_EXPORT_LOCATION, csvExportLocation);
@@ -162,10 +157,16 @@ public final class UserSettings {
     /** Last description. */
     private static final String LAST_DESCRIPTION = "description"; //$NON-NLS-1$
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getLastDescription()
+     */
     public String getLastDescription() {
         return doGetString(LAST_DESCRIPTION, "");
     }
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setLastDescription(java.lang.String)
+     */
     public void setLastDescription(final String lastDescription) {
         userConfig.setProperty(LAST_DESCRIPTION, lastDescription);
     }
@@ -177,6 +178,9 @@ public final class UserSettings {
     /** The key for the selected month of filter. */
     private static final String SELECTED_MONTH = "filter.month"; //$NON-NLS-1$
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getFilterSelectedMonth(int)
+     */
     public int getFilterSelectedMonth(int defaultValue) {
         // Avoid ConversionException by checking the type of the property
         final String selectedMonthObject = userConfig.getStringProperty(SELECTED_MONTH);
@@ -190,6 +194,9 @@ public final class UserSettings {
         return doGetInteger(SELECTED_MONTH, defaultValue);
     }
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setFilterSelectedMonth(int)
+     */
     public void setFilterSelectedMonth(final int month) {
         userConfig.setProperty(SELECTED_MONTH, month);
     }
@@ -197,10 +204,16 @@ public final class UserSettings {
     /** The key for the selected week of filter. */
     private static final String SELECTED_WEEK_OF_YEAR = "filter.weekOfYear"; //$NON-NLS-1$
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getFilterSelectedWeekOfYear(int)
+     */
     public int getFilterSelectedWeekOfYear(int defaultValue) {
         return doGetInteger(SELECTED_WEEK_OF_YEAR, defaultValue);
     }
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setFilterSelectedWeekOfYear(int)
+     */
     public void setFilterSelectedWeekOfYear(final int weekOfYear) {
         userConfig.setProperty(SELECTED_WEEK_OF_YEAR, weekOfYear);
     }
@@ -208,6 +221,9 @@ public final class UserSettings {
     /** The key for the selected year of filter. */
     private static final String SELECTED_YEAR = "filter.year"; //$NON-NLS-1$
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getFilterSelectedYear(int)
+     */
     public int getFilterSelectedYear(int defaultValue) {
         // Avoid ConversionException by checking the type of the property
         final String selectedYearObject = userConfig.getStringProperty(SELECTED_YEAR);
@@ -221,6 +237,9 @@ public final class UserSettings {
         return doGetInteger(SELECTED_YEAR, defaultValue);
     }
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setFilterSelectedYear(int)
+     */
     public void setFilterSelectedYear(final int year) {
         userConfig.setProperty(SELECTED_YEAR, year);
     }
@@ -228,10 +247,16 @@ public final class UserSettings {
     /** The key for the selected project id of filter. */
     private static final String SELECTED_PROJECT_ID = "filter.projectId"; //$NON-NLS-1$
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getFilterSelectedProjectId(long)
+     */
     public long getFilterSelectedProjectId(long defaultValue) {
         return doGetLong(SELECTED_PROJECT_ID, defaultValue);
     }
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setFilterSelectedProjectId(long)
+     */
     public void setFilterSelectedProjectId(final long projectId) {
         userConfig.setProperty(SELECTED_PROJECT_ID, projectId);
     }
@@ -243,40 +268,64 @@ public final class UserSettings {
     /** The key for the shown category. */
     public static final String SHOWN_CATEGORY = "shown.category"; //$NON-NLS-1$
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getShownCategory()
+     */
     public String getShownCategory() {
         return doGetString(SHOWN_CATEGORY, "General");
     }
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setShownCategory(java.lang.String)
+     */
     public void setShownCategory(final String shownCategory) {
         userConfig.setProperty(SHOWN_CATEGORY, shownCategory);
     }
     
     private static final String EXPORTER_ANUKO_LOGIN = "exporter.anuko.login";
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getAnukoLogin()
+     */
     public String getAnukoLogin() {
         return doGetString(EXPORTER_ANUKO_LOGIN, "");
     }
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setAnukoLogin(java.lang.String)
+     */
     public void setAnukoLogin(String login) {
         userConfig.setProperty(EXPORTER_ANUKO_LOGIN, login);
     }
     
     private static final String EXPORTER_ANUKO_PASSWORD = "exporter.anuko.password";
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getAnukoPassword()
+     */
     public String getAnukoPassword() {
         return doGetString(EXPORTER_ANUKO_PASSWORD, "");
     }
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setAnukoPassword(java.lang.String)
+     */
     public void setAnukoPassword(String password) {
         userConfig.setProperty(EXPORTER_ANUKO_PASSWORD, password);
     }
 
     private static final String EXPORTER_ANUKO_URL = "exporter.anuko.url";
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getAnukoUrl()
+     */
     public String getAnukoUrl() {
         return doGetString(EXPORTER_ANUKO_URL, "");
     }
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setAnukoUrl(java.lang.String)
+     */
     public void setAnukoUrl(String url) {
         userConfig.setProperty(EXPORTER_ANUKO_URL, url);
     }
@@ -289,10 +338,16 @@ public final class UserSettings {
     /** The key for remembering window size and location. */
     public static final String REMEMBER_WINDOWSIZE_LOCATION = "settings.rememberWindowSizeLocation"; //$NON-NLS-1$
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#isRememberWindowSizeLocation()
+     */
     public boolean isRememberWindowSizeLocation() {
         return doGetBoolean(REMEMBER_WINDOWSIZE_LOCATION, true);
     }
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setRememberWindowSizeLocation(boolean)
+     */
     public void setRememberWindowSizeLocation(final boolean rememberWindowSizeLocation) {
         userConfig.setProperty(REMEMBER_WINDOWSIZE_LOCATION, rememberWindowSizeLocation);
     }
@@ -304,6 +359,9 @@ public final class UserSettings {
     /** The key for the window size. */
     public static final String WINDOW_SIZE= "settings.windowSize"; //$NON-NLS-1$
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getWindowSize()
+     */
     public Dimension getWindowSize() {
         final String encodedSize = doGetString(WINDOW_SIZE, "530.0|720.0");
         final String[] sizeValues = StringUtils.split(encodedSize, '|');
@@ -312,6 +370,9 @@ public final class UserSettings {
         return size;
     }
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setWindowSize(java.awt.Dimension)
+     */
     public void setWindowSize(final Dimension size) {
         final String encodedSize = size.getWidth() + "|" + size.getHeight();
         userConfig.setProperty(WINDOW_SIZE, encodedSize);
@@ -324,6 +385,9 @@ public final class UserSettings {
     /** The key for the window location */
     private static final String WINDOW_LOCATION = "settings.windowLocation"; //$NON-NLS-1$
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getWindowLocation()
+     */
     public Point getWindowLocation() {
         final String encodedLocation = doGetString(WINDOW_LOCATION, "0.0|0.0");
         final String[] locationCoordinates = StringUtils.split(encodedLocation, '|');
@@ -332,6 +396,9 @@ public final class UserSettings {
         return location;
     }
 
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setWindowLocation(java.awt.Point)
+     */
     public void setWindowLocation(final Point location) {
         final String encodedLocation = location.getX() + "|" + location.getY();
         userConfig.setProperty(WINDOW_LOCATION, encodedLocation);
@@ -339,55 +406,84 @@ public final class UserSettings {
     
     private static final String WINDOW_MINIMIZED = "settings.windowMinimized"; //$NON-NLS-1$
 
+	/* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setWindowMinimized(boolean)
+     */
 	public void setWindowMinimized(boolean minimized) {
 		userConfig.setProperty(WINDOW_MINIMIZED, minimized);
 	}
 
+	/* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#isWindowMinimized()
+     */
 	public boolean isWindowMinimized() {
 		return doGetBoolean(WINDOW_MINIMIZED, false);
 	}
 	
     private static final String DISCARD_EMPTY_ACTIVITIES = "discard.emptyActivities";
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#isDiscardEmptyActivities()
+     */
     public boolean isDiscardEmptyActivities() {
         return doGetBoolean(DISCARD_EMPTY_ACTIVITIES, false);
     }
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setDiscardEmptyActivities(boolean)
+     */
     public void setDiscardEmptyActivities(boolean b) {
         userConfig.setProperty(DISCARD_EMPTY_ACTIVITIES, b);
     }
     
     private static final String USE_TRAY_ICON = "gui.useTrayIcon";
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#isUseTrayIcon()
+     */
     public boolean isUseTrayIcon() {
     	boolean def = !OSUtils.isGnome(); // tray icon issues under Gnome
     	return doGetBoolean(USE_TRAY_ICON, def);
     }
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setUseTrayIcon(boolean)
+     */
     public void setUseTrayIcon(boolean b) {
     	userConfig.setProperty(USE_TRAY_ICON, b);
     }
     
     private static final String DURATION_FORMAT = "durationFormat";
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#getDurationFormat()
+     */
     public String getDurationFormat() {
         return doGetString(DURATION_FORMAT, "#0.00");
     }
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setDurationFormat(java.lang.String)
+     */
     public void setDurationFormat(String format) {
         userConfig.setProperty(DURATION_FORMAT, format);
     } 
     
     private static final String ALLOW_OVERLAPPING_ACTIVITIES = "allow.overlapping.activities";
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#isAllowOverlappingActivities()
+     */
     public boolean isAllowOverlappingActivities() {
     	return doGetBoolean(ALLOW_OVERLAPPING_ACTIVITIES, true);
     }
     
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#setAllowOverlappingActivities(boolean)
+     */
     public void setAllowOverlappingActivities(boolean allow) {
     	userConfig.setProperty(ALLOW_OVERLAPPING_ACTIVITIES, allow);
     }
     
-    /**
-     * Restore the current filter from the user settings.
-     * @return the restored filter
+    /* (non-Javadoc)
+     * @see com.kemai.wremja.gui.settings.IUserSettings#restoreFromSettings()
      */
     public Filter restoreFromSettings() {
         final Filter filter = new Filter();

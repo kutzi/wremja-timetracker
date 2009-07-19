@@ -48,7 +48,7 @@ import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.model.ProjectActivityStateException;
 import com.kemai.wremja.gui.panels.ActivityPanel;
 import com.kemai.wremja.gui.panels.ReportPanel;
-import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -69,6 +69,8 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     
     /** The model. */
     private final PresentationModel model;
+    
+    private final IUserSettings settings;
 
     /** The tool bar. */
     private final JToolBar toolBar = new JToolBar();
@@ -131,16 +133,17 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     
     /** The Tray icon, if any. */
     private TrayIcon tray;
-    
+
     /**
      * This is the default constructor.
      * @param model the model
      */
-    public MainFrame(final PresentationModel model) {
+    public MainFrame(final PresentationModel model, IUserSettings settings) {
         super();
 
         this.model = model;
         this.model.addObserver(this);
+        this.settings = settings;
 
         initialize();
         initTrayIcon();
@@ -152,9 +155,9 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     private void initialize() {
         this.setResizable(true);
         
-        if (UserSettings.instance().isRememberWindowSizeLocation()) {
-            this.setSize(UserSettings.instance().getWindowSize());
-            this.setLocation(UserSettings.instance().getWindowLocation());
+        if (this.settings.isRememberWindowSizeLocation()) {
+            this.setSize(this.settings.getWindowSize());
+            this.setLocation(this.settings.getWindowLocation());
         } else {
             this.setSize(530, 720);
         }
@@ -163,12 +166,12 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
 
             @Override
             public void componentMoved(ComponentEvent e) {
-                UserSettings.instance().setWindowLocation(MainFrame.this.getLocation());
+                settings.setWindowLocation(MainFrame.this.getLocation());
             }
 
             @Override
             public void componentResized(ComponentEvent e) {
-                UserSettings.instance().setWindowSize(MainFrame.this.getSize());
+                settings.setWindowSize(MainFrame.this.getSize());
             }
         });
         
@@ -210,7 +213,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
 
         // Create try icon.
         try {
-            if (UserSettings.instance().isUseTrayIcon() && SystemTray.isSupported()) {
+            if (this.settings.isUseTrayIcon() && SystemTray.isSupported()) {
                 tray = new TrayIcon(model, this);
             } else {
                 tray = null;
@@ -430,11 +433,11 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         	date = this.model.getStart();
             title = textBundle.textFor("Global.Title") + " - " +
             		this.model.getSelectedProject() + textBundle.textFor("MainFrame.9") +
-            		FormatUtils.formatTime(date); //$NON-NLS-1$ //$NON-NLS-2$
+            		FormatUtils.formatTime(date); 
         } else {
         	date = this.model.getStop();
             title = textBundle.textFor("Global.Title") + " " + textBundle.textFor("MainFrame.12") +
-            		FormatUtils.formatTime(date); //$NON-NLS-1$
+            		FormatUtils.formatTime(date); 
         }
         
         if(date != null && !DateUtils.isSameDay(date, DateUtils.getNow())) {
@@ -619,7 +622,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
                 this.tray.hide();
             }
         }
-        UserSettings.instance().setWindowMinimized(show);
+        this.settings.setWindowMinimized(show);
     }
 
     public void handleUnfinishedActivityOnStartup(long lastModified) throws InterruptedException, InvocationTargetException {

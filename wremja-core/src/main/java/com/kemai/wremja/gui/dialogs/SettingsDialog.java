@@ -40,7 +40,7 @@ import com.kemai.util.OSUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.util.UiUtilities;
 import com.kemai.wremja.gui.actions.SettingsAction;
-import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.util.validator.UrlValidator;
 
@@ -59,7 +59,7 @@ public class SettingsDialog extends EscapeDialog {
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(SettingsDialog.class);
     
     /** The model. */
-    private final UserSettings settings;
+    private final IUserSettings settings;
     
     /** Component to edit setting to remember window size and location. */
     private final JCheckBox rememberWindowSizeLocation = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.RememberWindowSizeLocation.Title")); //$NON-NLS-1$
@@ -148,7 +148,7 @@ public class SettingsDialog extends EscapeDialog {
      * @param owner the owning frame
      * @param model the model
      */
-    public SettingsDialog(final Frame owner, final UserSettings settings) {
+    public SettingsDialog(final Frame owner, final IUserSettings settings) {
         super(owner);
         this.settings = settings;
 

@@ -33,7 +33,7 @@ import com.kemai.wremja.gui.model.report.HoursByDayReport;
 import com.kemai.wremja.gui.model.report.HoursByProjectReport;
 import com.kemai.wremja.gui.model.report.HoursByWeekReport;
 import com.kemai.wremja.gui.model.report.ObservingAccumulatedActivitiesReport;
-import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.OverlappingActivitiesException;
@@ -96,12 +96,15 @@ public class PresentationModel extends Observable {
 
 	private IdGenerator idGenerator;
 
+    private final IUserSettings settings;
+
     //private final Object startStopLock = new Object();
 
     /**
      * Creates a new model.
      */
-    public PresentationModel(File lastTouchFile) {
+    public PresentationModel(IUserSettings settings, File lastTouchFile) {
+        this.settings = settings;
         this.lastTouchFile = lastTouchFile;
         this.data = new ActivityRepository();
         this.projectList = new SortedList<Project>(new BasicEventList<Project>());
@@ -139,14 +142,14 @@ public class PresentationModel extends Observable {
         this.activitiesList.clear();
 
         // Set restored filter from settings
-        setFilter(UserSettings.instance().restoreFromSettings(), this);
+        setFilter(this.settings.restoreFromSettings(), this);
 
         // b) restore project (can be done here only as we need to search all projects)
-        final long selectedProjectId = UserSettings.instance().getFilterSelectedProjectId(ProjectFilterList.ALL_PROJECTS_DUMMY_VALUE);
+        final long selectedProjectId = this.settings.getFilterSelectedProjectId(ProjectFilterList.ALL_PROJECTS_DUMMY_VALUE);
         filter.setProject(this.data.findProjectById(selectedProjectId));
         applyFilter();
 
-        this.description = UserSettings.instance().getLastDescription();
+        this.description = this.settings.getLastDescription();
 
         // If last activity is still active, we must restart the timer
         if( active ) {
@@ -307,7 +310,7 @@ public class PresentationModel extends Observable {
 	            throw new ProjectActivityStateException(textBundle.textFor("PresentationModel.NoActiveProjectError")); //$NON-NLS-1$
 	        }
 	
-	        if( !force && UserSettings.instance().isDiscardEmptyActivities()) {
+	        if( !force && this.settings.isDiscardEmptyActivities()) {
 	            if( this.start.getMinuteOfDay() == stopTime.getMinuteOfDay() ) {
 	                
 	                clearOldActivity();
@@ -376,7 +379,7 @@ public class PresentationModel extends Observable {
     private void clearOldActivity() {
         // Clear old activity
         this.description = "";
-        UserSettings.instance().setLastDescription(this.description);
+        this.settings.setLastDescription(this.description);
         setActive(false);
         getData().stop();
         setStart(null);
@@ -411,7 +414,7 @@ public class PresentationModel extends Observable {
 	
 	            // 2. Track recorded project activity.
 	            if( stop.getMinuteOfDay() != start.getMinuteOfDay()
-	                || !UserSettings.instance().isDiscardEmptyActivities() ) {
+	                || !this.settings.isDiscardEmptyActivities() ) {
 	                final ProjectActivity activity = new ProjectActivity(start, stop, previousProject, description);
 	    
 	                getData().addActivity(activity);
@@ -425,7 +428,7 @@ public class PresentationModel extends Observable {
 	
 	            // Clear description
 	            description = "";
-	            UserSettings.instance().setLastDescription(description);
+	            this.settings.setLastDescription(description);
 	        }
     	}
     	
@@ -455,7 +458,7 @@ public class PresentationModel extends Observable {
             return;
         }
 
-        final File proTrackFile = new File(UserSettings.instance().getDataFileLocation());
+        final File proTrackFile = new File(this.settings.getDataFileLocation());
         // backup is now done inside ProTrackWriter
         //DataBackup.createBackup(proTrackFile);
 
@@ -468,6 +471,10 @@ public class PresentationModel extends Observable {
 
     /**
      * Add a new activity to the model.
+     * 
+     * Attention: this method ignores the 'discard empty activities' settings as
+     * it should only be called for explicit user actions - and if the user wants to
+     * add an empty activity let him ...
      * 
      * @param activity the activity to add
      * @param source the source of the add
@@ -808,7 +815,7 @@ public class PresentationModel extends Observable {
     }
     
     public ProjectActivity getOverlappingActivity(ProjectActivity newActivity, ProjectActivity original) {
-    	if(UserSettings.instance().isAllowOverlappingActivities()) {
+    	if(this.settings.isAllowOverlappingActivities()) {
     		return null;
     	}
     	
