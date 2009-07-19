@@ -226,7 +226,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     
     private ReportPanel getReportPanel() {
         if (reportPanel == null) {
-            reportPanel = new ReportPanel(this.model);
+            reportPanel = new ReportPanel(this.model, this.settings);
         }
         return reportPanel;
     }
@@ -277,7 +277,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      */
     private JPanel getCurrentActivityPanel() {
         if (currentActivityPanel == null) {
-            currentActivityPanel = new ActivityPanel(model);
+            currentActivityPanel = new ActivityPanel(model, this.settings);
         }
         return currentActivityPanel;
     }

@@ -26,7 +26,7 @@ import com.kemai.wremja.gui.panels.report.HoursByDayPanel;
 import com.kemai.wremja.gui.panels.report.HoursByProjectChartPanel;
 import com.kemai.wremja.gui.panels.report.HoursByProjectPanel;
 import com.kemai.wremja.gui.panels.report.HoursByWeekPanel;
-import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 
 /**
  * The panel containing the "category" buttons and the corresponding tabs.
@@ -42,6 +42,8 @@ public class FilteredActivitiesPane extends JXPanel {
 
 	/** The model. */
 	private final PresentationModel model;
+	
+    private final IUserSettings settings;
 
 	/** The category that's shown right now. */
 	private String shownCategory;
@@ -119,9 +121,10 @@ public class FilteredActivitiesPane extends JXPanel {
 		projectButton.setToolTipText(textBundle.textFor("Category.Project.ToolTipText"));
 	}
 
-	public FilteredActivitiesPane(final PresentationModel model) {
+	public FilteredActivitiesPane(final PresentationModel model, IUserSettings settings) {
 		super();
 		this.model = model;
+        this.settings = settings;
 
 		initialize();
 	}
@@ -145,7 +148,7 @@ public class FilteredActivitiesPane extends JXPanel {
 		//tabs.setTabShape(JideTabbedPane.SHAPE_WINDOWS);
 		//tabs.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
 
-		shownCategory = UserSettings.instance().getShownCategory();
+		shownCategory = this.settings.getShownCategory();
 
 		accummulatedActitvitiesTab = new CategorizedTab(); 
 		accummulatedActitvitiesPanel = new AccummulatedActitvitiesPanel(model.getFilteredReport());
@@ -276,7 +279,7 @@ public class FilteredActivitiesPane extends JXPanel {
 		shownCategory = newCategory;
 
 		//  b) in user settings
-		UserSettings.instance().setShownCategory(newCategory);
+		this.settings.setShownCategory(newCategory);
 
 		// 2. Set tab visibility
 		JTabbedPane newPane = this.category2Tabpane.get(this.shownCategory);

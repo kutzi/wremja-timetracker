@@ -3,16 +3,16 @@ package com.kemai.wremja.gui.model.io;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.kemai.util.IOUtils;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
@@ -29,10 +29,10 @@ public class DataBackup {
     private static final Logger LOG = Logger.getLogger(DataBackup.class);
 
     /** The date format for dates used in the names of backup files. */
-    private static final SimpleDateFormat BACKUP_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    private static final DateTimeFormatter BACKUP_DATE_FORMAT = DateTimeFormat.forPattern("yyyyMMdd_HHmmss");
 
     /** The full path of the backed up corrupt data file. */
-    private static final String ERROR_FILE_PATH = UserSettings.instance().getDataFileLocation() + ".Error";
+    private static final String ERROR_FILE_SUFFIX = ".Error";
 
     /** The name of the backed up corrupt data file. */
     private static final String ERROR_FILE_NAME = UserSettings.DEFAULT_FILE_NAME + ".Error";
@@ -40,27 +40,6 @@ public class DataBackup {
     /** The number of backup files to keep. */
     private static final int NUMBER_OF_BACKUPS = 5;
 
-    /**
-     * Create a backup from given file.
-     * @param toBackup the file to be backed up
-     */
-//    public static void createBackup(final File toBackup) {
-//        if (toBackup == null || !toBackup.exists()) {
-//            return;
-//        }
-//
-//        try {
-//            IOUtils.copyFile(
-//                    toBackup, 
-//                    new File(UserSettings.instance().getDataFileLocation() + "." + BACKUP_DATE_FORMAT.format(new Date())),
-//                    true
-//            );
-//            cleanupBackupFiles();
-//        } catch (Exception e) {
-//            LOG.error(e, e);
-//        }
-//    }
-    
     /**
      * Renames the argument to a backup file.
      * 
@@ -71,7 +50,7 @@ public class DataBackup {
             return;
         }
     	
-    	File backupFile = new File(UserSettings.instance().getDataFileLocation() + "." + BACKUP_DATE_FORMAT.format(new Date()));
+    	File backupFile = new File(file.getAbsolutePath() + "." + BACKUP_DATE_FORMAT.print(new DateTime()));
     	if(file.renameTo(backupFile)) {
     		cleanupBackupFiles();
     	} else {
@@ -103,7 +82,7 @@ public class DataBackup {
      * @return the list of backup files
      */
     public static List<File> getBackupFiles()  {
-        final SortedMap<Date, File> sortedBackupFiles = new TreeMap<Date, File>();
+        final SortedMap<DateTime, File> sortedBackupFiles = new TreeMap<DateTime, File>();
 
         final File dir = ApplicationSettings.instance().getApplicationDataDirectory();
         final String [] backupFiles = dir.list(new FilenameFilter() {
@@ -126,9 +105,9 @@ public class DataBackup {
 
         for (String backupFile : backupFiles) {
             try {
-            	final Date backupDate = BACKUP_DATE_FORMAT.parse(backupFile.substring(UserSettings.DEFAULT_FILE_NAME.length()+1));
+            	final DateTime backupDate = BACKUP_DATE_FORMAT.parseDateTime(backupFile.substring(UserSettings.DEFAULT_FILE_NAME.length()+1));
                 sortedBackupFiles.put(backupDate, new File(ApplicationSettings.instance().getApplicationDataDirectory() + File.separator + backupFile));
-            } catch (ParseException e) {
+            } catch (IllegalArgumentException e) {
                 // ignore
             }
         }
@@ -137,7 +116,7 @@ public class DataBackup {
         final List<File> backupFileList = new ArrayList<File>(sortedBackupFiles.size());
         final int numberOfBackups = sortedBackupFiles.size();
         for (int i = 0; i < numberOfBackups; i++) {
-            final Date backupDate = sortedBackupFiles.lastKey();
+            final DateTime backupDate = sortedBackupFiles.lastKey();
 
             backupFileList.add(sortedBackupFiles.get(backupDate));
             sortedBackupFiles.remove(backupDate);
@@ -151,9 +130,9 @@ public class DataBackup {
      * @param backupFile the backup file to get date for
      * @return The date on which the backup file has been created. If no date could be inferred <code>null</code> is returned.
      */
-    public static Date getDateOfBackup(final File backupFile) {
+    public static DateTime getDateOfBackup(final File backupFile) {
         try {
-            return BACKUP_DATE_FORMAT.parse(backupFile.getName().substring(UserSettings.DEFAULT_FILE_NAME.length()+1));
+            return BACKUP_DATE_FORMAT.parseDateTime(backupFile.getName().substring(UserSettings.DEFAULT_FILE_NAME.length()+1));
         } catch (Exception e) {
             LOG.error(e, e);
             return null;
@@ -163,9 +142,9 @@ public class DataBackup {
     /**
      * Make a backup copy of the corrupt data file.
      */
-    public static void saveCorruptDataFile() {
+    public static void saveCorruptDataFile(File file) {
         try {
-            IOUtils.copyFile(new File(UserSettings.instance().getDataFileLocation()), new File(ERROR_FILE_PATH), true);
+            IOUtils.copyFile(file, new File(file.getAbsolutePath() + ERROR_FILE_SUFFIX), true);
         } catch (IOException e) {
             LOG.error(e, e);
         }

@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
@@ -19,6 +17,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jdesktop.swingx.plaf.LookAndFeelAddons;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
@@ -328,7 +328,7 @@ public final class Launcher {
         } catch (IOException dataFileIOException) {
         	LOG.error("Data file corrupt, trying to read from backup", dataFileIOException);
             // Make a backup copy of the corrupt file
-            DataBackup.saveCorruptDataFile();
+            DataBackup.saveCorruptDataFile(file);
 
             // Reading data file was not successful so we try the backup files. 
             final List<File> backupFiles = DataBackup.getBackupFiles();
@@ -355,10 +355,10 @@ public final class Launcher {
 	            LOG.info("Loaded data from backup file " + backupFile +
 	                    ".\n" + data.getProjects().size() + " projects and " + data.getActivities().size() + " activities.");
 
-	            final Date backupDate = DataBackup.getDateOfBackup(backupFile);
+	            final DateTime backupDate = DataBackup.getDateOfBackup(backupFile);
 	            String backupDateString = backupFile.getName();
 	            if (backupDate != null)  {
-	                backupDateString = DateFormat.getDateTimeInstance().format(backupDate);
+	                backupDateString = DateTimeFormat.mediumDateTime().print(backupDate);
 	            }
 
 	            JOptionPane.showMessageDialog(null, 

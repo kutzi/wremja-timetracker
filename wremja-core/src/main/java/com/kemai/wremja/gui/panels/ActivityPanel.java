@@ -45,7 +45,7 @@ import com.kemai.wremja.gui.actions.StartAction;
 import com.kemai.wremja.gui.actions.StopAction;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
-import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
@@ -78,9 +78,17 @@ public class ActivityPanel extends JPanel implements Observer {
 
     /** Text for inactive duration. */
     private static final String DURATION_INACTIVE = "-:-- h";
+    
+    /** Format for minutes.
+     * 
+     * Note: access needs not to be synchronized as this should only be used from within the EDT.
+     */
+    private static final NumberFormat MINUTE_FORMAT = new DecimalFormat("##00");
 
     /** The model. */
     private final PresentationModel model;
+    
+    private final IUserSettings settings;
 
     /** Starts/stops the active project. */
     private final JButton startStopButton;
@@ -97,19 +105,14 @@ public class ActivityPanel extends JPanel implements Observer {
     /** Displays the start time of the running activity. */
     private JFormattedTextField start;
 
-    /** Format for minutes.
-     * 
-     * Note: access needs not to be synchronized as this should only be used from within the EDT.
-     */
-    private static final NumberFormat MINUTE_FORMAT = new DecimalFormat("##00");
-
     /**
      * Create a new panel for the given model.
      * @param model the model
      */
-    public ActivityPanel(final PresentationModel model) {
+    public ActivityPanel(final PresentationModel model, IUserSettings settings) {
         this.model = model;
         this.model.addObserver(this);
+        this.settings = settings;
         
         startStopButton = new JButton(new StartAction(null, this.model));
 
@@ -163,7 +166,7 @@ public class ActivityPanel extends JPanel implements Observer {
                 model.setDescription(description);
 
                 // Save description in settings.
-                UserSettings.instance().setLastDescription(description);
+                settings.setLastDescription(description);
             }
         });
 
@@ -366,7 +369,7 @@ public class ActivityPanel extends JPanel implements Observer {
         descriptionEditor.setEditable(true);
 
         // Clear description in settings.
-        UserSettings.instance().setLastDescription("");
+        this.settings.setLastDescription("");
 
         // Change button from start to stop
         startStopButton.setAction(new StopAction(this.model));
@@ -386,7 +389,7 @@ public class ActivityPanel extends JPanel implements Observer {
         descriptionEditor.setEditable(false);
 
         // Clear description in settings.
-        UserSettings.instance().setLastDescription("");
+        this.settings.setLastDescription("");
 
         startStopButton.setAction(new StartAction(null, this.model));
 

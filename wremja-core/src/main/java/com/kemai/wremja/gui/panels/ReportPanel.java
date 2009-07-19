@@ -21,7 +21,7 @@ import com.kemai.wremja.gui.lists.ProjectFilterList;
 import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
 import com.kemai.wremja.gui.lists.YearFilterList;
 import com.kemai.wremja.gui.model.PresentationModel;
-import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.filter.Filter;
 
@@ -38,6 +38,8 @@ public class ReportPanel extends JXPanel implements ActionListener {
 
     /** The model. */
     private final PresentationModel model;
+    
+    private final IUserSettings settings;
 
     /** Filter by selected project. */
     private JComboBox projectFilterSelector;
@@ -66,8 +68,9 @@ public class ReportPanel extends JXPanel implements ActionListener {
     /** The panel that actually displays the filtered activities. */
     private FilteredActivitiesPane filteredActivitiesPane;
 
-    public ReportPanel(final PresentationModel model) {
+    public ReportPanel(final PresentationModel model, IUserSettings settings) {
         this.model = model;
+        this.settings = settings;
 
         initialize();
     }
@@ -76,7 +79,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
      * Set up GUI components.
      */
     private void initialize() {
-        this.filteredActivitiesPane = new FilteredActivitiesPane(model);
+        this.filteredActivitiesPane = new FilteredActivitiesPane(this.model, this.settings);
 
         final double borderBig = 8;
         final double border = 3;
@@ -87,9 +90,9 @@ public class ReportPanel extends JXPanel implements ActionListener {
                         TableLayout.FILL, border } }; // Rows
         this.setLayout(new TableLayout(size));
 
-        int selectedYear = UserSettings.instance().getFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
-        int selectedMonth = UserSettings.instance().getFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
-        int selectedWeek = UserSettings.instance().getFilterSelectedWeekOfYear(WeekOfYearFilterList.ALL_WEEKS_OF_YEAR_DUMMY);
+        int selectedYear = this.settings.getFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
+        int selectedMonth = this.settings.getFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
+        int selectedWeek = this.settings.getFilterSelectedWeekOfYear(WeekOfYearFilterList.ALL_WEEKS_OF_YEAR_DUMMY);
         
         JXTitledSeparator filterSep = new JXTitledSeparator(textBundle.textFor("ReportPanel.FiltersLabel")); //$NON-NLS-1$
         this.add(filterSep, "1, 1, 15, 1"); //$NON-NLS-1$
@@ -167,7 +170,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
             );
             projectFilterSelector.setToolTipText(textBundle.textFor("ProjectFilterSelector.ToolTipText")); //$NON-NLS-1$
 
-            final long selectedProjectId = UserSettings.instance().getFilterSelectedProjectId(ProjectFilterList.ALL_PROJECTS_DUMMY_VALUE);
+            final long selectedProjectId = this.settings.getFilterSelectedProjectId(ProjectFilterList.ALL_PROJECTS_DUMMY_VALUE);
             for (LabeledItem<Project> item : projectFilterList.getProjectList()) {
                 if (item.getItem().getId() == selectedProjectId) {
                     projectFilterSelector.setSelectedItem(item);
@@ -270,26 +273,26 @@ public class ReportPanel extends JXPanel implements ActionListener {
         // Store filter by month
         LabeledItem<Integer> filterItem = (LabeledItem<Integer>) this.monthFilterSelector.getSelectedItem();
         final int selectedMonth = filterItem.getItem().intValue();
-        UserSettings.instance().setFilterSelectedMonth(selectedMonth);
+        this.settings.setFilterSelectedMonth(selectedMonth);
 
         // Store filter by year
         filterItem = (LabeledItem<Integer>) this.yearFilterSelector.getSelectedItem();
         final int selectedYear = filterItem.getItem().intValue();
-        UserSettings.instance().setFilterSelectedYear(selectedYear);
+        this.settings.setFilterSelectedYear(selectedYear);
 
         // Store filter by week of year
         filterItem = (LabeledItem<Integer>) this.weekFilterSelector.getSelectedItem();
         final int selectedWeekOfYear = filterItem.getItem().intValue();
-        UserSettings.instance().setFilterSelectedWeekOfYear(selectedWeekOfYear);
+        this.settings.setFilterSelectedWeekOfYear(selectedWeekOfYear);
 
         // Store filter by project
         final LabeledItem<Project> projectFilterItem = (LabeledItem<Project>) getProjectFilterSelector().getSelectedItem();
         final Project project = projectFilterItem.getItem();
         if (!ProjectFilterList.ALL_PROJECTS_DUMMY.equals(project)) {
             long projectId = project.getId();
-            UserSettings.instance().setFilterSelectedProjectId(projectId);
+            this.settings.setFilterSelectedProjectId(projectId);
         } else {
-            UserSettings.instance().setFilterSelectedProjectId(
+            this.settings.setFilterSelectedProjectId(
                     ProjectFilterList.ALL_PROJECTS_DUMMY_VALUE
             );
         }
