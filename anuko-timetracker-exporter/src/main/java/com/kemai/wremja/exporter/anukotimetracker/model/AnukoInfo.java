@@ -38,9 +38,18 @@ public class AnukoInfo {
     }
     
     public AnukoProject getProjectById( long id ) {
-        for(AnukoProject project : projects) {
+        for(AnukoProject project : this.projects) {
             if(project.getId() == id ) {
                 return project;
+            }
+        }
+        return null;
+    }
+    
+    public AnukoActivity getActivityById( long id ) {
+        for(AnukoActivity activity : this.activities) {
+            if(activity.getId() == id ) {
+                return activity;
             }
         }
         return null;

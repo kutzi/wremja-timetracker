@@ -13,7 +13,10 @@ public class AnukoPluggableExporter implements PluggableExporter {
     
     @Override
     public AbstractWremjaAction getExportAction(Frame owner, PresentationModel model) {
-        return new AnukoExporterAction(owner, model, settings);
+        //return new AnukoExporterAction(owner, model, settings);
+        
+        // FIXME
+        return null;
     }
 
     @Override

@@ -41,7 +41,7 @@ public class RequestTest {
         filter.setWeekOfYear(DateUtils.getNow().getWeekOfWeekyear());
         filter.setYear(DateUtils.getNow().getYear());
         
-        //displayExportDialog( data, filter );
+        displayExportDialog( data, filter );
     }
     
     private void displayExportDialog(ActivityRepository data, Filter filter) throws InterruptedException {
@@ -49,7 +49,8 @@ public class RequestTest {
 
         
         JDialog exportDialog = new ExportDialog(null,
-                "http://timetracker.wrconsulting.com/wginfo.php", data, filter);
+                "http://timetracker.wrconsulting.com/wginfo.php",
+                "kutzi_user", "moin", data, filter);
         exportDialog.setLocationByPlatform(true);
         exportDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         exportDialog.pack();

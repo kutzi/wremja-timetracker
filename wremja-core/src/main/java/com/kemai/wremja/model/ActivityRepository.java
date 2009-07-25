@@ -88,10 +88,9 @@ public class ActivityRepository implements ReadableRepository, Serializable {
 	}
 
 	/**
-	 * Looks for a project with given id.
-	 * @param id the id of the project to look for
-	 * @return the project or <code>null</code>
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Project findProjectById(final long id) {
 		for (Project project : getProjects()) {
 			if (id == project.getId()) {

@@ -16,7 +16,6 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -35,10 +34,11 @@ import com.kemai.wremja.model.filter.Filter;
 /**
  * Dialog for exporting to Anuko time tracker
  */
-@SuppressWarnings("serial")//$NON-NLS-1$
 public class ExportDialog extends EscapeDialog {
 
-    private static final Logger log = Logger.getLogger(ExportDialog.class);
+    private static final long serialVersionUID = 1L;
+
+    private static final Logger LOG = Logger.getLogger(ExportDialog.class);
     
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExportDialog.class);
@@ -51,7 +51,7 @@ public class ExportDialog extends EscapeDialog {
 
     private final Filter filter;
 
-    private JTextField url;
+    private JLabel url;
     
     private ProjectMappingPanel panel;
     
@@ -68,13 +68,13 @@ public class ExportDialog extends EscapeDialog {
      * @param owner
      * @param model
      */
-    public ExportDialog(final Frame owner, final String url,
+    public ExportDialog(final Frame owner, final String url, String login, String password,
             final ReadableRepository data, final Filter filter ) {
         super(owner);
         if( filter == null ) {
             throw new NullPointerException("filter must not be null!");
         }
-        this.anukoAccess = new AnukoAccess( url, "kutzi_user", "moin" );
+        this.anukoAccess = new AnukoAccess( url, login, password );
         this.data = data;
         this.filter = filter;
 
@@ -128,7 +128,7 @@ public class ExportDialog extends EscapeDialog {
                     		"Exported activities will be added to the existing!</b></html>");
                 }
             } catch (Exception e) {
-                log.error(e, e);
+                LOG.error(e, e);
             }
         } else {
             this.anukoInfo = new AnukoInfo();
@@ -146,7 +146,7 @@ public class ExportDialog extends EscapeDialog {
         this.setLayout(tableLayout);
         
         this.add( new JLabel("URL :"), "1, 1");
-        this.add( getUrlTextField(), "3, 1");
+        this.add( new JLabel(this.anukoAccess.getUrl()), "3, 1");
         
         this.add(getMappingPanel(), "0, 3, 4, 3");
         
@@ -155,21 +155,6 @@ public class ExportDialog extends EscapeDialog {
         this.add(getExportButton(), "1, 7, 3, 7");
     }
 
-    private JTextField getUrlTextField() {
-        if( this.url == null ) {
-            String text = this.anukoAccess.getUrl();
-            this.url = new JTextField(text);
-            this.url.addActionListener( new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    anukoAccess.setUrl( url.getText() );
-                    updateInfo();
-                }
-            });
-        }
-        return this.url;
-    }
-    
     private JLabel getWarningLabel() {
         if( warningLabel == null ) {
             warningLabel = new JLabel();

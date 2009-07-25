@@ -33,4 +33,11 @@ public interface ReadableRepository {
      * @return
      */
     public boolean isActive();
+
+    /**
+     * Looks for a project with given id.
+     * @param id the id of the project to look for
+     * @return the project or <code>null</code>
+     */
+    public Project findProjectById(long id);
 }

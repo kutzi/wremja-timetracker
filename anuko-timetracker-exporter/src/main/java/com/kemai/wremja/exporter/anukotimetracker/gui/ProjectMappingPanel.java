@@ -3,6 +3,7 @@ package com.kemai.wremja.exporter.anukotimetracker.gui;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -39,8 +40,9 @@ import com.kemai.wremja.model.filter.Filter;
  * A panel which helps matching the wremja {@link Project}s to
  * the Anuko activities.
  */
-@SuppressWarnings("serial")
 public class ProjectMappingPanel extends JXPanel {
+
+    private static final long serialVersionUID = 1L;
 
     private final AnukoInfo info;
     private final ReadableRepository wremjaData;
@@ -66,8 +68,8 @@ public class ProjectMappingPanel extends JXPanel {
         final double borderBig = 8;
         final double border = 3;
         
-        int numberOfRows = getwremjaProjects().size();
-        double[] rowLayout = new double[numberOfRows*2 + 1];
+        int numberOfRows = getWremjaProjects().size();
+        double[] rowLayout = new double[numberOfRows*2 + 3];
         for( int i=0; i < numberOfRows; i++ ) {
             int row = i*2;
             rowLayout[row] = border;
@@ -84,17 +86,25 @@ public class ProjectMappingPanel extends JXPanel {
                 rowLayout };
         this.setLayout(new TableLayout(size));
         
-        int row = 1;
-        for( Project p : getwremjaProjects() ) {
-            JXLabel label = new JXLabel(p.getTitle());
-            label.setToolTipText(p.getDescription());
+        JXLabel label = new JXLabel("Wremja");
+        label.setFont(label.getFont().deriveFont(Font.BOLD));
+        this.add(label, "1, 1");
+        
+        label = new JXLabel("Anuko");
+        label.setFont(label.getFont().deriveFont(Font.BOLD));
+        this.add(label, "3, 1");
+        
+        int row = 3;
+        for( Project wremjaProject : getWremjaProjects() ) {
+            label = new JXLabel(wremjaProject.getTitle());
+            label.setToolTipText(wremjaProject.getDescription());
             this.add(label, "1, " + row); //$NON-NLS-1$
-            this.add(getProjectSelector(p, info.getActivities()), "3, " + row); //$NON-NLS-1$
-            row = row+2;
+            this.add(getProjectSelector(wremjaProject, info.getActivities()), "3, " + row); //$NON-NLS-1$
+            row = row + 2;
         }
     }
     
-    private SortedSet<Project> getwremjaProjects() {
+    private SortedSet<Project> getWremjaProjects() {
         if( this.wremjaProjects == null ) {
             if( filter == null ) {
                 this.wremjaProjects = new TreeSet<Project>(this.wremjaData.getProjects());
@@ -157,7 +167,7 @@ public class ProjectMappingPanel extends JXPanel {
     
     private void addMapping( Project p, AnukoActivity a) {
         this.mappings.put(p, a);
-        if( mappings.size() == getwremjaProjects().size() ) {
+        if( mappings.size() == getWremjaProjects().size() ) {
             this.exportButton.setEnabled(true);
         }
     }
@@ -167,7 +177,9 @@ public class ProjectMappingPanel extends JXPanel {
         this.exportButton.setEnabled(false);
     }
     
-    public static class ComboTooltipRenderer extends DefaultListCellRenderer {
+    private static class ComboTooltipRenderer extends DefaultListCellRenderer {
+
+        private static final long serialVersionUID = 1L;
 
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
