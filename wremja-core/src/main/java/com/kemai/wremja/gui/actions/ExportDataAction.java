@@ -8,7 +8,7 @@ import javax.swing.filechooser.FileFilter;
 import com.kemai.swing.util.FileFilters;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
-import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.model.export.Exporter;
 import com.kemai.wremja.model.export.RawDataExporter;
 
@@ -29,8 +29,8 @@ public class ExportDataAction extends AbstractExportAction {
     private static final FileFilter DATA_FILE_FILTER = new FileFilters.DataExportFileFilter();
 
 
-    public ExportDataAction(final Frame owner, final PresentationModel model) {
-        super(owner, model);
+    public ExportDataAction(Frame owner, PresentationModel model, IUserSettings settings) {
+        super(owner, model, settings);
 
         setName(textBundle.textFor("ExportDataAction.Name")); //$NON-NLS-1$
         setTooltip(textBundle.textFor("ExportDataAction.ShortDescription")); //$NON-NLS-1$
@@ -66,7 +66,7 @@ public class ExportDataAction extends AbstractExportAction {
      */
     @Override
     protected String getLastExportLocation() {
-        return UserSettings.instance().getLastDataExportLocation();
+        return getSettings().getLastDataExportLocation();
     }
 
     /**
@@ -74,6 +74,6 @@ public class ExportDataAction extends AbstractExportAction {
      */
     @Override
     protected void setLastExportLocation(final String lastExportLocation) {
-        UserSettings.instance().setLastDataExportLocation(lastExportLocation);
+        getSettings().setLastDataExportLocation(lastExportLocation);
     }
 }

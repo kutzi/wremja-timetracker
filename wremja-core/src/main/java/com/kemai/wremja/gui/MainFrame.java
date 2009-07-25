@@ -4,11 +4,15 @@ import static com.kemai.wremja.gui.GuiConstants.ACTIVE_ICON;
 import static com.kemai.wremja.gui.GuiConstants.NORMAL_ICON;
 import info.clearthought.layout.TableLayout;
 
+import java.awt.Frame;
 import java.awt.SystemTray;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowListener;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,6 +37,7 @@ import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.actions.AboutAction;
+import com.kemai.wremja.gui.actions.AbstractExportAction;
 import com.kemai.wremja.gui.actions.AbstractWremjaAction;
 import com.kemai.wremja.gui.actions.AddActivityAction;
 import com.kemai.wremja.gui.actions.ExitAction;
@@ -257,8 +262,8 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         
         toolBar.add(new AddActivityAction(this, this.model));
         toolBar.add(new JToolBar.Separator());
-        toolBar.add(new ExportExcelAction(this, this.model));
-        toolBar.add(new ExportCsvAction(this, this.model));
+        toolBar.add(new ExportExcelAction(this, this.model, this.settings));
+        toolBar.add(new ExportCsvAction(this, this.model, this.settings));
         toolBar.add(new JToolBar.Separator());
         toolBar.add(this.model.getEditStack().getUndoAction());
         toolBar.add(this.model.getEditStack().getRedoAction());
@@ -343,7 +348,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             editMenu.add(getAddActivityMenuItem());
 
             editMenu.addSeparator();
-            editMenu.add(new JMenuItem(new SettingsAction(this, model)));
+            editMenu.add(new JMenuItem(new SettingsAction(this, model, this.settings)));
         }
         return editMenu;
     }
@@ -468,7 +473,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      */
     private JMenuItem getExportExcelItem() {
         if (exportExcelItem == null) {
-            final AbstractWremjaAction excelExportAction = new ExportExcelAction(this, this.model);
+            final AbstractWremjaAction excelExportAction = new ExportExcelAction(this, this.model, this.settings);
             exportExcelItem = new JMenuItem(excelExportAction);
         }
         return exportExcelItem;
@@ -480,7 +485,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      */
     private JMenuItem getExportCsvItem() {
         if (exportCsvItem == null) {
-            final AbstractWremjaAction csvExportAction = new ExportCsvAction(this, this.model);
+            final AbstractWremjaAction csvExportAction = new ExportCsvAction(this, this.model, this.settings);
             exportCsvItem = new JMenuItem(csvExportAction);
         }
         return exportCsvItem;
@@ -492,7 +497,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      */
     private JMenuItem getExportDataItem() {
         if (exportDataItem == null) {
-            final AbstractWremjaAction exportDataAction = new ExportDataAction(this, this.model);
+            final AbstractWremjaAction exportDataAction = new ExportDataAction(this, this.model, this.settings);
             exportDataItem = new JMenuItem(exportDataAction);
         }
         return exportDataItem;
@@ -511,8 +516,28 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
             exportMenu.add(getExportExcelItem());
             exportMenu.add(getExportCsvItem());
             exportMenu.add(getExportDataItem());
+            
+            for(AbstractExportAction action : getExportedPlugins()) {
+            	exportMenu.add(new JMenuItem(action));
+            }
         }
         return exportMenu;
+    }
+    
+    
+    private List<AbstractExportAction> getExportedPlugins() {
+    	// TODO
+    	try {
+    		Class<?> clazz = Class.forName("com.kemai.wremja.exporter.anukotimetracker.AnukoExporterAction");
+    		@SuppressWarnings("unchecked")
+    		Constructor<AbstractExportAction> cons = (Constructor<AbstractExportAction>) clazz.getConstructor(Frame.class, PresentationModel.class, IUserSettings.class);
+    		AbstractExportAction action = cons.newInstance(this, model, settings);
+    		return Collections.singletonList(action);
+    	} catch(Exception e) {
+    		LOG.warn(e, e);
+    		return Collections.emptyList();
+    	}
+    	
     }
 
     /**

@@ -7,9 +7,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -19,6 +17,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JList;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
@@ -31,6 +30,7 @@ import com.kemai.swing.util.LabeledItem;
 import com.kemai.wremja.exporter.anukotimetracker.model.AnukoActivity;
 import com.kemai.wremja.exporter.anukotimetracker.model.AnukoInfo;
 import com.kemai.wremja.exporter.anukotimetracker.model.AnukoProject;
+import com.kemai.wremja.exporter.anukotimetracker.model.Mapping;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.ReadableRepository;
@@ -50,16 +50,22 @@ public class ProjectMappingPanel extends JXPanel {
     private final JButton exportButton;
     private SortedSet<Project> wremjaProjects;
     
-    private final Map<Project, AnukoActivity> mappings = new HashMap<Project, AnukoActivity>();
+    private final Mapping mappings;
 
     
     public ProjectMappingPanel(AnukoInfo info, ReadableRepository wremjaData,
-            Filter filter, JButton exportButton) {
+            Filter filter, String mappings, JButton exportButton) {
         super();
         this.info = info;
         this.wremjaData = wremjaData;
         this.filter = filter;
         this.exportButton = exportButton;
+        
+        if(StringUtils.isNotBlank(mappings)) {
+        	this.mappings = Mapping.fromString(mappings, wremjaData, info);
+        } else {
+        	this.mappings = new Mapping();
+        }
         
         initialize();
     }
@@ -129,11 +135,20 @@ public class ProjectMappingPanel extends JXPanel {
     
     private JComboBox getProjectSelector(final Project p, Collection<AnukoActivity> activities) {
         
+    	AnukoActivity selectedActivity = this.mappings.get(p);
+    	
         EventList<LabeledItem<AnukoActivity>> eventList =
             new BasicEventList<LabeledItem<AnukoActivity>>();
         eventList.add(NO_SELECTION_ITEM);
+        
+        int selectionIndex = 0;
+        int i = 1;
         for( AnukoActivity activity : activities ) {
             eventList.add( new LabeledItem<AnukoActivity>(activity, activity.getName()) );
+            if(activity.equals(selectedActivity)) {
+            	selectionIndex = i;
+            }
+            i++;
         }
         SortedList<LabeledItem<AnukoActivity>> projectList = new SortedList<LabeledItem<AnukoActivity>>(eventList);
             
@@ -144,14 +159,13 @@ public class ProjectMappingPanel extends JXPanel {
         
         projectFilterSelector.setRenderer(new ComboTooltipRenderer() );
 
-        // Select first entry
-        projectFilterSelector.setSelectedIndex(0);
+        projectFilterSelector.setSelectedIndex(selectionIndex);
 
         projectFilterSelector.addActionListener(new ActionListener() {
 
-            @SuppressWarnings("unchecked")
             @Override
             public void actionPerformed(ActionEvent e) {
+            	@SuppressWarnings("unchecked")
                 LabeledItem<AnukoActivity> item = (LabeledItem<AnukoActivity>)
                     ((JComboBox)e.getSource()).getSelectedItem();
                 if( item == NO_SELECTION_ITEM ) {
@@ -166,7 +180,7 @@ public class ProjectMappingPanel extends JXPanel {
     }
     
     private void addMapping( Project p, AnukoActivity a) {
-        this.mappings.put(p, a);
+        this.mappings.add(p, a);
         if( mappings.size() == getWremjaProjects().size() ) {
             this.exportButton.setEnabled(true);
         }
@@ -206,7 +220,7 @@ public class ProjectMappingPanel extends JXPanel {
         }
     }
     
-    public Map<Project, AnukoActivity> getMappings() {
+    public Mapping getMappings() {
         return this.mappings;
     }
 }

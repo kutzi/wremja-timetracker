@@ -251,7 +251,7 @@ public class SettingsDialog extends EscapeDialog {
         JPanel anukoPanel = new JPanel();
         tabbedPane.addTab("Anuko", null, anukoPanel, "Anuko exporter is currently not usable");
         int index = tabbedPane.getTabCount() - 1;
-        tabbedPane.setEnabledAt(index, false);
+        tabbedPane.setEnabledAt(index, true);
         tableLayout = new TableLayout(size);
         anukoPanel.setLayout(tableLayout);
 

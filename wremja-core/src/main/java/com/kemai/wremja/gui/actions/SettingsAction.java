@@ -9,30 +9,34 @@ import javax.swing.ImageIcon;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.dialogs.SettingsDialog;
 import com.kemai.wremja.gui.model.PresentationModel;
-import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 
 /**
  * Shows the settings dialog of the application.
  * @author remast
  */
-@SuppressWarnings("serial")
 public class SettingsAction extends AbstractWremjaAction {
+
+    private static final long serialVersionUID = 1L;
 
 	public static final Icon ICON = new ImageIcon(SettingsDialog.class.getResource("/icons/stock_folder-properties.png")); //$NON-NLS-1$
 
-    /** The bundle for internationalized texts. */
+	/** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(SettingsAction.class);
+
+	private final IUserSettings settings;
 
     /**
      * Creates a new settings action.
      * @param owner the owning frame
      */
-    public SettingsAction(final Frame owner, final PresentationModel model) {
+    public SettingsAction(Frame owner, PresentationModel model, IUserSettings settings) {
         super(owner, model);
+		this.settings = settings;
 
         setName(textBundle.textFor("SettingsAction.Name")); //$NON-NLS-1$
         setTooltip(textBundle.textFor("SettingsAction.ShortDescription")); //$NON-NLS-1$
-        putValue(SMALL_ICON, ICON);
+        setIcon(ICON);
     }
 
     /**
@@ -41,7 +45,7 @@ public class SettingsAction extends AbstractWremjaAction {
     @Override
     public final void actionPerformed(final ActionEvent event) {
         // Display the settings dialog
-        final SettingsDialog settingsDialog = new SettingsDialog(getOwner(), UserSettings.instance());
+        final SettingsDialog settingsDialog = new SettingsDialog(getOwner(), this.settings);
         settingsDialog.pack();
         settingsDialog.setLocationRelativeTo(getOwner());
         settingsDialog.setVisible(true);

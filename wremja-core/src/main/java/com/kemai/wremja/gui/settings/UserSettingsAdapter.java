@@ -10,6 +10,7 @@ import com.kemai.wremja.model.filter.Filter;
  *
  * @author kutzi
  */
+// TODO: this is a test support class and should therefore be moved into a test module
 public class UserSettingsAdapter implements IUserSettings {
 
     @Override
@@ -25,6 +26,11 @@ public class UserSettingsAdapter implements IUserSettings {
     @Override
     public String getAnukoUrl() {
         return null;
+    }
+    
+    @Override
+    public String getAnukoMappings() {
+    	return null;
     }
 
     @Override
@@ -136,6 +142,10 @@ public class UserSettingsAdapter implements IUserSettings {
 
     @Override
     public void setAnukoUrl(String url) {
+    }
+    
+    @Override
+    public void setAnukoMappings(String s) {
     }
 
     @Override

@@ -2,13 +2,20 @@ package com.kemai.wremja.exporter.anukotimetracker;
 
 import javax.swing.JDialog;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
+import org.jdesktop.swingx.plaf.LookAndFeelAddons;
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Test;
 
+import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.kemai.util.DateUtils;
 import com.kemai.wremja.exporter.anukotimetracker.gui.ExportDialog;
+import com.kemai.wremja.gui.settings.IUserSettings;
+import com.kemai.wremja.gui.settings.UserSettingsAdapter;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
@@ -47,8 +54,11 @@ public class RequestTest {
     private void displayExportDialog(ActivityRepository data, Filter filter) throws InterruptedException {
         initLookAndFeel();
 
+        IUserSettings settings = createUserSettings();
+        
         
         JDialog exportDialog = new ExportDialog(null,
+        		settings,
                 "http://timetracker.wrconsulting.com/wginfo.php",
                 "kutzi_user", "moin", data, filter);
         exportDialog.setLocationByPlatform(true);
@@ -73,19 +83,49 @@ public class RequestTest {
 //        }
     }
 
-    private static void initLookAndFeel() {
+    private IUserSettings createUserSettings() {
+	    return new UserSettingsAdapter() {
+
+			@Override
+            public String getAnukoMappings() {
+				return "[1,42430],[2,2]";
+            }
+
+			@Override
+            public void setAnukoMappings(String s) {
+	            System.out.println("saved mappings: " + s);
+            }
+	    	
+	    };
+    }
+
+	private void initLookAndFeel() {
+    	// enable antialiasing
+        System.setProperty("swing.aatext", "true");
+
+        // use Xrender pipeline on Linux, if available
+        System.setProperty("sun.java2d.xrender", "true");
+
         try {
             // a) Try windows
-            UIManager.setLookAndFeel("com.jgoodies.looks.windows.WindowsLookAndFeel"); //$NON-NLS-1$
-        } catch (Exception e) {
+            UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
+            Plastic3DLookAndFeel.setTabStyle(PlasticLookAndFeel.TAB_STYLE_METAL_VALUE);
+            Plastic3DLookAndFeel.setHighContrastFocusColorsEnabled(true);
+        } catch (UnsupportedLookAndFeelException e) {
             // b) Try system look & feel
             try {
                 UIManager.setLookAndFeel(
                         UIManager.getSystemLookAndFeelClassName()
                 );
             } catch (Exception ex) {
-                System.err.println(ex);
+                Assert.fail(ex.toString());
             }
+        }
+        String s = LookAndFeelAddons.getBestMatchAddonClassName();
+        try {
+            LookAndFeelAddons.setAddon(s);
+        } catch (Exception e) {
+        	Assert.fail(e.toString());
         }
     }
 }

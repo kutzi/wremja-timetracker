@@ -84,6 +84,13 @@ public interface IUserSettings {
     public String getAnukoUrl();
 
     public void setAnukoUrl(String url);
+    
+    /**
+     * Returns the mappings from wremja to anuko projects.
+     */
+    public String getAnukoMappings();
+    
+    public void setAnukoMappings(String s);
 
     public boolean isRememberWindowSizeLocation();
 
@@ -123,5 +130,4 @@ public interface IUserSettings {
      * @return the restored filter
      */
     public Filter restoreFromSettings();
-
 }

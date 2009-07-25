@@ -329,7 +329,24 @@ public final class UserSettings implements IUserSettings {
     public void setAnukoUrl(String url) {
         userConfig.setProperty(EXPORTER_ANUKO_URL, url);
     }
+
+    private static final String EXPORTER_ANUKO_MAPPINGS = "exporter.anuko.mappings";
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getAnukoMappings() {
+        return doGetString(EXPORTER_ANUKO_MAPPINGS, "");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setAnukoMappings(String s) {
+        userConfig.setProperty(EXPORTER_ANUKO_MAPPINGS, s);
+    }
     
     //------------------------------------------------
     // Remember window size and location

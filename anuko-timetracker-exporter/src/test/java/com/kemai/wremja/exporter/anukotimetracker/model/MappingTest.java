@@ -31,10 +31,11 @@ public class MappingTest {
         m.add(b, aa2);
         
         String s = m.toString();
-        System.out.println(s);
         
         Mapping m2 = Mapping.fromString(s, repo, info);
         
-        assertEquals(2, m2.getMap().size());
+        assertEquals(2, m2.size());
+        assertEquals(aa1, m2.get(a));
+        assertEquals(aa2, m2.get(b));
     }
 }

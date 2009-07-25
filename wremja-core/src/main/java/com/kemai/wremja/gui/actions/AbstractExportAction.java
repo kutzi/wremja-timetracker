@@ -16,6 +16,7 @@ import javax.swing.filechooser.FileFilter;
 import com.kemai.util.IOUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.export.Exporter;
 
@@ -32,9 +33,11 @@ public abstract class AbstractExportAction extends AbstractWremjaAction {
     /** The logger. */
     private static final Logger log = Logger.getLogger(AbstractExportAction.class);
 
-
-    public AbstractExportAction(Frame owner, PresentationModel model) {
+    private final IUserSettings settings;
+    
+    public AbstractExportAction(Frame owner, PresentationModel model, IUserSettings settings) {
         super(owner, model);
+        this.settings = settings;
     }
 
     /**
@@ -43,6 +46,10 @@ public abstract class AbstractExportAction extends AbstractWremjaAction {
      */
     public abstract Exporter createExporter();
 
+    protected IUserSettings getSettings() {
+    	return this.settings;
+    }
+    
     /**
      * Getter for the last export location.
      * @return the location of the last export or <code>null</code>

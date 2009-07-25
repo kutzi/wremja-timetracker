@@ -8,8 +8,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -30,8 +28,8 @@ public class AnukoInfoResponseHandler implements ResponseHandler<AnukoInfo> {
             throws ClientProtocolException, IOException {
         Document doc = handler.handleResponse(response);
         
-        XMLOutputter output = new XMLOutputter(Format.getPrettyFormat());
-        output.output(doc, System.out);
+        //XMLOutputter output = new XMLOutputter(Format.getPrettyFormat());
+        //output.output(doc, System.out);
         
         if( doc != null ) {
             return parse(doc);

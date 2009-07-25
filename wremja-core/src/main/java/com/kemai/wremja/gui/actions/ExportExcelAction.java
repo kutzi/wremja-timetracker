@@ -8,7 +8,7 @@ import javax.swing.filechooser.FileFilter;
 import com.kemai.swing.util.FileFilters;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
-import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.model.export.ExcelExporter;
 import com.kemai.wremja.model.export.Exporter;
 
@@ -30,12 +30,12 @@ public final class ExportExcelAction extends AbstractExportAction {
     private static final FileFilter EXCEL_FILE_FILTER = new FileFilters.ExcelFileFilter();
 
 
-    public ExportExcelAction(final Frame owner, final PresentationModel model) {
-        super(owner, model);
+    public ExportExcelAction(Frame owner, PresentationModel model, IUserSettings settings) {
+        super(owner, model, settings);
 
         setName(textBundle.textFor("ExcelExportAction.Name")); //$NON-NLS-1$
         setTooltip(textBundle.textFor("ExcelExportAction.ShortDescription")); //$NON-NLS-1$
-        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/x-office-spreadsheet.png"))); //$NON-NLS-1$
+        setIcon(new ImageIcon(getClass().getResource("/icons/x-office-spreadsheet.png"))); //$NON-NLS-1$
     }
 
     /**
@@ -67,7 +67,7 @@ public final class ExportExcelAction extends AbstractExportAction {
      */
     @Override
     protected String getLastExportLocation() {
-        return UserSettings.instance().getLastExcelExportLocation();
+        return getSettings().getLastExcelExportLocation();
     }
 
     /**
@@ -75,7 +75,7 @@ public final class ExportExcelAction extends AbstractExportAction {
      */
     @Override
     protected void setLastExportLocation(final String lastExportLocation) {
-        UserSettings.instance().setLastExcelExportLocation(lastExportLocation);
+        getSettings().setLastExcelExportLocation(lastExportLocation);
     }
 
 }

@@ -11,22 +11,20 @@ import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.util.TextResourceBundle;
-import com.kemai.wremja.exporter.anukotimetracker.model.AnukoActivity;
 import com.kemai.wremja.exporter.anukotimetracker.model.AnukoInfo;
+import com.kemai.wremja.exporter.anukotimetracker.model.Mapping;
 import com.kemai.wremja.exporter.anukotimetracker.util.AnukoAccess;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.logging.Logger;
-import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.ReadableRepository;
 import com.kemai.wremja.model.filter.Filter;
@@ -51,9 +49,7 @@ public class ExportDialog extends EscapeDialog {
 
     private final Filter filter;
 
-    private JLabel url;
-    
-    private ProjectMappingPanel panel;
+    private final ProjectMappingPanel panel;
     
     private JLabel warningLabel;
     
@@ -63,14 +59,21 @@ public class ExportDialog extends EscapeDialog {
 
     private DateTime endDate;
 
+	private final IUserSettings settings;
+	
+	private boolean export = false;
+
     /**
      * Create a new dialog.
      * @param owner
+     * @param anukoMappings 
      * @param model
      */
-    public ExportDialog(final Frame owner, final String url, String login, String password,
-            final ReadableRepository data, final Filter filter ) {
+    public ExportDialog(Frame owner, 
+    		IUserSettings settings, String url, String login, String password,
+            ReadableRepository data, Filter filter ) {
         super(owner);
+		this.settings = settings;
         if( filter == null ) {
             throw new NullPointerException("filter must not be null!");
         }
@@ -78,6 +81,13 @@ public class ExportDialog extends EscapeDialog {
         this.data = data;
         this.filter = filter;
 
+        initRelevantDates();
+        updateInfo();
+
+        this.panel = new ProjectMappingPanel( this.anukoInfo, this.data, this.filter,
+        		this.settings.getAnukoMappings(),
+        		getExportButton() );
+        
         initialize();
     }
     
@@ -98,9 +108,7 @@ public class ExportDialog extends EscapeDialog {
      * Sets up GUI components.
      */
     private void initialize() {
-        initRelevantDates();
         getWarningLabel();
-        updateInfo();
         
         setLocationRelativeTo(getOwner());
         //this.setIconImage(new ImageIcon(getClass().getResource("/icons/gtk-add.png")).getImage()); //$NON-NLS-1$
@@ -148,7 +156,7 @@ public class ExportDialog extends EscapeDialog {
         this.add( new JLabel("URL :"), "1, 1");
         this.add( new JLabel(this.anukoAccess.getUrl()), "3, 1");
         
-        this.add(getMappingPanel(), "0, 3, 4, 3");
+        this.add(this.panel, "0, 3, 4, 3");
         
         this.add(getWarningLabel(), "1, 5, 3, 5");
 
@@ -164,14 +172,6 @@ public class ExportDialog extends EscapeDialog {
         return warningLabel;
     }
 
-    private JPanel getMappingPanel() {
-        if( panel == null ) {
-            panel = new ProjectMappingPanel( this.anukoInfo, this.data, this.filter,
-                    getExportButton() );
-        }
-        return panel;
-    }
-    
     private JButton getExportButton() {
         if (exportButton == null) {
             exportButton = new JButton();
@@ -183,11 +183,8 @@ public class ExportDialog extends EscapeDialog {
 
             exportButton.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent event) {
-                    System.out.println( "Mappings: ");
-                    Map<Project, AnukoActivity> mappings = panel.getMappings();
-                    for( Map.Entry<Project, AnukoActivity> e : mappings.entrySet()) {
-                        System.out.println( e.getKey() + " => " + e.getValue().getName());
-                    }
+                    settings.setAnukoMappings(panel.getMappings().toString());
+                    export = true;
                     ExportDialog.this.dispose();
                 }
             });
@@ -198,7 +195,11 @@ public class ExportDialog extends EscapeDialog {
         return exportButton;
     }
 
-    public String getLastUrl() {
-        return this.url.getText();
+    public Mapping getMappings() {
+    	return this.panel.getMappings();
+    }
+    
+    public boolean isExport() {
+    	return this.export;
     }
 }

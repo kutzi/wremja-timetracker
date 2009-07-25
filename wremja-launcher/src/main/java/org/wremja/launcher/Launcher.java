@@ -415,7 +415,11 @@ public final class Launcher {
         fileHandler.setFormatter(new BetterFormatter());
         fileHandler.setLevel(Level.INFO);
         
-        ConsoleHandler consoleHandler = new ConsoleHandler();
+        ConsoleHandler consoleHandler = new ConsoleHandler() {
+        	{
+        		setOutputStream(System.out);
+        	}
+        };
         consoleHandler.setLevel(Level.WARNING);
         consoleHandler.setFormatter(new BetterFormatter());
         

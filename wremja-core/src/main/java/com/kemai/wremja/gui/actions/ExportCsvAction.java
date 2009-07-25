@@ -8,7 +8,7 @@ import javax.swing.filechooser.FileFilter;
 import com.kemai.swing.util.FileFilters;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
-import com.kemai.wremja.gui.settings.UserSettings;
+import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.model.export.CsvExporter;
 import com.kemai.wremja.model.export.Exporter;
 
@@ -29,8 +29,8 @@ public final class ExportCsvAction extends AbstractExportAction {
     /** File filter for CSV files. */
     private static final FileFilter CSV_FILE_FILTER = new FileFilters.CsvFileFilter();
 
-    public ExportCsvAction(final Frame owner, final PresentationModel model) {
-        super(owner, model);
+    public ExportCsvAction(Frame owner, PresentationModel model, IUserSettings settings) {
+        super(owner, model, settings);
 
         setName(textBundle.textFor("CsvExportAction.Name")); //$NON-NLS-1$
         setTooltip(textBundle.textFor("CsvExportAction.ShortDescription")); //$NON-NLS-1$
@@ -66,7 +66,7 @@ public final class ExportCsvAction extends AbstractExportAction {
      */
     @Override
     protected String getLastExportLocation() {
-        return UserSettings.instance().getLastCsvExportLocation();
+        return getSettings().getLastCsvExportLocation();
     }
 
     /**
@@ -74,7 +74,7 @@ public final class ExportCsvAction extends AbstractExportAction {
      */
     @Override
     protected void setLastExportLocation(final String lastExportLocation) {
-        UserSettings.instance().setLastCsvExportLocation(lastExportLocation);
+        getSettings().setLastCsvExportLocation(lastExportLocation);
     }
 
 }

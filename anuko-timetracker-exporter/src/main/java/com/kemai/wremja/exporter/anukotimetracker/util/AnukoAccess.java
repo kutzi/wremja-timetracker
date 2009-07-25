@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -23,7 +22,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import com.kemai.wremja.exporter.anukotimetracker.model.AnukoActivity;
 import com.kemai.wremja.exporter.anukotimetracker.model.AnukoInfo;
-import com.kemai.wremja.model.Project;
+import com.kemai.wremja.exporter.anukotimetracker.model.Mapping;
 import com.kemai.wremja.model.ProjectActivity;
 
 public class AnukoAccess {
@@ -82,7 +81,7 @@ public class AnukoAccess {
         return this.url;
     }
 
-    public void submitActivities(List<ProjectActivity> activities, Map<Project, AnukoActivity> map) throws ClientProtocolException, IOException {
+    public void submitActivities(List<ProjectActivity> activities, Mapping map) throws ClientProtocolException, IOException {
         
         DefaultHttpClient httpclient = new DefaultHttpClient();
         List<NameValuePair> baseParameters = new ArrayList<NameValuePair>();
@@ -115,7 +114,7 @@ public class AnukoAccess {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "UTF-8");
             post.setEntity(entity);
             HttpResponse response = httpclient.execute(post);
-            response.getEntity().writeTo(System.out);
+            //response.getEntity().writeTo(System.out);
             response.getEntity().consumeContent();
         }
         
@@ -127,7 +126,7 @@ public class AnukoAccess {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "UTF-8");
             post.setEntity(entity);
             HttpResponse response = httpclient.execute(post);
-            response.getEntity().writeTo(System.out);
+            //response.getEntity().writeTo(System.out);
             response.getEntity().consumeContent();
         }
     }
