@@ -1,3 +1,7 @@
+/*
+ * $Id$
+ * $HeadURL$
+ */
 package com.kemai.wremja.model;
 
 import static org.junit.Assert.assertEquals;
@@ -6,7 +10,12 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-
+/**
+ * Test case for {@link Project}.
+ * 
+ * @author kutzi
+ * @author $Author$ (last change)
+ */
 public class ProjectTest {
 
     /**
