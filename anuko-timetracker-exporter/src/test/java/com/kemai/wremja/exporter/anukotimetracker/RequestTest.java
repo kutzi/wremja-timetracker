@@ -8,6 +8,7 @@ import javax.swing.WindowConstants;
 import org.jdesktop.swingx.plaf.LookAndFeelAddons;
 import org.joda.time.DateTime;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
@@ -26,7 +27,7 @@ import com.kemai.wremja.model.filter.Filter;
  */
 public class RequestTest {
 
-    @Test
+    @Test @Ignore
     public void testApp() throws InterruptedException {
         ActivityRepository data = new ActivityRepository();
         Project project1 = new Project(1, "Project 1", "Description of project 1");
