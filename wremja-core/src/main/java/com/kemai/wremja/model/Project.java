@@ -11,9 +11,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("project") 
 public class Project implements Serializable, Comparable<Project>{
     
-    /**
-     * 
-     */
+    public static final String PROPERTY_TITLE = "com.kemai.wremja.model.title";
+    
     private static final long serialVersionUID = 1L;
 
     /** The unique identifier of the project. */
@@ -25,8 +24,6 @@ public class Project implements Serializable, Comparable<Project>{
     /** A description of the project. */
     private String description;
     
-    public static final String PROPERTY_TITLE = "com.kemai.wremja.model.title";
-
     /**
      * Creates a new project.
      * @param id the unique id
@@ -73,7 +70,7 @@ public class Project implements Serializable, Comparable<Project>{
     
     /**
      * Setter for the title.
-     * @param title the title to set
+     * @param title the new title
      */
     public void setTitle(final String title) {
         this.title = title;
@@ -103,13 +100,25 @@ public class Project implements Serializable, Comparable<Project>{
     }
 
     @Override
-    public int compareTo(final Project project) {
-        if (project == null || this.getTitle() == null) {
+    public int compareTo(final Project that) {
+        if (that == null || this.getTitle() == null) {
             return 0;
         }
         
-        // Compare the title only.
-        return this.getTitle().compareTo(project.getTitle());
+        
+        int result = getTitle().compareTo(that.getTitle());
+        
+        if(result != 0) {
+            return result;
+        }
+
+        if(this.getId() < that.getId()) {
+            return -1;
+        } else if (this.getId() > that.getId()){
+            return 1;
+        }
+        
+        return 0; 
     }
     
     @Override
