@@ -60,6 +60,7 @@ public class ProjectMappingPanel extends JXPanel {
         this.wremjaData = wremjaData;
         this.filter = filter;
         this.exportButton = exportButton;
+        this.exportButton.setEnabled(true);
         
         if(StringUtils.isNotBlank(mappings)) {
         	this.mappings = Mapping.fromString(mappings, wremjaData, info);
@@ -160,6 +161,10 @@ public class ProjectMappingPanel extends JXPanel {
         projectFilterSelector.setRenderer(new ComboTooltipRenderer() );
 
         projectFilterSelector.setSelectedIndex(selectionIndex);
+        
+        if(selectionIndex == 0) {
+        	this.exportButton.setEnabled(false);
+        }
 
         projectFilterSelector.addActionListener(new ActionListener() {
 
