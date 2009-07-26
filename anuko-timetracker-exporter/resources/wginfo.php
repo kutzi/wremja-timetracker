@@ -1,58 +1,71 @@
 <?php
-// +----------------------------------------------------------------------+
-// | WR Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2004-2006 WR Consulting (http://wrconsulting.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:  Igor Melnik <imelnik@wrconsulting.com>
-// +----------------------------------------------------------------------+
+/** WR Time Tracker
+*
+* Copyright (c) 2004-2006 WR Consulting (http://wrconsulting.com)
+*
+* LIBERAL FREEWARE LICENSE: This source code document may be used
+* by anyone for any purpose, and freely redistributed alone or in
+* combination with other software, provided that the license is obeyed.
+*
+* There are only two ways to violate the license:
+*
+* 1. To redistribute this code in source form, with the copyright
+*    notice or license removed or altered. (Distributing in compiled
+*    forms without embedded copyright notices is permitted).
+*
+* 2. To redistribute modified versions of this code in *any* form
+*    that bears insufficient indications that the modifications are
+*    not the work of the original author(s).
+*
+* This license applies to this document only, not any other software
+* that it may be combined with.
+* 
+* Contributors: Igor Melnik <igor.melnik at mail.ru>
+* 
+*/
 
+// $Id: wginfo.php,v 1.0 2005/07/08 16:08:21 dries Exp $
+
+/**
+ * The script for interaction TimeTracker API and iGoogle gadget
+ * @package TimeTracker
+ */
 	require_once('initialize.php');
 	import('UserHelper');
 	import('TimeHelper');
-	import('DateTime');
+	import('DateAndTime');
 	import('SysConfig');
 	import('ProjectHelper');
 	import('ActivityHelper');
 
-	function doStart($user, $cl_project, $cl_activity, $cl_date, $cl_start) {
-		$crdate = new DateTime('m/d/Y', $cl_date);
-		TimeHelper::insert(
-			$crdate->toString(DB_DATEFORMAT),
-			$user->getActiveUser(),
-			$cl_project,
-			$cl_activity,
-			$cl_start,
-			"",
-			"",
-			"",
-			"",
-			true);
-	}
 	
+	if ($GLOBALS["I18N"] && $_GET["lng"]) {
+		$i18n = $GLOBALS["I18N"];
+		$i18n->load($_GET["lng"]);
+		$GLOBALS["I18N"] = &$i18n;
+	}
+		
+        // inserts timesheet record without end time 
+	function doStart($user, $cl_project, $cl_activity, $cl_date, $cl_start, $cl_notes) {
+		$crdate = new DateAndTime('m/d/Y', $cl_date);
+		TimeHelper::insert(array(
+			'date' => $crdate->toString(DB_DATEFORMAT),
+			'user_id' => $user->getActiveUser(),
+			'project' => $cl_project,
+			'activity' => $cl_activity,
+			'start' => $cl_start,
+			'finish' => '',
+			'duration' => '',
+			'note' => $cl_notes,
+			'billable' => true));
+	}
+
+        // updates unfinished timesheet record
 	function doFinish($user, $cl_project, $cl_activity, $cl_date, $cl_finish, $rec) {
 		if (TimeHelper::toMinutes($cl_finish)==TimeHelper::toMinutes($rec["tfrom"])) {
 			doDelete($user, $rec);
 		} else {
-			$crdate = new DateTime();
+			$crdate = new DateAndTime();
 			$crdate->parseVal($rec["al_date"], DB_DATEFORMAT);
 			
 			$locktime = $user->getLocktime();
@@ -62,7 +75,7 @@
 				$locktime = $sc->getValue(SYSC_LOCK_DAYS);	
 			}
 			if ($locktime>0) {
-				$lockdate = new DateTime();
+				$lockdate = new DateAndTime();
 				$lockdate->decDay($locktime);
 			}
 			
@@ -74,20 +87,21 @@
 	      		exit;
 	    	}
 	
-			TimeHelper::update(
-				$rec["al_date"],
-				$rec["al_timestamp"],
-				$user->getActiveUser(),
-				$rec["al_project_id"],
-				$rec["al_activity_id"],
-				$rec["tfrom"],
-				$cl_finish,
-				"",
-				$rec["al_comment"],
-				true);
+			TimeHelper::update(array(
+				'date' => $rec["al_date"],
+				'ts' => $rec["al_timestamp"],
+				'user_id' => $user->getActiveUser(),
+				'project' => $rec["al_project_id"],
+				'activity' => $rec["al_activity_id"],
+				'start' => $rec["tfrom"],
+				'finish' => $cl_finish,
+				'duration' => '',
+				'comment' => $rec["al_comment"],
+				'billable' => true));
 		}
 	}
-	
+
+        // deletes timesheet record
 	function doDelete($user, $rec) {
 		TimeHelper::delete($user->getActiveUser(), $rec["al_timestamp"], $rec["al_date"]);
 	}
@@ -105,22 +119,27 @@
 		exit();
 	}
 	
-	$crdate = new DateTime();
-
 	$rec = TimeHelper::checkPresentTimeWithEmptyDuration($user->getUserId());
 	
+	$errors = array();
 	$cl_project		= $request->getParameter('project');
 	$cl_activity	= $request->getParameter('activity');
 	$cl_action		= $request->getParameter('action');
 	$cl_start		= $request->getParameter('start');
 	$cl_finish		= $request->getParameter('finish');
+	$cl_notes		= $request->getParameter('notes');
 	$cl_date		= $request->getParameter('date');
 	
+	$crdate = new DateAndTime('%m/%d/%Y', $cl_date);
+	if ($crdate->isError()) die("Date Error");
+	
 	if ($cl_action=="start") {
+		if (empty($cl_project)) $errors[] = "Error: Select project";
+		if (empty($cl_activity)) $errors[] = "Error: Select activity";
 		if ($rec) {
 			doFinish($user, $cl_project, $cl_activity, $cl_date, $cl_finish, $rec);
 		}
-		doStart($user, $cl_project, $cl_activity, $cl_date, $cl_start);
+		doStart($user, $cl_project, $cl_activity, $cl_date, $cl_start, $cl_notes);
 		$rec = TimeHelper::checkPresentTimeWithEmptyDuration($user->getUserId());
 	}
 	
@@ -128,16 +147,20 @@
 		doFinish($user, $cl_project, $cl_activity, $cl_date, $cl_finish, $rec);
 		$rec = TimeHelper::checkPresentTimeWithEmptyDuration($user->getUserId());
 	}
-	
-	$project_list = ProjectHelper::findAllProjects($user, true);
-	$activity_list = ActivityHelper::findAllActivity($user);
 
+        // prepares data for response
+	$project_list = ProjectHelper::findAllProjects($user, array('restrict' => true));
+	$activity_list = ActivityHelper::findAllActivity($user);
+	
 	$week_time = TimeHelper::getTimePerWeek($user, $crdate);
+	if (!$week_time) $week_time = "0:00";
+
 	$daily_time = TimeHelper::getTotalTime($crdate->toString(DB_DATEFORMAT),$user->getActiveUser());
+	if ($daily_time == false) $daily_time = "0:00";
 	
 	header('Content-Type: text/xml');
 
-	$xml = '<?xml version="1.0" encoding="UTF-8"?>';
+	/*$xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";*/
 	$xml = '<info>';
 	$xml .= '<projects>';
 	foreach ($project_list as $project) {
@@ -153,10 +176,17 @@
 	$xml .= '</activities>';
 	$xml .= '<records>';
 	if ($rec) {
-		$xml .= '<incompleate project="'.$rec["al_project_id"].'" activity="'.$rec["al_activity_id"].'" start="'.$rec["tfrom"].'" finish="" date="'.$rec["al_date"].'"/>';
+		$xml .= '<incompleate project="'.$rec["al_project_id"].'" activity="'.$rec["al_activity_id"].'" start="'.$rec["tfrom"].'" date="'.$rec["al_date"].'">';
+		$xml .= '<![CDATA['.$rec["al_comment"].']]>';
+		$xml .= "</incompleate>\n";
 	}
-	$xml .= '<compleate count="0" daily_time="'.$daily_time.'" week_time="'.$week_time.'"/>';
+	$xml .= "<compleate daily_time=\"$daily_time\" week_time=\"$week_time\" />";
 	$xml .= '</records>';
+	$xml .= '<errors>';
+	foreach ($errors as $error) {
+		$xml .= '<error id="" message="'.$error.'"/>';
+	}
+	$xml .= '</errors>';
 	$xml .= '</info>';
 	
 	print $xml;

@@ -29,12 +29,20 @@ public class AnukoAccess {
     
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("MM/dd/yyyy");
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormat.forPattern("HH:mm");
+    private static final DateTimeFormatter NOW_FORMAT = DateTimeFormat.forPattern(" yyyy-MM-dd HH:mm");
 
-    private String url;
+    private final String url;
     private final String username;
     private final String password;
 
     public AnukoAccess( String url, String username, String password ) {
+    	if(url.endsWith(".php")) {
+    		throw new IllegalArgumentException("URL must not end with .php");
+    	}
+    	
+    	if(! url.endsWith("/")) {
+    		url = url + '/';
+    	}
         this.url = url;
         this.username = username;
         this.password = password;
@@ -64,17 +72,13 @@ public class AnukoAccess {
         String dateString = DATE_FORMAT.print(date);
         parameters.add(new BasicNameValuePair("date", dateString));
         
-        HttpGet httpget = new HttpGet( this.url + "?"
+        HttpGet httpget = new HttpGet( this.url + "wginfo.php?"
                 + URLEncodedUtils.format(parameters, "UTF-8"));
         
         //System.out.println("executing request " + httpget.getURI());
 
         ResponseHandler<AnukoInfo> responseHandler = new AnukoInfoResponseHandler();
         return httpclient.execute(httpget, responseHandler);
-    }
-    
-    public void setUrl(String text) {
-        this.url = text != null ? text.trim() : "";
     }
     
     public String getUrl() {
@@ -99,22 +103,26 @@ public class AnukoAccess {
     private void submitActivity(DefaultHttpClient httpclient,
             ProjectActivity activity, AnukoActivity anukoActivity,
             List<NameValuePair> baseParameters) throws ClientProtocolException, IOException {
+    	String submitUrl = this.url + "wginfo.php";
+    	
         List<NameValuePair> myBaseParams = new ArrayList<NameValuePair>( baseParameters );
         myBaseParams.add(new BasicNameValuePair("project", "" + anukoActivity.getFirstProject().getId()));
         myBaseParams.add(new BasicNameValuePair("activity", "" + anukoActivity.getId()));
         myBaseParams.add(new BasicNameValuePair("date", DATE_FORMAT.print(activity.getDay())));
+        //myBaseParams.add(new BasicNameValuePair("date_now", NOW_FORMAT.print(new DateTime())));
         myBaseParams.add(new BasicNameValuePair("note", activity.getDescription()));
         myBaseParams = Collections.unmodifiableList(myBaseParams);
         
         {
-            HttpPost post = new HttpPost(this.url);
+            HttpPost post = new HttpPost(submitUrl);
             List<NameValuePair> params = new ArrayList<NameValuePair>( myBaseParams );
             params.add(new BasicNameValuePair("action", "start"));
             params.add(new BasicNameValuePair("start", TIME_FORMAT.print(activity.getStart())));
+            //params.add(new BasicNameValuePair("billable", "1"));
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "UTF-8");
             post.setEntity(entity);
             HttpResponse response = httpclient.execute(post);
-            //response.getEntity().writeTo(System.out);
+            response.getEntity().writeTo(System.out);
             response.getEntity().consumeContent();
         }
         
@@ -126,7 +134,7 @@ public class AnukoAccess {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "UTF-8");
             post.setEntity(entity);
             HttpResponse response = httpclient.execute(post);
-            //response.getEntity().writeTo(System.out);
+            response.getEntity().writeTo(System.out);
             response.getEntity().consumeContent();
         }
     }

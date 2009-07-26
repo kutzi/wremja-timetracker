@@ -60,7 +60,7 @@ public class RequestTest {
         
         JDialog exportDialog = new ExportDialog(null,
         		settings,
-                "http://timetracker.wrconsulting.com/wginfo.php",
+                "http://timetracker.wrconsulting.com/",
                 "kutzi_user", "moin", data, filter);
         exportDialog.setLocationByPlatform(true);
         exportDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

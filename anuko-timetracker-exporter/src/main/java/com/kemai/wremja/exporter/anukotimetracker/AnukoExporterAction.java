@@ -5,6 +5,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
@@ -24,7 +25,7 @@ public class AnukoExporterAction extends AbstractExportAction {
         
         setName("Anuko Exporter");
         setTooltip("Exports projects to Anuko Timetracker");
-        //putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/package-x-generic.png"))); //$NON-NLS-1$
+        setIcon(new ImageIcon(AnukoExporterAction.class.getResource("/icons/anuko_icon.gif"))); //$NON-NLS-1$
     }
 
     @Override
@@ -70,6 +71,8 @@ public class AnukoExporterAction extends AbstractExportAction {
     				"Error", JOptionPane.ERROR_MESSAGE);
     		return;
     	}
+    	
+    	
     	
         ExportDialog dialog = new ExportDialog(getOwner(),
         		settings,
