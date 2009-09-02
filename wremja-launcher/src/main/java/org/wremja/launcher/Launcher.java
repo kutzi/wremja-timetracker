@@ -341,7 +341,7 @@ public final class Launcher {
                 model.setData(data);
             } else {
             	// look if there are backup files
-                final List<File> backupFiles = DataBackup.getBackupFiles();
+                final List<File> backupFiles = DataBackup.getBackupFiles(file);
 
                 if (CollectionUtils.isNotEmpty(backupFiles)) {
                     loadFromBackup(model, backupFiles);
@@ -353,7 +353,7 @@ public final class Launcher {
             DataBackup.saveCorruptDataFile(file);
 
             // Reading data file was not successful so we try the backup files. 
-            final List<File> backupFiles = DataBackup.getBackupFiles();
+            final List<File> backupFiles = DataBackup.getBackupFiles(file);
 
             if (CollectionUtils.isNotEmpty(backupFiles)) {
                 loadFromBackup(model, backupFiles);
