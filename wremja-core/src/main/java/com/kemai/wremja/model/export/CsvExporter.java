@@ -10,12 +10,13 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import au.com.bytecode.opencsv.CSVWriter;
+
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.ReadableRepository;
 import com.kemai.wremja.model.filter.Filter;
-
-import au.com.bytecode.opencsv.CSVWriter;
+import com.kemai.wremja.model.io.IOConstants;
 
 /**
  * Exports the data into Commma Separated Value (CSV) format.
@@ -63,17 +64,16 @@ public class CsvExporter implements Exporter {
         }
 
         final CSVWriter writer = new CSVWriter(
-                new OutputStreamWriter(outputStream),
-                SEPARATOR_CHARACTER
+                new OutputStreamWriter(outputStream, IOConstants.FILE_ENCODING),
+                SEPARATOR_CHARACTER, '"', "\n"
         );
 
         writer.writeNext(CSV_HEADER);
 
         for (ProjectActivity activity : activities) {
             writer.writeNext(makeCsvLine(activity));
-            writer.flush();
         }
-
+        writer.flush();
     }
 
     /**
