@@ -25,17 +25,13 @@ import com.kemai.wremja.logging.Logger;
  */
 public class DataBackup {
 
-    /** The logger. */
-    private static final Logger LOG = Logger.getLogger(DataBackup.class);
+    private static final Logger LOGGER = Logger.getLogger(DataBackup.class);
 
     /** The date format for dates used in the names of backup files. */
     private static final DateTimeFormatter BACKUP_DATE_FORMAT = DateTimeFormat.forPattern("yyyyMMdd_HHmmss");
 
     /** The full path of the backed up corrupt data file. */
     private static final String ERROR_FILE_SUFFIX = ".Error";
-
-    /** The name of the backed up corrupt data file. */
-    private static final String ERROR_FILE_NAME = UserSettings.DEFAULT_FILE_NAME + ".Error";
 
     /** The number of backup files to keep. */
     private static final int NUMBER_OF_BACKUPS = 5;
@@ -46,23 +42,27 @@ public class DataBackup {
      * @param file the file
      */
     public static void toBackup(File file) {
-    	if (file == null || !file.exists()) {
-            return;
+    	try {
+	        if (file == null || !file.exists()) {
+	            return;
+	        }
+	        
+	        File backupFile = new File(file.getAbsolutePath() + "." + BACKUP_DATE_FORMAT.print(new DateTime()));
+	        if(file.renameTo(backupFile)) {
+	        	cleanupBackupFiles(file);
+	        } else {
+	        	LOGGER.error("Couldn't rename to " + backupFile.getAbsolutePath());
+	        }
+        } catch (Exception e) {
+	        LOGGER.warn(e, e);
         }
-    	
-    	File backupFile = new File(file.getAbsolutePath() + "." + BACKUP_DATE_FORMAT.print(new DateTime()));
-    	if(file.renameTo(backupFile)) {
-    		cleanupBackupFiles();
-    	} else {
-    		LOG.error("Couldn't rename to " + backupFile.getAbsolutePath());
-    	}
     }
 
     /**
      * Cleans up old backup files so that not more backup files than <code>NUMBER_OF_BACKUPS</code> exist.
      */
-    private static void cleanupBackupFiles() {
-        final List<File> backupFiles = getBackupFiles();
+    private static void cleanupBackupFiles(File file) {
+        final List<File> backupFiles = getBackupFiles(file);
         if (backupFiles != null && backupFiles.size() > NUMBER_OF_BACKUPS) {
             final int numberOfFilesToDelete = backupFiles.size() - NUMBER_OF_BACKUPS;
 
@@ -70,7 +70,7 @@ public class DataBackup {
                 final File toDelete = backupFiles.get(backupFiles.size() - i);
                 final boolean successfull = toDelete.delete();
                 if (!successfull) {
-                    LOG.error("Could not delete file " + toDelete.getAbsolutePath() + ".");
+                    LOGGER.error("Could not delete file " + toDelete.getAbsolutePath() + ".");
                 }
             }
         }
@@ -79,18 +79,20 @@ public class DataBackup {
     /**
      * Get a list of all backup files in order of the backup date (with the latest backup as first). If 
      * there there are no backups <code>Collections.EMPTY_LIST</code> is returned.
+     * 
+     * @param file the file for which backups should be searched
      * @return the list of backup files
      */
-    public static List<File> getBackupFiles()  {
+    public static List<File> getBackupFiles(final File file)  {
         final SortedMap<DateTime, File> sortedBackupFiles = new TreeMap<DateTime, File>();
 
-        final File dir = ApplicationSettings.instance().getApplicationDataDirectory();
+        final File dir = file.getParentFile();
         final String [] backupFiles = dir.list(new FilenameFilter() {
 
             public boolean accept(final File dir, final String name) {
-                if (!StringUtils.equals(ERROR_FILE_NAME, name) 
-                        && !StringUtils.equals(UserSettings.DEFAULT_FILE_NAME, name) 
-                        && name.startsWith(UserSettings.DEFAULT_FILE_NAME)) {
+                if (!name.endsWith(ERROR_FILE_SUFFIX) 
+                        && !StringUtils.equals(file.getName(), name) 
+                        && name.startsWith(file.getName())) {
                     return true;
                 }
 
@@ -134,7 +136,7 @@ public class DataBackup {
         try {
             return BACKUP_DATE_FORMAT.parseDateTime(backupFile.getName().substring(UserSettings.DEFAULT_FILE_NAME.length()+1));
         } catch (Exception e) {
-            LOG.error(e, e);
+            LOGGER.error(e, e);
             return null;
         }
     }
@@ -146,7 +148,7 @@ public class DataBackup {
         try {
             IOUtils.copyFile(file, new File(file.getAbsolutePath() + ERROR_FILE_SUFFIX), true);
         } catch (IOException e) {
-            LOG.error(e, e);
+            LOGGER.error(e, e);
         }
     }
 }
