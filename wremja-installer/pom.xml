@@ -5,6 +5,7 @@
 	<packaging>jar</packaging>
 	<version>1.2-SNAPSHOT</version>
 	<name>Wremja Installer</name>
+        <description>This module generates the installer files for Wremja</description>
 	<url>http://kemai.com/projects/wremja/pages/Home</url>
 	<parent>
 		<groupId>com.kemai.wremja</groupId>
@@ -108,3 +109,4 @@
 		</dependency>
 	</dependencies>
 </project>
+
