@@ -92,6 +92,10 @@ public class PresentationModel extends Observable {
     
     private volatile boolean stopActivityOnShutdown = true;
 
+    /**
+     * Saves the last timestamp wremja was active.
+     * Is updated on a regular basis and when changes get saved.
+     */
     private final File lastTouchFile;
 
 	private IdGenerator idGenerator;

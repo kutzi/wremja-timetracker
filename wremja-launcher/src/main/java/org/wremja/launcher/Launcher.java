@@ -19,6 +19,8 @@
  */
 package org.wremja.launcher;
 
+import java.awt.Frame;
+import java.awt.SystemTray;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -206,12 +208,9 @@ public final class Launcher {
             mainFrame.handleUnfinishedActivityOnStartup(lastModified);
         }
         
-        // TODO: clean up this mess. Make handling of tray enabled vs. tray disabled easier!
-        if(mainFrame.getTray() != null) {
-        	mainFrame.setVisible(!minimized);
-        	if( minimized ) {
-        		mainFrame.showTray(true);
-        	}
+        if (settings.isUseTrayIcon() && SystemTray.isSupported()) {
+        	mainFrame.setVisible(true);
+        	mainFrame.setExtendedState(minimized ? Frame.ICONIFIED : Frame.NORMAL);
         } else {
         	// tray icon disabled or not supported
         	// remembering minimized state doesn't make much sense in that scenario

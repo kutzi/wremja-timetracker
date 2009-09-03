@@ -5,10 +5,8 @@ import static com.kemai.wremja.gui.GuiConstants.NORMAL_ICON;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.Frame;
-import java.awt.SystemTray;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.WindowListener;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -17,7 +15,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -63,10 +60,8 @@ import com.kemai.wremja.model.ProjectActivity;
  * @author kutzi
  */
 @SuppressWarnings("serial")
-public class MainFrame extends JXFrame implements Observer, WindowListener {
+public class MainFrame extends JXFrame implements Observer {
 	
-	private static final boolean DEBUG = false;
-
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(MainFrame.class);
 
@@ -137,7 +132,7 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
     private JMenuItem importItem = null;
     
     /** The Tray icon, if any. */
-    private TrayIcon tray;
+    private final TraySupport tray;
 
     /**
      * This is the default constructor.
@@ -151,7 +146,10 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         this.settings = settings;
 
         initialize();
-        initTrayIcon();
+        this.tray = new TraySupport(this.model, this);
+        if (this.settings.isUseTrayIcon()) {
+        	this.tray.enable();
+        }
     }
 
     /**
@@ -183,8 +181,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         
         this.setJMenuBar(getMainMenuBar());
 
-        this.addWindowListener(this);
-
         // 1. Init start-/stop-Buttons
         if (this.model.isActive()) {
             this.setIconImage(ACTIVE_ICON);
@@ -204,29 +200,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         this.add(initToolBar(), "0, 0");
         this.add(getCurrentActivityPanel(), "0, 1");
         this.add(getReportPanel(), "0, 2");
-    }
-
-
-    /**
-     * Initializes the lock file.
-     * @param model the model to be displayed
-     * @param mainInstance the main instance
-     * @param mainFrame
-     */
-    private void initTrayIcon() {
-        LOG.debug("Initializing tray icon ...");
-
-        // Create try icon.
-        try {
-            if (this.settings.isUseTrayIcon() && SystemTray.isSupported()) {
-                tray = new TrayIcon(model, this);
-            } else {
-                tray = null;
-            }
-        } catch (UnsupportedOperationException e) {
-            // Tray icon not supported on the current platform.
-            tray = null;
-        }
     }
     
     private ReportPanel getReportPanel() {
@@ -554,70 +527,6 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
         return importMenu;
     }
 
-    @Override
-    public void windowIconified(final java.awt.event.WindowEvent e) {
-    	if(DEBUG) {
-    		System.out.println("iconified");
-    	}
-        if (getTray() != null) {
-            setVisible(false);
-            showTray(true);
-        }
-    }
-
-    @Override
-    public void windowOpened(final java.awt.event.WindowEvent e) {
-    	if(DEBUG) {
-    		System.out.println("opened");
-    	}
-        showTray(false);
-    }
-
-    @Override
-    public void windowClosing(final java.awt.event.WindowEvent e) {
-    	if(DEBUG) {
-    		System.out.println("closing");
-    	}
-        if (getTray() != null) {
-            setVisible(false);
-            showTray(true);
-        } else {
-            new ExitAction(this, this.model).actionPerformed(null);
-        }
-    }
-
-    @Override
-    public void windowClosed(final java.awt.event.WindowEvent e) {
-    	if(DEBUG) {
-    		System.out.println("closed");
-    	}
-    	if (getTray() != null) {
-    		setExtendedState(JFrame.NORMAL);
-    	}
-    }
-
-    @Override
-    public void windowDeiconified(final java.awt.event.WindowEvent e) {
-    	if(DEBUG) {
-    		System.out.println("Deiconified");
-    	}
-        showTray(false);
-    }
-
-    @Override
-    public void windowActivated(final java.awt.event.WindowEvent e) {
-    	if(DEBUG) {
-    		System.out.println("activated");
-    	}
-    }
-
-    @Override
-    public void windowDeactivated(final java.awt.event.WindowEvent e) {
-    	if(DEBUG) {
-    		System.out.println("deactivated");
-    	}
-    }
-
     /**
      * This method initializes exitItem.
      * @return javax.swing.JMenuItem
@@ -635,21 +544,10 @@ public class MainFrame extends JXFrame implements Observer, WindowListener {
      * @return The tray icon or <code>null</code> if a tray icon
      * is not supported by the platform.
      */
-    public TrayIcon getTray() {
+    public TraySupport getTray() {
         return this.tray;
     }
     
-    public void showTray( boolean show ) {
-        if( this.tray != null ) {
-            if( show ) {
-                this.tray.show();
-            } else {
-                this.tray.hide();
-            }
-        }
-        this.settings.setWindowMinimized(show);
-    }
-
     public void handleUnfinishedActivityOnStartup(long lastModified) throws InterruptedException, InvocationTargetException {
         setVisible(true);
         

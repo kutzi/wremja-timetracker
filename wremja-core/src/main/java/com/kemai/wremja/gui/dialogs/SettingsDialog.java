@@ -36,7 +36,6 @@ import org.jdesktop.swingx.JXHeader;
 
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.swing.util.WPasswordField;
-import com.kemai.util.OSUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.util.UiUtilities;
 import com.kemai.wremja.gui.actions.SettingsAction;
@@ -80,12 +79,6 @@ public class SettingsDialog extends EscapeDialog {
     private final JCheckBox useTrayicon = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.Title")); //$NON-NLS-1$
     {
     	String toolTip = textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.ToolTipText"); //$NON-NLS-1$
-    	if(OSUtils.isGnome()) {
-    		toolTip = "<html>" + toolTip + //$NON-NLS-1$
-    		"<br>" + //$NON-NLS-1$
-    		textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.ToolTipGnomeWarning") + //$NON-NLS-1$
-    		"</html>"; //$NON-NLS-1$
-    	}
     	useTrayicon.setToolTipText(toolTip);
     }
 
