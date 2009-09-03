@@ -6,10 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Properties;
 
 import com.kemai.util.IOUtils;
-import com.kemai.wremja.logging.Logger;
+import com.kemai.wremja.gui.model.io.DataBackup;
 
 /**
  * A {@link Configuration} based on java.util.Properties
@@ -20,8 +21,6 @@ public class JUPropertiesConfiguration implements Configuration {
 	
 	public static final String TMP_FILE_POSTFIX = ".tmp";
 	
-	private static final Logger LOG = Logger.getLogger(JUPropertiesConfiguration.class);
-
     private final File file;
     private final String name;
     private final Properties props = new Properties();
@@ -34,13 +33,13 @@ public class JUPropertiesConfiguration implements Configuration {
         if(this.file.exists() ) {
         	in = new FileInputStream(this.file);
         } else {
-            // There is a small time window in save() where the 'real' file is already deleted,
-            // but the tmp file not yet renamed.
-            // Check if that maybe happened
-            File tmpFile = new File(this.file.getParentFile(), this.file.getName() + TMP_FILE_POSTFIX);
-            if(tmpFile.exists()) {
-            	in = new FileInputStream(tmpFile);
-            }
+            // There is a small time window in save() where a backup file is created, but the
+            // new configuration isn't saved yet.
+            // Check if that maybe has happened
+        	List<File> backupFiles = DataBackup.getBackupFiles(this.file);
+        	if (!backupFiles.isEmpty()) {
+        		in = new FileInputStream(backupFiles.get(0));
+        	}
         }
         
         
@@ -114,22 +113,15 @@ public class JUPropertiesConfiguration implements Configuration {
 
     private void save() {
 
-    	File tmpFile = new File(this.file.getParentFile(), this.file.getName() + TMP_FILE_POSTFIX);
-    	
         OutputStream out = null;
         try {
+        	DataBackup.toBackup(this.file);
             // note that Properties internally wraps the outputstream
             // in a BufferedWriter, so we don't need to buffer it here
-            out = new FileOutputStream(tmpFile);
+            out = new FileOutputStream(this.file);
             this.props.store(out, this.name );
             out.close();
 
-            if(this.file.exists() && !this.file.delete()) {
-            	LOG.error("Couldn't delete file " + this.file.getAbsolutePath());
-            }
-            if(!tmpFile.renameTo(this.file)) {
-            	LOG.error("Couldn't rename tmp file to file");
-            }
         } catch (IOException e) {
             throw new RuntimeException( "Saving failed", e );
         } finally {
