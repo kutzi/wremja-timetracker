@@ -48,7 +48,7 @@ public class TraySupport implements Observer, WindowListener {
     
     private static final Logger LOGGER = Logger.getLogger(TraySupport.class);
     
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     /** The model. */
     private final PresentationModel model;
@@ -162,7 +162,10 @@ public class TraySupport implements Observer, WindowListener {
         } else {
             hideIcon();
         }
-        UserSettings.instance().setWindowMinimized(show);
+        
+        if (UserSettings.instance().isWindowMinimized() != show) {
+            UserSettings.instance().setWindowMinimized(show);
+        }
     }
 
     /**

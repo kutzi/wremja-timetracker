@@ -19,11 +19,13 @@ import com.kemai.wremja.gui.model.io.DataBackup;
  */
 public class JUPropertiesConfiguration implements Configuration {
 	
-	public static final String TMP_FILE_POSTFIX = ".tmp";
+	private static final boolean DEBUG = false;
 	
     private final File file;
     private final String name;
     private final Properties props = new Properties();
+    
+    private volatile long lastBackupSaved = 0;
 
     public JUPropertiesConfiguration( File propertiesFile, String name ) throws IOException {
         this.file = propertiesFile;
@@ -115,13 +117,22 @@ public class JUPropertiesConfiguration implements Configuration {
 
         OutputStream out = null;
         try {
-        	DataBackup.toBackup(this.file);
-            // note that Properties internally wraps the outputstream
+            if (System.currentTimeMillis() > lastBackupSaved + 5000) {
+                // create backup at most every 5 seconds
+                DataBackup.toBackup(this.file);
+                lastBackupSaved = System.currentTimeMillis();
+                if (DEBUG) {
+                    System.out.println("Backup created");
+                }
+            }
+            // note that Properties internally wraps the output stream
             // in a BufferedWriter, so we don't need to buffer it here
             out = new FileOutputStream(this.file);
             this.props.store(out, this.name );
             out.close();
-
+            if (DEBUG) {
+                System.out.println("Properties saved");
+            }
         } catch (IOException e) {
             throw new RuntimeException( "Saving failed", e );
         } finally {
