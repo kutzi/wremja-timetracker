@@ -241,8 +241,9 @@ public class SettingsDialog extends EscapeDialog {
         //getRootPane().setDefaultButton(saveButton);
 
         // add anuko pane
+        // TODO: remove all Anuko related stuff and remove dependency from POMs?
         JPanel anukoPanel = new JPanel();
-        tabbedPane.addTab("Anuko", null, anukoPanel, "Anuko exporter is currently not usable");
+        //tabbedPane.addTab("Anuko", null, anukoPanel, "Anuko exporter is currently not usable");
         int index = tabbedPane.getTabCount() - 1;
         tabbedPane.setEnabledAt(index, true);
         tableLayout = new TableLayout(size);
