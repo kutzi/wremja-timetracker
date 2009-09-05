@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.kemai.util.IOUtils;
 import com.kemai.wremja.gui.model.io.DataBackup;
 
@@ -108,9 +110,11 @@ public class JUPropertiesConfiguration implements Configuration {
     }
 
     @Override
-    public void setProperty(String key, String value) {
-        this.props.setProperty(key, value);
-        save();
+    public void setProperty(String key, String newValue) {
+        Object oldValue = this.props.setProperty(key, newValue);
+        if (!ObjectUtils.equals(oldValue, newValue)) {
+        	save();
+        }
     }
 
     private void save() {
