@@ -1,16 +1,14 @@
 package com.kemai.swing.util;
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Frame;
-import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Window;
-
-import javax.swing.Action;
 
 /**
  * @author remast
+ * @author kutzi
  */
 public abstract class AWTUtils {
     
@@ -18,26 +16,15 @@ public abstract class AWTUtils {
     private AWTUtils() {}
 
     /**
-     * Create AWT MenuItem from Swing Action.
-     * @param action
-     * @return 
-     */
-    public static MenuItem createFromAction(final Action action) {
-        final MenuItem item = new MenuItem(action.getValue(Action.NAME).toString());
-        item.addActionListener(action);
-        return item;
-    }
-    
-    /**
-     * Ensures that a window stays within the current screen's bounds
+     * Ensures that a component stays within the current screen's bounds
      * while changing the position of the window as little as possible.
      *
-     * @param preferredLeftTop The preferred left-top location of the window
-     * @param window The window
+     * @param preferredLeftTop The preferred left-top location of the component
+     * @param component The component
      */
-    public static void keepInScreenBounds(final Point preferredLeftTop, final Window window) {
-        Rectangle preferredBounds = new Rectangle(preferredLeftTop, window.getPreferredSize());
-        window.setLocation(ScreenUtils.ensureOnScreen(preferredBounds).getLocation());
+    public static void keepInScreenBounds(final Point preferredLeftTop, final Component component) {
+        Rectangle preferredBounds = new Rectangle(preferredLeftTop, component.getPreferredSize());
+        component.setLocation(ScreenUtils.ensureOnScreen(preferredBounds).getLocation());
     }
     
     /**

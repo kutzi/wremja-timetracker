@@ -43,10 +43,7 @@ import com.kemai.wremja.logging.Logger;
  * Provides utilities for UI stuff.
  * 
  * @author Til Schneider, www.murfman.de
- */
-/**
  * @author MadMan
- * 
  */
 public class UiUtilities {
 
@@ -156,6 +153,13 @@ public class UiUtilities {
         return im;
     }
 
+    /**
+     * Returns the mnemonic a UI resource in the given locale.
+     * 
+     * @param key The key of the UI resource e.g. "OptionPane.cancelButtonMnemonic"
+     * @param l The locale
+     * @return The mnemonic or 0
+     */
     public static int getMnemonic(String key, Locale l) {
         String value = (String)UIManager.get(key, l);
 

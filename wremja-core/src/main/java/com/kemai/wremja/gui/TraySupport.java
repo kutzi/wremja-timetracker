@@ -14,15 +14,12 @@ import java.awt.event.WindowListener;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
 import org.jdesktop.swinghelper.tray.JXTrayIcon;
 
-import com.kemai.swing.util.WPopupMenu;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.actions.AbstractWremjaAction;
@@ -57,8 +54,7 @@ public class TraySupport implements Observer, WindowListener {
     private JXTrayIcon trayIcon;
 
     /** The menu of the tray icon. */
-    private final JPopupMenu menu = new WPopupMenu();
-
+    private JPopupMenu menu;
     private final MainFrame mainFrame;
 
 	private boolean shown;
@@ -80,7 +76,6 @@ public class TraySupport implements Observer, WindowListener {
     
     void enable() {
     	if (SystemTray.isSupported()) {
-	    	buildMenu();
 	
 	        if (model.isActive()) {
 	            trayIcon = new JXTrayIcon(ACTIVE_ICON);
@@ -90,6 +85,10 @@ public class TraySupport implements Observer, WindowListener {
 	            trayIcon.setToolTip(TEXT_BUNDLE.textFor("Global.Title"));
 	        }
 	        trayIcon.setImageAutoSize(true);
+	        // tray popup menu on Linux (Gnome only?) is flaky
+	        // we do it ourself by a MouseListener
+	        menu = trayIcon.new PopupMenu();
+	        buildMenu();
 	        trayIcon.setJPopupMenu(menu);
 	        trayIcon.setImageAutoSize(true);
 	
@@ -99,6 +98,15 @@ public class TraySupport implements Observer, WindowListener {
 					if(SwingUtilities.isLeftMouseButton(e)) {
 						miniIt();
 					}
+//					} else if (SwingUtilities.isRightMouseButton(e)) {
+//						if (menu.isVisible()) {
+//							menu.setVisible(false);
+//						} else {
+//							//calcLocation(menu, e.getLocationOnScreen());
+//							AWTUtils.keepInScreenBounds(e.getLocationOnScreen(), menu);
+//							menu.setVisible(true);
+//						}
+//					}
 				}
 	        });
 	        this.mainFrame.removeWindowListener(DEFAULT_WINDOW_LISTENER);
@@ -119,8 +127,8 @@ public class TraySupport implements Observer, WindowListener {
 			private static final long serialVersionUID = 1L;
 
 			{
-        		putValue(NAME, TEXT_BUNDLE.textFor("Global.RestoreMainFrame.Title"));
-                putValue(SHORT_DESCRIPTION, TEXT_BUNDLE.textFor("Global.RestoreMainFrame.ToolTipText"));
+        		setName(TEXT_BUNDLE.textFor("Global.RestoreMainFrame.Title"));
+                setTooltip(TEXT_BUNDLE.textFor("Global.RestoreMainFrame.ToolTipText"));
         	}
         	
 			@Override
@@ -130,27 +138,25 @@ public class TraySupport implements Observer, WindowListener {
         };
         menu.add(restoreAction);
         final ExitAction exitAction = new ExitAction(this.mainFrame, model);
-        exitAction.putValue(AbstractAction.SMALL_ICON, null);
+        exitAction.setIcon(null);
         menu.add(exitAction);
 
-        // Add separator
-        menu.add(new JSeparator());
+        menu.addSeparator();
 
         for (Project project : model.getProjectList()) {
         	final ChangeProjectAction changeAction = new ChangeProjectAction(model, project);
             menu.add(changeAction);
         }
 
-        // Add separator
-        menu.add(new JSeparator());
+        menu.addSeparator();
 
         if (model.isActive()) {
         	final StopAction stopAction = new StopAction(model);
-        	stopAction.putValue(AbstractAction.SMALL_ICON, null);
+        	stopAction.setIcon(null);
             menu.add(stopAction);
         } else {
         	final StartAction startAction = new StartAction(null, model);
-        	startAction.putValue(AbstractAction.SMALL_ICON, null);
+        	startAction.setIcon(null);
             menu.add(startAction);
         }
     }
@@ -163,9 +169,7 @@ public class TraySupport implements Observer, WindowListener {
             hideIcon();
         }
         
-        if (UserSettings.instance().isWindowMinimized() != show) {
-            UserSettings.instance().setWindowMinimized(show);
-        }
+        UserSettings.instance().setWindowMinimized(show);
     }
 
     /**
@@ -322,8 +326,6 @@ public class TraySupport implements Observer, WindowListener {
     		System.out.println("iconified");
     	}
     	toggleState();
-//    	mainFrame.setVisible(false);
-//        showTray(true);
     }
 
     @Override
@@ -331,7 +333,6 @@ public class TraySupport implements Observer, WindowListener {
     	if(DEBUG) {
     		System.out.println("opened");
     	}
-        //showTray(false);
     }
 
     @Override
@@ -340,8 +341,6 @@ public class TraySupport implements Observer, WindowListener {
     		System.out.println("closing");
     	}
     	toggleState();
-    	//mainFrame.setVisible(false);
-        //showTray(true);
     }
 
     @Override
@@ -349,7 +348,6 @@ public class TraySupport implements Observer, WindowListener {
     	if(DEBUG) {
     		System.out.println("closed");
     	}
-    	//mainFrame.setExtendedState(JFrame.NORMAL);
     }
 
     @Override
@@ -358,7 +356,6 @@ public class TraySupport implements Observer, WindowListener {
     		System.out.println("Deiconified");
     	}
     	this.lastIconified = System.currentTimeMillis();
-//        showTray(false);
     }
 
     @Override
@@ -374,5 +371,4 @@ public class TraySupport implements Observer, WindowListener {
     		System.out.println("deactivated");
     	}
     }
-
 }

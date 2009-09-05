@@ -139,7 +139,7 @@ public class SettingsDialog extends EscapeDialog {
     /**
      * Creates a new settings dialog.
      * @param owner the owning frame
-     * @param model the model
+     * @param settings the settings instance to use
      */
     public SettingsDialog(final Frame owner, final IUserSettings settings) {
         super(owner);
