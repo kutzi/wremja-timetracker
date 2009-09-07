@@ -6,8 +6,10 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import net.infonode.tabbedpanel.TabAdapter;
 import net.infonode.tabbedpanel.TabDropDownListVisiblePolicy;
 import net.infonode.tabbedpanel.TabLayoutPolicy;
+import net.infonode.tabbedpanel.TabStateChangedEvent;
 import net.infonode.tabbedpanel.TabbedPanel;
 import net.infonode.tabbedpanel.theme.ShapedGradientTheme;
 import net.infonode.tabbedpanel.theme.TabbedPanelTitledTabTheme;
@@ -86,12 +88,19 @@ public class FilteredActivitiesPane extends JXPanel {
 		);
 		
 		//JTabbedPane generalTabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-		TabbedPanel generalTabpane = new TabbedPanel();
+		final TabbedPanel generalTabpane = new TabbedPanel();
 		generalTabpane.getProperties().setTabLayoutPolicy(TabLayoutPolicy.SCROLLING);
 		generalTabpane.getProperties().setTabDropDownListVisiblePolicy(TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE);
 		generalTabpane.getProperties().setTabReorderEnabled(true);
 		
 		generalTabpane.getProperties().addSuperObject(theme.getTabbedPanelProperties());
+		
+		generalTabpane.addTabListener(new TabAdapter() {
+			@Override
+			public void tabSelected(TabStateChangedEvent event) {
+				generalTabpane.scrollTabToVisibleArea(event.getTab());
+			}
+		});
 		
 		addTabToPane(generalTabpane, accummulatedActitvitiesTab);
 		addTabToPane(generalTabpane, filteredActitvitiesTab);
@@ -115,7 +124,6 @@ public class FilteredActivitiesPane extends JXPanel {
 		
 		addTabToPane(generalTabpane, hoursByWeekTab);
 		addTabToPane(generalTabpane, hoursByDayTab);
-		//this.category2Tabpane.put("Time", timeTabpane);
 
 		JPanel hoursByProjectPanel = new HoursByProjectPanel(model.getHoursByProjectReport());
 		Tab hoursByProjectTab = new Tab(
@@ -133,72 +141,18 @@ public class FilteredActivitiesPane extends JXPanel {
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByProjectChart.Tooltip") //$NON-NLS-1$
 		);
 
-        //JTabbedPane projectTabpane = new JTabbedPane();
         addTabToPane(generalTabpane, hoursByProjectTab);
         addTabToPane(generalTabpane, hoursByProjectChartTab);
-        //this.category2Tabpane.put("Project", projectTabpane);
-		
-		//this.initToggleButtons();
 
 		this.add(generalTabpane, "0, 0"); //$NON-NLS-1$
 		generalTabpane.setVisible(true);
 	}
-
-	/**
-	 * Initializes the toggle buttons for the categories from the settings.
-	 */
-//	private void initToggleButtons() {
-//		// 1. Deselect all buttons
-//		generalButton.setSelected(false);
-//		timeButton.setSelected(false);
-//		projectButton.setSelected(false);
-//
-//		// 2. Select shown button
-//		if (StringUtils.equals("General", shownCategory)) { //$NON-NLS-1$
-//			generalButton.setSelected(true);
-//		} else if (StringUtils.equals("Time", shownCategory)) { //$NON-NLS-1$
-//			timeButton.setSelected(true);
-//		} else if (StringUtils.equals("Project", shownCategory)) { //$NON-NLS-1$
-//			projectButton.setSelected(true);
-//		}
-//	}
-
-	/**
-	 * Processes the action that the user toggles a category button.
-	 * @param newCategory the toggled category
-	 * @param toggledCategoryButton the toggled button
-	 */
-//	private void toggleCategory(final String newCategory) {
-//	    if(StringUtils.equals(this.shownCategory, newCategory)) {
-//	        //initToggleButtons();
-//	        return;
-//	    }
-//
-//		// 1. Store category
-//		//  a) internally
-//		shownCategory = newCategory;
-//
-//		//  b) in user settings
-//		this.settings.setShownCategory(newCategory);
-//
-//		// 2. Set tab visibility
-//		JTabbedPane newPane = this.category2Tabpane.get(this.shownCategory);
-//	    this.currentPane.setVisible(false);
-//	    remove(this.currentPane);
-//	    this.currentPane = newPane;
-//	    add(currentPane, "0, 1");
-//	    this.currentPane.setVisible(true);
-//		
-//		// 3.  Deselect all categoryToggleButtons except the one toggled
-//		//initToggleButtons();
-//	}
 
 	private void addTabToPane(TabbedPanel pane, Tab tab) {
 		if (tab == null) {
 			return;
 		}
 
-		//pane.addTab(tab.getTitle(), tab.getIcon(), tab.getComponent(), tab.getTooltip());
 		pane.addTab(makeInfoNodeTab(tab));
 	}
 
