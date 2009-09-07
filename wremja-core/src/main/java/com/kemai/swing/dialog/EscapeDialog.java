@@ -13,7 +13,7 @@ import javax.swing.KeyStroke;
 
 /**
  * A dialog that is closed when ESC is pressed.
- * @see http://www.java2s.com/Code/JavaAPI/javax.swing/extendsJDialogPressEscapeKeytocloseadialog.htm
+ * @see <a href="http://www.java2s.com/Code/JavaAPI/javax.swing/extendsJDialogPressEscapeKeytocloseadialog.htm">example</a>
  */
 @SuppressWarnings("serial")
 public class EscapeDialog extends JDialog {

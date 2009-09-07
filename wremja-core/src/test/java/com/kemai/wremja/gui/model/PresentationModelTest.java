@@ -43,7 +43,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
     /**
      * Test for an activity that goes on until after midnight.
      * @throws ProjectActivityStateException should never be thrown if test is ok
-     * @see Issue <a href="http://baralga.origo.ethz.ch/node/87">#17</a>
+     * @see <a href="http://baralga.origo.ethz.ch/node/87">Baralga Issue #17</a>
      */
     @Test
     public void testActivityOverMidnight() throws ProjectActivityStateException {

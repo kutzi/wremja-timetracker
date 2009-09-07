@@ -285,7 +285,7 @@ public class PresentationModel extends Observable {
     /**
      * Stop a project activity.
      * @throws ProjectActivityStateException if there is no running project
-     * @see #stop(boolean)
+     * @see #stop(DateTime)
      */
     public final void stop() throws ProjectActivityStateException {
         // Stop with notifying observers.
@@ -557,8 +557,11 @@ public class PresentationModel extends Observable {
     }
 
     /**
-     * Remove an activity from the model.
-     * @param activity the activity to remove
+     * Replaces an activity in the model.
+     * 
+     * @param oldActivity the activity to replace
+     * @param newActivity the new activity
+     * @param source the source component which triggered the replacement
      */
     public final void replaceActivity(final ProjectActivity oldActivity, final ProjectActivity newActivity,
             final Object source) {

@@ -16,7 +16,7 @@ public class MonthPredicate implements Predicate<ProjectActivity> {
 
     /**
      * Creates a new predicate that holds for the given month.
-     * @param dateInMonth the month the predicate holds for
+     * @param month the month the predicate holds for
      */
     public MonthPredicate(int month) {
         this.month = month;

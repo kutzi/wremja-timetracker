@@ -3,8 +3,6 @@ package com.kemai.util;
 /**
  * Defines a functor interface implemented by classes that perform a predicate
  * test on an object.
- * 
- * @param T the type of the objects to test
  */
 public interface Predicate<T> {
 

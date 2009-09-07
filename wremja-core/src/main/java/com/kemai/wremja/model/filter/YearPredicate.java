@@ -16,15 +16,15 @@ public class YearPredicate implements Predicate<ProjectActivity> {
 
     /**
      * Constructor for a new predicate.
-     * @param dateInYear the year of the predicate
+     * @param year the year of the predicate
      */
     public YearPredicate(final int year) {
         this.year = year;
     }
 
     /**
-     * Checks if this predicate holds for the given object.
-     * @param object the object to check
+     * Checks if this predicate holds for the given activity.
+     * @param activity activity to check
      * @return <code>true</code> if the given object is a project activity
      * of that year else <code>false</code>
      */
