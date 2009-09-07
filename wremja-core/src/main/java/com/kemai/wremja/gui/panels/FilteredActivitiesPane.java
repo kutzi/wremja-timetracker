@@ -63,6 +63,20 @@ public class FilteredActivitiesPane extends JXPanel {
 				{ TableLayout.FILL } }; // Rows
 		this.setLayout(new TableLayout(size));
 
+		final TabbedPanel tabpane = new TabbedPanel();
+		tabpane.getProperties().setTabLayoutPolicy(TabLayoutPolicy.SCROLLING);
+		tabpane.getProperties().setTabDropDownListVisiblePolicy(TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE);
+		tabpane.getProperties().setTabReorderEnabled(true);
+		
+		tabpane.getProperties().addSuperObject(theme.getTabbedPanelProperties());
+		
+		tabpane.addTabListener(new TabAdapter() {
+			@Override
+			public void tabSelected(TabStateChangedEvent event) {
+				tabpane.scrollTabToVisibleArea(event.getTab());
+			}
+		});
+		
 		JPanel accummulatedActitvitiesPanel = new AccummulatedActitvitiesPanel(model.getFilteredReport());
 		Tab accummulatedActitvitiesTab = new Tab(
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.AccumulatedActivities"),  //$NON-NLS-1$
@@ -87,24 +101,9 @@ public class FilteredActivitiesPane extends JXPanel {
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.Descriptions.Tooltip") //$NON-NLS-1$
 		);
 		
-		//JTabbedPane generalTabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-		final TabbedPanel generalTabpane = new TabbedPanel();
-		generalTabpane.getProperties().setTabLayoutPolicy(TabLayoutPolicy.SCROLLING);
-		generalTabpane.getProperties().setTabDropDownListVisiblePolicy(TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE);
-		generalTabpane.getProperties().setTabReorderEnabled(true);
-		
-		generalTabpane.getProperties().addSuperObject(theme.getTabbedPanelProperties());
-		
-		generalTabpane.addTabListener(new TabAdapter() {
-			@Override
-			public void tabSelected(TabStateChangedEvent event) {
-				generalTabpane.scrollTabToVisibleArea(event.getTab());
-			}
-		});
-		
-		addTabToPane(generalTabpane, accummulatedActitvitiesTab);
-		addTabToPane(generalTabpane, filteredActitvitiesTab);
-		addTabToPane(generalTabpane, descriptionTab);
+		addTabToPane(tabpane, accummulatedActitvitiesTab);
+		addTabToPane(tabpane, filteredActitvitiesTab);
+		addTabToPane(tabpane, descriptionTab);
 
 		JPanel hoursByWeekPanel = new HoursByWeekPanel(model.getHoursByWeekReport());
 		Tab hoursByWeekTab = new Tab(
@@ -122,8 +121,8 @@ public class FilteredActivitiesPane extends JXPanel {
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByDay.Tooltip") //$NON-NLS-1$
 		);
 		
-		addTabToPane(generalTabpane, hoursByWeekTab);
-		addTabToPane(generalTabpane, hoursByDayTab);
+		addTabToPane(tabpane, hoursByWeekTab);
+		addTabToPane(tabpane, hoursByDayTab);
 
 		JPanel hoursByProjectPanel = new HoursByProjectPanel(model.getHoursByProjectReport());
 		Tab hoursByProjectTab = new Tab(
@@ -141,11 +140,11 @@ public class FilteredActivitiesPane extends JXPanel {
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByProjectChart.Tooltip") //$NON-NLS-1$
 		);
 
-        addTabToPane(generalTabpane, hoursByProjectTab);
-        addTabToPane(generalTabpane, hoursByProjectChartTab);
+        addTabToPane(tabpane, hoursByProjectTab);
+        addTabToPane(tabpane, hoursByProjectChartTab);
 
-		this.add(generalTabpane, "0, 0"); //$NON-NLS-1$
-		generalTabpane.setVisible(true);
+		this.add(tabpane, "0, 0"); //$NON-NLS-1$
+		tabpane.setVisible(true);
 	}
 
 	private void addTabToPane(TabbedPanel pane, Tab tab) {
