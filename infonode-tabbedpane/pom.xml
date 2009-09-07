@@ -8,4 +8,6 @@
   <groupId>net.infonode</groupId>
   <artifactId>infonode-tabbedpane</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <name>Infonode Tabbedpanel</name>
+  <description>The tabbed panel component from http://www.infonode.net/. Bases on v1.6.1</description>
 </project>

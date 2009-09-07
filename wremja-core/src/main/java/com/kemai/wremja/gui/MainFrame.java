@@ -4,10 +4,8 @@ import static com.kemai.wremja.gui.GuiConstants.ACTIVE_ICON;
 import static com.kemai.wremja.gui.GuiConstants.NORMAL_ICON;
 import info.clearthought.layout.TableLayout;
 
-import java.awt.Frame;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
@@ -490,7 +488,7 @@ public class MainFrame extends JXFrame implements Observer {
             exportMenu.add(getExportCsvItem());
             exportMenu.add(getExportDataItem());
             
-            for(AbstractExportAction action : getExportedPlugins()) {
+            for(AbstractExportAction action : getExporterPlugins()) {
             	exportMenu.add(new JMenuItem(action));
             }
         }
@@ -498,19 +496,19 @@ public class MainFrame extends JXFrame implements Observer {
     }
     
     
-    private List<AbstractExportAction> getExportedPlugins() {
+    private List<AbstractExportAction> getExporterPlugins() {
     	// TODO
-    	try {
-    		Class<?> clazz = Class.forName("com.kemai.wremja.exporter.anukotimetracker.AnukoExporterAction");
-    		@SuppressWarnings("unchecked")
-    		Constructor<AbstractExportAction> cons = (Constructor<AbstractExportAction>) clazz.getConstructor(Frame.class, PresentationModel.class, IUserSettings.class);
-    		AbstractExportAction action = cons.newInstance(this, model, settings);
-    		return Collections.singletonList(action);
-    	} catch(Exception e) {
-    		LOG.warn(e, e);
-    		return Collections.emptyList();
-    	}
-    	
+//    	try {
+//    		Class<?> clazz = Class.forName("com.kemai.wremja.exporter.anukotimetracker.AnukoExporterAction");
+//    		@SuppressWarnings("unchecked")
+//    		Constructor<AbstractExportAction> cons = (Constructor<AbstractExportAction>) clazz.getConstructor(Frame.class, PresentationModel.class, IUserSettings.class);
+//    		AbstractExportAction action = cons.newInstance(this, model, settings);
+//    		return Collections.singletonList(action);
+//    	} catch(Exception e) {
+//    		LOG.warn(e, e);
+//    		return Collections.emptyList();
+//    	}
+    	return Collections.emptyList();
     }
 
     /**

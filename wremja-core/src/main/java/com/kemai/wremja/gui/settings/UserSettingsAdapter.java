@@ -212,4 +212,12 @@ public class UserSettingsAdapter implements IUserSettings {
     public void setWindowSize(Dimension size) {
     }
 
+    @Override
+    public int[] getMainTabpaneOrder() {
+        return null;
+    }
+
+    @Override
+    public void setMainTabpaneOrder(int[] order) {
+    }
 }

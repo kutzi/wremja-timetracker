@@ -130,4 +130,14 @@ public interface IUserSettings {
      * @return the restored filter
      */
     public Filter restoreFromSettings();
+
+    /**
+     * Returns the order of the tabs in the main tabbed pane.
+     */
+    int[] getMainTabpaneOrder();
+
+    /**
+     * Sets the order of the tabs in the main tabbed pane.
+     */
+    void setMainTabpaneOrder(int[] order);
 }

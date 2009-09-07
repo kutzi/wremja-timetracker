@@ -488,6 +488,7 @@ public final class UserSettings implements IUserSettings {
     /* (non-Javadoc)
      * @see com.kemai.wremja.gui.settings.IUserSettings#isAllowOverlappingActivities()
      */
+    @Override
     public boolean isAllowOverlappingActivities() {
     	return doGetBoolean(ALLOW_OVERLAPPING_ACTIVITIES, true);
     }
@@ -495,8 +496,53 @@ public final class UserSettings implements IUserSettings {
     /* (non-Javadoc)
      * @see com.kemai.wremja.gui.settings.IUserSettings#setAllowOverlappingActivities(boolean)
      */
+    @Override
     public void setAllowOverlappingActivities(boolean allow) {
     	userConfig.setProperty(ALLOW_OVERLAPPING_ACTIVITIES, allow);
+    }
+    
+    private static final String MAIN_TABPANE_ORDER = "main.tabpane.order";
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int[] getMainTabpaneOrder() {
+        String order = doGetString(MAIN_TABPANE_ORDER, "");
+        if (StringUtils.isBlank(order)) {
+            return new int[0];
+        }
+
+        String[] split = order.split(",");
+        int[] result = new int[split.length];
+        
+        try {
+            for (int i = 0; i < split.length; i++) {
+                result[i] = Integer.parseInt(split[i]);
+            }
+            return result;
+        } catch (NumberFormatException e) {
+            LOG.warn("", e);
+            return new int[0];
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setMainTabpaneOrder(int[] order) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (int i : order) {
+            if (!first) {
+                sb.append(",");
+            } else {
+                first = false;
+            }
+            sb.append(i);
+        }
+        userConfig.setProperty(MAIN_TABPANE_ORDER, sb.toString());
     }
     
     /* (non-Javadoc)
@@ -522,7 +568,7 @@ public final class UserSettings implements IUserSettings {
      * @param filter the restored filter
      */
     private void restoreYearFilter(final Filter filter) {
-        final int selectedYear = UserSettings.instance().getFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
+        final int selectedYear = getFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
 
         filter.setYear(selectedYear);
     }

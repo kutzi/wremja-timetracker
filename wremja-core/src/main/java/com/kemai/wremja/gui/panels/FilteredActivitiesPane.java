@@ -6,14 +6,17 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import net.infonode.tabbedpanel.Tab;
 import net.infonode.tabbedpanel.TabAdapter;
 import net.infonode.tabbedpanel.TabDropDownListVisiblePolicy;
+import net.infonode.tabbedpanel.TabEvent;
 import net.infonode.tabbedpanel.TabLayoutPolicy;
 import net.infonode.tabbedpanel.TabStateChangedEvent;
 import net.infonode.tabbedpanel.TabbedPanel;
 import net.infonode.tabbedpanel.theme.ShapedGradientTheme;
 import net.infonode.tabbedpanel.theme.TabbedPanelTitledTabTheme;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
+import net.infonode.tabbedpanel.titledtab.TitledTabSizePolicy;
 
 import org.jdesktop.swingx.JXPanel;
 
@@ -44,12 +47,16 @@ public class FilteredActivitiesPane extends JXPanel {
 
 	/** The model. */
 	private final PresentationModel model;
+	private final IUserSettings settings;
 	
 	private final TabbedPanelTitledTabTheme theme = new ShapedGradientTheme();
 	
+	private int[] tabOrder = { 0, 1, 2, 3, 4, 5, 6 };
+
 	public FilteredActivitiesPane(final PresentationModel model, IUserSettings settings) {
 		super();
 		this.model = model;
+		this.settings = settings;
 
 		initialize();
 	}
@@ -62,23 +69,23 @@ public class FilteredActivitiesPane extends JXPanel {
 				{ TableLayout.FILL}, // Columns
 				{ TableLayout.FILL } }; // Rows
 		this.setLayout(new TableLayout(size));
+		
+		this.theme.getTitledTabProperties().setSizePolicy(TitledTabSizePolicy.EQUAL_SIZE);
+		this.theme.getTitledTabProperties().getHighlightedProperties().setToolTipEnabled(true);
+		this.theme.getTitledTabProperties().getNormalProperties().setToolTipEnabled(true);
 
 		final TabbedPanel tabpane = new TabbedPanel();
+		tabpane.getProperties().addSuperObject(theme.getTabbedPanelProperties());
+
 		tabpane.getProperties().setTabLayoutPolicy(TabLayoutPolicy.SCROLLING);
 		tabpane.getProperties().setTabDropDownListVisiblePolicy(TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE);
 		tabpane.getProperties().setTabReorderEnabled(true);
 		
-		tabpane.getProperties().addSuperObject(theme.getTabbedPanelProperties());
-		
-		tabpane.addTabListener(new TabAdapter() {
-			@Override
-			public void tabSelected(TabStateChangedEvent event) {
-				tabpane.scrollTabToVisibleArea(event.getTab());
-			}
-		});
+		tabpane.getProperties().getButtonProperties().getTabDropDownListButtonProperties().setToolTipText(
+		        TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tabpane.Dropdownlist.Tooltip"));
 		
 		JPanel accummulatedActitvitiesPanel = new AccummulatedActitvitiesPanel(model.getFilteredReport());
-		Tab accummulatedActitvitiesTab = new Tab(
+		WTab accummulatedActitvitiesTab = new WTab(
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.AccumulatedActivities"),  //$NON-NLS-1$
 				null,
 				accummulatedActitvitiesPanel, 
@@ -86,7 +93,7 @@ public class FilteredActivitiesPane extends JXPanel {
 		);
 
 		JPanel filteredActitvitiesPanel = new AllActitvitiesPanel(model);
-		Tab filteredActitvitiesTab = new Tab(
+		WTab filteredActitvitiesTab = new WTab(
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.AllActivities"),  //$NON-NLS-1$
 				null,
 				filteredActitvitiesPanel, 
@@ -94,19 +101,15 @@ public class FilteredActivitiesPane extends JXPanel {
 		);
 
 		JPanel descriptionPanel = new DescriptionPanel(model);
-		Tab descriptionTab = new Tab(
+		WTab descriptionTab = new WTab(
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.Descriptions"),  //$NON-NLS-1$
 				null,
 				descriptionPanel, 
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.Descriptions.Tooltip") //$NON-NLS-1$
 		);
 		
-		addTabToPane(tabpane, accummulatedActitvitiesTab);
-		addTabToPane(tabpane, filteredActitvitiesTab);
-		addTabToPane(tabpane, descriptionTab);
-
 		JPanel hoursByWeekPanel = new HoursByWeekPanel(model.getHoursByWeekReport());
-		Tab hoursByWeekTab = new Tab(
+		WTab hoursByWeekTab = new WTab(
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByWeek"),  //$NON-NLS-1$
 				null,
 				hoursByWeekPanel, 
@@ -114,18 +117,15 @@ public class FilteredActivitiesPane extends JXPanel {
 		);
 
 		JPanel hoursByDayPanel = new HoursByDayPanel(model.getHoursByDayReport());
-		Tab hoursByDayTab = new Tab(
+		WTab hoursByDayTab = new WTab(
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByDay"),  //$NON-NLS-1$
 				null,
 				hoursByDayPanel, 
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByDay.Tooltip") //$NON-NLS-1$
 		);
 		
-		addTabToPane(tabpane, hoursByWeekTab);
-		addTabToPane(tabpane, hoursByDayTab);
-
 		JPanel hoursByProjectPanel = new HoursByProjectPanel(model.getHoursByProjectReport());
-		Tab hoursByProjectTab = new Tab(
+		WTab hoursByProjectTab = new WTab(
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByProject"),  //$NON-NLS-1$
 				null,
 				hoursByProjectPanel, 
@@ -133,42 +133,66 @@ public class FilteredActivitiesPane extends JXPanel {
 		);
 
 		JPanel hoursByProjectChartPanel = new HoursByProjectChartPanel(model.getHoursByProjectReport());
-		Tab hoursByProjectChartTab = new Tab(
+		WTab hoursByProjectChartTab = new WTab(
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByProjectChart"),  //$NON-NLS-1$
 				null,
 				hoursByProjectChartPanel, 
 				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByProjectChart.Tooltip") //$NON-NLS-1$
 		);
 
-        addTabToPane(tabpane, hoursByProjectTab);
-        addTabToPane(tabpane, hoursByProjectChartTab);
+        final Tab[] tabs = new Tab[] {
+                makeInfoNodeTab(accummulatedActitvitiesTab),
+                makeInfoNodeTab(filteredActitvitiesTab),
+                makeInfoNodeTab(descriptionTab),
+                makeInfoNodeTab(hoursByWeekTab),
+                makeInfoNodeTab(hoursByDayTab),
+                makeInfoNodeTab(hoursByProjectTab),
+                makeInfoNodeTab(hoursByProjectChartTab)
+        };
+        
+        int[] order = this.settings.getMainTabpaneOrder();
+        if (order.length == this.tabOrder.length) {
+            this.tabOrder = order;
+        } else {
+            // ignore; use default order
+        }
+        
+        for (int o : this.tabOrder) {
+            tabpane.addTab(tabs[o]);
+        }
+        
+        tabpane.addTabListener(new TabAdapter() {
+            @Override
+            public void tabSelected(TabStateChangedEvent event) {
+                tabpane.scrollTabToVisibleArea(event.getTab());
+            }
+
+            @Override
+            public void tabMoved(TabEvent event) {
+                for (int i=0; i < tabs.length; i++) {
+                    int index = tabpane.getTabIndex(tabs[i]);
+                    tabOrder[index] = i;
+                }
+                settings.setMainTabpaneOrder(tabOrder);
+            }
+        });
 
 		this.add(tabpane, "0, 0"); //$NON-NLS-1$
 		tabpane.setVisible(true);
 	}
 
-	private void addTabToPane(TabbedPanel pane, Tab tab) {
-		if (tab == null) {
-			return;
-		}
-
-		pane.addTab(makeInfoNodeTab(tab));
-	}
-
-	private net.infonode.tabbedpanel.Tab makeInfoNodeTab(Tab tab) {
+	private Tab makeInfoNodeTab(WTab tab) {
 		TitledTab t = new TitledTab(tab.getTitle(), tab.getIcon(), tab.getComponent(), null);
-		t.getProperties().getNormalProperties().setToolTipEnabled(true);
-		t.getProperties().getNormalProperties().setToolTipText(tab.getTooltip());
-		t.getProperties().getHighlightedProperties().setToolTipEnabled(true);
-		t.getProperties().getHighlightedProperties().setToolTipText(tab.getTooltip());
 		t.getProperties().addSuperObject(theme.getTitledTabProperties());
+		t.getProperties().getNormalProperties().setToolTipText(tab.getTooltip());
+		t.getProperties().getHighlightedProperties().setToolTipText(tab.getTooltip());
 		return t;
 	}
 	
 	/**
 	 * Convenience class for working with tabs.
 	 */
-	private static class Tab {
+	private static class WTab {
 
 		/** The title of the tab. */
 		private final String title;
@@ -182,7 +206,7 @@ public class FilteredActivitiesPane extends JXPanel {
 		/** The component displayed in the tab. */
 		private final JComponent component;
 
-		private Tab(String title, Icon icon, JComponent component, String tooltip) {
+		private WTab(String title, Icon icon, JComponent component, String tooltip) {
 			this.title = title;
 			this.icon = icon;
 			this.component = component;
