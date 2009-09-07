@@ -12,26 +12,30 @@ import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.renderer.FormatStringValue;
 
+import ca.odell.glazedlists.swing.EventTableModel;
+
+import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.model.report.HoursByProject;
 import com.kemai.wremja.gui.model.report.HoursByProjectReport;
 import com.kemai.wremja.gui.panels.table.HoursByProjectTableFormat;
 
-import ca.odell.glazedlists.swing.EventTableModel;
-
 /**
  * Panel for displaying the report of working hours by project.
  * @see HoursByProjectReport
  * @author remast
+ * @author kutzi
  */
 @SuppressWarnings("serial") //$NON-NLS-1$
 public class HoursByProjectPanel extends JXPanel implements Observer {
+	
+	private static final TextResourceBundle TEXT_BUNDLE = TextResourceBundle.getBundle(GuiConstants.class);
 
     /**
      * The report displayed by this panel.
      */
-    private HoursByProjectReport report;
+    private final HoursByProjectReport report;
     
     /**
      * The table model.
@@ -57,7 +61,23 @@ public class HoursByProjectPanel extends JXPanel implements Observer {
     private void initialize() {
         tableModel = new EventTableModel<HoursByProject>(this.report.getHoursByProject(), new HoursByProjectTableFormat());
 
-        final JXTable table = new JXTable(tableModel);
+        final JXTable table = new JXTable(tableModel) {
+            @Override
+            public String getToolTipText() {
+                if (getSelectedRows().length == 0) {
+                    return "";
+                }
+
+                double duration = 0;
+                
+                for (int i : getSelectedRows()) {
+                	int modelIndex = convertRowIndexToModel(i);
+                    duration += tableModel.getElementAt(modelIndex).getHours();
+                }
+
+                return TEXT_BUNDLE.textFor("AllActivitiesPanel.tooltipDuration", FormatUtils.getDurationFormat().format(duration)); //$NON-NLS-1$
+            }
+        };
         table.setHighlighters(GuiConstants.HIGHLIGHTERS);
         table.setAutoResizeMode(JXTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         

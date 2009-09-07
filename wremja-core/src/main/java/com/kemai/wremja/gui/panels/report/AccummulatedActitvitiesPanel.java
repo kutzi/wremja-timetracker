@@ -18,6 +18,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import ca.odell.glazedlists.swing.EventTableModel;
 
+import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.model.report.ObservingAccumulatedActivitiesReport;
@@ -28,11 +29,14 @@ import com.kemai.wremja.model.report.AccumulatedProjectActivity;
 /**
  * Panel containing the accumulated hours spent on each project on one day.
  * @author remast
+ * @author kutzi
  */
 @SuppressWarnings("serial") 
 public class AccummulatedActitvitiesPanel extends JXPanel implements Observer {
 
-    private AccumulatedActivitiesReport report;
+	private static final TextResourceBundle TEXT_BUNDLE = TextResourceBundle.getBundle(GuiConstants.class);
+	
+    private final AccumulatedActivitiesReport report;
     
     private EventTableModel<AccumulatedProjectActivity> tableModel;
 
@@ -52,7 +56,23 @@ public class AccummulatedActitvitiesPanel extends JXPanel implements Observer {
         this.setBackground(Color.RED);
 
         tableModel = new EventTableModel<AccumulatedProjectActivity>(this.report.getAccumulatedActivitiesByDay(), new AccumulatedActivitiesTableFormat());
-        final JXTable table = new JXTable(tableModel);
+        final JXTable table = new JXTable(tableModel) {
+            @Override
+            public String getToolTipText() {
+                if (getSelectedRows().length == 0) {
+                    return "";
+                }
+
+                double duration = 0;
+                
+                for (int i : getSelectedRows()) {
+                	int modelIndex = convertRowIndexToModel(i);
+                    duration += tableModel.getElementAt(modelIndex).getTime();
+                }
+
+                return TEXT_BUNDLE.textFor("AllActivitiesPanel.tooltipDuration", FormatUtils.getDurationFormat().format(duration)); //$NON-NLS-1$
+            }
+        };
         table.setHighlighters(GuiConstants.HIGHLIGHTERS);
 
         StringValue dateTimeConverter = new StringValue() {
