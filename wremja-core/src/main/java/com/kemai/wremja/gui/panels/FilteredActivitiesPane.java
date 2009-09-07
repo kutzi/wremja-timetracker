@@ -2,18 +2,17 @@ package com.kemai.wremja.gui.panels;
 
 import info.clearthought.layout.TableLayout;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.AbstractAction;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JTabbedPane;
-import javax.swing.JToggleButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
-import org.apache.commons.lang.StringUtils;
+import net.infonode.tabbedpanel.TabDropDownListVisiblePolicy;
+import net.infonode.tabbedpanel.TabLayoutPolicy;
+import net.infonode.tabbedpanel.TabbedPanel;
+import net.infonode.tabbedpanel.theme.ShapedGradientTheme;
+import net.infonode.tabbedpanel.theme.TabbedPanelTitledTabTheme;
+import net.infonode.tabbedpanel.titledtab.TitledTab;
+
 import org.jdesktop.swingx.JXPanel;
 
 import com.kemai.util.TextResourceBundle;
@@ -34,97 +33,21 @@ import com.kemai.wremja.gui.settings.IUserSettings;
  * @author remast
  * @author kutzi
  */
-@SuppressWarnings("serial")
 public class FilteredActivitiesPane extends JXPanel {
 
-    /** The bundle for internationalized texts. */
-    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(GuiConstants.class);
+    private static final long serialVersionUID = 1L;
+
+	/** The bundle for internationalized texts. */
+    private static final TextResourceBundle TEXT_BUNDLE = TextResourceBundle.getBundle(GuiConstants.class);
 
 	/** The model. */
 	private final PresentationModel model;
 	
-    private final IUserSettings settings;
-
-	/** The category that's shown right now. */
-	private String shownCategory;
-
-	/** The currently displayed tabpane. */
-	private JTabbedPane currentPane;
+	private final TabbedPanelTitledTabTheme theme = new ShapedGradientTheme();
 	
-	/** Mapping from category to tabpane. */
-	private final Map<String, JTabbedPane> category2Tabpane = new HashMap<String, JTabbedPane>();
-
-	//------------------------------------------------
-	// Tabs with their panels
-	//------------------------------------------------
-
-	private AccummulatedActitvitiesPanel accummulatedActitvitiesPanel;
-	private CategorizedTab accummulatedActitvitiesTab;
-
-	private HoursByWeekPanel hoursByWeekPanel;
-	private CategorizedTab hoursByWeekTab;
-
-	private HoursByDayPanel hoursByDayPanel;
-	private CategorizedTab hoursByDayTab;
-
-	private HoursByProjectPanel hoursByProjectPanel;
-	private CategorizedTab hoursByProjectTab;
-
-	private HoursByProjectChartPanel hoursByProjectChartPanel;
-	private CategorizedTab hoursByProjectChartTab;
-
-	private AllActitvitiesPanel filteredActitvitiesPanel;
-	private CategorizedTab filteredActitvitiesTab;
-
-	private DescriptionPanel descriptionPanel;
-	private CategorizedTab descriptionTab;
-
-	//------------------------------------------------
-	// Toggle buttons for tab categories
-	//------------------------------------------------
-
-	private final JXPanel categoryButtonPanel = new JXPanel();
-
-	private final JToggleButton generalButton = new JToggleButton(new AbstractAction(textBundle.textFor("Category.General"), new ImageIcon(getClass().getResource("/icons/gtk-dnd-multiple.png"))) {
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			FilteredActivitiesPane.this.toggleCategory("General"); //$NON-NLS-1$
-		}
-
-	});
-	{
-		generalButton.setToolTipText(textBundle.textFor("Category.General.ToolTipText"));
-	}
-
-	private final JToggleButton timeButton = new JToggleButton(new AbstractAction(textBundle.textFor("Category.Time"), new ImageIcon(getClass().getResource("/icons/stock_calendar-view-day.png"))) {
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			FilteredActivitiesPane.this.toggleCategory("Time"); //$NON-NLS-1$
-		}
-
-	});
-	{
-		timeButton.setToolTipText(textBundle.textFor("Category.Time.ToolTipText"));
-	}
-
-	private final JToggleButton projectButton = new JToggleButton(new AbstractAction(textBundle.textFor("Category.Project"), new ImageIcon(getClass().getResource("/icons/stock_calendar-view-day.png"))) {
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			FilteredActivitiesPane.this.toggleCategory("Project"); //$NON-NLS-1$
-		}
-
-	});
-	{
-		projectButton.setToolTipText(textBundle.textFor("Category.Project.ToolTipText"));
-	}
-
 	public FilteredActivitiesPane(final PresentationModel model, IUserSettings settings) {
 		super();
 		this.model = model;
-        this.settings = settings;
 
 		initialize();
 	}
@@ -135,197 +58,178 @@ public class FilteredActivitiesPane extends JXPanel {
 	private void initialize() {
 		double size[][] = {
 				{ TableLayout.FILL}, // Columns
-				{ TableLayout.PREFERRED, TableLayout.FILL } }; // Rows
+				{ TableLayout.FILL } }; // Rows
 		this.setLayout(new TableLayout(size));
 
-		int border = 5;
-		categoryButtonPanel.setLayout(new TableLayout(new double [][] {{0, TableLayout.FILL, border, TableLayout.FILL, border, TableLayout.FILL},{border, TableLayout.PREFERRED, border-3}}));
-		categoryButtonPanel.add(generalButton, "1, 1"); //$NON-NLS-1$
-		categoryButtonPanel.add(timeButton, "3, 1"); //$NON-NLS-1$
-		categoryButtonPanel.add(projectButton, "5, 1"); //$NON-NLS-1$
-		this.add(categoryButtonPanel, "0, 0"); //$NON-NLS-1$
-
-		//tabs.setTabShape(JideTabbedPane.SHAPE_WINDOWS);
-		//tabs.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-
-		shownCategory = this.settings.getShownCategory();
-
-		accummulatedActitvitiesTab = new CategorizedTab(); 
-		accummulatedActitvitiesPanel = new AccummulatedActitvitiesPanel(model.getFilteredReport());
-		accummulatedActitvitiesTab.setComponent(
-				textBundle.textFor("FilteredActivitiesPane.Tab.AccumulatedActivities"),  //$NON-NLS-1$
+		JPanel accummulatedActitvitiesPanel = new AccummulatedActitvitiesPanel(model.getFilteredReport());
+		Tab accummulatedActitvitiesTab = new Tab(
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.AccumulatedActivities"),  //$NON-NLS-1$
 				null,
-//				new ImageIcon(getClass().getResource("/icons/gnome-calculator.png")),  //$NON-NLS-1$
 				accummulatedActitvitiesPanel, 
-				textBundle.textFor("FilteredActivitiesPane.Tab.AccumulatedActivities.Tooltip") //$NON-NLS-1$
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.AccumulatedActivities.Tooltip") //$NON-NLS-1$
 		);
 
-		filteredActitvitiesTab = new CategorizedTab();
-		filteredActitvitiesPanel = new AllActitvitiesPanel(model);
-		filteredActitvitiesTab.setComponent(
-				textBundle.textFor("FilteredActivitiesPane.Tab.AllActivities"),  //$NON-NLS-1$
+		JPanel filteredActitvitiesPanel = new AllActitvitiesPanel(model);
+		Tab filteredActitvitiesTab = new Tab(
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.AllActivities"),  //$NON-NLS-1$
 				null,
-//				new ImageIcon(getClass().getResource("/icons/gtk-dnd-multiple.png")),  //$NON-NLS-1$
 				filteredActitvitiesPanel, 
-				textBundle.textFor("FilteredActivitiesPane.Tab.AllActivities.Tooltip") //$NON-NLS-1$
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.AllActivities.Tooltip") //$NON-NLS-1$
 		);
 
-		descriptionTab = new CategorizedTab();
-		descriptionPanel = new DescriptionPanel(model);
-		descriptionTab.setComponent(
-				textBundle.textFor("FilteredActivitiesPane.Tab.Descriptions"),  //$NON-NLS-1$
+		JPanel descriptionPanel = new DescriptionPanel(model);
+		Tab descriptionTab = new Tab(
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.Descriptions"),  //$NON-NLS-1$
 				null,
-//				new ImageIcon(getClass().getResource("/icons/gnome-mime-text-x-readme.png")), 
 				descriptionPanel, 
-				textBundle.textFor("FilteredActivitiesPane.Tab.Descriptions.Tooltip") //$NON-NLS-1$
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.Descriptions.Tooltip") //$NON-NLS-1$
 		);
 		
-		JTabbedPane generalTabpane = new JTabbedPane();
-		addCategorizedTab(generalTabpane, accummulatedActitvitiesTab);
-		addCategorizedTab(generalTabpane, filteredActitvitiesTab);
-		addCategorizedTab(generalTabpane, descriptionTab);
-		this.category2Tabpane.put("General", generalTabpane);
+		//JTabbedPane generalTabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+		TabbedPanel generalTabpane = new TabbedPanel();
+		generalTabpane.getProperties().setTabLayoutPolicy(TabLayoutPolicy.SCROLLING);
+		generalTabpane.getProperties().setTabDropDownListVisiblePolicy(TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE);
+		generalTabpane.getProperties().setTabReorderEnabled(true);
+		
+		generalTabpane.getProperties().addSuperObject(theme.getTabbedPanelProperties());
+		
+		addTabToPane(generalTabpane, accummulatedActitvitiesTab);
+		addTabToPane(generalTabpane, filteredActitvitiesTab);
+		addTabToPane(generalTabpane, descriptionTab);
 
-		hoursByWeekTab = new CategorizedTab();
-		hoursByWeekPanel = new HoursByWeekPanel(model.getHoursByWeekReport());
-		hoursByWeekTab.setComponent(
-				textBundle.textFor("FilteredActivitiesPane.Tab.HoursByWeek"),  //$NON-NLS-1$
+		JPanel hoursByWeekPanel = new HoursByWeekPanel(model.getHoursByWeekReport());
+		Tab hoursByWeekTab = new Tab(
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByWeek"),  //$NON-NLS-1$
 				null,
-//				new ImageIcon(getClass().getResource("/icons/stock_calendar-view-work-week.png")),  //$NON-NLS-1$
 				hoursByWeekPanel, 
-				textBundle.textFor("FilteredActivitiesPane.Tab.HoursByWeek.Tooltip") //$NON-NLS-1$
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByWeek.Tooltip") //$NON-NLS-1$
 		);
 
-		hoursByDayTab = new CategorizedTab();
-		hoursByDayPanel = new HoursByDayPanel(model.getHoursByDayReport());
-		hoursByDayTab.setComponent(
-				textBundle.textFor("FilteredActivitiesPane.Tab.HoursByDay"),  //$NON-NLS-1$
+		JPanel hoursByDayPanel = new HoursByDayPanel(model.getHoursByDayReport());
+		Tab hoursByDayTab = new Tab(
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByDay"),  //$NON-NLS-1$
 				null,
-//				new ImageIcon(getClass().getResource("/icons/stock_calendar-view-day.png")),  //$NON-NLS-1$
 				hoursByDayPanel, 
-				textBundle.textFor("FilteredActivitiesPane.Tab.HoursByDay.Tooltip") //$NON-NLS-1$
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByDay.Tooltip") //$NON-NLS-1$
 		);
 		
-		JTabbedPane timeTabpane = new JTabbedPane();
-		addCategorizedTab(timeTabpane, hoursByWeekTab);
-		addCategorizedTab(timeTabpane, hoursByDayTab);
-		this.category2Tabpane.put("Time", timeTabpane);
+		addTabToPane(generalTabpane, hoursByWeekTab);
+		addTabToPane(generalTabpane, hoursByDayTab);
+		//this.category2Tabpane.put("Time", timeTabpane);
 
-		hoursByProjectTab = new CategorizedTab();
-		hoursByProjectPanel = new HoursByProjectPanel(model.getHoursByProjectReport());
-		hoursByProjectTab.setComponent(
-				textBundle.textFor("FilteredActivitiesPane.Tab.HoursByProject"),  //$NON-NLS-1$
+		JPanel hoursByProjectPanel = new HoursByProjectPanel(model.getHoursByProjectReport());
+		Tab hoursByProjectTab = new Tab(
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByProject"),  //$NON-NLS-1$
 				null,
-//				new ImageIcon(getClass().getResource("/icons/stock_calendar-view-day.png")),  //$NON-NLS-1$
 				hoursByProjectPanel, 
-				textBundle.textFor("FilteredActivitiesPane.Tab.HoursByProject.Tooltip") //$NON-NLS-1$
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByProject.Tooltip") //$NON-NLS-1$
 		);
 
-		hoursByProjectChartTab = new CategorizedTab();
-		hoursByProjectChartPanel = new HoursByProjectChartPanel(model.getHoursByProjectReport());
-		hoursByProjectChartTab.setComponent(
-				textBundle.textFor("FilteredActivitiesPane.Tab.HoursByProjectChart"),  //$NON-NLS-1$
+		JPanel hoursByProjectChartPanel = new HoursByProjectChartPanel(model.getHoursByProjectReport());
+		Tab hoursByProjectChartTab = new Tab(
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByProjectChart"),  //$NON-NLS-1$
 				null,
-//				new ImageIcon(getClass().getResource("/icons/stock_calendar-view-day.png")),  //$NON-NLS-1$
 				hoursByProjectChartPanel, 
-				textBundle.textFor("FilteredActivitiesPane.Tab.HoursByProjectChart.Tooltip") //$NON-NLS-1$
+				TEXT_BUNDLE.textFor("FilteredActivitiesPane.Tab.HoursByProjectChart.Tooltip") //$NON-NLS-1$
 		);
 
-        JTabbedPane projectTabpane = new JTabbedPane();
-        addCategorizedTab(projectTabpane, hoursByProjectTab);
-        addCategorizedTab(projectTabpane, hoursByProjectChartTab);
-        this.category2Tabpane.put("Project", projectTabpane);
+        //JTabbedPane projectTabpane = new JTabbedPane();
+        addTabToPane(generalTabpane, hoursByProjectTab);
+        addTabToPane(generalTabpane, hoursByProjectChartTab);
+        //this.category2Tabpane.put("Project", projectTabpane);
 		
-		this.initToggleButtons();
+		//this.initToggleButtons();
 
-		this.currentPane = this.category2Tabpane.get(this.shownCategory);
-		
-		this.add(currentPane, "0, 1"); //$NON-NLS-1$
-		currentPane.setVisible(true);
+		this.add(generalTabpane, "0, 0"); //$NON-NLS-1$
+		generalTabpane.setVisible(true);
 	}
 
 	/**
 	 * Initializes the toggle buttons for the categories from the settings.
 	 */
-	private void initToggleButtons() {
-		// 1. Deselect all buttons
-		generalButton.setSelected(false);
-		timeButton.setSelected(false);
-		projectButton.setSelected(false);
-
-		// 2. Select shown button
-		if (StringUtils.equals("General", shownCategory)) { //$NON-NLS-1$
-			generalButton.setSelected(true);
-		} else if (StringUtils.equals("Time", shownCategory)) { //$NON-NLS-1$
-			timeButton.setSelected(true);
-		} else if (StringUtils.equals("Project", shownCategory)) { //$NON-NLS-1$
-			projectButton.setSelected(true);
-		}
-	}
+//	private void initToggleButtons() {
+//		// 1. Deselect all buttons
+//		generalButton.setSelected(false);
+//		timeButton.setSelected(false);
+//		projectButton.setSelected(false);
+//
+//		// 2. Select shown button
+//		if (StringUtils.equals("General", shownCategory)) { //$NON-NLS-1$
+//			generalButton.setSelected(true);
+//		} else if (StringUtils.equals("Time", shownCategory)) { //$NON-NLS-1$
+//			timeButton.setSelected(true);
+//		} else if (StringUtils.equals("Project", shownCategory)) { //$NON-NLS-1$
+//			projectButton.setSelected(true);
+//		}
+//	}
 
 	/**
 	 * Processes the action that the user toggles a category button.
 	 * @param newCategory the toggled category
 	 * @param toggledCategoryButton the toggled button
 	 */
-	private void toggleCategory(final String newCategory) {
-	    if(StringUtils.equals(this.shownCategory, newCategory)) {
-	        initToggleButtons();
-	        return;
-	    }
+//	private void toggleCategory(final String newCategory) {
+//	    if(StringUtils.equals(this.shownCategory, newCategory)) {
+//	        //initToggleButtons();
+//	        return;
+//	    }
+//
+//		// 1. Store category
+//		//  a) internally
+//		shownCategory = newCategory;
+//
+//		//  b) in user settings
+//		this.settings.setShownCategory(newCategory);
+//
+//		// 2. Set tab visibility
+//		JTabbedPane newPane = this.category2Tabpane.get(this.shownCategory);
+//	    this.currentPane.setVisible(false);
+//	    remove(this.currentPane);
+//	    this.currentPane = newPane;
+//	    add(currentPane, "0, 1");
+//	    this.currentPane.setVisible(true);
+//		
+//		// 3.  Deselect all categoryToggleButtons except the one toggled
+//		//initToggleButtons();
+//	}
 
-		// 1. Store category
-		//  a) internally
-		shownCategory = newCategory;
-
-		//  b) in user settings
-		this.settings.setShownCategory(newCategory);
-
-		// 2. Set tab visibility
-		JTabbedPane newPane = this.category2Tabpane.get(this.shownCategory);
-	    this.currentPane.setVisible(false);
-	    remove(this.currentPane);
-	    this.currentPane = newPane;
-	    add(currentPane, "0, 1");
-	    this.currentPane.setVisible(true);
-		
-		// 3.  Deselect all categoryToggleButtons except the one toggled
-		initToggleButtons();
-	}
-
-	/**
-	 * Add a categorized tab to the tabs.
-	 * @param tab the tab to add
-	 */
-	private void addCategorizedTab(JTabbedPane pane, CategorizedTab tab) {
+	private void addTabToPane(TabbedPanel pane, Tab tab) {
 		if (tab == null) {
 			return;
 		}
 
-		pane.addTab(tab.getTitle(), tab.getIcon(), tab.getComponent(), tab.getTooltip());
+		//pane.addTab(tab.getTitle(), tab.getIcon(), tab.getComponent(), tab.getTooltip());
+		pane.addTab(makeInfoNodeTab(tab));
 	}
 
+	private net.infonode.tabbedpanel.Tab makeInfoNodeTab(Tab tab) {
+		TitledTab t = new TitledTab(tab.getTitle(), tab.getIcon(), tab.getComponent(), null);
+		t.getProperties().getNormalProperties().setToolTipEnabled(true);
+		t.getProperties().getNormalProperties().setToolTipText(tab.getTooltip());
+		t.getProperties().getHighlightedProperties().setToolTipEnabled(true);
+		t.getProperties().getHighlightedProperties().setToolTipText(tab.getTooltip());
+		t.getProperties().addSuperObject(theme.getTitledTabProperties());
+		return t;
+	}
+	
 	/**
-	 * A tab belonging to a category.
+	 * Convenience class for working with tabs.
 	 */
-	private static class CategorizedTab {
+	private static class Tab {
 
 		/** The title of the tab. */
-		private String title;
+		private final String title;
 
 		/** The icon of the tab. */
 		private Icon icon;
 
 		/** The tooltip of the tab. */
-		private String tooltip;
+		private final String tooltip;
 
 		/** The component displayed in the tab. */
-		private Component component;
+		private final JComponent component;
 
-		private CategorizedTab() {
-		}
-
-		private void setComponent(final String title, final Icon icon, final Component component, final String tooltip) {
+		private Tab(String title, Icon icon, JComponent component, String tooltip) {
 			this.title = title;
 			this.icon = icon;
 			this.component = component;
@@ -349,12 +253,12 @@ public class FilteredActivitiesPane extends JXPanel {
 		 /**
 		  * @return the component
 		  */
-		 private Component getComponent() {
+		 private JComponent getComponent() {
 			 return component;
 		 }
 
 		 /**
-		  * @return the tip
+		  * @return the tooltip
 		  */
 		 private String getTooltip() {
 			 return tooltip;

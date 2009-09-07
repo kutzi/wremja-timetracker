@@ -15,13 +15,14 @@ import com.kemai.wremja.logging.Logger;
  * @author remast
  * @author kutzi
  */
-@SuppressWarnings("serial") 
 public class ExitAction extends AbstractWremjaAction {
 
-    private static final Logger LOG = Logger.getLogger(ExitAction.class);
+    private static final long serialVersionUID = 1L;
+
+	private static final Logger LOGGER = Logger.getLogger(ExitAction.class);
     
     /** The bundle for internationalized texts. */
-    private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ExitAction.class);
+    private static final TextResourceBundle TEXT_BUNDLE = TextResourceBundle.getBundle(ExitAction.class);
 
     /**
      * Constructor.
@@ -32,10 +33,10 @@ public class ExitAction extends AbstractWremjaAction {
     public ExitAction(final Frame owner, final PresentationModel model) {
         super(owner, model);
 
-        setName(textBundle.textFor("ExitAction.Name")); //$NON-NLS-1$
-        setTooltip(textBundle.textFor("ExitAction.ShortDescription")); //$NON-NLS-1$
-        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-quit.png"))); //$NON-NLS-1$
-        putValue(LONG_DESCRIPTION, textBundle.textFor("ExitAction.LongDescription")); //$NON-NLS-1$
+        setName(TEXT_BUNDLE.textFor("ExitAction.Name")); //$NON-NLS-1$
+        setTooltip(TEXT_BUNDLE.textFor("ExitAction.ShortDescription")); //$NON-NLS-1$
+        setIcon(new ImageIcon(getClass().getResource("/icons/gtk-quit.png"))); //$NON-NLS-1$
+        putValue(LONG_DESCRIPTION, TEXT_BUNDLE.textFor("ExitAction.LongDescription")); //$NON-NLS-1$
     }
 
     /**
@@ -48,12 +49,14 @@ public class ExitAction extends AbstractWremjaAction {
 
         // If activity is running, then double check with user.
         if (getModel().isActive()) {
-            final int dialogResult = JOptionPane.showConfirmDialog(
+            final int dialogResult = JOptionPane.showOptionDialog(
                     getOwner(), 
-                    textBundle.textFor("ExitConfirmDialog.Message"),  //$NON-NLS-1$
-                    textBundle.textFor("ExitConfirmDialog.Title"),  //$NON-NLS-1$
+                    TEXT_BUNDLE.textFor("ExitConfirmDialog.Message"),  //$NON-NLS-1$
+                    TEXT_BUNDLE.textFor("ExitConfirmDialog.Title"),  //$NON-NLS-1$
                     JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.INFORMATION_MESSAGE
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    null, null
             );
             
             switch(dialogResult) {
@@ -68,13 +71,13 @@ public class ExitAction extends AbstractWremjaAction {
                     getModel().setStopActivityOnShutdown(false);
                     break;
                 default:
-                    LOG.error("Invalid dialogResult " + dialogResult );
+                    LOGGER.error("Invalid dialogResult " + dialogResult );
                     quit = false;
             }
         } 
 
         if (quit) {
-            LOG.info("Shutting down");
+            LOGGER.info("Shutting down");
             System.exit(0);
         }
     }

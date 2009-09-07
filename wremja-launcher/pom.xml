@@ -55,11 +55,6 @@
     	<artifactId>wremja-core</artifactId>
     	<version>1.2-SNAPSHOT</version>
     </dependency>
-    <dependency>
-    	<groupId>com.kemai.wremja</groupId>
-    	<artifactId>anuko-timetracker-exporter</artifactId>
-    	<version>1.2-SNAPSHOT</version>
-    </dependency>
 	<dependency>
 	  <groupId>findbugs</groupId>
 	  <artifactId>annotations</artifactId>

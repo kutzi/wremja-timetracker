@@ -17,6 +17,7 @@
         <module>anuko-timetracker-exporter</module>
         <module>wremja-installer</module>
         <module>wremja-launcher</module>
+        <module>infonode-tabbedpane</module>
     </modules>
 
     <properties>
@@ -131,6 +132,12 @@
     </reporting>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>net.infonode</groupId>
+                <artifactId>infonode-tabbedpane</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <scope>compile</scope>
+            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>

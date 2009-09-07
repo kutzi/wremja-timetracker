@@ -165,6 +165,10 @@
 		  <groupId>findbugs</groupId>
 		  <artifactId>annotations</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>net.infonode</groupId>
+            <artifactId>infonode-tabbedpane</artifactId>
+        </dependency>
         <!-- <dependency>
             <groupId>net.java.dev.balloontip</groupId>
             <artifactId>balloontip</artifactId>
