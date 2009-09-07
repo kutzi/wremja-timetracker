@@ -1381,11 +1381,13 @@ public class TabbedPanel extends JPanel {
   private void setTabAreaComponentsButtonsVisible() {
     if (scrollButtonBox != null) {
       boolean visible = false;
-      if (!tabAreaOrientation.isHorizontal())
+      if (!tabAreaOrientation.isHorizontal()) {
         visible = draggableComponentBox.getInnerSize().getWidth() > calcScrollWidth();
-      else
+      } else {
         visible = draggableComponentBox.getInnerSize().getHeight() > calcScrollHeight();
-        scrollButtonBox.setVisible(visible);
+      }
+      scrollButtonBox.setVisible(false);
+      // TODO ckutz: make this configurable  scrollButtonBox.setVisible(visible);
 
       if (dropDownList != null && listVisiblePolicy == TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE)
         dropDownList.setVisible(visible);
