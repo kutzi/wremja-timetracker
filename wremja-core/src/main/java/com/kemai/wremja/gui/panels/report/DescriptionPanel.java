@@ -15,9 +15,12 @@ import javax.swing.JScrollPane;
 
 import org.jdesktop.swingx.JXPanel;
 
+import ca.odell.glazedlists.SortedList;
+
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ProjectActivity;
 
 /**
@@ -27,6 +30,8 @@ import com.kemai.wremja.model.ProjectActivity;
 @SuppressWarnings("serial")
 public class DescriptionPanel extends JXPanel implements Observer {
 
+    private static final Logger LOGGER = Logger.getLogger(DescriptionPanel.class);
+    
     /** The model. */
     private final PresentationModel model;
 
@@ -62,7 +67,8 @@ public class DescriptionPanel extends JXPanel implements Observer {
         // Remove old description panels.
         container.removeAll();
 
-        for (final ProjectActivity activity : this.model.getActivitiesList()) {
+        SortedList<ProjectActivity> activitiesList = this.model.getActivitiesList();
+        for (final ProjectActivity activity : activitiesList) {
             final DescriptionPanelEntry descriptionPanelEntry = new DescriptionPanelEntry(activity, this.model);
 
             // Alternate background color
@@ -77,7 +83,11 @@ public class DescriptionPanel extends JXPanel implements Observer {
 
             // Display entry
             container.add(descriptionPanelEntry);
+        }
 
+        // prevent display glitches, if all entries were removed:
+        if (activitiesList.isEmpty()) {
+            updateUI();
         }
     }
 
@@ -85,7 +95,10 @@ public class DescriptionPanel extends JXPanel implements Observer {
      * {@inheritDoc}
      */
     public void update(final Observable source, final Object eventObject) {
-        if (eventObject == null || !(eventObject instanceof WremjaEvent)) {
+        if (!(eventObject instanceof WremjaEvent)) {
+            LOGGER.warn("Expected WremjaEvent but got: " +
+                    (eventObject != null ? eventObject.getClass() : "null"));
+                    
             return;
         }
 
