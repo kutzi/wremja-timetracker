@@ -23,7 +23,7 @@ public interface IUserSettings {
      * Sets the location of the last Excel export.
      * @param excelExportLocation the location of the last Excel export to set
      */
-    public void setLastExcelExportLocation(final String excelExportLocation);
+    public void setLastExcelExportLocation(String excelExportLocation);
 
     /**
      * Gets the location of the last Data export.
@@ -35,7 +35,7 @@ public interface IUserSettings {
      * Sets the location of the last Data export.
      * @param dataExportLocation the location of the last data export to set
      */
-    public void setLastDataExportLocation(final String dataExportLocation);
+    public void setLastDataExportLocation(String dataExportLocation);
 
     /**
      * Gets the location of the last Csv export.
@@ -47,31 +47,37 @@ public interface IUserSettings {
      * Sets the location of the last Csv export.
      * @param csvExportLocation the location of the last Csv export to set
      */
-    public void setLastCsvExportLocation(final String csvExportLocation);
+    public void setLastCsvExportLocation(String csvExportLocation);
 
     public String getLastDescription();
 
-    public void setLastDescription(final String lastDescription);
+    public void setLastDescription(String lastDescription);
 
     public int getFilterSelectedMonth(int defaultValue);
 
-    public void setFilterSelectedMonth(final int month);
+    public void setFilterSelectedMonth(int month);
 
     public int getFilterSelectedWeekOfYear(int defaultValue);
 
-    public void setFilterSelectedWeekOfYear(final int weekOfYear);
+    public void setFilterSelectedWeekOfYear(int weekOfYear);
 
     public int getFilterSelectedYear(int defaultValue);
 
-    public void setFilterSelectedYear(final int year);
+    public void setFilterSelectedYear(int year);
 
     public long getFilterSelectedProjectId(long defaultValue);
 
-    public void setFilterSelectedProjectId(final long projectId);
+    public void setFilterSelectedProjectId(long projectId);
 
+    /**
+     * @deprecated There's no such thing anymore
+     */
     public String getShownCategory();
 
-    public void setShownCategory(final String shownCategory);
+    /**
+     * @deprecated There's no such thing anymore
+     */
+    public void setShownCategory(String shownCategory);
 
     public String getAnukoLogin();
 
@@ -94,16 +100,15 @@ public interface IUserSettings {
 
     public boolean isRememberWindowSizeLocation();
 
-    public void setRememberWindowSizeLocation(
-            final boolean rememberWindowSizeLocation);
+    public void setRememberWindowSizeLocation(boolean rememberWindowSizeLocation);
 
     public Dimension getWindowSize();
 
-    public void setWindowSize(final Dimension size);
+    public void setWindowSize(Dimension size);
 
     public Point getWindowLocation();
 
-    public void setWindowLocation(final Point location);
+    public void setWindowLocation(Point location);
 
     public void setWindowMinimized(boolean minimized);
 
