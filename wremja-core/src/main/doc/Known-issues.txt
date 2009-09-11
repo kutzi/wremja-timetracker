@@ -12,8 +12,6 @@ However, Wremja recognizes unfinished activities on next startup and asks how to
 
 - tray icon issues on Linux
   - background of the icon is always gray
-  - Minimizing to/restoring from tray icon doesn't work reliably (on Gnome).
-    Therefore the tray icon is disabled per default when running under Gnome
 
 - No installer for Mac OS
 
