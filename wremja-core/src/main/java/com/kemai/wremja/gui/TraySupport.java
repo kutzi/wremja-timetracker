@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 
 import org.jdesktop.swinghelper.tray.JXTrayIcon;
 
+import com.kemai.swing.action.AbstractWAction;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.actions.AbstractWremjaAction;
@@ -143,21 +144,27 @@ public class TraySupport implements Observer, WindowListener {
 
         menu.addSeparator();
 
+        // add projects action later within here
+        
+        menu.addSeparator();
+        
+        // create mnemonic for start/stop action before projects:
+        final AbstractWAction startOrStop;
+        if (model.isActive()) {
+        	startOrStop = new StopAction(model);
+        } else {
+        	startOrStop = new StartAction(null, model);
+        }
+        startOrStop.setIcon(null);
+        menu.add(startOrStop);
+        
+        // add projects between the 2 separators
+        int index = 3;
+        // TODO: maybe it doesn't make sense to auto-create mnemonics for the change-projects action at all?
         for (Project project : model.getProjectList()) {
         	final ChangeProjectAction changeAction = new ChangeProjectAction(model, project);
-            menu.add(changeAction);
-        }
-
-        menu.addSeparator();
-
-        if (model.isActive()) {
-        	final StopAction stopAction = new StopAction(model);
-        	stopAction.setIcon(null);
-            menu.add(stopAction);
-        } else {
-        	final StartAction startAction = new StartAction(null, model);
-        	startAction.setIcon(null);
-            menu.add(startAction);
+            menu.insert(changeAction, index);
+            index++;
         }
     }
 

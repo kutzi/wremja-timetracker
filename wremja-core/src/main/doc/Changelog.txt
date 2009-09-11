@@ -1,3 +1,11 @@
+Changes in Version 1.2.0
+==========================
+- Bug: fixed tray icon problems on Linux (http://kenai.com/jira/browse/WREMJA-3)
+- Bug: fixed possible properties corruption (http://kenai.com/jira/browse/WREMJA-22)
+- Improvement: removed 'categories/tabs' concept with a single tabbed pane (http://kenai.com/jira/browse/WREMJA-7)
+- Improvement: display 'duration' tooltip also in accumulated and hours-by-project tab
+- Improvement: allow reordering of tabs
+
 Changes in Version 1.1.2
 ==========================
 - Bug: detection of unfinished activities from previous days didn't work

@@ -43,24 +43,24 @@ public class MnemonicsContainer {
 	public void addMnemonicsFor(JMenuItem item) {
 		Action a = item.getAction();
 		if(a instanceof AbstractWAction) {
-			updateMnemonicsFromAction(item, (AbstractWAction)item.getAction(), this);
+			updateMnemonicsFromAction(item, (AbstractWAction)item.getAction());
 		} else {
-			updateMnemonicsFromMenuItem(item, this);
+			updateMnemonicsFromMenuItem(item);
 		}
 	}
 	
-	void updateMnemonicsFromAction(JMenuItem item, AbstractWAction action, MnemonicsContainer container) {
+	void updateMnemonicsFromAction(JMenuItem item, AbstractWAction action) {
 		if(action.hasMnemonicSet()) {
 			item.setMnemonic(action.getMnemonic().intValue());
 			item.setDisplayedMnemonicIndex(action.getDisplayedMnemonicIndex().intValue());
 		} else {
 			String name = getName(action);
-			updateMnemonicsFromName(item, name, container);
+			updateMnemonicsFromName(item, name);
 		}
 	}
 
-	void updateMnemonicsFromMenuItem(JMenuItem item, MnemonicsContainer container) {
-		updateMnemonicsFromName(item, item.getText(), container);
+	void updateMnemonicsFromMenuItem(JMenuItem item) {
+		updateMnemonicsFromName(item, item.getText());
 	}
 
 //	   1. Try the first alphanumeric character in the string. Check to see if it is available (among other menu items in the menu or components in the window, as appropriate).
@@ -68,7 +68,7 @@ public class MnemonicsContainer {
 //	   3. If no capitalized letters are available, try lowercase consonants.
 //	   4. If no lowercase consonants are available, try lowercase vowels.
 //	   5. If no lowercase vowels are available, give up.
-	void updateMnemonicsFromName(JMenuItem item, String name, MnemonicsContainer container) {
+	void updateMnemonicsFromName(JMenuItem item, String name) {
 		if(org.apache.commons.lang.StringUtils.isBlank(name)) {
 			return;
 		}
@@ -77,7 +77,7 @@ public class MnemonicsContainer {
 		
 		int m = name.codePointAt(0);
 		if(Character.isLetterOrDigit(m)) {
-    		if(container.add(m)) {
+    		if(add(m)) {
     			item.setMnemonic(m);
     			item.setDisplayedMnemonicIndex(0);
     			return;
@@ -87,7 +87,7 @@ public class MnemonicsContainer {
 		// TODO: handle Unicode codepoints here!
 		for(int i=1; i<name.length()-1; i++) {
 			if(Character.isUpperCase(name.charAt(i))) {
-				if(trySetMnemonic(name, i, container, item)) {
+				if(trySetMnemonic(name, i, item)) {
 					return;
 				}
 			}
@@ -95,7 +95,7 @@ public class MnemonicsContainer {
 		
 		for(int i=1; i<name.length()-1; i++) {
 			if(StringUtils.isConsonant(name.charAt(i))) {
-				if(trySetMnemonic(name, i, container, item)) {
+				if(trySetMnemonic(name, i, item)) {
 					return;
 				}
 			}
@@ -103,7 +103,7 @@ public class MnemonicsContainer {
 		
 		for(int i=1; i<name.length()-1; i++) {
 			if(!StringUtils.isConsonant(name.charAt(i))) {
-				if(trySetMnemonic(name, i, container, item)) {
+				if(trySetMnemonic(name, i, item)) {
 					return;
 				}
 			}
@@ -113,9 +113,9 @@ public class MnemonicsContainer {
 		return;
 	}
 
-	private static boolean trySetMnemonic(CharSequence s, int index, MnemonicsContainer container, JMenuItem item) {
+	private boolean trySetMnemonic(CharSequence s, int index, JMenuItem item) {
 		int m = Character.codePointAt(s, index);
-		if(container.add(m)) {
+		if(add(m)) {
 			item.setMnemonic(m);
 			item.setDisplayedMnemonicIndex(index);
 			return true;
