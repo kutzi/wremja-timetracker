@@ -4,13 +4,13 @@
     <groupId>com.kemai.wremja</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2</version>
+    <version>1.2.1-SNAPSHOT</version>
     <name>Wremja Parent</name>
     <description>Parent project for Wremja</description>
     <url>http://kenai.com/projects/wremja/pages/Home</url>
     <scm>
-        <developerConnection>scm:svn:https://kenai.com/svn/wremja~svn/tags/parent-1.2</developerConnection>
-        <url>https://kenai.com/svn/wremja~svn/tags/parent-1.2</url>
+        <developerConnection>scm:svn:https://kenai.com/svn/wremja~svn/trunk</developerConnection>
+        <url>https://kenai.com/svn/wremja~svn/trunk</url>
     </scm>
     <modules>
         <module>wremja-core</module>
@@ -135,7 +135,7 @@
             <dependency>
                 <groupId>net.infonode</groupId>
                 <artifactId>infonode-tabbedpane</artifactId>
-                <version>1.0</version>
+                <version>1.1-SNAPSHOT</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
