@@ -15,6 +15,7 @@ import com.kemai.util.StringUtils;
  * 
  * Implements the semi-intelligent mnemonics auto-detect described here:
  * http://weblogs.java.net/blog/enicholas/archive/2006/06/mnemonic_magic.html
+ * - together with some improvements done by me.
  * 
  * 
  * @author kutzi
@@ -25,13 +26,20 @@ public class MnemonicsContainer {
 
 	/**
 	 * Adds the given mnemonic to the container.
-	 * Returns true, if the container did NOT contain the mnemonic previously.
+	 * Cases are ignored by this method - i.e. 'a' and 'A' are considered to
+	 * be the same mnemonic.
+	 * 
+	 * @return true, if the container did NOT contain the mnemonic previously.
 	 * Returns false otherwise.
 	 */
 	private boolean add(int mnemonic) {
-		return this.usedMnemonics.add(Integer.valueOf(mnemonic));
+		int upperMnemonic = Character.toUpperCase(mnemonic);
+		return this.usedMnemonics.add(Integer.valueOf(upperMnemonic));
 	}
 	
+	/**
+	 * Adds an auto-generated mnemonic for the item.
+	 */
 	public void addMnemonicsFor(JMenuItem item) {
 		Action a = item.getAction();
 		if(a instanceof AbstractWAction) {
