@@ -18,6 +18,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
@@ -196,8 +197,15 @@ public class MainFrame extends JXFrame implements Observer {
         TableLayout tableLayout = new TableLayout(size);
         this.setLayout(tableLayout);
         this.add(initToolBar(), "0, 0");
-        this.add(getCurrentActivityPanel(), "0, 1");
-        this.add(getReportPanel(), "0, 2");
+        JSplitPane splitPane = new JSplitPane(
+                JSplitPane.VERTICAL_SPLIT,
+                true,
+                getCurrentActivityPanel(),
+                getReportPanel());
+        splitPane.setDividerSize(2);
+        this.add(splitPane, "0, 1, 0, 2");
+        //this.add(getCurrentActivityPanel(), "0, 1");
+        //this.add(getReportPanel(), "0, 2");
     }
     
     private ReportPanel getReportPanel() {

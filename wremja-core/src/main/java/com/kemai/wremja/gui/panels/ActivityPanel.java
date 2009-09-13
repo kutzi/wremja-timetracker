@@ -3,6 +3,7 @@ package com.kemai.wremja.gui.panels;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -23,9 +24,11 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXPanel;
@@ -130,15 +133,17 @@ public class ActivityPanel extends JPanel implements Observer {
             startStopButton.setAction(new StartAction(null, this.model));
         }
 
+        int preferredElementHeight = startStopButton.getPreferredSize().height;
+        createProjectSelector(preferredElementHeight);
         // 2. Restore selected project if set.
         if (this.model.getData().getActiveProject() != null) {
-            this.getProjectSelector().setSelectedItem(
+            this.projectSelector.setSelectedItem(
                     this.model.getData().getActiveProject()
             );
         } else {
             // If not set initially select first project
             if (!this.model.getProjectList().isEmpty()) {
-                getProjectSelector().setSelectedItem(
+                this.projectSelector.setSelectedItem(
                         this.model.getProjectList().get(0)
                 );
             }
@@ -177,13 +182,15 @@ public class ActivityPanel extends JPanel implements Observer {
 
         final double buttonPanelSize [][] = {
                 { border, TableLayout.FILL, border, TableLayout.FILL, border }, // Columns
-                { 0, TableLayout.FILL, border, TableLayout.FILL, border, TableLayout.FILL, border * 2 } // Rows
+                { 0, TableLayout.PREFERRED, border, TableLayout.PREFERRED, border,
+                    TableLayout.PREFERRED,
+                    TableLayout.FILL, border * 2 } // Rows
         };
 
         buttonPanel.setLayout(new TableLayout(buttonPanelSize));
 
         buttonPanel.add(startStopButton, "1, 1, 3, 1"); //$NON-NLS-1$
-        buttonPanel.add(getProjectSelector(), "1, 3, 3, 3"); //$NON-NLS-1$
+        buttonPanel.add(this.projectSelector, "1, 3, 3, 3"); //$NON-NLS-1$
 
         start = new JFormattedTextField(FormatUtils.getTimeFormat());
         start.setToolTipText(textBundle.textFor("ActivityPanel.Start.ToolTipText"));
@@ -224,7 +231,9 @@ public class ActivityPanel extends JPanel implements Observer {
 
         startPanel.add(startLabel, "0, 0"); //$NON-NLS-1$
         startPanel.add(start, "2, 0"); //$NON-NLS-1$
-
+        startPanel.setPreferredSize(new Dimension(
+                startPanel.getPreferredSize().width,
+                preferredElementHeight));
         buttonPanel.add(startPanel, "1, 5"); //$NON-NLS-1$
 
         duration = new JLabel();
@@ -255,8 +264,14 @@ public class ActivityPanel extends JPanel implements Observer {
 
         timerPanel.add(durationLabel, "0, 0"); //$NON-NLS-1$
         timerPanel.add(duration, "2, 0"); //$NON-NLS-1$
+        timerPanel.setPreferredSize(new Dimension(
+                timerPanel.getPreferredSize().width,
+                preferredElementHeight));
 
         buttonPanel.add(timerPanel, "3, 5"); //$NON-NLS-1$
+        
+        // add a dummy panel to take up additional height, when JSplitPane is resized
+        buttonPanel.add(new JPanel(), "1, 6, 3, 6"); //$NON-NLS-1$
 
         this.add(new JXTitledSeparator(textBundle.textFor("ActivityPanel.ActivityLabel")), "1, 1, 3, 1"); //$NON-NLS-1$ $NON-NLS-2$
         this.add(buttonPanel, "1, 3"); //$NON-NLS-1$
@@ -282,30 +297,42 @@ public class ActivityPanel extends JPanel implements Observer {
 	}
 
     /**
-     * This method initializes projectSelector.
-     * @return javax.swing.JComboBox
+     * Initializes the projectSelector.
      */
-    private JComboBox getProjectSelector() {
-        if (projectSelector == null) {
-            projectSelector = new JComboBox();
-            projectSelector.setToolTipText(textBundle.textFor("ProjectSelector.ToolTipText")); //$NON-NLS-1$
-            projectSelector.setModel(new EventComboBoxModel<Project>(this.model.getProjectList()));
+    private void createProjectSelector(int preferredHeight) {
+        projectSelector = new JComboBox();
+        projectSelector.setToolTipText(textBundle.textFor("ProjectSelector.ToolTipText")); //$NON-NLS-1$
+        projectSelector.setModel(new EventComboBoxModel<Project>(this.model.getProjectList()));
 
-            /* Handling of selection events: */
-            projectSelector.addActionListener(new ActionListener() {
-                public void actionPerformed(final ActionEvent e) {
-                    // 1. Set current project to the just selected project.
-                    final Project selectedProject = (Project) projectSelector.getSelectedItem();
-                    ActivityPanel.this.model.changeProject(selectedProject);
+        /* Handling of selection events: */
+        projectSelector.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                // 1. Set current project to the just selected project.
+                final Project selectedProject = (Project) projectSelector.getSelectedItem();
+                ActivityPanel.this.model.changeProject(selectedProject);
 
-                    // 2. Clear the description.
-                    if (descriptionEditor != null) {
-                        descriptionEditor.setText("");
-                    }
+                // 2. Clear the description.
+                if (descriptionEditor != null) {
+                    descriptionEditor.setText("");
                 }
-            });
-        }
-        return projectSelector;
+            }
+        });
+        Dimension preferredSize = projectSelector.getPreferredSize();
+        preferredSize.setSize(preferredSize.width, preferredHeight);
+        projectSelector.setPreferredSize(preferredSize);
+        final ListCellRenderer renderer = projectSelector.getRenderer();
+        projectSelector.setRenderer(new ListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                Component comp = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (comp instanceof JLabel) {
+                    JLabel label = (JLabel) comp;
+                    label.setText(" " + label.getText());
+                }
+                return comp;
+            }
+        });
     }
 
     /**
@@ -353,7 +380,7 @@ public class ActivityPanel extends JPanel implements Observer {
      * @param event the event of the project change
      */
     private void updateProjectChanged(final WremjaEvent event) {
-        getProjectSelector().setSelectedItem(event.getData());
+        this.projectSelector.setSelectedItem(event.getData());
 
         if (model.isActive()) {
             start.setValue(this.model.getStart().toDate());
