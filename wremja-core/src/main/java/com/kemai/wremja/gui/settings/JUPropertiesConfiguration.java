@@ -40,6 +40,7 @@ public class JUPropertiesConfiguration implements Configuration {
             // There is a small time window in save() where a backup file is created, but the
             // new configuration isn't saved yet.
             // Check if that maybe has happened
+            // FIXME: clean up old backups!
         	List<File> backupFiles = DataBackup.getBackupFiles(this.file);
         	if (!backupFiles.isEmpty()) {
         		in = new FileInputStream(backupFiles.get(0));

@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -16,7 +17,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 import com.kemai.util.IOUtils;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
-import com.kemai.wremja.gui.settings.UserSettings;
 import com.kemai.wremja.logging.Logger;
 
 /**
@@ -84,8 +84,6 @@ public class DataBackup {
      * @return the list of backup files
      */
     public static List<File> getBackupFiles(final File file)  {
-        final SortedMap<DateTime, File> sortedBackupFiles = new TreeMap<DateTime, File>();
-
         final File dir = file.getParentFile();
         final String [] backupFiles = dir.list(new FilenameFilter() {
 
@@ -105,24 +103,26 @@ public class DataBackup {
             return Collections.emptyList();
         }
 
+        // Order by the date of the backup (descending)
+        final SortedMap<DateTime, File> sortedBackupFiles = new TreeMap<DateTime, File>(
+                new Comparator<DateTime>() {
+                    @Override
+                    public int compare(DateTime o1, DateTime o2) {
+                        return -o1.compareTo(o2);
+                    }
+                }
+                );
         for (String backupFile : backupFiles) {
             try {
-            	final DateTime backupDate = BACKUP_DATE_FORMAT.parseDateTime(backupFile.substring(UserSettings.DEFAULT_FILE_NAME.length()+1));
+            	final DateTime backupDate = BACKUP_DATE_FORMAT.parseDateTime(backupFile.substring(file.getName().length()+1));
                 sortedBackupFiles.put(backupDate, new File(ApplicationSettings.instance().getApplicationDataDirectory() + File.separator + backupFile));
             } catch (IllegalArgumentException e) {
                 // ignore
             }
         }
 
-        // Order the list by the date of the backup with the latest backup at front.
         final List<File> backupFileList = new ArrayList<File>(sortedBackupFiles.size());
-        final int numberOfBackups = sortedBackupFiles.size();
-        for (int i = 0; i < numberOfBackups; i++) {
-            final DateTime backupDate = sortedBackupFiles.lastKey();
-
-            backupFileList.add(sortedBackupFiles.get(backupDate));
-            sortedBackupFiles.remove(backupDate);
-        }
+        backupFileList.addAll(sortedBackupFiles.values());
 
         return backupFileList;
     }
@@ -134,11 +134,15 @@ public class DataBackup {
      */
     public static DateTime getDateOfBackup(final File backupFile) {
         try {
-            return BACKUP_DATE_FORMAT.parseDateTime(backupFile.getName().substring(UserSettings.DEFAULT_FILE_NAME.length()+1));
+            String fileName = backupFile.getName();
+            int lastDot = fileName.lastIndexOf('.');
+            if (lastDot != -1 && fileName.length() > lastDot) {
+                return BACKUP_DATE_FORMAT.parseDateTime(fileName.substring(lastDot + 1));
+            }
         } catch (Exception e) {
             LOGGER.error(e, e);
-            return null;
         }
+        return null;
     }
 
     /**
