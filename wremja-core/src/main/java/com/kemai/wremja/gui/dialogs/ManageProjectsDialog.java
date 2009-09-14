@@ -2,6 +2,7 @@ package com.kemai.wremja.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -20,6 +21,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
@@ -43,11 +46,13 @@ import com.kemai.wremja.model.Project;
 @SuppressWarnings("serial")
 public class ManageProjectsDialog extends EscapeDialog implements Observer {
 
-	private static final Logger log = Logger.getLogger(ManageProjectsDialog.class);
+	private static final Logger LOGGER = Logger.getLogger(ManageProjectsDialog.class);
 	
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(ManageProjectsDialog.class);
 
+    private final PresentationModel model;
+    
     private JPanel jContentPane = null;
 
     private JXTable projectList = null;
@@ -64,13 +69,8 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
 
     private JLabel lableProjectTitle = null;
 
-    private final PresentationModel model;
-
     private EventTableModel<Project> projectListTableModel;
 
-    /**
-     * @param owner
-     */
     public ManageProjectsDialog(final Frame owner, final PresentationModel model) {
         super(owner);
 
@@ -97,7 +97,6 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
 
     /**
      * This method initializes jContentPane.
-     * @return javax.swing.JPanel
      */
     private JPanel getJContentPane() {
         if (jContentPane == null) {
@@ -114,26 +113,30 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
 
     /**
      * This method initializes projectList.
-     * @return javax.swing.JList	
      */
     private JXTable getProjectList() {
         if (projectList == null) {
             projectList = new JXTable();
             projectList.setSortable(false);
-            projectList.getTableHeader().setVisible(false);
+            projectList.getTableHeader().setVisible(true);
 
             projectListTableModel = new EventTableModel<Project>(model.getProjectList(), new ProjectListTableFormat(model));
             projectList.setModel(projectListTableModel);
             projectList.setToolTipText(textBundle.textFor("ManageProjectsDialog.ProjectList.ToolTipText")); //$NON-NLS-1$
+            
+            fitColumnToContent(projectList, 1);
+            projectList.getColumn(1).setCellRenderer(projectList.getDefaultRenderer(Boolean.class));
+            projectList.getColumn(1).setCellEditor(projectList.getDefaultEditor(Boolean.class));
+            fitColumnToContent(projectList, 2);
+            projectList.getColumn(2).setCellRenderer(projectList.getDefaultRenderer(Boolean.class));
+            projectList.getColumn(2).setCellEditor(projectList.getDefaultEditor(Boolean.class));
         }
         return projectList;
     }
 
     /**
      * This method initializes newProjectTextField.
-     * @return javax.swing.JTextField	
      */
-    // TODO: disallow leading/trailing whitespace (or simply trim it)?
     private JTextField getNewProjectTextField() {
         if (newProjectTextField == null) {
             newProjectTextField = new JTextField();
@@ -173,7 +176,7 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
 							addProjectButton.setEnabled(false);
 						}
 					} catch (BadLocationException e) {
-						log.error(e, e);
+						LOGGER.error(e, e);
 					}
 				}
             });
@@ -282,5 +285,44 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
             projectListTableModel.fireTableDataChanged();
             break;
         }
+    }
+    
+    /**
+     * From http://www.wer-weiss-was.de/theme35/article3227810.html
+     */
+    private static void fitColumnToContent(JXTable table, int colIndex) {
+        TableColumn column = table.getColumnModel().getColumn(colIndex);
+        if (column == null)
+            return;
+
+        int modelIndex = column.getModelIndex();
+        TableCellRenderer renderer, headerRenderer;
+        Component component;
+        int colContentWidth = 0;
+        int headerWidth = 0;
+        int rows = table.getRowCount();
+
+        // Get width of column header
+        headerRenderer = column.getHeaderRenderer();
+        if (headerRenderer == null)
+            headerRenderer = table.getTableHeader().getDefaultRenderer();
+
+        Component comp = headerRenderer.getTableCellRendererComponent(table,
+                column.getHeaderValue(), false, false, 0, 0);
+        headerWidth = comp.getPreferredSize().width
+                + table.getIntercellSpacing().width;
+
+        // Get max width of column content
+        for (int i = 0; i < rows; i++) {
+            renderer = table.getCellRenderer(i, modelIndex);
+            Object valueAt = table.getValueAt(i, modelIndex);
+            component = renderer.getTableCellRendererComponent(table, valueAt,
+                    false, false, i, modelIndex);
+            colContentWidth = Math.max(colContentWidth, component
+                    .getPreferredSize().width
+                    + table.getIntercellSpacing().width);
+        }
+        int colWidth = Math.max(colContentWidth, headerWidth);
+        column.setPreferredWidth(colWidth);
     }
 }

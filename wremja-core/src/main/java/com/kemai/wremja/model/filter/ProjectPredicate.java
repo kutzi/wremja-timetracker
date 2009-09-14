@@ -7,7 +7,7 @@ import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
 /**
- * Holds for all activities of one project.
+ * Evaluates to true for all activities of a given project.
  * @author remast
  */
 public class ProjectPredicate implements Predicate<ProjectActivity> {
@@ -36,7 +36,7 @@ public class ProjectPredicate implements Predicate<ProjectActivity> {
             return false;
         }
 
-        final ProjectActivity activity = (ProjectActivity) object;
+        final ProjectActivity activity = object;
         return ObjectUtils.equals(this.project, activity.getProject());
     }
 

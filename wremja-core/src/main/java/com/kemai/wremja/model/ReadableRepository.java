@@ -30,7 +30,6 @@ public interface ReadableRepository {
     
     /**
      * Returns <code>true</code> iff there's currently a started activity.
-     * @return
      */
     public boolean isActive();
 

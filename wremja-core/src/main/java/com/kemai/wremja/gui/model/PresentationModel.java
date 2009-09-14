@@ -16,7 +16,10 @@ import org.apache.commons.lang.ObjectUtils;
 import org.joda.time.DateTime;
 
 import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.matchers.Matcher;
 
 import com.kemai.util.DateUtils;
 import com.kemai.util.IdGenerator;
@@ -594,6 +597,19 @@ public class PresentationModel extends Observable {
      */
     public SortedList<Project> getProjectList() {
         return projectList;
+    }
+
+    /**
+     * Returns a view of the projects showing only the 'visible' projects.
+     */
+    public EventList<Project> getVisibleProjects() {
+        return new FilterList<Project>(getProjectList(),
+                new Matcher<Project>() {
+                    @Override
+                    public boolean matches(Project p) {
+                        return p.isVisible();
+                    }
+                });
     }
 
     /**

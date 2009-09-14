@@ -114,8 +114,6 @@ public class MainFrame extends JXFrame implements Observer {
     // The menu items
     // ------------------------------------------------
 
-    private JMenuItem aboutMenuItem = null;
-
     private JMenuItem addActivityMenuItem = null;
 
     private JMenuItem editProjectsMenuItem = null;
@@ -204,8 +202,6 @@ public class MainFrame extends JXFrame implements Observer {
                 getReportPanel());
         splitPane.setDividerSize(2);
         this.add(splitPane, "0, 1, 0, 2");
-        //this.add(getCurrentActivityPanel(), "0, 1");
-        //this.add(getReportPanel(), "0, 2");
     }
     
     private ReportPanel getReportPanel() {
@@ -361,11 +357,8 @@ public class MainFrame extends JXFrame implements Observer {
      * @return javax.swing.JMenuItem
      */
     private JMenuItem getAboutMenuItem() {
-        if (aboutMenuItem == null) {
-            AbstractWremjaAction aboutAction = new AboutAction(this);
-            aboutMenuItem = new JMenuItem(aboutAction);
-        }
-        return aboutMenuItem;
+        AbstractWremjaAction aboutAction = new AboutAction(this);
+        return new JMenuItem(aboutAction);
     }
 
     /**

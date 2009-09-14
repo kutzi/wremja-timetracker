@@ -3,16 +3,15 @@ package com.kemai.wremja.gui.lists;
 import java.util.Observable;
 import java.util.Observer;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.SortedList;
 
 import com.kemai.swing.util.LabeledItem;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.Project;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.SortedList;
 
 /**
  * The list containing all projects available for the filter.
@@ -30,9 +29,12 @@ public class ProjectFilterList implements Observer {
     public static final int ALL_PROJECTS_DUMMY_VALUE = -10;
 
     public static final Project ALL_PROJECTS_DUMMY = new Project(ALL_PROJECTS_DUMMY_VALUE, "*", "*"); //$NON-NLS-1$ //$NON-NLS-2$
+    
+    public static final Project BILLABLE_PROJECTS_DUMMY = new Project(-5, "*", "*"); //$NON-NLS-1$ //$NON-NLS-2$
 
-    public static final LabeledItem<Project> ALL_PROJECTS_FILTER_ITEM = new LabeledItem<Project>(ALL_PROJECTS_DUMMY, textBundle.textFor("ProjectFilterList.AllProjectsLabel")); //$NON-NLS-1$
-
+    public static final LabeledItem<Project> ALL_PROJECTS_FILTER_ITEM = new LabeledItem<Project>(ALL_PROJECTS_DUMMY,
+            "<" + textBundle.textFor("ProjectFilterList.AllProjectsLabel") + ">"); //$NON-NLS-1$
+    
     /** The actual list containing all projects. */
     private final EventList<LabeledItem<Project>> projectList;
 
@@ -54,6 +56,7 @@ public class ProjectFilterList implements Observer {
     private void initialize() {
         this.projectList.clear();
         this.projectList.add(ALL_PROJECTS_FILTER_ITEM);
+        this.projectList.add(new LabeledItem<Project>(BILLABLE_PROJECTS_DUMMY, "<Only billable>"));
 
         for (Project activity : this.model.getData().getProjects()) {
             this.addProject(activity);

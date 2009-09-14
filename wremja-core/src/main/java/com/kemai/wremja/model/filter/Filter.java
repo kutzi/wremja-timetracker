@@ -41,13 +41,15 @@ public class Filter {
     
     /** The year to filter by. */
     private Integer year;
-
     
     /** The predicate to filter by year. */
     private static final String YEAR_PREDICATE = "YEAR_PREDICATE";
 
     /** The project to filter by. */
     private Project project;
+    
+    /** If to display only billable projects. */
+    private boolean onlyBillable;
 
     /** The predicate to filter by project. */
     private static final String PROJECT_PREDICATE = "PROJECT_PREDICATE";
@@ -230,5 +232,16 @@ public class Filter {
 
         final Predicate<ProjectActivity> newProjectPredicate = new ProjectPredicate(project);
         this.predicates.put(PROJECT_PREDICATE, newProjectPredicate);
+    }
+
+    public void setOnlyBillable(boolean b) {
+        this.predicates.remove(PROJECT_PREDICATE);
+        
+        this.onlyBillable = b;
+        
+        if (this.onlyBillable) {
+            Predicate<ProjectActivity> predicate = new BillableProjectPredicate();
+            this.predicates.put(PROJECT_PREDICATE, predicate);
+        }
     }
 }

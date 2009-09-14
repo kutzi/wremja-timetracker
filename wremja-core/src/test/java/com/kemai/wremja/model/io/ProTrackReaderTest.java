@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import org.joda.time.DateTime;
 
 import com.kemai.wremja.model.ActivityRepository;
+import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
 public class ProTrackReaderTest extends TestCase {
@@ -76,8 +77,16 @@ public class ProTrackReaderTest extends TestCase {
         DateTime expectedStartTime = new DateTime(2009, 1, 28, 19, 24, 0, 0);
         assertEquals(expectedStartTime, data.getStart());
         
+        // when reading legacy (without sequence) data, the calculated
+        // next sequence value must be active + deleted projects count
         long expectedProjectSequence = data.getProjects().size() + data.getDeletedProjects().size();
         assertEquals(expectedProjectSequence, data.getProjectIdSequence());
+        
+        for (Project project : data.getProjects()) {
+            //When reading legacy projects, billable and enabled must be set to true
+            assertEquals(Boolean.TRUE, project.getBillable());
+            assertEquals(Boolean.TRUE, project.getEnabled());
+        }
         
         assertEquals(5, data.getActivities().size());
         

@@ -20,7 +20,6 @@ public class TimeFormat extends DateFormat {
      * @param date
      * @param toAppendTo
      * @param fieldPosition
-     * @return
      * @see java.text.DateFormat#format(java.util.Date, java.lang.StringBuffer, java.text.FieldPosition)
      */
     @Override
@@ -33,7 +32,6 @@ public class TimeFormat extends DateFormat {
     /**
      * @param source
      * @param pos
-     * @return
      * @see java.text.DateFormat#parse(java.lang.String, java.text.ParsePosition)
      */
     @Override

@@ -161,8 +161,8 @@ public class TraySupport implements Observer, WindowListener {
         // add projects between the 2 separators
         int index = 3;
         // TODO: maybe it doesn't make sense to auto-create mnemonics for the change-projects action at all?
-        for (Project project : model.getProjectList()) {
-        	final ChangeProjectAction changeAction = new ChangeProjectAction(model, project);
+        for (Project project : model.getVisibleProjects()) {
+            final ChangeProjectAction changeAction = new ChangeProjectAction(model, project);
             menu.insert(changeAction, index);
             index++;
         }

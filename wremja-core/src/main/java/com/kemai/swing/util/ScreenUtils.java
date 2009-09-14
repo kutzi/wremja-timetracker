@@ -18,7 +18,7 @@ import javax.swing.JApplet;
 /**
  * A helper class for screen related stuff.
  * 
- * A partial copy of the JIDE {@link com.jidesoft.utils.PortingUtils}
+ * A partial copy of the JIDE com.jidesoft.utils.PortingUtils
  * but:
  * - fixes ensureOnScreen() to handle the taskbar on Windows correctly
  * - cleaned up initialization

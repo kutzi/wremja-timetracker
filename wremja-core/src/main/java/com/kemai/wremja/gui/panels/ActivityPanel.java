@@ -302,7 +302,7 @@ public class ActivityPanel extends JPanel implements Observer {
     private void createProjectSelector(int preferredHeight) {
         projectSelector = new JComboBox();
         projectSelector.setToolTipText(textBundle.textFor("ProjectSelector.ToolTipText")); //$NON-NLS-1$
-        projectSelector.setModel(new EventComboBoxModel<Project>(this.model.getProjectList()));
+        projectSelector.setModel(new EventComboBoxModel<Project>(this.model.getVisibleProjects()));
 
         /* Handling of selection events: */
         projectSelector.addActionListener(new ActionListener() {

@@ -19,8 +19,7 @@ public class StringUtils {
     
     /**
      * Strip all xml tags from given String and unescape xml characters.
-     * @param xml
-     * @return
+     * @param xml The XML string
      */
     public static String stripXmlTags(final String xml) {
         if (org.apache.commons.lang.StringUtils.isBlank(xml)) {

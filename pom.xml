@@ -13,11 +13,11 @@
         <url>https://kenai.com/svn/wremja~svn/trunk</url>
     </scm>
     <modules>
+        <module>infonode-tabbedpane</module>
         <module>wremja-core</module>
         <module>anuko-timetracker-exporter</module>
         <module>wremja-installer</module>
         <module>wremja-launcher</module>
-        <module>infonode-tabbedpane</module>
     </modules>
 
     <properties>
@@ -121,6 +121,25 @@
             </plugins>
         </pluginManagement>
     </build>
+    <repositories>
+        <repository>
+            <id>projectlombok.org</id>
+            <url>http://projectlombok.org/mavenrepo</url>
+        </repository>
+        <repository>
+            <id>google-code</id>
+            <url>http://google-maven-repository.googlecode.com/svn/repository/</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+    	<pluginRepository>
+    		<id>Codehaus Snapshots</id>
+    		<url>http://snapshots.repository.codehaus.org/</url>
+    		<releases>
+    			<enabled>false</enabled>
+    		</releases>
+    	</pluginRepository>
+    </pluginRepositories>
     <reporting>
         <plugins>
             <plugin>
@@ -227,6 +246,12 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>4.0</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>0.8.5</version>
                 <scope>compile</scope>
             </dependency>
         </dependencies>
