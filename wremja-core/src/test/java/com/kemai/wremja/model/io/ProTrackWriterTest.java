@@ -44,12 +44,16 @@ public class ProTrackWriterTest extends TestCase {
         		"    <project id=\"3\">\n" + 
         		"      <id>42</id>\n" + 
         		"      <title>foobar</title>\n" + 
-        		"      <description>foo!</description>\n" + 
+        		"      <description>foo!</description>\n" +
+        		"      <billable>true</billable>\n" +
+        		"      <enabled>true</enabled>\n" +
         		"    </project>\n" + 
         		"    <project id=\"4\">\n" + 
         		"      <id>4711</id>\n" + 
         		"      <title>The Answer</title>\n" + 
-        		"      <description>To the question</description>\n" + 
+        		"      <description>To the question</description>\n" +
+        		"      <billable>true</billable>\n" +
+        		"      <enabled>true</enabled>\n" +
         		"    </project>\n" + 
         		"  </activeProjects>\n" + 
         		"  <projectsToBeDeleted id=\"5\"/>\n" + 

@@ -207,6 +207,9 @@ public class TraySupport implements Observer, WindowListener {
      */
     @Override
     public void update(final Observable source, final Object eventObject) {
+    	if (!shown) {
+    		return;
+    	}
         if (eventObject != null && eventObject instanceof WremjaEvent) {
             WremjaEvent event = (WremjaEvent) eventObject;
 

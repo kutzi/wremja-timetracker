@@ -45,6 +45,8 @@ public class Project implements Serializable, Comparable<Project>{
         this.id = id;
         this.title = title;
         this.description = description;
+        this.billable = Boolean.TRUE;
+        this.enabled = Boolean.TRUE;
     }
 
     /**

@@ -22,6 +22,7 @@ import com.kemai.wremja.gui.settings.ApplicationSettings;
 /**
  * Displays information about the application like version and homepage.
  * @author remast
+ * @author kutzi
  */
 @SuppressWarnings("serial") 
 public class AboutDialog extends EscapeDialog {
@@ -36,9 +37,9 @@ public class AboutDialog extends EscapeDialog {
     public AboutDialog(final Frame owner) {
         super(owner);
         
-        this.setName("aboutDialog"); //$NON-NLS-1$
+        setName("aboutDialog"); //$NON-NLS-1$
         setTitle(textBundle.textFor("AboutDialog.Title")); //$NON-NLS-1$
-        this.setAlwaysOnTop(true);
+        setAlwaysOnTop(true);
         setModal(true);
         setResizable(false);
         setBackground(GuiConstants.BEIGE);
@@ -50,7 +51,7 @@ public class AboutDialog extends EscapeDialog {
      * Set up GUI components.
      */
     private void initialize() {
-        this.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
         
         final JXImagePanel image = new JXImagePanel(getClass().getResource("/icons/Wremja-About.png")); //$NON-NLS-1$
         image.setBackground(GuiConstants.BEIGE);
@@ -82,13 +83,16 @@ public class AboutDialog extends EscapeDialog {
             storageMode = textBundle.textFor("Settings.DataStorage.NormalLabel");
         }
         
+        
+        String javaVersion = System.getProperty("java.version");
         final String versionInfo = "<html>" +
         		"<font color=blue size=\"big\"><h2><b>" +
         		textBundle.textFor("Global.Version") +
         		":</b> " + GuiConstants.WREMJA_VERSION +
         		"<br><b>Revision:</b> " + GuiConstants.WREMJA_REVISION +
         		"<br><b>Timestamp:</b> " + GuiConstants.WREMJA_TIMESTAMP +
-        		"<br><b>Application mode:</b> " + storageMode + "</h2></font>" +
+        		"<br><b>Application mode:</b> " + storageMode +
+        		"<br><b>Java version:</b> " + javaVersion + "</h2></font>" +
         		"</html>";
         final JLabel versionLabel = new JXLabel(versionInfo, JLabel.CENTER);
         versionLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
