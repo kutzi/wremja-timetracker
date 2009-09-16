@@ -4,6 +4,8 @@ import java.beans.PropertyChangeEvent;
 
 import ca.odell.glazedlists.gui.WritableTableFormat;
 
+import com.kemai.util.TextResourceBundle;
+import com.kemai.wremja.gui.dialogs.ManageProjectsDialog;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.Project;
 
@@ -13,6 +15,8 @@ import com.kemai.wremja.model.Project;
  */
 public class ProjectListTableFormat implements WritableTableFormat<Project> {
 
+    private static final TextResourceBundle TEXT_BUNDLE = TextResourceBundle.getBundle(ManageProjectsDialog.class);
+    
     /** The model. */
     private final PresentationModel model;
 
@@ -72,9 +76,9 @@ public class ProjectListTableFormat implements WritableTableFormat<Project> {
 
     public String getColumnName(final int column) {
         switch (column) {
-        case 0: return "Name";
-        case 1: return "Billable";
-        case 2: return "Enabled";
+        case 0: return TEXT_BUNDLE.textFor("ManageProjectsDialog.ProjectList.Title");
+        case 1: return TEXT_BUNDLE.textFor("ManageProjectsDialog.ProjectList.Billable");
+        case 2: return TEXT_BUNDLE.textFor("ManageProjectsDialog.ProjectList.Enabled");
         default: return null;
         }
     }

@@ -15,9 +15,11 @@ import java.util.Observer;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -125,13 +127,32 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
             projectList.setToolTipText(textBundle.textFor("ManageProjectsDialog.ProjectList.ToolTipText")); //$NON-NLS-1$
             
             fitColumnToContent(projectList, 1);
-            projectList.getColumn(1).setCellRenderer(projectList.getDefaultRenderer(Boolean.class));
+            projectList.getColumn(1).setCellRenderer(new CheckboxCellRenderer());
             projectList.getColumn(1).setCellEditor(projectList.getDefaultEditor(Boolean.class));
             fitColumnToContent(projectList, 2);
-            projectList.getColumn(2).setCellRenderer(projectList.getDefaultRenderer(Boolean.class));
+            projectList.getColumn(2).setCellRenderer(new CheckboxCellRenderer());
             projectList.getColumn(2).setCellEditor(projectList.getDefaultEditor(Boolean.class));
         }
         return projectList;
+    }
+    
+    private static class CheckboxCellRenderer implements TableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table,
+                Object value, boolean isSelected, boolean hasFocus, int row,
+                int column) {
+            TableCellRenderer delegate = table.getDefaultRenderer(Boolean.class);
+            JComponent comp = (JComponent) delegate.getTableCellRendererComponent(table, value, isSelected,
+                    hasFocus, row, column);
+            if (column == 1) {
+                comp.setToolTipText(textBundle.textFor("ManageProjectsDialog.ProjectList.Billable.Tooltip"));
+            } else if (column == 2) {
+                comp.setToolTipText(textBundle.textFor("ManageProjectsDialog.ProjectList.Enabled.Tooltip"));
+            }
+            return comp;
+        }
+        
     }
 
     /**
