@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>com.kemai.wremja</groupId>
-		<version>1.2.1-SNAPSHOT</version>
+		<version>1.2.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,7 @@
 	<artifactId>anuko-timetracker-exporter</artifactId>
 	<name>Wremja Exporter for Anuko Time Tracker</name>
 	<description>Wremja Exporter for the Anuko Time Tracker (http://wrconsulting.com/cms/wrtimetracker/index.htm)</description>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.2.1</version>
 	<developers>
 		<developer>
 			<name>Christoph Kutzinski</name>
@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>com.kemai.wremja</groupId>
 			<artifactId>wremja-core</artifactId>
-			<version>1.2.1-SNAPSHOT</version>
+			<version>1.2.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
