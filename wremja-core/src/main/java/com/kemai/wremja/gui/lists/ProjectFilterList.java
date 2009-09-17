@@ -56,7 +56,8 @@ public class ProjectFilterList implements Observer {
     private void initialize() {
         this.projectList.clear();
         this.projectList.add(ALL_PROJECTS_FILTER_ITEM);
-        this.projectList.add(new LabeledItem<Project>(BILLABLE_PROJECTS_DUMMY, "<Only billable>"));
+        this.projectList.add(new LabeledItem<Project>(BILLABLE_PROJECTS_DUMMY,
+                "<" + textBundle.textFor("ProjectFilterList.BillableProjectsLabel") + ">"));
 
         for (Project activity : this.model.getData().getProjects()) {
             this.addProject(activity);
