@@ -328,7 +328,7 @@ public class ActivityPanel extends JPanel implements Observer {
                 Component comp = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (comp instanceof JLabel) {
                     JLabel label = (JLabel) comp;
-                    label.setText(" " + label.getText());
+                    label.setText(label.getText());
                 }
                 return comp;
             }
