@@ -74,7 +74,7 @@ public class HoursByProjectChartPanel extends JXPanel implements Observer {
     private void initChartData() {
         hoursByProjectDataset.clear();
         
-        for (HoursByProject hoursByProject : report.getHoursByProject()) {
+        for (HoursByProject hoursByProject : report.getHoursByPeriod()) {
             hoursByProjectDataset.setValue(hoursByProject.getProject(), hoursByProject.getHours());
         }
     }

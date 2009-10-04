@@ -33,7 +33,7 @@ public class HoursByProjectTableFormat implements TableFormat<HoursByProject> {
         case 1:
             return textBundle.textFor("HoursByDayProjectFormat.HoursHeading"); //$NON-NLS-1$
         default:
-            return null;
+            throw new IllegalArgumentException("Illegal column: " + column);
         }
     }
 
@@ -42,9 +42,9 @@ public class HoursByProjectTableFormat implements TableFormat<HoursByProject> {
         case 0:
             return baseObject.getProject();
         case 1:
-            return Double.valueOf(baseObject.getHours());
+            return baseObject;
         default:
-            return null;
+            throw new IllegalArgumentException("Illegal column: " + column);
         }
     }
 

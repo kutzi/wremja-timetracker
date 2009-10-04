@@ -3,14 +3,14 @@ package com.kemai.wremja.gui.model.report;
 import java.util.Observable;
 import java.util.Observer;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.SortedList;
+
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.filter.Filter;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.SortedList;
 
 /**
  * Report for the working hours by period.
@@ -65,11 +65,17 @@ public abstract class HoursByPeriodReport<E extends HoursByPeriod> extends Obser
         }
     }
 
+    /**
+     * Add the already elapsed hours of the current activity to the report.
+     */
     protected abstract void addCurrentHours();
 
+    /**
+     * Add the hours of the given activity to the report.
+     */
     protected abstract void addHours(final ProjectActivity activity);
     
-    protected void addHoursByPeriod( E newHoursByPeriod ) {
+    protected final void addHoursByPeriod( E newHoursByPeriod ) {
         if (this.hoursByPeriodList.contains(newHoursByPeriod)) {
             E oldHoursByPeriod = this.hoursByPeriodList.get(hoursByPeriodList.indexOf(newHoursByPeriod));
             oldHoursByPeriod.addHours(newHoursByPeriod);
@@ -78,11 +84,11 @@ public abstract class HoursByPeriodReport<E extends HoursByPeriod> extends Obser
         }
     }
     
-    protected PresentationModel getModel() {
+    protected final PresentationModel getModel() {
         return this.model;
     }
 
-    protected boolean filterMatches( ProjectActivity activity ) {
+    protected final boolean filterMatches( ProjectActivity activity ) {
         if (filter != null && !filter.matchesCriteria(activity)) {
             return false;
         }
@@ -92,7 +98,7 @@ public abstract class HoursByPeriodReport<E extends HoursByPeriod> extends Obser
     /**
      * {@inheritDoc}
      */
-    public void update(final Observable source, final Object eventObject) {
+    public final void update(final Observable source, final Object eventObject) {
         if (eventObject == null || !(eventObject instanceof WremjaEvent)) {
             return;
         }

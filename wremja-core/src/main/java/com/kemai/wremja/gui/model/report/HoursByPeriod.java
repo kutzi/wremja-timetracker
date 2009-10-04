@@ -3,6 +3,8 @@ package com.kemai.wremja.gui.model.report;
 /**
  * Hours per a period (e.g. hours per day)
  * 
+ * TODO: 'period' doesn't get it anymore since HoursByProject is also implemented via this
+ * 
  * @author kutzi
  */
 public abstract class HoursByPeriod {
@@ -24,7 +26,7 @@ public abstract class HoursByPeriod {
     }
     
     /**
-     * Adds the given hours to the hours on that day.
+     * Adds the given hours to the hours in that period.
      * @param additionalHours the hours to add
      */
     public void addHours(HoursByPeriod additionalHours) {

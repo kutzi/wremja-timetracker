@@ -6,8 +6,10 @@ import java.awt.Font;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
@@ -105,9 +107,11 @@ abstract class HoursByPeriodPanel<P extends HoursByPeriod, R extends HoursByPeri
                 int column) {
             if(value instanceof HoursByPeriod) {
                 HoursByPeriod hoursByPeriod = (HoursByPeriod)value;
-                Component comp = super.getTableCellRendererComponent(table,
+                JComponent comp = (JComponent) super.getTableCellRendererComponent(table,
                         Double.valueOf(hoursByPeriod.getHours()),
                         isSelected, hasFocus,  row, column);
+                comp.setBorder(new EmptyBorder(0, 5, 0, 5));
+                
                 Font f = comp.getFont();
                 if( hoursByPeriod.isChanging() ) {
                     f = f.deriveFont(Font.ITALIC);
