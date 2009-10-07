@@ -60,6 +60,10 @@ public interface IUserSettings {
     public int getFilterSelectedWeekOfYear(int defaultValue);
 
     public void setFilterSelectedWeekOfYear(int weekOfYear);
+    
+    public int getFilterSelectedDayOfWeek(int defaultValue);
+
+    public void setFilterSelectedDayOfWeek(int selectedDayOfWeek);
 
     public int getFilterSelectedYear(int defaultValue);
 

@@ -204,18 +204,25 @@ public final class UserSettings implements IUserSettings {
     /** The key for the selected week of filter. */
     private static final String SELECTED_WEEK_OF_YEAR = "filter.weekOfYear"; //$NON-NLS-1$
 
-    /* (non-Javadoc)
-     * @see com.kemai.wremja.gui.settings.IUserSettings#getFilterSelectedWeekOfYear(int)
-     */
     public int getFilterSelectedWeekOfYear(int defaultValue) {
         return doGetInteger(SELECTED_WEEK_OF_YEAR, defaultValue);
     }
 
-    /* (non-Javadoc)
-     * @see com.kemai.wremja.gui.settings.IUserSettings#setFilterSelectedWeekOfYear(int)
-     */
     public void setFilterSelectedWeekOfYear(final int weekOfYear) {
         userConfig.setProperty(SELECTED_WEEK_OF_YEAR, weekOfYear);
+    }
+    
+    /** The key for the selected day of week of filter. */
+    private static final String SELECTED_DAY_OF_WEEK = "filter.dayOfWeek"; //$NON-NLS-1$
+
+    @Override
+    public int getFilterSelectedDayOfWeek(int defaultValue) {
+        return doGetInteger(SELECTED_DAY_OF_WEEK, defaultValue);
+    }
+
+    @Override
+    public void setFilterSelectedDayOfWeek(int dayOfWeek) {
+        userConfig.setProperty(SELECTED_DAY_OF_WEEK, dayOfWeek);
     }
 
     /** The key for the selected year of filter. */

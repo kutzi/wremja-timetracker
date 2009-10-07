@@ -16,6 +16,7 @@ import ca.odell.glazedlists.swing.EventComboBoxModel;
 import com.kemai.swing.util.LabeledItem;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
+import com.kemai.wremja.gui.lists.DayOfWeekFilterList;
 import com.kemai.wremja.gui.lists.MonthFilterList;
 import com.kemai.wremja.gui.lists.ProjectFilterList;
 import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
@@ -53,6 +54,9 @@ public class ReportPanel extends JXPanel implements ActionListener {
     /** Filter by selected week. */
     private JComboBox weekFilterSelector;
     
+    /** Filter by selected day. */
+    private JComboBox dayFilterSelector;
+    
     /** The panel that actually displays the filtered activities. */
     private FilteredActivitiesPane filteredActivitiesPane;
 
@@ -72,8 +76,11 @@ public class ReportPanel extends JXPanel implements ActionListener {
         final double borderBig = 8;
         final double border = 3;
         final double size[][] = {
-                { border, TableLayout.PREFERRED, border, TableLayout.FILL, borderBig, TableLayout.PREFERRED, border,
-                    TableLayout.FILL, borderBig, TableLayout.PREFERRED, border, TableLayout.FILL, borderBig, TableLayout.PREFERRED, border, TableLayout.FILL, border}, // Columns
+                { border, TableLayout.PREFERRED, border, TableLayout.FILL, borderBig,
+                    TableLayout.PREFERRED, border, TableLayout.FILL, borderBig,
+                    TableLayout.PREFERRED, border, TableLayout.FILL, borderBig,
+                    TableLayout.PREFERRED, border, TableLayout.FILL, borderBig,
+                    TableLayout.PREFERRED, border, TableLayout.FILL, border}, // Columns
                     { border, TableLayout.PREFERRED, border, TableLayout.PREFERRED, borderBig, TableLayout.PREFERRED, 0,
                         TableLayout.FILL, border } }; // Rows
         this.setLayout(new TableLayout(size));
@@ -81,6 +88,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
         int selectedYear = this.settings.getFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
         int selectedMonth = this.settings.getFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
         int selectedWeek = this.settings.getFilterSelectedWeekOfYear(WeekOfYearFilterList.ALL_WEEKS_OF_YEAR_DUMMY);
+        int selectedDay = this.settings.getFilterSelectedDayOfWeek(DayOfWeekFilterList.ALL_DAYS_DUMMY);
         
         JXTitledSeparator filterSep = new JXTitledSeparator(TEXT_BUNDLE.textFor("ReportPanel.FiltersLabel")); //$NON-NLS-1$
         this.add(filterSep, "1, 1, 15, 1"); //$NON-NLS-1$
@@ -97,12 +105,16 @@ public class ReportPanel extends JXPanel implements ActionListener {
         this.add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.WeekLabel")), "13, 3"); 
         this.add(initWeekOfYearFilterSelector(selectedWeek), "15, 3"); 
         
-        JXTitledSeparator sep = new JXTitledSeparator(TEXT_BUNDLE.textFor("ReportPanel.DataLabel")); //$NON-NLS-1$
-        this.add(sep, "1, 5, 15, 1"); //$NON-NLS-1$
+        this.add(new JXLabel("Tag"), "17, 3"); 
+        this.add(initDayOfWeekFilterSelector(selectedDay), "19, 3"); 
 
-        this.add(filteredActivitiesPane, "1, 7, 15, 7"); 
         
-        disableCheckBoxesIfNeeded(selectedMonth, selectedWeek);
+        JXTitledSeparator sep = new JXTitledSeparator(TEXT_BUNDLE.textFor("ReportPanel.DataLabel")); //$NON-NLS-1$
+        this.add(sep, "1, 5, 19, 1"); //$NON-NLS-1$
+
+        this.add(filteredActivitiesPane, "1, 7, 19, 7"); 
+        
+        disableSelectBoxesIfNeeded(selectedMonth, selectedWeek, selectedDay);
     }
 
     /**
@@ -110,7 +122,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
      * @return the monthFilterSelector
      */
     private JComboBox initMonthFilterSelector(int selectedMonth) {
-        MonthFilterList monthFilterList = model.getMonthFilterList();
+        MonthFilterList monthFilterList = new MonthFilterList(model);
         monthFilterSelector = new JComboBox(
                 new EventComboBoxModel<LabeledItem<Integer>>(monthFilterList.getMonthList())
         );
@@ -131,7 +143,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
      * @return the weekFilterSelector
      */
     private JComboBox initWeekOfYearFilterSelector(int selectedWeek) {
-        WeekOfYearFilterList weekOfYearFilterList = model.getWeekFilterList();
+        WeekOfYearFilterList weekOfYearFilterList = new WeekOfYearFilterList(model);
         weekFilterSelector = new JComboBox(new EventComboBoxModel<LabeledItem<Integer>>(weekOfYearFilterList
                 .getWeekList()));
         weekFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("WeekOfYearFilterSelector.ToolTipText")); 
@@ -146,13 +158,30 @@ public class ReportPanel extends JXPanel implements ActionListener {
         weekFilterSelector.addActionListener(this);
         return weekFilterSelector;
     }
+    
+    private JComboBox initDayOfWeekFilterSelector(int selectedWeek) {
+        DayOfWeekFilterList dayOfWeekFilterList = new DayOfWeekFilterList();
+        dayFilterSelector = new JComboBox(new EventComboBoxModel<LabeledItem<Integer>>(dayOfWeekFilterList
+                .getDayList()));
+        dayFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("WeekOfYearFilterSelector.ToolTipText")); 
+
+        for (LabeledItem<Integer> item : dayOfWeekFilterList.getDayList()) {
+            if (item.getItem().intValue() == selectedWeek) {
+                dayFilterSelector.setSelectedItem(item);
+                break;
+            }
+        }
+
+        dayFilterSelector.addActionListener(this);
+        return dayFilterSelector;
+    }
 
     /**
      * @return the projectFilterSelector
      */
     private JComboBox getProjectFilterSelector() {
         if (projectFilterSelector == null) {
-            ProjectFilterList projectFilterList = model.getProjectFilterList();
+            ProjectFilterList projectFilterList = new ProjectFilterList(model);
             projectFilterSelector = new JComboBox(
                     new EventComboBoxModel<LabeledItem<Project>>(projectFilterList.getProjectList())
             );
@@ -177,7 +206,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
      */
     private JComboBox initYearFilterSelector(int selectedYear) {
         if (yearFilterSelector == null) {
-            YearFilterList yearFilterList = model.getYearFilterList();
+            YearFilterList yearFilterList = new YearFilterList(model);
             yearFilterSelector = new JComboBox(
                     new EventComboBoxModel<LabeledItem<Integer>>(yearFilterList.getYearList())
             );
@@ -227,7 +256,15 @@ public class ReportPanel extends JXPanel implements ActionListener {
             filter.setWeekOfYear(selectedWeekOfYear);
         }
         
-        disableCheckBoxesIfNeeded(selectedMonth, selectedWeekOfYear);
+        final int selectedDayOfWeek;
+        // Filter for week of year
+        {
+            LabeledItem<Integer> filterItem = (LabeledItem<Integer>) this.dayFilterSelector.getSelectedItem();
+            selectedDayOfWeek = filterItem.getItem().intValue();
+            filter.setDayOfWeek(selectedDayOfWeek);
+        }
+        
+        disableSelectBoxesIfNeeded(selectedMonth, selectedWeekOfYear, selectedDayOfWeek);
         
         // Filter for project
         final LabeledItem<Project> projectFilterItem = (LabeledItem<Project>) getProjectFilterSelector().getSelectedItem();
@@ -242,19 +279,27 @@ public class ReportPanel extends JXPanel implements ActionListener {
         return filter;
     }
     
-    private void disableCheckBoxesIfNeeded(int selectedMonth, int selectedWeekOfYear) {
-        if(selectedMonth == MonthFilterList.CURRENT_MONTH_DUMMY
-                || selectedWeekOfYear == WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY) {
-                 this.yearFilterSelector.setEnabled(false);
-             } else {
-                 this.yearFilterSelector.setEnabled(true);
-             }
-             
-             if(selectedWeekOfYear == WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY) {
-                 this.monthFilterSelector.setEnabled(false);
-             } else {
-                 this.monthFilterSelector.setEnabled(true);
-             }
+    private void disableSelectBoxesIfNeeded(int selectedMonth, int selectedWeekOfYear, int selectedDayOfWeek) {
+        if (selectedMonth == MonthFilterList.CURRENT_MONTH_DUMMY
+            || selectedWeekOfYear == WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY
+            || selectedDayOfWeek == DayOfWeekFilterList.CURRENT_DAY_DUMMY) {
+            this.yearFilterSelector.setEnabled(false);
+        } else {
+            this.yearFilterSelector.setEnabled(true);
+        }
+
+        if (selectedWeekOfYear == WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY
+            || selectedDayOfWeek == DayOfWeekFilterList.CURRENT_DAY_DUMMY) {
+            this.monthFilterSelector.setEnabled(false);
+        } else {
+            this.monthFilterSelector.setEnabled(true);
+        }
+        
+        if ( selectedDayOfWeek == DayOfWeekFilterList.CURRENT_DAY_DUMMY) {
+            this.weekFilterSelector.setEnabled(false);
+        } else {
+            this.weekFilterSelector.setEnabled(true);
+        }
     }
 
     /**
@@ -276,6 +321,11 @@ public class ReportPanel extends JXPanel implements ActionListener {
         filterItem = (LabeledItem<Integer>) this.weekFilterSelector.getSelectedItem();
         final int selectedWeekOfYear = filterItem.getItem().intValue();
         this.settings.setFilterSelectedWeekOfYear(selectedWeekOfYear);
+        
+        // Store filter by day of week
+        filterItem = (LabeledItem<Integer>) this.dayFilterSelector.getSelectedItem();
+        final int selectedDayOfWeek = filterItem.getItem().intValue();
+        this.settings.setFilterSelectedDayOfWeek(selectedDayOfWeek);
 
         // Store filter by project
         final LabeledItem<Project> projectFilterItem = (LabeledItem<Project>) getProjectFilterSelector().getSelectedItem();

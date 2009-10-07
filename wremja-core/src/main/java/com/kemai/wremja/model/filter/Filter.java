@@ -8,6 +8,7 @@ import java.util.Map;
 import org.joda.time.DateTime;
 
 import com.kemai.util.Predicate;
+import com.kemai.wremja.gui.lists.DayOfWeekFilterList;
 import com.kemai.wremja.gui.lists.MonthFilterList;
 import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
 import com.kemai.wremja.gui.lists.YearFilterList;
@@ -23,12 +24,15 @@ import com.kemai.wremja.model.ProjectActivity;
 public class Filter {
 
     /** The predicates of the filter. */
-    private final Map<String, Predicate<ProjectActivity>> predicates
-        = new HashMap<String, Predicate<ProjectActivity>>();
+    private final Map<Object, Predicate<ProjectActivity>> predicates
+        = new HashMap<Object, Predicate<ProjectActivity>>();
     
     // Ugly HACK for the 'smart' week filter
-    private final Map<String, Predicate<ProjectActivity>> disabledPredicates
-        = new HashMap<String, Predicate<ProjectActivity>>();
+    private final Map<Object, Predicate<ProjectActivity>> disabledPredicates
+        = new HashMap<Object, Predicate<ProjectActivity>>();
+    
+    /** The predicate to filter by day of week. */
+    private static final Object DAY_PREDICATE = new Object();
     
     /** The predicate to filter by week of year. */
     private static final String WEEK_PREDICATE = "WEEK_PREDICATE";
@@ -107,6 +111,50 @@ public class Filter {
         return matchesCriteria(nowActivity);
     }
     
+
+    public void setDayOfWeek(int dayOfWeek) {
+        this.predicates.remove(DAY_PREDICATE);
+
+        // clear filter if 'all' is selected
+        if (dayOfWeek == DayOfWeekFilterList.ALL_DAYS_DUMMY) {
+            return;
+        }
+
+        Predicate<ProjectActivity> newWeekOfYearPredicate = null;
+        if(dayOfWeek == DayOfWeekFilterList.CURRENT_DAY_DUMMY) {
+            newWeekOfYearPredicate = new CurrentDayPredicate();
+        } else {
+            newWeekOfYearPredicate = new DayOfWeekPredicate(dayOfWeek);
+        }
+        
+        if(newWeekOfYearPredicate instanceof CurrentWeekPredicate) {
+            Predicate<ProjectActivity> yearPred =
+                this.predicates.remove(YEAR_PREDICATE);
+            if(yearPred != null) {
+                this.disabledPredicates.put(YEAR_PREDICATE, yearPred);
+            }
+            
+            Predicate<ProjectActivity> monthPred =
+                this.predicates.remove(MONTH_PREDICATE);
+            if(monthPred != null) {
+                this.disabledPredicates.put(MONTH_PREDICATE, monthPred);
+            }
+            
+            Predicate<ProjectActivity> weekPred =
+                this.predicates.remove(WEEK_PREDICATE);
+            if(weekPred != null) {
+                this.disabledPredicates.put(WEEK_PREDICATE, weekPred);
+            }
+        } else {
+            for(Map.Entry<Object, Predicate<ProjectActivity>> entry : this.disabledPredicates.entrySet()) {
+                this.predicates.put(entry.getKey(), entry.getValue());
+            }
+            this.disabledPredicates.clear();
+        }
+        
+        this.predicates.put(DAY_PREDICATE, newWeekOfYearPredicate);
+    }
+    
     /**
      * Sets the weekOfYear to filter by.
      * @param weekOfYear the weekOfYear to set.
@@ -139,7 +187,7 @@ public class Filter {
                 this.disabledPredicates.put(MONTH_PREDICATE, monthPred);
             }
         } else {
-            for(Map.Entry<String, Predicate<ProjectActivity>> entry : this.disabledPredicates.entrySet()) {
+            for(Map.Entry<Object, Predicate<ProjectActivity>> entry : this.disabledPredicates.entrySet()) {
                 this.predicates.put(entry.getKey(), entry.getValue());
             }
             this.disabledPredicates.clear();
@@ -177,7 +225,7 @@ public class Filter {
                 this.disabledPredicates.put(YEAR_PREDICATE, yearPred);
             }
         } else {
-            for(Map.Entry<String, Predicate<ProjectActivity>> entry : this.disabledPredicates.entrySet()) {
+            for(Map.Entry<Object, Predicate<ProjectActivity>> entry : this.disabledPredicates.entrySet()) {
                 this.predicates.put(entry.getKey(), entry.getValue());
             }
             this.disabledPredicates.clear();

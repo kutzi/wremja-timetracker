@@ -220,4 +220,13 @@ public class UserSettingsAdapter implements IUserSettings {
     @Override
     public void setMainTabpaneOrder(int[] order) {
     }
+
+    @Override
+    public int getFilterSelectedDayOfWeek(int defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public void setFilterSelectedDayOfWeek(int selectedDayOfWeek) {
+    }
 }

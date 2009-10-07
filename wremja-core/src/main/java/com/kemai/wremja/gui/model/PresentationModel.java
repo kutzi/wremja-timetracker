@@ -27,10 +27,7 @@ import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.events.WremjaEvent.Type;
-import com.kemai.wremja.gui.lists.MonthFilterList;
 import com.kemai.wremja.gui.lists.ProjectFilterList;
-import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
-import com.kemai.wremja.gui.lists.YearFilterList;
 import com.kemai.wremja.gui.model.edit.EditStack;
 import com.kemai.wremja.gui.model.report.HoursByDayReport;
 import com.kemai.wremja.gui.model.report.HoursByProjectReport;
@@ -618,34 +615,6 @@ public class PresentationModel extends Observable {
      */
     public SortedList<ProjectActivity> getActivitiesList() {
         return activitiesList;
-    }
-
-    public ProjectFilterList getProjectFilterList() {
-        return new ProjectFilterList(this);
-    }
-
-    /**
-     * Get all years in which there are project activities.
-     * @return List of years with activities as String.
-     */
-    public YearFilterList getYearFilterList() {
-        return new YearFilterList(this);
-    }
-
-    /**
-     * Get all months in which there are project activities.
-     * @return List of months with activities as String.
-     */
-    public MonthFilterList getMonthFilterList() {
-        return new MonthFilterList(this);
-    }
-
-    /**
-     * Get all weeks in which there are project activities.
-     * @return List of weeks with activities as String.
-     */
-    public WeekOfYearFilterList getWeekFilterList() {
-        return new WeekOfYearFilterList(this);
     }
 
     public ObservingAccumulatedActivitiesReport getFilteredReport() {
