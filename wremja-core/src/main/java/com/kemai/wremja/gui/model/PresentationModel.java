@@ -120,12 +120,14 @@ public class PresentationModel extends Observable {
         this.timer = new Timer(1000 * 60, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Fire event
-                final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.DURATION_CHANGED, PresentationModel.this);
-                event.setData(Double.valueOf(getCurrentDuration()));
-                
-                
-                PresentationModel.this.notify(event);
+                try {
+                    final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.DURATION_CHANGED, PresentationModel.this);
+                    event.setData(Double.valueOf(getCurrentDuration()));
+                    
+                    PresentationModel.this.notify(event);
+                } catch (Exception exc) {
+                    LOG.warn("", exc);
+                }
             }
         });
     }
