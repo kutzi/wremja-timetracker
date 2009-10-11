@@ -47,6 +47,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
      */
     @Test
     public void testActivityOverMidnight() throws ProjectActivityStateException {
+        // TODO: this test fails if run shortly after midnight!
         PresentationModel model = getNewTestModel();
         final DateTime yesterday = DateUtils.getNow().minusMinutes(5).minusDays(1);
 
@@ -100,6 +101,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
      */
     @Test
     public void testAcitivityOverMidnight2() throws ProjectActivityStateException {
+        // TODO: this test fails if run shortly after midnight!
         PresentationModel model = getNewTestModel();
         final DateTime threeDaysAgo = DateUtils.getNow().minusMinutes(5).minusDays(3);
 
