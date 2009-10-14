@@ -1,13 +1,12 @@
 package com.kemai.wremja.model.filter;
 
-import com.kemai.util.Predicate;
 import com.kemai.wremja.model.ProjectActivity;
 
 /**
  * Holds for all project activities of one month.
  * @author remast
  */
-public class MonthPredicate implements Predicate<ProjectActivity> {
+public class MonthPredicate implements TimePredicate<ProjectActivity> {
 
     /**
      * The month to check for.

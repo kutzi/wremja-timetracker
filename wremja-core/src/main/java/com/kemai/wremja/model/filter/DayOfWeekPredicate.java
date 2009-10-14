@@ -2,11 +2,10 @@ package com.kemai.wremja.model.filter;
 
 import org.joda.time.DateTimeConstants;
 
-import com.kemai.util.Predicate;
 import com.kemai.wremja.model.ProjectActivity;
 
 
-public class DayOfWeekPredicate implements Predicate<ProjectActivity> {
+public class DayOfWeekPredicate implements TimePredicate<ProjectActivity> {
 
     private final int dayOfWeek;
     

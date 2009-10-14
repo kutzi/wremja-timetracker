@@ -11,7 +11,7 @@ import com.kemai.wremja.model.ProjectActivity;
  * 
  * @author kutzi
  */
-public class CurrentDayPredicate implements Predicate<ProjectActivity> {
+public class CurrentDayPredicate implements TimePredicate<ProjectActivity> {
 
     private final DateMidnight currentDay;
 

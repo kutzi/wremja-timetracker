@@ -1,6 +1,5 @@
 package com.kemai.wremja.model.filter;
 
-import com.kemai.util.Predicate;
 import com.kemai.wremja.model.ProjectActivity;
 
 /**
@@ -8,7 +7,7 @@ import com.kemai.wremja.model.ProjectActivity;
  * @author remast
  * @author kutzi
  */
-public class WeekOfYearPredicate implements Predicate<ProjectActivity> {
+public class WeekOfYearPredicate implements TimePredicate<ProjectActivity> {
 
     /**
      * The week of year to check for.

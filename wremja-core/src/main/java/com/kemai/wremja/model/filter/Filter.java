@@ -105,9 +105,16 @@ public class Filter {
         long nowMs = System.currentTimeMillis();
         ProjectActivity nowActivity = new ProjectActivity(
                 new DateTime( nowMs-1 ), new DateTime(nowMs), null);
-        return matchesCriteria(nowActivity);
+        for (Predicate<ProjectActivity> predicate : predicates.values()) {
+            if (predicate instanceof TimePredicate<?>) {
+                if (!predicate.evaluate(nowActivity)) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
     }
-    
 
     public void setDayOfWeek(int dayOfWeek) {
         this.predicates.remove(DAY_PREDICATE);

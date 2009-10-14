@@ -10,7 +10,7 @@ import com.kemai.wremja.model.ProjectActivity;
  * 
  * @author kutzi
  */
-public class CurrentMonthPredicate implements Predicate<ProjectActivity> {
+public class CurrentMonthPredicate implements TimePredicate<ProjectActivity> {
 
     private final DateTime currentTime;
 

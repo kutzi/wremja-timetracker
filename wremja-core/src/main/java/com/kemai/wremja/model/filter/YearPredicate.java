@@ -1,13 +1,12 @@
 package com.kemai.wremja.model.filter;
 
-import com.kemai.util.Predicate;
 import com.kemai.wremja.model.ProjectActivity;
 
 /**
  * Holds for all project activities of one year.
  * @author remast
  */
-public class YearPredicate implements Predicate<ProjectActivity> {
+public class YearPredicate implements TimePredicate<ProjectActivity> {
 
     /**
      * The year to check for.
