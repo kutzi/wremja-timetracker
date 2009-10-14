@@ -149,4 +149,8 @@ public interface IUserSettings {
      * Sets the order of the tabs in the main tabbed pane.
      */
     void setMainTabpaneOrder(int[] order);
+
+    boolean getBooleanProperty(String key, boolean defaultValue);
+
+    void setBooleanProperty(String key, boolean value);
 }

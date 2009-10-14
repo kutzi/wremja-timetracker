@@ -1,5 +1,8 @@
 package com.kemai.wremja.gui.lists;
 
+import static com.kemai.wremja.gui.settings.SettingsConstants.ALL_ITEMS_FILTER_DUMMY;
+import static com.kemai.wremja.gui.settings.SettingsConstants.CURRENT_ITEM_FILTER_DUMMY;
+
 import java.beans.PropertyChangeEvent;
 import java.util.Observable;
 import java.util.Observer;
@@ -33,21 +36,15 @@ public class YearFilterList implements Observer {
     /** The model. */
     private final PresentationModel model;
 
-    /** Value for the all years dummy. */
-    public static final int ALL_YEARS_DUMMY = -10; 
-
     /** Filter item for the all years dummy. */
     public static final LabeledItem<Integer> ALL_YEARS_FILTER_ITEM = new LabeledItem<Integer>(
-            Integer.valueOf(ALL_YEARS_DUMMY),
+            Integer.valueOf(ALL_ITEMS_FILTER_DUMMY),
             textBundle.textFor("YearFilterList.AllYearsLabel") //$NON-NLS-1$
     );
     
-    /** Value for the current year dummy. */
-    public static final int CURRENT_YEAR_DUMMY = -5; 
-
     /** Filter item for the current year dummy. */
     public static final LabeledItem<Integer> CURRENT_YEAR_FILTER_ITEM = new LabeledItem<Integer>(
-            Integer.valueOf(CURRENT_YEAR_DUMMY),
+            Integer.valueOf(CURRENT_ITEM_FILTER_DUMMY),
             textBundle.textFor("YearFilterList.CurrentYearsLabel", YEAR_FORMAT.print(DateUtils.getNow())) //$NON-NLS-1$
     );
 

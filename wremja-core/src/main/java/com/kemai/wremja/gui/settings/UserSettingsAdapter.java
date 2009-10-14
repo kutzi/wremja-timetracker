@@ -229,4 +229,13 @@ public class UserSettingsAdapter implements IUserSettings {
     @Override
     public void setFilterSelectedDayOfWeek(int selectedDayOfWeek) {
     }
+
+    @Override
+    public boolean getBooleanProperty(String key, boolean defaultValue) {
+        return false;
+    }
+
+    @Override
+    public void setBooleanProperty(String key, boolean value) {
+    }
 }

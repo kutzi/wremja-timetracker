@@ -1,5 +1,8 @@
 package com.kemai.wremja.gui.lists;
 
+import static com.kemai.wremja.gui.settings.SettingsConstants.ALL_ITEMS_FILTER_DUMMY;
+import static com.kemai.wremja.gui.settings.SettingsConstants.CURRENT_ITEM_FILTER_DUMMY;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
@@ -20,21 +23,15 @@ public class DayOfWeekFilterList {
     public static final DateTimeFormatter DAY_FORMAT = DateTimeFormat.forPattern("E"); //$NON-NLS-1$
     public static final DateTimeFormatter DAY_FORMAT2 = DateTimeFormat.forPattern("dd.MM.yy"); //$NON-NLS-1$
 
-    /** Value for the all days */
-    public static final int ALL_DAYS_DUMMY = -10;
-
     /** filter item for the all days. */
     public static final LabeledItem<Integer> ALL_DAYS_FILTER_ITEM = new LabeledItem<Integer>(
-            Integer.valueOf(ALL_DAYS_DUMMY),
+            Integer.valueOf(ALL_ITEMS_FILTER_DUMMY),
             " " + textBundle.textFor("DayFilterList.AllDaysLabel") //$NON-NLS-1$
     );
 
-    /** Value for the current day. */
-    public static final int CURRENT_DAY_DUMMY = -5;
-
     /** filter item for the current day. */
     public static final LabeledItem<Integer> CURRENT_DAY_FILTER_ITEM = new LabeledItem<Integer>(
-            Integer.valueOf(CURRENT_DAY_DUMMY),
+            Integer.valueOf(CURRENT_ITEM_FILTER_DUMMY),
             " " + textBundle.textFor("DayFilterList.CurrentDayLabel", DAY_FORMAT2.print(DateUtils.getNow())) //$NON-NLS-1$
     );
 

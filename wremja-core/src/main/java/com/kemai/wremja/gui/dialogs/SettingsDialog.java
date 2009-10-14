@@ -1,8 +1,12 @@
 package com.kemai.wremja.gui.dialogs;
 
+import static com.kemai.wremja.gui.settings.SettingsConstants.DAY_OF_WEEK_FILTER_ENABLED;
+import static com.kemai.wremja.gui.settings.SettingsConstants.MONTH_FILTER_ENABLED;
+import static com.kemai.wremja.gui.settings.SettingsConstants.PROJECT_FILTER_ENABLED;
+import static com.kemai.wremja.gui.settings.SettingsConstants.WEEK_OF_YEAR_FILTER_ENABLED;
+import static com.kemai.wremja.gui.settings.SettingsConstants.YEAR_FILTER_ENABLED;
 import info.clearthought.layout.TableLayout;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -17,31 +21,21 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
 import org.jdesktop.swingx.JXHeader;
 
 import com.kemai.swing.dialog.EscapeDialog;
-import com.kemai.swing.util.WPasswordField;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.util.UiUtilities;
 import com.kemai.wremja.gui.actions.SettingsAction;
 import com.kemai.wremja.gui.settings.IUserSettings;
-import com.kemai.wremja.logging.Logger;
-import com.kemai.wremja.util.validator.UrlValidator;
 
 /**
  * The settings dialog for editing both application and user settings.
@@ -49,13 +43,16 @@ import com.kemai.wremja.util.validator.UrlValidator;
  * @author kutzi
  * @author remast
  */
-@SuppressWarnings("serial")
 public class SettingsDialog extends EscapeDialog {
 
-    private static final Logger LOG = Logger.getLogger(SettingsDialog.class);
-    
+    private static final long serialVersionUID = 1L;
+
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(SettingsDialog.class);
+    
+    private static String text(String key) {
+        return textBundle.textFor(key);
+    }
     
     /** The model. */
     private final IUserSettings settings;
@@ -78,10 +75,10 @@ public class SettingsDialog extends EscapeDialog {
     
     private final JCheckBox useTrayicon = new JCheckBox(textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.Title")); //$NON-NLS-1$
     {
-    	String toolTip = textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.ToolTipText"); //$NON-NLS-1$
-    	useTrayicon.setToolTipText(toolTip);
+    	useTrayicon.setToolTipText(textBundle.textFor("SettingsDialog.Setting.UseTrayIcon.ToolTipText")); //$NON-NLS-1$
     }
 
+    @SuppressWarnings("serial")
     private static final Map<String, String> durationTexts = new HashMap<String, String>() {
 	    {
 	        put("#0.00", textBundle.textFor("SettingsDialog.Setting.DurationFormat.HoursAndFractions")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -118,14 +115,19 @@ public class SettingsDialog extends EscapeDialog {
         durationFormat.setRenderer(renderer);
     }
     
-    private final JTextField urlField = new JFormattedTextField();
+    private final JCheckBox projectFilter = new JCheckBox(text("SettingsDialog.Setting.ProjectFilter.Title"));
+    private final JCheckBox yearFilter = new JCheckBox(text("SettingsDialog.Setting.YearFilter.Title"));
+    private final JCheckBox monthFilter = new JCheckBox(text("SettingsDialog.Setting.MonthFilter.Title"));
+    private final JCheckBox weekFilter = new JCheckBox(text("SettingsDialog.Setting.WeekFilter.Title"));
+    private final JCheckBox dayFilter = new JCheckBox(text("SettingsDialog.Setting.DayFilter.Title"));
     {
-        urlField.setColumns(30);
-        urlField.getDocument().addDocumentListener(new UrlDocumentListener(urlField));
+        projectFilter.setToolTipText(text("SettingsDialog.Setting.ProjectFilter.ToolTip"));
+        yearFilter.setToolTipText(text("SettingsDialog.Setting.YearFilter.ToolTip"));
+        monthFilter.setToolTipText(text("SettingsDialog.Setting.MonthFilter.ToolTip"));
+        weekFilter.setToolTipText(text("SettingsDialog.Setting.WeekFilter.ToolTip"));
+        dayFilter.setToolTipText(text("SettingsDialog.Setting.DayFilter.ToolTip"));
     }
-    private final JTextField loginField = new JTextField();
-    private final JPasswordField passwordField = new WPasswordField();
-
+    
     private final JButton saveButton = new JButton();
     {
         saveButton.setText(textBundle.textFor("SettingsDialog.SaveLabel")); //$NON-NLS-1$
@@ -161,11 +163,9 @@ public class SettingsDialog extends EscapeDialog {
                         border, TableLayout.PREFERRED, border } // Rows
         };
 
-        TableLayout tableLayout = new TableLayout(size);
-
         this.setName("SettingsDialog"); //$NON-NLS-1$
         this.setTitle(textBundle.textFor("SettingsDialog.Title")); //$NON-NLS-1$
-        this.setLayout(tableLayout);
+        this.setLayout(new TableLayout(size));
         this.add(
                 new JXHeader(textBundle
                         .textFor("SettingsDialog.ApplicationSettingsTitle"),
@@ -182,10 +182,12 @@ public class SettingsDialog extends EscapeDialog {
                 settings.setUseTrayIcon(useTrayicon.isSelected());
                 settings.setAllowOverlappingActivities(allowOverlappingActivities.isSelected());
                 settings.setDurationFormat(durationFormat.getSelectedItem().toString());
-                settings.setAnukoUrl(urlField.getText());
-                settings.setAnukoLogin(loginField.getText());
-                settings.setAnukoPassword(String.valueOf(passwordField
-                        .getPassword()));
+                
+                settings.setBooleanProperty(PROJECT_FILTER_ENABLED, projectFilter.isSelected());
+                settings.setBooleanProperty(YEAR_FILTER_ENABLED, yearFilter.isSelected());
+                settings.setBooleanProperty(MONTH_FILTER_ENABLED, monthFilter.isSelected());
+                settings.setBooleanProperty(WEEK_OF_YEAR_FILTER_ENABLED, weekFilter.isSelected());
+                settings.setBooleanProperty(DAY_OF_WEEK_FILTER_ENABLED, dayFilter.isSelected());
                 
                 JOptionPane.showMessageDialog(SettingsDialog.this, textBundle.textFor("SettingsDialog.SaveInfo.Message"),
                 		textBundle.textFor("SettingsDialog.SaveInfo.Title"), JOptionPane.INFORMATION_MESSAGE);
@@ -225,41 +227,39 @@ public class SettingsDialog extends EscapeDialog {
                         TableLayout.PREFERRED, border,
                         TableLayout.PREFERRED, border } // Rows
         };
-        tableLayout = new TableLayout(size);
-        generalPanel.setLayout(tableLayout);
+        generalPanel.setLayout(new TableLayout(size));
 
         generalPanel.add(rememberWindowSizeLocation, "1, 1, 3, 1"); //$NON-NLS-1$
         generalPanel.add(purgeEmptyActivities, "1, 3, 3, 3"); //$NON-NLS-1$
         generalPanel.add(allowOverlappingActivities, "1, 5, 3, 5"); //$NON-NLS-1$
         generalPanel.add(useTrayicon, "1, 7, 3, 7"); //$NON-NLS-1$
         JPanel durationFormatPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        durationFormatPanel.add(new JLabel("Duration Format:"));
+        durationFormatPanel.add(new JLabel(text("SettingsDialog.Setting.DurationFormat.Title")));
         durationFormatPanel.add(durationFormat);
         
         generalPanel.add(durationFormatPanel, "1, 9, 3, 9"); //$NON-NLS-1$
 
-        //getRootPane().setDefaultButton(saveButton);
-
-        // add anuko pane
-        // TODO: remove all Anuko related stuff and remove dependency from POMs?
-        JPanel anukoPanel = new JPanel();
-        //tabbedPane.addTab("Anuko", null, anukoPanel, "Anuko exporter is currently not usable");
-        int index = tabbedPane.getTabCount() - 1;
-        tabbedPane.setEnabledAt(index, true);
-        tableLayout = new TableLayout(size);
-        anukoPanel.setLayout(tableLayout);
-
-        JLabel urlLabel = new JLabel("Timetracker base URL");
-        anukoPanel.add(urlLabel, "1, 1"); //$NON-NLS-1$
-        anukoPanel.add(urlField, "3, 1"); //$NON-NLS-1$
-
-        JLabel loginLabel = new JLabel("Timetracker login");
-        anukoPanel.add(loginLabel, "1, 3"); //$NON-NLS-1$
-        anukoPanel.add(loginField, "3, 3"); //$NON-NLS-1$
-        JLabel passwordLabel = new JLabel("Timetracker password");
-        anukoPanel.add(passwordLabel, "1, 5");
-        anukoPanel.add(passwordField, "3, 5");
-
+        
+        JPanel filterPanel = new JPanel();
+        tabbedPane.addTab("Filter", null, filterPanel, "Filter settings");
+        size = new double[][] {
+                { border, TableLayout.PREFERRED, border,
+                    TableLayout.PREFERRED, border
+                     }, // Columns
+                { border, TableLayout.PREFERRED, border,
+                         TableLayout.PREFERRED, border,
+                         TableLayout.PREFERRED, border,
+                         TableLayout.PREFERRED, border,
+                         TableLayout.PREFERRED, border,
+                } // Rows
+        };
+        filterPanel.setLayout(new TableLayout(size));
+        filterPanel.add(this.projectFilter, "1, 1, 3, 1");
+        filterPanel.add(this.yearFilter, "1, 3, 3, 3");
+        filterPanel.add(this.monthFilter, "1, 5, 3, 5");
+        filterPanel.add(this.weekFilter, "1, 7, 3, 7");
+        filterPanel.add(this.dayFilter, "1, 9, 3, 9");
+        
         readFromSettings();
         
         addSaveEnabler();
@@ -292,9 +292,11 @@ public class SettingsDialog extends EscapeDialog {
         useTrayicon.addActionListener(saveEnabler);
         durationFormat.addActionListener(saveEnabler);
         
-        urlField.addActionListener(saveEnabler);
-        loginField.addActionListener(saveEnabler);
-        passwordField.addActionListener(saveEnabler);
+        this.projectFilter.addActionListener(saveEnabler);
+        this.yearFilter.addActionListener(saveEnabler);
+        this.monthFilter.addActionListener(saveEnabler);
+        this.weekFilter.addActionListener(saveEnabler);
+        this.dayFilter.addActionListener(saveEnabler);
 	}
 
     /**
@@ -306,52 +308,11 @@ public class SettingsDialog extends EscapeDialog {
         this.allowOverlappingActivities.setSelected(this.settings.isAllowOverlappingActivities());
         this.useTrayicon.setSelected(this.settings.isUseTrayIcon());
         this.durationFormat.setSelectedItem(this.settings.getDurationFormat());
-        this.urlField.setText(this.settings.getAnukoUrl());
-        this.loginField.setText(this.settings.getAnukoLogin());
-        this.passwordField.setText(this.settings.getAnukoPassword());
-    }
-
-    private class UrlDocumentListener implements DocumentListener {
-
-        private final JTextField tf;
-        private final Color defaultColor;
-        private final UrlValidator validator;
         
-        public UrlDocumentListener( JTextField tf ) {
-            this.tf = tf;
-            this.defaultColor = tf.getForeground();
-            this.validator = new UrlValidator();
-        }
-        
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            // noop
-        }
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            validate( e.getDocument() );
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            validate( e.getDocument() );
-        }
-        
-        private void validate(Document document) {
-            try {
-                String text = document.getText(0, document.getLength());
-                if( validator.validate(text)) {
-                    tf.setForeground(defaultColor);
-                    saveButton.setEnabled(true);
-                } else {
-                    tf.setForeground(Color.RED);
-                    saveButton.setEnabled(false);
-                }
-            } catch (BadLocationException e) {
-                LOG.error(e, e);
-            }
-        }
-        
+        this.projectFilter.setSelected(this.settings.getBooleanProperty(PROJECT_FILTER_ENABLED, true));
+        this.yearFilter.setSelected(this.settings.getBooleanProperty(YEAR_FILTER_ENABLED, true));
+        this.monthFilter.setSelected(this.settings.getBooleanProperty(MONTH_FILTER_ENABLED, true));
+        this.weekFilter.setSelected(this.settings.getBooleanProperty(WEEK_OF_YEAR_FILTER_ENABLED, true));
+        this.dayFilter.setSelected(this.settings.getBooleanProperty(DAY_OF_WEEK_FILTER_ENABLED, true));
     }
 }

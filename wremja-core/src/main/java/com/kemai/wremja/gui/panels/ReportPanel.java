@@ -1,5 +1,7 @@
 package com.kemai.wremja.gui.panels;
 
+import static com.kemai.wremja.gui.settings.SettingsConstants.ALL_ITEMS_FILTER_DUMMY;
+import static com.kemai.wremja.gui.settings.SettingsConstants.CURRENT_ITEM_FILTER_DUMMY;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.event.ActionEvent;
@@ -23,6 +25,7 @@ import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
 import com.kemai.wremja.gui.lists.YearFilterList;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.settings.IUserSettings;
+import com.kemai.wremja.gui.settings.SettingsConstants;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.filter.Filter;
 
@@ -73,6 +76,10 @@ public class ReportPanel extends JXPanel implements ActionListener {
     private void initialize() {
         this.filteredActivitiesPane = new FilteredActivitiesPane(this.model, this.settings);
 
+        // TODO: init filter selectors based on settings!
+        int nrOfFilters = getNumberOfEnabledFilters();
+        
+        
         final double borderBig = 8;
         final double border = 3;
         final double size[][] = {
@@ -85,13 +92,13 @@ public class ReportPanel extends JXPanel implements ActionListener {
                         TableLayout.FILL, border } }; // Rows
         this.setLayout(new TableLayout(size));
 
-        int selectedYear = this.settings.getFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
-        int selectedMonth = this.settings.getFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
-        int selectedWeek = this.settings.getFilterSelectedWeekOfYear(WeekOfYearFilterList.ALL_WEEKS_OF_YEAR_DUMMY);
-        int selectedDay = this.settings.getFilterSelectedDayOfWeek(DayOfWeekFilterList.ALL_DAYS_DUMMY);
+        int selectedYear = this.settings.getFilterSelectedYear(ALL_ITEMS_FILTER_DUMMY);
+        int selectedMonth = this.settings.getFilterSelectedMonth(ALL_ITEMS_FILTER_DUMMY);
+        int selectedWeek = this.settings.getFilterSelectedWeekOfYear(ALL_ITEMS_FILTER_DUMMY);
+        int selectedDay = this.settings.getFilterSelectedDayOfWeek(ALL_ITEMS_FILTER_DUMMY);
         
         JXTitledSeparator filterSep = new JXTitledSeparator(TEXT_BUNDLE.textFor("ReportPanel.FiltersLabel")); //$NON-NLS-1$
-        this.add(filterSep, "1, 1, 15, 1"); //$NON-NLS-1$
+        this.add(filterSep, "1, 1, 19, 1"); //$NON-NLS-1$
 
         this.add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.ProjectLabel")), "1, 3"); 
         this.add(getProjectFilterSelector(), "3, 3"); 
@@ -105,7 +112,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
         this.add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.WeekLabel")), "13, 3"); 
         this.add(initWeekOfYearFilterSelector(selectedWeek), "15, 3"); 
         
-        this.add(new JXLabel("Tag"), "17, 3"); 
+        this.add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.DayLabel")), "17, 3"); 
         this.add(initDayOfWeekFilterSelector(selectedDay), "19, 3"); 
 
         
@@ -115,6 +122,26 @@ public class ReportPanel extends JXPanel implements ActionListener {
         this.add(filteredActivitiesPane, "1, 7, 19, 7"); 
         
         disableSelectBoxesIfNeeded(selectedMonth, selectedWeek, selectedDay);
+    }
+
+    private int getNumberOfEnabledFilters() {
+        int nr = 0;
+        if (this.settings.getBooleanProperty(SettingsConstants.PROJECT_FILTER_ENABLED, true)) {
+            nr++;
+        }
+        if (this.settings.getBooleanProperty(SettingsConstants.YEAR_FILTER_ENABLED, true)) {
+            nr++;
+        }
+        if (this.settings.getBooleanProperty(SettingsConstants.MONTH_FILTER_ENABLED, true)) {
+            nr++;
+        }
+        if (this.settings.getBooleanProperty(SettingsConstants.WEEK_OF_YEAR_FILTER_ENABLED, true)) {
+            nr++;
+        }
+        if (this.settings.getBooleanProperty(SettingsConstants.DAY_OF_WEEK_FILTER_ENABLED, true)) {
+            nr++;
+        }
+        return nr;
     }
 
     /**
@@ -163,7 +190,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
         DayOfWeekFilterList dayOfWeekFilterList = new DayOfWeekFilterList();
         dayFilterSelector = new JComboBox(new EventComboBoxModel<LabeledItem<Integer>>(dayOfWeekFilterList
                 .getDayList()));
-        dayFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("WeekOfYearFilterSelector.ToolTipText")); 
+        dayFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("DayOfWeekFilterSelector.ToolTipText")); 
 
         for (LabeledItem<Integer> item : dayOfWeekFilterList.getDayList()) {
             if (item.getItem().intValue() == selectedWeek) {
@@ -187,7 +214,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
             );
             projectFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("ProjectFilterSelector.ToolTipText")); 
 
-            final long selectedProjectId = this.settings.getFilterSelectedProjectId(ProjectFilterList.ALL_PROJECTS_DUMMY_VALUE);
+            final long selectedProjectId = this.settings.getFilterSelectedProjectId(ALL_ITEMS_FILTER_DUMMY);
             for (LabeledItem<Project> item : projectFilterList.getProjectList()) {
                 if (item.getItem().getId() == selectedProjectId) {
                     projectFilterSelector.setSelectedItem(item);
@@ -257,7 +284,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
         }
         
         final int selectedDayOfWeek;
-        // Filter for week of year
+        // Filter for day of week
         {
             LabeledItem<Integer> filterItem = (LabeledItem<Integer>) this.dayFilterSelector.getSelectedItem();
             selectedDayOfWeek = filterItem.getItem().intValue();
@@ -279,23 +306,24 @@ public class ReportPanel extends JXPanel implements ActionListener {
         return filter;
     }
     
+    // TODO: there must be a more intelligent way to implement this:
     private void disableSelectBoxesIfNeeded(int selectedMonth, int selectedWeekOfYear, int selectedDayOfWeek) {
-        if (selectedMonth == MonthFilterList.CURRENT_MONTH_DUMMY
-            || selectedWeekOfYear == WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY
-            || selectedDayOfWeek == DayOfWeekFilterList.CURRENT_DAY_DUMMY) {
+        if (selectedMonth == CURRENT_ITEM_FILTER_DUMMY
+            || selectedWeekOfYear ==  CURRENT_ITEM_FILTER_DUMMY
+            || selectedDayOfWeek ==  CURRENT_ITEM_FILTER_DUMMY) {
             this.yearFilterSelector.setEnabled(false);
         } else {
             this.yearFilterSelector.setEnabled(true);
         }
 
-        if (selectedWeekOfYear == WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY
-            || selectedDayOfWeek == DayOfWeekFilterList.CURRENT_DAY_DUMMY) {
+        if (selectedWeekOfYear ==  CURRENT_ITEM_FILTER_DUMMY
+            || selectedDayOfWeek ==  CURRENT_ITEM_FILTER_DUMMY) {
             this.monthFilterSelector.setEnabled(false);
         } else {
             this.monthFilterSelector.setEnabled(true);
         }
         
-        if ( selectedDayOfWeek == DayOfWeekFilterList.CURRENT_DAY_DUMMY) {
+        if ( selectedDayOfWeek ==  CURRENT_ITEM_FILTER_DUMMY) {
             this.weekFilterSelector.setEnabled(false);
         } else {
             this.weekFilterSelector.setEnabled(true);

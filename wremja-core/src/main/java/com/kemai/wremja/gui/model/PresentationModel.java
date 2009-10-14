@@ -27,13 +27,13 @@ import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.events.WremjaEvent.Type;
-import com.kemai.wremja.gui.lists.ProjectFilterList;
 import com.kemai.wremja.gui.model.edit.EditStack;
 import com.kemai.wremja.gui.model.report.HoursByDayReport;
 import com.kemai.wremja.gui.model.report.HoursByProjectReport;
 import com.kemai.wremja.gui.model.report.HoursByWeekReport;
 import com.kemai.wremja.gui.model.report.ObservingAccumulatedActivitiesReport;
 import com.kemai.wremja.gui.settings.IUserSettings;
+import com.kemai.wremja.gui.settings.SettingsConstants;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.OverlappingActivitiesException;
@@ -151,7 +151,7 @@ public class PresentationModel extends Observable {
         setFilter(this.settings.restoreFromSettings(), this);
 
         // b) restore project (can be done here only as we need to search all projects)
-        final long selectedProjectId = this.settings.getFilterSelectedProjectId(ProjectFilterList.ALL_PROJECTS_DUMMY_VALUE);
+        final long selectedProjectId = this.settings.getFilterSelectedProjectId(SettingsConstants.ALL_ITEMS_FILTER_DUMMY);
         filter.setProject(this.data.findProjectById(selectedProjectId));
         applyFilter();
 

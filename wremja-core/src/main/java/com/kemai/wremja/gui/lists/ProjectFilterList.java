@@ -1,5 +1,7 @@
 package com.kemai.wremja.gui.lists;
 
+import static com.kemai.wremja.gui.settings.SettingsConstants.ALL_ITEMS_FILTER_DUMMY;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -26,9 +28,7 @@ public class ProjectFilterList implements Observer {
     /** The model. */
     private final PresentationModel model;
 
-    public static final int ALL_PROJECTS_DUMMY_VALUE = -10;
-
-    public static final Project ALL_PROJECTS_DUMMY = new Project(ALL_PROJECTS_DUMMY_VALUE, "*", "*"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final Project ALL_PROJECTS_DUMMY = new Project(ALL_ITEMS_FILTER_DUMMY, "*", "*"); //$NON-NLS-1$ //$NON-NLS-2$
     
     public static final Project BILLABLE_PROJECTS_DUMMY = new Project(-5, "*", "*"); //$NON-NLS-1$ //$NON-NLS-2$
 

@@ -8,8 +8,6 @@ import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 
 import com.kemai.util.OSUtils;
-import com.kemai.wremja.gui.lists.MonthFilterList;
-import com.kemai.wremja.gui.lists.YearFilterList;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.filter.Filter;
@@ -25,7 +23,7 @@ public final class UserSettings implements IUserSettings {
 
     /** Default name of the {@link ActivityRepository} data file. */
     public static final String DEFAULT_FILE_NAME = "ProTrack.ptd"; //$NON-NLS-1$
-
+    
     /* (non-Javadoc)
      * @see com.kemai.wremja.gui.settings.IUserSettings#getDataFileLocation()
      */
@@ -188,7 +186,7 @@ public final class UserSettings implements IUserSettings {
         // -- 
         // :INFO: Migrate from < Baralga 1.3 where * was used as dummy value
         if (StringUtils.equals("*", selectedMonthObject)) {
-            setFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
+            setFilterSelectedMonth(SettingsConstants.ALL_ITEMS_FILTER_DUMMY);
         }
         // --
         return doGetInteger(SELECTED_MONTH, defaultValue);
@@ -238,7 +236,7 @@ public final class UserSettings implements IUserSettings {
         // -- 
         // :INFO: Migrate from < 1.3 where * was used as dummy value
         if (StringUtils.equals("*", selectedYearObject)) {
-            setFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
+            setFilterSelectedYear(SettingsConstants.ALL_ITEMS_FILTER_DUMMY);
         }
         // -- 
         return doGetInteger(SELECTED_YEAR, defaultValue);
@@ -555,49 +553,23 @@ public final class UserSettings implements IUserSettings {
     /* (non-Javadoc)
      * @see com.kemai.wremja.gui.settings.IUserSettings#restoreFromSettings()
      */
+    // TODO try to unify this with the initialization logic in ReportPanel!
     public Filter restoreFromSettings() {
         final Filter filter = new Filter();
 
-        // Restore the month
-        restoreMonthFilter(filter);
-
         // Restore the year
-        restoreYearFilter(filter);
+        filter.setYear(getFilterSelectedYear(SettingsConstants.ALL_ITEMS_FILTER_DUMMY));
+        
+        // Restore the month
+        filter.setMonth(getFilterSelectedMonth(SettingsConstants.ALL_ITEMS_FILTER_DUMMY));
         
         // Restore the week of the year
-        restoreWeekOfYearFilter(filter);
+        filter.setWeekOfYear(getFilterSelectedWeekOfYear(SettingsConstants.ALL_ITEMS_FILTER_DUMMY));
+        
+        // Restore the day of week
+        filter.setDayOfWeek(getFilterSelectedDayOfWeek(SettingsConstants.ALL_ITEMS_FILTER_DUMMY));
 
         return filter;
-    }
-
-    /**
-     * Restores the filter for the year.
-     * @param filter the restored filter
-     */
-    private void restoreYearFilter(final Filter filter) {
-        final int selectedYear = getFilterSelectedYear(YearFilterList.ALL_YEARS_DUMMY);
-
-        filter.setYear(selectedYear);
-    }
-
-    /**
-     * Restores the filter for the month.
-     * @param filter the restored filter
-     */
-    private void restoreMonthFilter(final Filter filter) {
-        final int selectedMonth = getFilterSelectedMonth(MonthFilterList.ALL_MONTHS_DUMMY);
-
-        filter.setMonth(selectedMonth);
-    }
-
-    /**
-     * Restores the filter for the week of year.
-     * @param filter the restored filter
-     */
-    private void restoreWeekOfYearFilter(final Filter filter) {
-        final int selectedWeekOfYear = getFilterSelectedWeekOfYear(YearFilterList.ALL_YEARS_DUMMY);
-
-        filter.setWeekOfYear(selectedWeekOfYear);
     }
 
     //------------------------------------------------
@@ -666,5 +638,15 @@ public final class UserSettings implements IUserSettings {
             LOG.error(e, e);
             return defaultValue;
         }
+    }
+    
+    @Override
+    public boolean getBooleanProperty(String key, boolean defaultValue) {
+        return doGetBoolean(key, defaultValue);
+    }
+    
+    @Override
+    public void setBooleanProperty(String key, boolean value) {
+        userConfig.setProperty(key, value);
     }
 }

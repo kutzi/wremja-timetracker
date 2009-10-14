@@ -8,10 +8,7 @@ import java.util.Map;
 import org.joda.time.DateTime;
 
 import com.kemai.util.Predicate;
-import com.kemai.wremja.gui.lists.DayOfWeekFilterList;
-import com.kemai.wremja.gui.lists.MonthFilterList;
-import com.kemai.wremja.gui.lists.WeekOfYearFilterList;
-import com.kemai.wremja.gui.lists.YearFilterList;
+import com.kemai.wremja.gui.settings.SettingsConstants;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
@@ -116,12 +113,12 @@ public class Filter {
         this.predicates.remove(DAY_PREDICATE);
 
         // clear filter if 'all' is selected
-        if (dayOfWeek == DayOfWeekFilterList.ALL_DAYS_DUMMY) {
+        if (dayOfWeek == SettingsConstants.ALL_ITEMS_FILTER_DUMMY) {
             return;
         }
 
         Predicate<ProjectActivity> newWeekOfYearPredicate = null;
-        if(dayOfWeek == DayOfWeekFilterList.CURRENT_DAY_DUMMY) {
+        if(dayOfWeek == SettingsConstants.CURRENT_ITEM_FILTER_DUMMY) {
             newWeekOfYearPredicate = new CurrentDayPredicate();
         } else {
             newWeekOfYearPredicate = new DayOfWeekPredicate(dayOfWeek);
@@ -163,12 +160,12 @@ public class Filter {
         this.predicates.remove(WEEK_PREDICATE);
 
         // clear filter if 'all' is selected
-        if (weekOfYear == WeekOfYearFilterList.ALL_WEEKS_OF_YEAR_DUMMY) {
+        if (weekOfYear == SettingsConstants.ALL_ITEMS_FILTER_DUMMY) {
             return;
         }
 
         final Predicate<ProjectActivity> newWeekOfYearPredicate;
-        if(weekOfYear == WeekOfYearFilterList.CURRENT_WEEK_OF_YEAR_DUMMY) {
+        if(weekOfYear == SettingsConstants.CURRENT_ITEM_FILTER_DUMMY) {
             newWeekOfYearPredicate = new CurrentWeekPredicate();
         } else {
             newWeekOfYearPredicate = new WeekOfYearPredicate(weekOfYear);
@@ -204,7 +201,7 @@ public class Filter {
         this.predicates.remove(MONTH_PREDICATE);
 
         // If month is null set month predicate also to null.
-        if (month == MonthFilterList.ALL_MONTHS_DUMMY) {
+        if (month == SettingsConstants.ALL_ITEMS_FILTER_DUMMY) {
             this.month = null;
             return;
         }
@@ -212,7 +209,7 @@ public class Filter {
         this.month = Integer.valueOf(month);
         
         final Predicate<ProjectActivity> newMonthPredicate;
-        if(month == MonthFilterList.CURRENT_MONTH_DUMMY) {
+        if(month == SettingsConstants.CURRENT_ITEM_FILTER_DUMMY) {
             newMonthPredicate = new CurrentMonthPredicate();
         } else {
             newMonthPredicate = new MonthPredicate(month);
@@ -254,7 +251,7 @@ public class Filter {
         this.predicates.remove(YEAR_PREDICATE);
 
         // If year is null set year predicate also to null.
-        if (year == YearFilterList.ALL_YEARS_DUMMY) {
+        if (year == SettingsConstants.ALL_ITEMS_FILTER_DUMMY) {
             this.year = null;
             return;
         }

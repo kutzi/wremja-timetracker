@@ -1,5 +1,8 @@
 package com.kemai.wremja.gui.lists;
 
+import static com.kemai.wremja.gui.settings.SettingsConstants.ALL_ITEMS_FILTER_DUMMY;
+import static com.kemai.wremja.gui.settings.SettingsConstants.CURRENT_ITEM_FILTER_DUMMY;
+
 import java.beans.PropertyChangeEvent;
 import java.util.Observable;
 import java.util.Observer;
@@ -33,21 +36,15 @@ public class MonthFilterList implements Observer {
     /** The model. */
     private final PresentationModel model;
 
-    /** Value for the all months dummy. */
-    public static final int ALL_MONTHS_DUMMY = -10;
-
     /** filter item for the all months dummy. */
     public static final LabeledItem<Integer> ALL_MONTHS_FILTER_ITEM = new LabeledItem<Integer>(
-            Integer.valueOf(ALL_MONTHS_DUMMY),
+            Integer.valueOf(ALL_ITEMS_FILTER_DUMMY),
             textBundle.textFor("MonthFilterList.AllMonthsLabel") //$NON-NLS-1$
     );
 
-    /** Value for the current month dummy. */
-    public static final int CURRENT_MONTH_DUMMY = -5;
-
     /** filter item for the current month dummy. */
     public static final LabeledItem<Integer> CURRENT_MONTH_FILTER_ITEM = new LabeledItem<Integer>(
-            Integer.valueOf(CURRENT_MONTH_DUMMY),
+            Integer.valueOf(CURRENT_ITEM_FILTER_DUMMY),
             textBundle.textFor("MonthFilterList.CurrentMonthLabel", MONTH_FORMAT.print(DateUtils.getNow())) //$NON-NLS-1$
     );
 
