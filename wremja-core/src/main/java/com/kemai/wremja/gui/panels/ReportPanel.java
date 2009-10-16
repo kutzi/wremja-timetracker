@@ -76,52 +76,80 @@ public class ReportPanel extends JXPanel implements ActionListener {
     private void initialize() {
         this.filteredActivitiesPane = new FilteredActivitiesPane(this.model, this.settings);
 
-        // TODO: init filter selectors based on settings!
-        int nrOfFilters = getNumberOfEnabledFilters();
-        
-        
         final double borderBig = 8;
         final double border = 3;
-        final double size[][] = {
-                { border, TableLayout.PREFERRED, border, TableLayout.FILL, borderBig,
-                    TableLayout.PREFERRED, border, TableLayout.FILL, borderBig,
-                    TableLayout.PREFERRED, border, TableLayout.FILL, borderBig,
-                    TableLayout.PREFERRED, border, TableLayout.FILL, borderBig,
-                    TableLayout.PREFERRED, border, TableLayout.FILL, border}, // Columns
-                    { border, TableLayout.PREFERRED, border, TableLayout.PREFERRED, borderBig, TableLayout.PREFERRED, 0,
-                        TableLayout.FILL, border } }; // Rows
+        final double size[][] = new double[2] [];
+
+        int nrOfFilters = getNumberOfEnabledFilters();
+        int nrOfColumns = Math.max(1, nrOfFilters);
+        double[] columns = new double[nrOfColumns * 4 + 1];
+        columns[0] = border;
+        for (int i=1; i <= nrOfColumns; i++) {
+        	int base = (i-1) * 4;
+        	columns[base+1] = TableLayout.PREFERRED;
+        	columns[base+2] = border;
+        	columns[base+3] = TableLayout.FILL;
+        	columns[base+4] = borderBig;
+        }
+        columns[columns.length - 1] = border;
+        size[0] = columns;
+        
+        double[] rows =  { border, TableLayout.PREFERRED, border, TableLayout.PREFERRED, borderBig, TableLayout.PREFERRED, 0,
+            TableLayout.FILL, border };
+        size[1] = rows;
         this.setLayout(new TableLayout(size));
 
-        int selectedYear = this.settings.getFilterSelectedYear(ALL_ITEMS_FILTER_DUMMY);
-        int selectedMonth = this.settings.getFilterSelectedMonth(ALL_ITEMS_FILTER_DUMMY);
-        int selectedWeek = this.settings.getFilterSelectedWeekOfYear(ALL_ITEMS_FILTER_DUMMY);
-        int selectedDay = this.settings.getFilterSelectedDayOfWeek(ALL_ITEMS_FILTER_DUMMY);
+        int lastColumn = columns.length - 2; // excluding the last border column
         
         JXTitledSeparator filterSep = new JXTitledSeparator(TEXT_BUNDLE.textFor("ReportPanel.FiltersLabel")); //$NON-NLS-1$
-        this.add(filterSep, "1, 1, 19, 1"); //$NON-NLS-1$
+        this.add(filterSep, "1, 1, " + lastColumn + ", 1"); //$NON-NLS-1$
 
-        this.add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.ProjectLabel")), "1, 3"); 
-        this.add(getProjectFilterSelector(), "3, 3"); 
-
-        this.add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.YearLabel")), "5, 3"); 
-        this.add(initYearFilterSelector(selectedYear), "7, 3"); 
-
-        this.add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.MonthLabel")), "9, 3"); 
-        this.add(initMonthFilterSelector(selectedMonth), "11, 3"); 
-
-        this.add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.WeekLabel")), "13, 3"); 
-        this.add(initWeekOfYearFilterSelector(selectedWeek), "15, 3"); 
+        initSelectorComponents();
         
-        this.add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.DayLabel")), "17, 3"); 
-        this.add(initDayOfWeekFilterSelector(selectedDay), "19, 3"); 
+        int column = 1;
+        if (settings.getBooleanProperty(SettingsConstants.PROJECT_FILTER_ENABLED, true)) {
+        	add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.ProjectLabel")), column + ", 3");
+        	column += 2;
+        	add(this.projectFilterSelector, column + ", 3");
+        	column += 2;
+        }
 
+        if (settings.getBooleanProperty(SettingsConstants.YEAR_FILTER_ENABLED, true)) {
+        	add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.YearLabel")), column + ", 3");
+        	column += 2;
+        	add(initYearFilterSelector(), column + ", 3");
+        	column += 2;
+        }
+
+        if (settings.getBooleanProperty(SettingsConstants.MONTH_FILTER_ENABLED, true)) {
+        	add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.MonthLabel")), column + ", 3");
+        	column += 2;
+        	add(initMonthFilterSelector(), column + ", 3");
+        	column += 2;
+        }
+
+        if (settings.getBooleanProperty(SettingsConstants.WEEK_OF_YEAR_FILTER_ENABLED, true)) {
+        	add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.WeekLabel")), column + ", 3");
+        	column += 2;
+        	add(initWeekOfYearFilterSelector(), column + ", 3");
+        	column += 2;
+        }        
+        if (settings.getBooleanProperty(SettingsConstants.DAY_OF_WEEK_FILTER_ENABLED, true)) {
+        	add(new JXLabel(TEXT_BUNDLE.textFor("ReportPanel.DayLabel")), column + ", 3");
+        	column += 2;
+        	add(initDayOfWeekFilterSelector(), column + ", 3");
+        	column += 2;
+        }
         
         JXTitledSeparator sep = new JXTitledSeparator(TEXT_BUNDLE.textFor("ReportPanel.DataLabel")); //$NON-NLS-1$
-        this.add(sep, "1, 5, 19, 1"); //$NON-NLS-1$
+        this.add(sep, "1, 5, " + lastColumn + ", 1"); //$NON-NLS-1$
 
-        this.add(filteredActivitiesPane, "1, 7, 19, 7"); 
+        this.add(filteredActivitiesPane, "1, 7, " + lastColumn + ", 7"); 
         
-        disableSelectBoxesIfNeeded(selectedMonth, selectedWeek, selectedDay);
+        int selectedMonth = this.settings.getFilterSelectedMonth(SettingsConstants.ALL_ITEMS_FILTER_DUMMY);
+    	int selectedWeekOfYear = this.settings.getFilterSelectedWeekOfYear(SettingsConstants.ALL_ITEMS_FILTER_DUMMY);
+    	int selectedDayOfWeek = this.settings.getFilterSelectedDayOfWeek(SettingsConstants.ALL_ITEMS_FILTER_DUMMY);
+        disableSelectBoxesIfNeeded(selectedMonth, selectedWeekOfYear, selectedDayOfWeek);
     }
 
     private int getNumberOfEnabledFilters() {
@@ -144,17 +172,25 @@ public class ReportPanel extends JXPanel implements ActionListener {
         return nr;
     }
 
+    private void initSelectorComponents() {
+        getProjectFilterSelector(); 
+        initYearFilterSelector(); 
+        initMonthFilterSelector(); 
+        initWeekOfYearFilterSelector(); 
+        initDayOfWeekFilterSelector(); 
+    }
+    
     /**
-     * @param selectedMonth 
      * @return the monthFilterSelector
      */
-    private JComboBox initMonthFilterSelector(int selectedMonth) {
+    private JComboBox initMonthFilterSelector() {
         MonthFilterList monthFilterList = new MonthFilterList(model);
         monthFilterSelector = new JComboBox(
                 new EventComboBoxModel<LabeledItem<Integer>>(monthFilterList.getMonthList())
         );
         monthFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("MonthFilterSelector.ToolTipText")); 
 
+        int selectedMonth = this.settings.getFilterSelectedMonth(ALL_ITEMS_FILTER_DUMMY);
         for (LabeledItem<Integer> item : monthFilterList.getMonthList()) {
             if (item.getItem().intValue() == selectedMonth) {
                 monthFilterSelector.setSelectedItem(item);
@@ -169,12 +205,13 @@ public class ReportPanel extends JXPanel implements ActionListener {
     /**
      * @return the weekFilterSelector
      */
-    private JComboBox initWeekOfYearFilterSelector(int selectedWeek) {
+    private JComboBox initWeekOfYearFilterSelector() {
         WeekOfYearFilterList weekOfYearFilterList = new WeekOfYearFilterList(model);
         weekFilterSelector = new JComboBox(new EventComboBoxModel<LabeledItem<Integer>>(weekOfYearFilterList
                 .getWeekList()));
         weekFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("WeekOfYearFilterSelector.ToolTipText")); 
 
+        int selectedWeek = this.settings.getFilterSelectedWeekOfYear(ALL_ITEMS_FILTER_DUMMY);
         for (LabeledItem<Integer> item : weekOfYearFilterList.getWeekList()) {
             if (item.getItem().intValue() == selectedWeek) {
                 weekFilterSelector.setSelectedItem(item);
@@ -186,14 +223,15 @@ public class ReportPanel extends JXPanel implements ActionListener {
         return weekFilterSelector;
     }
     
-    private JComboBox initDayOfWeekFilterSelector(int selectedWeek) {
+    private JComboBox initDayOfWeekFilterSelector() {
         DayOfWeekFilterList dayOfWeekFilterList = new DayOfWeekFilterList();
         dayFilterSelector = new JComboBox(new EventComboBoxModel<LabeledItem<Integer>>(dayOfWeekFilterList
                 .getDayList()));
         dayFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("DayOfWeekFilterSelector.ToolTipText")); 
 
+        int selectedDay = this.settings.getFilterSelectedDayOfWeek(ALL_ITEMS_FILTER_DUMMY);
         for (LabeledItem<Integer> item : dayOfWeekFilterList.getDayList()) {
-            if (item.getItem().intValue() == selectedWeek) {
+            if (item.getItem().intValue() == selectedDay) {
                 dayFilterSelector.setSelectedItem(item);
                 break;
             }
@@ -228,10 +266,9 @@ public class ReportPanel extends JXPanel implements ActionListener {
     }
 
     /**
-     * @param selectedYear 
      * @return the yearFilterSelector
      */
-    private JComboBox initYearFilterSelector(int selectedYear) {
+    private JComboBox initYearFilterSelector() {
         if (yearFilterSelector == null) {
             YearFilterList yearFilterList = new YearFilterList(model);
             yearFilterSelector = new JComboBox(
@@ -239,6 +276,7 @@ public class ReportPanel extends JXPanel implements ActionListener {
             );
             yearFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("YearFilterSelector.ToolTipText")); 
 
+            int selectedYear = this.settings.getFilterSelectedYear(ALL_ITEMS_FILTER_DUMMY);
             for (LabeledItem<Integer> item : yearFilterList.getYearList()) {
                 if (item.getItem().intValue() == selectedYear) {
                     yearFilterSelector.setSelectedItem(item);
