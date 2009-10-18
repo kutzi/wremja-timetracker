@@ -7,10 +7,11 @@ import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.kemai.util.OSUtils;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.filter.Filter;
+
+import de.kutzi.javautils.system.OSUtil;
 
 /**
  * Stores and reads all settings specific to one user.
@@ -461,7 +462,7 @@ public final class UserSettings implements IUserSettings {
      * @see com.kemai.wremja.gui.settings.IUserSettings#isUseTrayIcon()
      */
     public boolean isUseTrayIcon() {
-    	boolean def = !OSUtils.isGnome(); // tray icon issues under Gnome
+    	boolean def = !OSUtil.isGnome(); // tray icon issues under Gnome
     	return doGetBoolean(USE_TRAY_ICON, def);
     }
     

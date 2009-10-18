@@ -3,7 +3,7 @@ package com.kemai.swing.util;
 import javax.swing.JPasswordField;
 import javax.swing.text.Document;
 
-import com.kemai.util.JavaUtils;
+import de.kutzi.javautils.system.JavaUtil;
 
 /**
  * A custom {@link JPasswordField} with a workaround for the bug:
@@ -43,7 +43,7 @@ public class WPasswordField extends JPasswordField {
 	}
 
 	private void checkJPasswordFieldBug() {
-		if(JavaUtils.hasJPasswordFieldBug()) {
+		if(JavaUtil.hasJPasswordFieldBug()) {
 			enableInputMethods(true);
 		}
 		

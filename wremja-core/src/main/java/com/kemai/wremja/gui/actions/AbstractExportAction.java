@@ -13,12 +13,13 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import com.kemai.util.IOUtils;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.settings.IUserSettings;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.export.Exporter;
+
+import de.kutzi.javautils.io.IOUtils;
 
 /**
  * Base action for all data exports.
@@ -179,7 +180,7 @@ public abstract class AbstractExportAction extends AbstractWremjaAction {
                         JOptionPane.ERROR_MESSAGE
                 );
             } finally {
-                IOUtils.closeQuietly(out);
+                IOUtils.close(out);
             }
             return null;
         }

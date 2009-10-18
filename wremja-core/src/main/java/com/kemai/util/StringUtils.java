@@ -37,7 +37,12 @@ public class StringUtils {
         return strippedXml;
     }
     
-    // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5003547
+    /**
+     * Returns an {@link Iterable} which iterates over all Unicode 4 codepoints
+     * in the given string.
+     * 
+     * {@link "http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5003547"}
+     */
     public static Iterable<Integer> codePoints(final String s) {
         return new Iterable<Integer>() {
             public Iterator<Integer> iterator() {
@@ -59,6 +64,9 @@ public class StringUtils {
         };
     }
     
+    /**
+     * Converts the given string into Unicode 4 codepoints.
+     */
     public static int[] stringToCodepoints(String s) {
         int codePoints = s.codePointCount(0, s.length());
         int[] result = new int[codePoints];
@@ -70,6 +78,11 @@ public class StringUtils {
         return result;
     }
     
+    /**
+     * Returns a rough guess (!) if c is a consonant.
+     * 
+     * Currently only works reliably for English and German!
+     */
     public static boolean isConsonant(char c) {
     	// FIXME: that's not i18n at all!
     	final String CONSONANTS = "bcdfghjklmnpqrstvwxzß" +

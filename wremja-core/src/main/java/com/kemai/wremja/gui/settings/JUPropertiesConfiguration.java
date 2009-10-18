@@ -11,8 +11,9 @@ import java.util.Properties;
 
 import org.apache.commons.lang.ObjectUtils;
 
-import com.kemai.util.IOUtils;
 import com.kemai.wremja.gui.model.io.DataBackup;
+
+import de.kutzi.javautils.io.IOUtils;
 
 /**
  * A {@link Configuration} based on java.util.Properties
@@ -51,7 +52,7 @@ public class JUPropertiesConfiguration implements Configuration {
 	        try {
 	            props.load(in);
 	        } finally {
-	            IOUtils.closeQuietly(in);
+	            IOUtils.close(in);
 	        }
         }
     }
@@ -140,7 +141,7 @@ public class JUPropertiesConfiguration implements Configuration {
         } catch (IOException e) {
             throw new RuntimeException( "Saving failed", e );
         } finally {
-            IOUtils.closeQuietly(out);
+            IOUtils.close(out);
         }
     }
 

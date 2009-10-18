@@ -10,7 +10,6 @@ import java.io.Writer;
 
 import org.jfree.util.Log;
 
-import com.kemai.util.IOUtils;
 import com.kemai.wremja.gui.model.io.DataBackup;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.Project;
@@ -18,6 +17,8 @@ import com.kemai.wremja.model.ProjectActivity;
 import com.kemai.wremja.model.ReadableRepository;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+
+import de.kutzi.javautils.io.IOUtils;
 
 /**
  * Writer for ActivityRepository data files.
@@ -73,7 +74,7 @@ public class ProTrackWriter {
                 	Log.error("Couldn't rename tmp file to " + file.getAbsolutePath());
                 }
             } finally {
-                IOUtils.closeQuietly(fileOut);
+                IOUtils.close(fileOut);
             }
         }
     }

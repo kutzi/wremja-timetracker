@@ -8,6 +8,28 @@
     <name>Wremja Parent</name>
     <description>Parent project for Wremja</description>
     <url>http://kenai.com/projects/wremja/pages/Home</url>
+    <issueManagement>
+        <url>http://kenai.com/jira/browse/WREMJA</url>
+    </issueManagement>
+    <developers>
+        <developer>
+            <name>Christoph Kutzinski</name>
+            <email>kutzi@gmx.de</email>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License</name>
+            <url>http://www.gnu.org/licenses/lgpl.html
+            </url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+    
     <scm>
         <developerConnection>scm:svn:https://kenai.com/svn/wremja~svn/trunk</developerConnection>
         <url>https://kenai.com/svn/wremja~svn/trunk</url>
@@ -150,7 +172,32 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
+        <repositories>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2/
+            </url>
+        </repository>
+        <repository>
+            <id>maven2-repository.atlassian.com
+            </id>
+            <name>Atlassian Repository for Maven</name>
+            <url>https://maven.atlassian.com/repository/public
+            </url>
+        </repository>
+        <repository>
+            <id>mirrors.ibiblio.org</id>
+            <name>Ibiblio Repository for Maven</name>
+            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2
+            </url>
+        </repository>
+        <repository>
+            <id>repository.jboss.org</id>
+            <name>JBoss Repository for Maven</name>
+            <url>http://repository.jboss.org/maven2
+            </url>
+        </repository>
         <repository>
             <id>projectlombok.org</id>
             <url>http://projectlombok.org/mavenrepo</url>
@@ -179,6 +226,12 @@
     </reporting>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>de.kutzi</groupId>
+                <artifactId>javautils</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <scope>compile</scope>
+            </dependency>
             <dependency>
                 <groupId>net.infonode</groupId>
                 <artifactId>infonode-tabbedpane</artifactId>

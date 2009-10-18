@@ -6,13 +6,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.kemai.util.IOUtils;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+
+import de.kutzi.javautils.io.IOUtils;
 
 /**
  * Reader for {@link ActivityRepository} data files.
@@ -44,7 +45,7 @@ public class ProTrackReader {
         } catch(IOException e) {
             throw new IOException("The file " + (file != null ? file.toString() : "<null>") + " does not contain valid Baralga data.", e);
         } finally {
-            IOUtils.closeQuietly(fis);
+            IOUtils.close(fis);
         }
     }
 

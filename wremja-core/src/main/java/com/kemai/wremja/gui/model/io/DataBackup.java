@@ -15,9 +15,10 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.kemai.util.IOUtils;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
 import com.kemai.wremja.logging.Logger;
+
+import de.kutzi.javautils.io.IOUtils;
 
 /**
  * Misc utility methods for creating and reading backups.
