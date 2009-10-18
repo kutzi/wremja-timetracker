@@ -18,11 +18,25 @@ public class IOUtils {
         throw new AssertionError("No instances allowed!");
     }
     
-    public static boolean copyFile(File source, File destination) throws IOException {
+    /**
+     * Copies the file contents from source to destination.
+     * Also, copies file attributes as far as possible (i.e. supported by the underlying
+     * Java version) - this means that at least last-modified timestamp is kept.
+     */
+    public static void copyFile(File source, File destination) throws IOException {
+    	copyFile(source, destination, true);
+    }
+    
+    /**
+     * Copies the file contents from source to destination.
+     * 
+     * If <code>copyAttributes</code> is true, also copies file attributes as far as possible (i.e. supported by the underlying
+     * Java version) - this means that at least last-modified timestamp is kept.
+     */
+    public static void copyFile(File source, File destination, boolean copyAttributes) throws IOException {
 
         if (JavaUtil.isGreaterOrEqual(17, 0)) {
-            copyJava7(source, destination);
-            return true;
+            copyJava7(source, destination, copyAttributes);
         } else {
             // Java 6
             FileInputStream fis = null;
@@ -36,9 +50,12 @@ public class IOUtils {
                     transferedBytes += destChannel.transferFrom(sourceChannel, 0, size - transferedBytes);
                 }
                 destination.setWritable(source.canWrite());
-                destination.setExecutable(source.canExecute());
                 // obviously, source is readable
-                return true;
+                destination.setExecutable(source.canExecute());
+                if (!destination.setLastModified(source.lastModified())) {
+                	throw new IOException("Couldn't update last-modified of '" + destination
+                			+ "' to " + source.lastModified());
+                }
             } finally {
                 close(fis, fos);
             }
@@ -46,10 +63,14 @@ public class IOUtils {
     }
 
     @IgnoreJRERequirement
-    private static void copyJava7(File source, File destination) throws IOException {
+    private static void copyJava7(File source, File destination, boolean copyAttributes) throws IOException {
         Path sourcePath = source.toPath();
         Path targetPath = destination.toPath();
-        sourcePath.copyTo(targetPath, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.COPY_ATTRIBUTES);
+        if (copyAttributes) {
+        	sourcePath.copyTo(targetPath, StandardCopyOption.COPY_ATTRIBUTES);
+        } else {
+        	sourcePath.copyTo(targetPath);
+        }
     }
 
     public static void close(Closeable... closables) {
