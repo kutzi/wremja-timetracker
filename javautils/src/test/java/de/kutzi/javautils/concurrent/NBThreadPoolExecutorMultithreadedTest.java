@@ -1,19 +1,23 @@
 package de.kutzi.javautils.concurrent;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  *
  * @author kutzi
  */
+@Test(groups="stress")
 public class NBThreadPoolExecutorMultithreadedTest {
 
     private final AtomicLong counter = new AtomicLong();
@@ -26,13 +30,13 @@ public class NBThreadPoolExecutorMultithreadedTest {
     public NBThreadPoolExecutorMultithreadedTest() {
     }
 
-    @Before
+    @BeforeTest
     public void setUp() {
         counter.set(0);
         results.clear();
     }
 
-    @After
+    @AfterTest
     public void tearDown() {
     }
 
@@ -60,8 +64,7 @@ public class NBThreadPoolExecutorMultithreadedTest {
         }
 
         executor.shutdown();
-        assertTrue( "executor didn't finish within 10 seconds",
-        		executor.awaitTermination( 10, TimeUnit.SECONDS ) );
+        assertTrue( executor.awaitTermination( 10, TimeUnit.SECONDS ), "executor didn't finish within 10 seconds" );
         
         long end = System.nanoTime();
         long secs = TimeUnit.SECONDS.convert(end - start, TimeUnit.NANOSECONDS);

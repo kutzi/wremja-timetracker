@@ -1,19 +1,23 @@
 package de.kutzi.javautils.concurrent;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  *
  * @author kutzi
  */
+@Test(groups="stress")
 public class NotifyingBlockingThreadPoolExecutorTest {
 
     private final AtomicLong counter = new AtomicLong();
@@ -23,21 +27,16 @@ public class NotifyingBlockingThreadPoolExecutorTest {
     public NotifyingBlockingThreadPoolExecutorTest() {
     }
 
-    @Before
+    @BeforeTest
     public void setUp() {
         counter.set(0);
         results.clear();
-    }
-
-    @After
-    public void tearDown() {
     }
 
     /**
      * Test of execute method, of class BlockingThreadPoolExecutor.
      * @throws InterruptedException 
      */
-    @Test
     public void testExecutesAllTasks() throws InterruptedException {
         int numberOfThreads = 1;
         int numberOfTasks = 1000;
@@ -56,8 +55,7 @@ public class NotifyingBlockingThreadPoolExecutorTest {
         }
 
         executor.shutdown();
-        assertTrue( "executor didn't finish within 10 seconds",
-        		executor.awaitTermination( 10, TimeUnit.SECONDS ) );
+        assertTrue( executor.awaitTermination( 10, TimeUnit.SECONDS ), "executor didn't finish within 10 seconds" );
         
         long end = System.nanoTime();
         long secs = TimeUnit.SECONDS.convert(end - start, TimeUnit.NANOSECONDS);

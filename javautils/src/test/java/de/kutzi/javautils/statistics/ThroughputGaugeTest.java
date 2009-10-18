@@ -4,11 +4,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
-
+@Test(groups="stress")
 public class ThroughputGaugeTest {
 
 	private static final int NUM_THREADS = 200;
@@ -18,14 +18,13 @@ public class ThroughputGaugeTest {
 	private CountDownLatch startLatch;
 	private final AtomicLong taskCount = new AtomicLong(0);
 
-	@Before
+	@BeforeTest
 	public void setup() {
 		this.throughputGauge = new ThroughputGaugeSynchronizedImpl( 300, 1, TimeUnit.SECONDS );
 		this.startLatch = new CountDownLatch( NUM_THREADS );
 		this.taskCount.set(0);
 	}
 
-	@Test
 	public void stressTest() throws InterruptedException {
 		Thread[] threads = new Thread[NUM_THREADS];
 		for( int i=0; i < NUM_THREADS; i++) {
@@ -51,8 +50,8 @@ public class ThroughputGaugeTest {
 		long nextBucketTime = this.throughputGauge.getNextBucketTime();
 		long period = nextBucketTime - startTime;
 		long remainder = period % TimeUnit.SECONDS.toNanos(1);
-		Assert.assertEquals("nextBucketTime must only be increased by full multiples of granularity!",
-		        0, remainder);
+		Assert.assertEquals(remainder, 0,
+				"nextBucketTime must only be increased by full multiples of granularity!");
 	}
 
 	private class WorkerThread extends Thread {

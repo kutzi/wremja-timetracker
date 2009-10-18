@@ -1,20 +1,23 @@
 package de.kutzi.javautils.concurrent;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * Demonstrates that under rare conditions the last task in a {@link NotifyingBlockingThreadPoolExecutor}
  * may 'starve' i.e. never been executed.
  */
+@Test(groups="stress")
 public class NotifyingBlockingThreadPoolExecutorErrorTest {
 
     private final AtomicLong counter = new AtomicLong();
@@ -27,21 +30,16 @@ public class NotifyingBlockingThreadPoolExecutorErrorTest {
     public NotifyingBlockingThreadPoolExecutorErrorTest() {
     }
 
-    @Before
+    @BeforeTest
     public void setUp() {
         counter.set(0);
         results.clear();
-    }
-
-    @After
-    public void tearDown() {
     }
 
     /**
      * Test of execute method, of class BlockingThreadPoolExecutor.
      * @throws InterruptedException 
      */
-    @Test
     public void testExecutesAllTasks() throws InterruptedException {
 
         System.out.println( System.getProperty("java.vm.name") + " " + System.getProperty("java.runtime.version"));
