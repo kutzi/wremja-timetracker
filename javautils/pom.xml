@@ -98,6 +98,16 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
+    <distributionManagement>
+    	<repository>
+    		<id>kenai-releases</id>
+    		<url>http://oss.sonatype.org/content/repositories/kenai-releases</url>
+    	</repository>
+    	<snapshotRepository>
+    		<id>kenai-snapshots</id>
+    		<url>http://oss.sonatype.org/content/repositories/kenai-snapshots</url>
+    	</snapshotRepository>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
