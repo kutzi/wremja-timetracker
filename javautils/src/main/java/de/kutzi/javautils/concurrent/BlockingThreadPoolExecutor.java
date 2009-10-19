@@ -7,11 +7,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A blocking {@link ThreadPoolExecutor} as suggested by Brian Goetz.
- * 
+ * <p>A blocking {@link ThreadPoolExecutor} as suggested by Brian Goetz.
  * See
  * <a href="http://today.java.net/pub/a/today/2008/10/23/creating-a-notifying-blocking-thread-pool-executor.html">here</a>
  * (3rd suggested solution)
+ * 
+ * <p>'Blocking' means that the executor will block the client thread if no worker threads are
+ * available in the pool until a thread becomes available.
  */
 public class BlockingThreadPoolExecutor
     extends ThreadPoolExecutor { 
@@ -19,7 +21,13 @@ public class BlockingThreadPoolExecutor
     private final Semaphore semaphore;
 
     /**
-     * {@inheritDoc}
+     * Creates a new {@code BlockingThreadPoolExecutor} with the given 
+     * pool size.
+     *
+     * @param poolSize the fixed number of threads in the pool
+     * @throws IllegalArgumentException if {@code poolSize <= 0}
+     * 
+     * @see ThreadPoolExecutor
      */
     public BlockingThreadPoolExecutor( int poolSize ) {
     	/* Note the subtle impl. details here:
