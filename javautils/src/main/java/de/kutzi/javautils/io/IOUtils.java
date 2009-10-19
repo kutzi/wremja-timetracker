@@ -32,6 +32,9 @@ public class IOUtils {
      * 
      * If <code>copyAttributes</code> is true, also copies file attributes as far as possible (i.e. supported by the underlying
      * Java version) - this means that at least last-modified timestamp is kept.
+     * 
+     * Attention: if <code>copyAttributes</code> is false, it does NOT necessarily mean that attributes
+     * are not supported. The behaviour seems to be platform dependent.
      */
     public static void copyFile(File source, File destination, boolean copyAttributes) throws IOException {
 
