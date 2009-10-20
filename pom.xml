@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.kemai.wremja</groupId>
+    <groupId>com.kenai.wremja</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
     <version>1.2.2-SNAPSHOT</version>
@@ -37,7 +37,7 @@
     <modules>
         <module>infonode-tabbedpane</module>
         <module>wremja-core</module>
-        <module>anuko-timetracker-exporter</module>
+        <!-- <module>anuko-timetracker-exporter</module> -->
         <module>wremja-installer</module>
         <module>wremja-launcher</module>
     </modules>
@@ -315,7 +315,8 @@
                 <groupId>findbugs</groupId>
                 <artifactId>annotations</artifactId>
                 <version>1.0.0</version>
-                <scope>provided</scope>
+                <scope>compile</scope>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
@@ -337,5 +338,16 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>kenai-releases</id>
+            <url>http://oss.sonatype.org/content/repositories/kenai-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>kenai-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/kenai-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
 

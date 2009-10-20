@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>parent</artifactId>
-    <groupId>com.kemai.wremja</groupId>
+    <groupId>com.kenai.wremja</groupId>
     <version>1.2.2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.kemai.wremja</groupId>
   <artifactId>wremja-launcher</artifactId>
   <name>wremja-launcher</name>
   <description>The launcher for Wremja</description>
   <version>1.2.2-SNAPSHOT</version>
-  <url>http://kemai.com/projects/wremja/pages/Home</url>
+  <url>http://kenai.com/projects/wremja/pages/Home</url>
   
   <build>
   		<plugins>
@@ -23,7 +22,7 @@
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<mainClass>org.wremja.launcher.Launcher</mainClass>
-							<packageName>com.kemai.wremja</packageName>
+							<packageName>com.kenai.wremja</packageName>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
 							<addExtensions />
@@ -51,7 +50,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>com.kemai.wremja</groupId>
+    	<groupId>com.kenai.wremja</groupId>
     	<artifactId>wremja-core</artifactId>
     	<version>1.2.2-SNAPSHOT</version>
     </dependency>

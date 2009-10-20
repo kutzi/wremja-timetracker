@@ -2,12 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>parent</artifactId>
-		<groupId>com.kemai.wremja</groupId>
+		<groupId>com.kenai.wremja</groupId>
 		<version>1.2.2-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.kemai.wremja</groupId>
 	<artifactId>anuko-timetracker-exporter</artifactId>
 	<name>Wremja Exporter for Anuko Time Tracker</name>
 	<description>Wremja Exporter for the Anuko Time Tracker (http://wrconsulting.com/cms/wrtimetracker/index.htm)</description>
@@ -34,7 +33,7 @@
 	</reporting>
 	<dependencies>
 		<dependency>
-			<groupId>com.kemai.wremja</groupId>
+			<groupId>com.kenai.wremja</groupId>
 			<artifactId>wremja-core</artifactId>
 			<version>1.2.2-SNAPSHOT</version>
 			<scope>compile</scope>

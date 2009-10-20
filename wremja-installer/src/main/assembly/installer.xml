@@ -46,8 +46,8 @@
 			<unpack>false</unpack>
 			<scope>runtime</scope>
 			<excludes>
-				<exclude>com.kemai.wremja:wremja-launcher</exclude>
-				<exclude>com.kemai.wremja:wremja-installer</exclude>
+				<exclude>com.kenai.wremja:wremja-launcher</exclude>
+				<exclude>com.kenai.wremja:wremja-installer</exclude>
 			</excludes>
 		</dependencySet>
 		<dependencySet>
@@ -58,7 +58,7 @@
 			<unpack>false</unpack>
 			<scope>runtime</scope>
 			<includes>
-				<include>com.kemai.wremja:wremja-launcher</include>
+				<include>com.kenai.wremja:wremja-launcher</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>

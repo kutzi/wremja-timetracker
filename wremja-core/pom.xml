@@ -2,12 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>parent</artifactId>
-		<groupId>com.kemai.wremja</groupId>
+		<groupId>com.kenai.wremja</groupId>
 		<version>1.2.2-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.kemai.wremja</groupId>
 	<artifactId>wremja-core</artifactId>
 	<name>Wremja core application</name>
         <description>The core files (i.e. the businesslogic) of Wremja</description>
@@ -19,14 +18,14 @@
 		    <filtering>false</filtering>
 		    <directory>src/main/resources/</directory>
 		    <excludes>
-		      <exclude>com/kemai/wremja/wremja.properties</exclude>
+		      <exclude>com/kenai/wremja/wremja.properties</exclude>
 		    </excludes>
 		  </resource>
 		  <resource>
 		    <filtering>true</filtering>
 		    <directory>src/main/resources/</directory>
 		    <includes>
-		      <include>com/kemai/wremja/wremja.properties</include>
+		      <include>com/kenai/wremja/wremja.properties</include>
 		    </includes>
 		  </resource>
 		</resources>

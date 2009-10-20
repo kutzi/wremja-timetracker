@@ -1,11 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>parent</artifactId>
-    <groupId>com.kemai.wremja</groupId>
+    <groupId>com.kenai.wremja</groupId>
     <version>1.2.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.infonode</groupId>
   <artifactId>infonode-tabbedpane</artifactId>
   <version>1.2-SNAPSHOT</version>
   <name>Infonode Tabbedpanel</name>
