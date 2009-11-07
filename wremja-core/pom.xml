@@ -18,14 +18,14 @@
 		    <filtering>false</filtering>
 		    <directory>src/main/resources/</directory>
 		    <excludes>
-		      <exclude>com/kenai/wremja/wremja.properties</exclude>
+		      <exclude>com/kemai/wremja/wremja.properties</exclude>
 		    </excludes>
 		  </resource>
 		  <resource>
 		    <filtering>true</filtering>
 		    <directory>src/main/resources/</directory>
 		    <includes>
-		      <include>com/kenai/wremja/wremja.properties</include>
+		      <include>com/kemai/wremja/wremja.properties</include>
 		    </includes>
 		  </resource>
 		</resources>
