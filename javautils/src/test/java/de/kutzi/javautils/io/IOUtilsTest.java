@@ -32,6 +32,15 @@ public class IOUtilsTest {
 		MockCloseable closeable = new MockCloseable();
 		IOUtils.close(closeable);
 		Assert.assertTrue(closeable.closeCalled);
+		
+		closeable = new MockCloseable();
+		MockCloseable closeable2 = new MockCloseable();
+		IOUtils.close(closeable, closeable2);
+		Assert.assertTrue(closeable.closeCalled);
+		Assert.assertTrue(closeable2.closeCalled);
+		
+		Closeable nullCloseable = null;
+		IOUtils.close(nullCloseable);
 	}
 	
 	private static class MockCloseable implements Closeable {

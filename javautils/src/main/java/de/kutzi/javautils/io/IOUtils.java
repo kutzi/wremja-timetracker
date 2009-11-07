@@ -76,13 +76,19 @@ public class IOUtils {
         }
     }
 
-    public static void close(Closeable... closables) {
-        for (Closeable closeable : closables) {
+    public static void close(Closeable closeable) {
+        if (closeable != null) {
             try {
                 closeable.close();
             } catch(IOException e) {
                 // ignore
             }
+        }
+    }
+    
+    public static void close(Closeable... closables) {
+        for (Closeable closeable : closables) {
+        	close(closeable);
         }
     }
 }
