@@ -119,7 +119,7 @@
 		  <artifactId>annotations</artifactId>
 		</dependency>
         <dependency>
-            <groupId>net.infonode</groupId>
+            <groupId>com.kenai.wremja</groupId>
             <artifactId>infonode-tabbedpane</artifactId>
         </dependency>
         <dependency>

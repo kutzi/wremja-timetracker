@@ -49,7 +49,16 @@ public class FilteredActivitiesPane extends JXPanel {
 	private final PresentationModel model;
 	private final IUserSettings settings;
 	
-	private final TabbedPanelTitledTabTheme theme = new ShapedGradientTheme();
+	/**
+	 * This object acts as a template for concrete {@link TitledTab}s.
+	 * I.e. properties of this theme are inherited to tabs.
+	 */
+	private static final TabbedPanelTitledTabTheme theme = new ShapedGradientTheme();
+	static {
+		theme.getTitledTabProperties().setSizePolicy(TitledTabSizePolicy.EQUAL_SIZE);
+		theme.getTitledTabProperties().getHighlightedProperties().setToolTipEnabled(true);
+		theme.getTitledTabProperties().getNormalProperties().setToolTipEnabled(true);
+	}
 	
 	private int[] tabOrder = { 0, 1, 2, 3, 4, 5, 6 };
 
@@ -70,10 +79,6 @@ public class FilteredActivitiesPane extends JXPanel {
 				{ TableLayout.FILL } }; // Rows
 		this.setLayout(new TableLayout(size));
 		
-		this.theme.getTitledTabProperties().setSizePolicy(TitledTabSizePolicy.EQUAL_SIZE);
-		this.theme.getTitledTabProperties().getHighlightedProperties().setToolTipEnabled(true);
-		this.theme.getTitledTabProperties().getNormalProperties().setToolTipEnabled(true);
-
 		final TabbedPanel tabpane = new TabbedPanel();
 		tabpane.getProperties().addSuperObject(theme.getTabbedPanelProperties());
 
@@ -169,6 +174,7 @@ public class FilteredActivitiesPane extends JXPanel {
 
             @Override
             public void tabMoved(TabEvent event) {
+            	// remember tab order in settings
                 for (int i=0; i < tabs.length; i++) {
                     int index = tabpane.getTabIndex(tabs[i]);
                     tabOrder[index] = i;

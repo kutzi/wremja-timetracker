@@ -233,7 +233,7 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>net.infonode</groupId>
+                <groupId>com.kenai.wremja</groupId>
                 <artifactId>infonode-tabbedpane</artifactId>
                 <version>1.2-SNAPSHOT</version>
                 <scope>compile</scope>
