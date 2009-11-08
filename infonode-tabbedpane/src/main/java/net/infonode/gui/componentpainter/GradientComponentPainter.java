@@ -23,7 +23,11 @@
 // $Id$
 package net.infonode.gui.componentpainter;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.MemoryImageSource;
 import java.lang.ref.SoftReference;
 
@@ -44,7 +48,7 @@ public class GradientComponentPainter extends AbstractComponentPainter {
 
   private final ColorProvider[] colorProviders = new ColorProvider[4];
   private transient Color[] colors;
-  private final int size = 128;
+  private static final int size = 128;
   private transient SoftReference[] images;
   private transient boolean hasAlpha;
 
@@ -79,7 +83,8 @@ public class GradientComponentPainter extends AbstractComponentPainter {
     colorProviders[3] = bottomRightColor;
   }
 
-  public void paint(Component component,
+  @Override
+public void paint(Component component,
                     Graphics g,
                     int x,
                     int y,
@@ -238,7 +243,8 @@ public class GradientComponentPainter extends AbstractComponentPainter {
     }
   }
 
-  public boolean isOpaque(Component component) {
+  @Override
+public boolean isOpaque(Component component) {
     updateColors(component);
     return !hasAlpha;
   }

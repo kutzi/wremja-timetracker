@@ -24,7 +24,11 @@
 
 package net.infonode.gui.draggable;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
@@ -32,13 +36,17 @@ import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
-import net.infonode.gui.*;
+import net.infonode.gui.ComponentUtil;
+import net.infonode.gui.ScrollButtonBox;
+import net.infonode.gui.ScrollButtonBoxListener;
+import net.infonode.gui.ScrollableBox;
+import net.infonode.gui.ScrollableBoxListener;
 import net.infonode.gui.layout.DirectionLayout;
 import net.infonode.gui.panel.SimplePanel;
 import net.infonode.util.Direction;
 
 public class DraggableComponentBox extends SimplePanel {
-  private final boolean componentBoxEnabled = true;
+  private static final boolean componentBoxEnabled = true;
 
   private final JComponent componentBox;
   private JComponent componentContainer;
@@ -107,14 +115,16 @@ public class DraggableComponentBox extends SimplePanel {
                                                                                              componentDirection == Direction.DOWN ?
                                                                                                                                    Direction.RIGHT :
                                                                                                                                      Direction.DOWN) {
-      public Dimension minimumLayoutSize(Container parent) {
+      @Override
+    public Dimension minimumLayoutSize(Container parent) {
         Dimension min = super.minimumLayoutSize(parent);
         Dimension pref = super.preferredLayoutSize(parent);
         return componentDirection.isHorizontal() ?
                                                   new Dimension(pref.width, min.height) : new Dimension(min.width, pref.height);
       }
 
-      public void layoutContainer(Container parent) {
+      @Override
+    public void layoutContainer(Container parent) {
         if (DraggableComponentBox.this != null && componentBoxEnabled) {
           //long millis = System.currentTimeMillis();
           doSort();
@@ -123,7 +133,8 @@ public class DraggableComponentBox extends SimplePanel {
         }
       }
 
-      public Dimension preferredLayoutSize(Container parent) {
+      @Override
+    public Dimension preferredLayoutSize(Container parent) {
         doSort();
         return super.preferredLayoutSize(parent);
       }
@@ -132,17 +143,20 @@ public class DraggableComponentBox extends SimplePanel {
     layout.setLayoutOrderList(layoutOrderList);
 
     componentBox = new SimplePanel(layout) {
-      public boolean isOptimizedDrawingEnabled() {
+      @Override
+    public boolean isOptimizedDrawingEnabled() {
         return DraggableComponentBox.this != null && getComponentSpacing() >= 0;
       }
     };
 
     componentBox.addComponentListener(new ComponentAdapter() {
-      public void componentResized(ComponentEvent e) {
+      @Override
+    public void componentResized(ComponentEvent e) {
         //fireChangedEvent();
       }
 
-      public void componentMoved(ComponentEvent e) {
+      @Override
+    public void componentMoved(ComponentEvent e) {
         fireChangedEvent();
       }
     });
@@ -411,7 +425,8 @@ public class DraggableComponentBox extends SimplePanel {
     //component.drag(SwingUtilities.convertPoint(this, p, component.getComponent()));
   }
 
-  public Dimension getMaximumSize() {
+  @Override
+public Dimension getMaximumSize() {
     if (scrollEnabled)
       return getPreferredSize();
 
@@ -598,6 +613,7 @@ public class DraggableComponentBox extends SimplePanel {
       });
 
       scrollableBox.addComponentListener(new ComponentAdapter() {
+        @Override
         public void componentResized(ComponentEvent e) {
           scrollButtonBox.setButton1Enabled(!scrollableBox.isLeftEnd());
           scrollButtonBox.setButton2Enabled(!scrollableBox.isRightEnd());

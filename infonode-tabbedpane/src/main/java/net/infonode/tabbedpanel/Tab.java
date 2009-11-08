@@ -23,16 +23,20 @@
 // $Id$
 package net.infonode.tabbedpanel;
 
-import net.infonode.gui.draggable.DraggableComponent;
-import net.infonode.tabbedpanel.titledtab.TitledTab;
-import net.infonode.util.Direction;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Shape;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
+import net.infonode.gui.draggable.DraggableComponent;
+import net.infonode.tabbedpanel.titledtab.TitledTab;
+import net.infonode.util.Direction;
 
 /**
  * <p>A Tab is a component that represents a tab in a {@link TabbedPanel}.</p>
@@ -78,10 +82,11 @@ public class Tab extends JPanel {
   private TabbedPanel tabbedPanel;
   private JComponent contentComponent;
   private JComponent focusableComponent;
-  private ArrayList listeners;
+  private List<TabListener> listeners;
   private DraggableComponent draggableComponent;
 
   private KeyListener focusableKeyListener = new KeyAdapter() {
+    @Override
     public void keyPressed(KeyEvent e) {
       if (tabbedPanel != null) {
         Direction tabOrientation = tabbedPanel.getProperties().getTabAreaOrientation();
@@ -208,7 +213,7 @@ public class Tab extends JPanel {
    */
   public void addTabListener(TabListener listener) {
     if (listeners == null)
-      listeners = new ArrayList(2);
+      listeners = new CopyOnWriteArrayList<TabListener>();
 
     listeners.add(listener);
   }
@@ -255,7 +260,8 @@ public class Tab extends JPanel {
    *
    * @param enabled true for enabled, otherwise false
    */
-  public void setEnabled(boolean enabled) {
+  @Override
+public void setEnabled(boolean enabled) {
     getDraggableComponent().setEnabled(enabled);
     super.setEnabled(enabled);
   }
@@ -437,9 +443,9 @@ public class Tab extends JPanel {
                                                         this,
                                                         event.getPreviousTab(),
                                                         event.getCurrentTab());
-      Object[] l = listeners.toArray();
-      for (int i = 0; i < l.length; i++)
-        ((TabListener) l[i]).tabHighlighted(e);
+      
+      for (TabListener l : listeners)
+        l.tabHighlighted(e);
     }
   }
 
@@ -450,9 +456,8 @@ public class Tab extends JPanel {
                                                         this,
                                                         event.getPreviousTab(),
                                                         event.getCurrentTab());
-      Object[] l = listeners.toArray();
-      for (int i = 0; i < l.length; i++)
-        ((TabListener) l[i]).tabDehighlighted(e);
+      for (TabListener l : listeners)
+        l.tabDehighlighted(e);
     }
   }
 
@@ -463,9 +468,9 @@ public class Tab extends JPanel {
                                                         this,
                                                         event.getPreviousTab(),
                                                         event.getCurrentTab());
-      Object[] l = listeners.toArray();
-      for (int i = 0; i < l.length; i++)
-        ((TabListener) l[i]).tabSelected(e);
+      
+      for (TabListener l : listeners)
+        l.tabSelected(e);
     }
   }
 
@@ -476,72 +481,74 @@ public class Tab extends JPanel {
                                                         this,
                                                         event.getPreviousTab(),
                                                         event.getCurrentTab());
-      Object[] l = listeners.toArray();
-      for (int i = 0; i < l.length; i++)
-        ((TabListener) l[i]).tabDeselected(e);
+      
+      for (TabListener l : listeners)
+        l.tabDeselected(e);
     }
   }
 
   private void fireDraggedEvent(TabDragEvent event) {
     if (listeners != null) {
       TabDragEvent e = new TabDragEvent(this, event.getMouseEvent());
-      Object[] l = listeners.toArray();
-      for (int i = 0; i < l.length; i++)
-        ((TabListener) l[i]).tabDragged(e);
+      
+      for (TabListener l : listeners)
+        l.tabDragged(e);
     }
   }
 
   private void fireDroppedEvent(TabDragEvent event) {
     if (listeners != null) {
-      TabDragEvent e = new TabDragEvent(this, this, event.getPoint());
-      Object[] l = listeners.toArray();
-      for (int i = 0; i < l.length; i++)
-        ((TabListener) l[i]).tabDropped(e);
+      TabDragEvent e = new TabDragEvent(this, event.getMouseEvent());
+      
+      for (TabListener l : listeners)
+        l.tabDropped(e);
     }
   }
 
   private void fireNotDroppedEvent() {
     if (listeners != null) {
       TabEvent e = new TabEvent(this, this);
-      Object[] l = listeners.toArray();
-      for (int i = 0; i < l.length; i++)
-        ((TabListener) l[i]).tabDragAborted(e);
+      
+      for (TabListener l : listeners)
+        l.tabDragAborted(e);
     }
   }
 
   private void fireMovedEvent() {
     if (listeners != null) {
       TabEvent e = new TabEvent(this, this);
-      Object[] l = listeners.toArray();
-      for (int i = 0; i < l.length; i++)
-        ((TabListener) l[i]).tabMoved(e);
+      
+      for (TabListener l : listeners)
+        l.tabMoved(e);
     }
   }
 
   private void fireAddedEvent() {
     if (listeners != null) {
       TabEvent e = new TabEvent(this, this);
-      Object[] l = listeners.toArray();
-      for (int i = 0; i < l.length; i++)
-        ((TabListener) l[i]).tabAdded(e);
+      
+      for (TabListener l : listeners)
+        l.tabAdded(e);
     }
   }
 
   private void fireRemovedEvent(TabRemovedEvent event) {
     if (listeners != null) {
       TabRemovedEvent e = new TabRemovedEvent(this, this, event.getTabbedPanel());
-      Object[] l = listeners.toArray();
-      for (int i = 0; i < l.length; i++)
-        ((TabListener) l[i]).tabRemoved(e);
+      
+      for (TabListener l : listeners)
+        l.tabRemoved(e);
     }
   }
 
-  public void addNotify() {
+  @Override
+public void addNotify() {
     if (!draggableComponent.isIgnoreAddNotify())
       super.addNotify();
   }
 
-  public void removeNotify() {
+  @Override
+public void removeNotify() {
     if (!draggableComponent.isIgnoreAddNotify())
       super.removeNotify();
   }

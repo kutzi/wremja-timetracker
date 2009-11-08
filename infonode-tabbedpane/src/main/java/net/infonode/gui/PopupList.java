@@ -23,26 +23,41 @@
 // $Id$
 package net.infonode.gui;
 
-import net.infonode.gui.panel.SimplePanel;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultButtonModel;
+import javax.swing.JList;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
+
+import net.infonode.gui.panel.SimplePanel;
 
 public class PopupList extends SimplePanel {
-  private class PopupButtonModel extends DefaultButtonModel {
+  private static class PopupButtonModel extends DefaultButtonModel {
     private boolean pressed;
 
+    @Override
     public boolean isPressed() {
       return super.isPressed() || pressed;
     }
 
+    @Override
     public boolean isArmed() {
       return super.isArmed() || pressed;
     }
@@ -80,6 +95,7 @@ public class PopupList extends SimplePanel {
 
     public MouseMotionListener getMouseMotionListener() {
       return new MouseMotionAdapter() {
+        @Override
         public void mouseDragged(MouseEvent e) {
           if (SwingUtilities.isLeftMouseButton(e)) {
             Component c = (Component) e.getSource();
@@ -98,6 +114,7 @@ public class PopupList extends SimplePanel {
 
     public MouseListener getMouseListener() {
       return new MouseAdapter() {
+        @Override
         public void mousePressed(MouseEvent e) {
           if (SwingUtilities.isLeftMouseButton(e)) {
             if (isVisible()) {
@@ -117,6 +134,7 @@ public class PopupList extends SimplePanel {
           }
         }
 
+        @Override
         public void mouseReleased(MouseEvent e) {
           if (SwingUtilities.isLeftMouseButton(e)) {
             if (!isVisible())
@@ -139,6 +157,7 @@ public class PopupList extends SimplePanel {
       return list;
     }
 
+    @Override
     public void updateUI() {
       super.updateUI();
       setBorder(new LineBorder(UIManagerUtil.getColor("controlDkShadow", Color.BLACK), 1));
@@ -203,7 +222,8 @@ public class PopupList extends SimplePanel {
     return getComponentCount() == 0 ? null : (AbstractButton) getComponent(0);
   }
 
-  public void updateUI() {
+  @Override
+public void updateUI() {
     super.updateUI();
     if (popup != null)
       SwingUtilities.updateComponentTreeUI(popup);

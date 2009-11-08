@@ -23,11 +23,28 @@
 // $Id$
 package net.infonode.tabbedpanel.titledtab;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
+import java.awt.LayoutManager;
+import java.awt.Point;
+import java.awt.Shape;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -58,7 +75,14 @@ import net.infonode.properties.gui.util.ShapedPanelProperties;
 import net.infonode.properties.propertymap.PropertyMapTreeListener;
 import net.infonode.properties.propertymap.PropertyMapWeakListenerManager;
 import net.infonode.properties.util.PropertyChangeListener;
-import net.infonode.tabbedpanel.*;
+import net.infonode.tabbedpanel.Tab;
+import net.infonode.tabbedpanel.TabAdapter;
+import net.infonode.tabbedpanel.TabEvent;
+import net.infonode.tabbedpanel.TabRemovedEvent;
+import net.infonode.tabbedpanel.TabSelectTrigger;
+import net.infonode.tabbedpanel.TabbedPanel;
+import net.infonode.tabbedpanel.TabbedPanelProperties;
+import net.infonode.tabbedpanel.TabbedUtils;
 import net.infonode.util.Alignment;
 import net.infonode.util.Direction;
 import net.infonode.util.ValueChange;
@@ -106,7 +130,8 @@ public class TitledTab extends Tab implements IconProvider {
     private final ShapedPanel panel = new ShapedPanel();
     private final SimplePanel titleComponentPanel = new SimplePanel();
     private final RotatableLabel label = new RotatableLabel(null, null) {
-      public Dimension getPreferredSize() {
+      @Override
+    public Dimension getPreferredSize() {
         Dimension d = super.getPreferredSize();
         String text = this.getText();
         Icon tmpIcon = this.getIcon();
@@ -143,6 +168,7 @@ public class TitledTab extends Tab implements IconProvider {
       add(panel, BorderLayout.CENTER);
     }
 
+    @Override
     public String getToolTipText() {
       return toolTipText;
     }
@@ -193,18 +219,21 @@ public class TitledTab extends Tab implements IconProvider {
       add(panel, BorderLayout.CENTER);
     }
 
+    @Override
     public Dimension getPreferredSize() {
       activateTitleComponent();
 
       return getAdjustedSize(super.getPreferredSize());
     }
 
+    @Override
     public Dimension getMinimumSize() {
       activateTitleComponent();
 
       return getAdjustedSize(super.getMinimumSize());
     }
 
+    @Override
     public Dimension getMaximumSize() {
       activateTitleComponent();
       return super.getMaximumSize();
@@ -466,22 +495,26 @@ public class TitledTab extends Tab implements IconProvider {
 
   private final HoverablePanel eventPanel = new HoverablePanel(new BorderLayout()) {
 
+    @Override
     public boolean contains(int x, int y) {
       return getComponentCount() > 0 && getComponent(0).contains(x, y);
     }
 
+    @Override
     public boolean inside(int x, int y) {
       return getComponentCount() > 0 && getComponent(0).inside(x, y);
     }
 
   };
 
-  public boolean contains(int x, int y) {
+  @Override
+public boolean contains(int x, int y) {
     Point p = SwingUtilities.convertPoint(this, new Point(x, y), eventPanel);
     return eventPanel.contains(p.x, p.y);
   }
 
-  public boolean inside(int x, int y) {
+  @Override
+public boolean inside(int x, int y) {
     Point p = SwingUtilities.convertPoint(this, new Point(x, y), eventPanel);
     return eventPanel.inside(p.x, p.y);
   }
@@ -490,8 +523,8 @@ public class TitledTab extends Tab implements IconProvider {
   private final StatePanel highlightedStatePanel;
   private final StatePanel disabledStatePanel;
 
-  private ArrayList mouseListeners;
-  private ArrayList mouseMotionListeners;
+  private List<MouseListener> mouseListeners;
+  private List<MouseMotionListener> mouseMotionListeners;
   private final StackableLayout layout;
   private StatePanel currentStatePanel;
   private final FocusBorder focusBorder;
@@ -555,7 +588,8 @@ public class TitledTab extends Tab implements IconProvider {
 
 
     layout = new StackableLayout(this) {
-      public void layoutContainer(Container parent) {
+      @Override
+    public void layoutContainer(Container parent) {
         super.layoutContainer(parent);
         StatePanel visibleStatePanel = (StatePanel) getVisibleComponent();
         visibleStatePanel.activateTitleComponent();
@@ -573,11 +607,13 @@ public class TitledTab extends Tab implements IconProvider {
     setTitleComponent(titleComponent);
 
     eventPanel.addMouseListener(new MouseAdapter() {
-      public void mousePressed(MouseEvent e) {
+      @Override
+    public void mousePressed(MouseEvent e) {
         updateFocus(TabSelectTrigger.MOUSE_PRESS);
       }
 
-      public void mouseReleased(MouseEvent e) {
+      @Override
+    public void mouseReleased(MouseEvent e) {
         updateFocus(TabSelectTrigger.MOUSE_RELEASE);
       }
 
@@ -610,36 +646,36 @@ public class TitledTab extends Tab implements IconProvider {
       public void mousePressed(MouseEvent e) {
         if (mouseListeners != null) {
           MouseEvent event = convertMouseEvent(e);
-          Object[] l = mouseListeners.toArray();
-          for (int i = 0; i < l.length; i++)
-            ((MouseListener) l[i]).mousePressed(event);
+          
+          for (MouseListener l : mouseListeners)
+            l.mousePressed(event);
         }
       }
 
       public void mouseReleased(MouseEvent e) {
         if (mouseListeners != null) {
           MouseEvent event = convertMouseEvent(e);
-          Object[] l = mouseListeners.toArray();
-          for (int i = 0; i < l.length; i++)
-            ((MouseListener) l[i]).mouseReleased(event);
+          
+          for (MouseListener l : mouseListeners)
+            l.mouseReleased(event);
         }
       }
 
       public void mouseEntered(MouseEvent e) {
         if (mouseListeners != null) {
           MouseEvent event = convertMouseEvent(e);
-          Object[] l = mouseListeners.toArray();
-          for (int i = 0; i < l.length; i++)
-            ((MouseListener) l[i]).mouseEntered(event);
+          
+          for (MouseListener l : mouseListeners)
+            l.mouseEntered(event);
         }
       }
 
       public void mouseExited(MouseEvent e) {
         if (mouseListeners != null) {
           MouseEvent event = convertMouseEvent(e);
-          Object[] l = mouseListeners.toArray();
-          for (int i = 0; i < l.length; i++)
-            ((MouseListener) l[i]).mouseExited(event);
+          
+          for (MouseListener l : mouseListeners)
+            l.mouseExited(event);
         }
       }
     };
@@ -648,18 +684,18 @@ public class TitledTab extends Tab implements IconProvider {
       public void mouseDragged(MouseEvent e) {
         if (mouseMotionListeners != null) {
           MouseEvent event = convertMouseEvent(e);
-          Object[] l = mouseMotionListeners.toArray();
-          for (int i = 0; i < l.length; i++)
-            ((MouseMotionListener) l[i]).mouseDragged(event);
+          
+          for (MouseMotionListener l : mouseMotionListeners)
+            l.mouseDragged(event);
         }
       }
 
       public void mouseMoved(MouseEvent e) {
         if (mouseMotionListeners != null) {
           MouseEvent event = convertMouseEvent(e);
-          Object[] l = mouseMotionListeners.toArray();
-          for (int i = 0; i < l.length; i++)
-            ((MouseMotionListener) l[i]).mouseMoved(event);
+          
+          for (MouseMotionListener l : mouseMotionListeners)
+            l.mouseMoved(event);
         }
       }
     };
@@ -670,14 +706,16 @@ public class TitledTab extends Tab implements IconProvider {
     PropertyMapWeakListenerManager.addWeakTreeListener(properties.getMap(), propertiesListener);
 
     addTabListener(new TabAdapter() {
-      public void tabAdded(TabEvent event) {
+      @Override
+    public void tabAdded(TabEvent event) {
         PropertyMapWeakListenerManager.addWeakPropertyChangeListener(getTabbedPanel().getProperties().getMap(),
             TabbedPanelProperties.TAB_AREA_ORIENTATION,
             tabbedPanelPropertiesListener);
         updateTabAreaOrientation(getTabbedPanel().getProperties().getTabAreaOrientation());
       }
 
-      public void tabRemoved(TabRemovedEvent event) {
+      @Override
+    public void tabRemoved(TabRemovedEvent event) {
         PropertyMapWeakListenerManager.removeWeakPropertyChangeListener(
             event.getTabbedPanel().getProperties().getMap(),
             TabbedPanelProperties.TAB_AREA_ORIENTATION,
@@ -765,7 +803,8 @@ public class TitledTab extends Tab implements IconProvider {
    *
    * @param highlighted true for highlight, otherwise false
    */
-  public void setHighlighted(boolean highlighted) {
+  @Override
+public void setHighlighted(boolean highlighted) {
     super.setHighlighted(highlighted);
     updateCurrentStatePanel();
   }
@@ -783,7 +822,8 @@ public class TitledTab extends Tab implements IconProvider {
    *
    * @param enabled true for enabled, otherwise false
    */
-  public void setEnabled(boolean enabled) {
+  @Override
+public void setEnabled(boolean enabled) {
     super.setEnabled(enabled);
     updateCurrentStatePanel();
   }
@@ -842,7 +882,8 @@ public class TitledTab extends Tab implements IconProvider {
    * @see #getText
    * @since ITP 1.1.0
    */
-  public String toString() {
+  @Override
+public String toString() {
     return getText();
   }
 
@@ -851,9 +892,10 @@ public class TitledTab extends Tab implements IconProvider {
    *
    * @param l the MouseListener
    */
-  public synchronized void addMouseListener(MouseListener l) {
+  @Override
+public synchronized void addMouseListener(MouseListener l) {
     if (mouseListeners == null)
-      mouseListeners = new ArrayList(2);
+      mouseListeners = new CopyOnWriteArrayList<MouseListener>();
     mouseListeners.add(l);
   }
 
@@ -862,7 +904,8 @@ public class TitledTab extends Tab implements IconProvider {
    *
    * @param l the MouseListener to remove
    */
-  public synchronized void removeMouseListener(MouseListener l) {
+  @Override
+public synchronized void removeMouseListener(MouseListener l) {
     if (mouseListeners != null) {
       mouseListeners.remove(l);
 
@@ -876,7 +919,8 @@ public class TitledTab extends Tab implements IconProvider {
    *
    * @return the mouse listeners
    */
-  public synchronized MouseListener[] getMouseListeners() {
+  @Override
+public synchronized MouseListener[] getMouseListeners() {
     MouseListener[] listeners = new MouseListener[0];
 
     if (mouseListeners != null) {
@@ -894,9 +938,10 @@ public class TitledTab extends Tab implements IconProvider {
    *
    * @param l the MouseMotionListener
    */
-  public synchronized void addMouseMotionListener(MouseMotionListener l) {
+  @Override
+public synchronized void addMouseMotionListener(MouseMotionListener l) {
     if (mouseMotionListeners == null)
-      mouseMotionListeners = new ArrayList(2);
+      mouseMotionListeners = new CopyOnWriteArrayList<MouseMotionListener>();
 
     mouseMotionListeners.add(l);
   }
@@ -906,7 +951,8 @@ public class TitledTab extends Tab implements IconProvider {
    *
    * @param l the MouseMotionListener to remove
    */
-  public synchronized void removeMouseMotionListener(MouseMotionListener l) {
+  @Override
+public synchronized void removeMouseMotionListener(MouseMotionListener l) {
     if (mouseMotionListeners != null) {
       mouseMotionListeners.remove(l);
 
@@ -920,7 +966,8 @@ public class TitledTab extends Tab implements IconProvider {
    *
    * @return the mouse motion listeners
    */
-  public synchronized MouseMotionListener[] getMouseMotionListeners() {
+  @Override
+public synchronized MouseMotionListener[] getMouseMotionListeners() {
     MouseMotionListener[] listeners = new MouseMotionListener[0];
 
     if (mouseMotionListeners != null) {
@@ -939,7 +986,8 @@ public class TitledTab extends Tab implements IconProvider {
    * @return the Shape for the active rendering state, null if no special shape
    * @since ITP 1.2.0
    */
-  public Shape getShape() {
+  @Override
+public Shape getShape() {
     Shape shape = currentStatePanel.getShape();
 
     if (shape == null)
@@ -949,7 +997,8 @@ public class TitledTab extends Tab implements IconProvider {
     return new TranslatingShape(shape, p.x, p.y);
   }
 
-  protected void setTabbedPanel(TabbedPanel tabbedPanel) {
+  @Override
+protected void setTabbedPanel(TabbedPanel tabbedPanel) {
     if (tabbedPanel == null)
       HoverManager.getInstance().removeHoverable(eventPanel);
 
@@ -1141,16 +1190,19 @@ public class TitledTab extends Tab implements IconProvider {
     updateCurrentStatePanel();
   }
 
-  public void setUI(PanelUI ui) {
+  @Override
+public void setUI(PanelUI ui) {
     if (getUI() != UI)
       super.setUI(UI);
   }
 
-  public void updateUI() {
+  @Override
+public void updateUI() {
     setUI(UI);
   }
 
-  public void setOpaque(boolean opaque) {
+  @Override
+public void setOpaque(boolean opaque) {
     // Ignore
   }
 

@@ -24,13 +24,23 @@
 
 package net.infonode.gui;
 
+import java.applet.Applet;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
+import java.awt.KeyboardFocusManager;
+import java.awt.Point;
+import java.awt.Window;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.RootPaneContainer;
+import javax.swing.SwingUtilities;
+
 import net.infonode.gui.componentpainter.ComponentPainter;
 import net.infonode.util.Direction;
-
-import javax.swing.*;
-import java.applet.Applet;
-import java.awt.*;
-import java.util.ArrayList;
 
 public class ComponentUtil {
   private ComponentUtil() {
@@ -70,14 +80,14 @@ public class ComponentUtil {
     return null;
   }
 
-  public static void getComponentTreePosition(Component c, ArrayList pos) {
+  public static void getComponentTreePosition(Component c, List pos) {
     if (c.getParent() == null) {
       return;
     }
 
     getComponentTreePosition(c.getParent(), pos);
 
-    pos.add(new Integer(c.getParent().getComponentCount() - ComponentUtil.getComponentIndex(c)));
+    pos.add(Integer.valueOf(c.getParent().getComponentCount() - ComponentUtil.getComponentIndex(c)));
   }
 
   public static Component findComponentUnderGlassPaneAt(Point p, Component top) {

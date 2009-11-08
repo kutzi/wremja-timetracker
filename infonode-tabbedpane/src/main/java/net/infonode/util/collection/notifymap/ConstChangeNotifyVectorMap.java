@@ -23,6 +23,9 @@
 // $Id$
 package net.infonode.util.collection.notifymap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.infonode.util.ValueChange;
 import net.infonode.util.collection.map.ConstVectorMap;
 import net.infonode.util.collection.map.MapAdapter;
@@ -31,21 +34,21 @@ import net.infonode.util.collection.map.base.ConstMapIterator;
 import net.infonode.util.signal.Signal;
 import net.infonode.util.signal.SignalListener;
 
-import java.util.ArrayList;
-
 public class ConstChangeNotifyVectorMap extends AbstractConstChangeNotifyMap {
   private ConstVectorMap vectorMap = new ConstVectorMap();
-  private ArrayList mapListeners;
+  private List<SignalListener> mapListeners;
 
-  protected void firstListenerAdded() {
-    mapListeners = new ArrayList(vectorMap.getMapCount() + 2);
+  @Override
+protected void firstListenerAdded() {
+    mapListeners = new ArrayList<SignalListener>(vectorMap.getMapCount() + 2);
 
     for (int i = 0; i < vectorMap.getMapCount(); i++) {
       addMapListener(i);
     }
   }
 
-  protected void lastListenerRemoved() {
+  @Override
+protected void lastListenerRemoved() {
     for (int i = vectorMap.getMapCount() - 1; i >= 0; i--) {
       removeMapListener(i);
     }
@@ -95,7 +98,7 @@ public class ConstChangeNotifyVectorMap extends AbstractConstChangeNotifyMap {
 
   private void addMapListener(int index) {
     if (mapListeners == null)
-      mapListeners = new ArrayList(index + 2);
+      mapListeners = new ArrayList<SignalListener>(index + 2);
 
     final ConstChangeNotifyMap map = getMap(index);
 

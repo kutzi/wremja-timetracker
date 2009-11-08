@@ -23,15 +23,16 @@
 // $Id$
 package net.infonode.gui.laf;
 
-import net.infonode.gui.icon.button.TreeIcon;
-import net.infonode.gui.laf.ui.SlimComboBoxUI;
-import net.infonode.gui.laf.ui.SlimInternalFrameUI;
-import net.infonode.gui.laf.ui.SlimMenuItemUI;
-import net.infonode.gui.laf.ui.SlimSplitPaneUI;
-import net.infonode.util.ArrayUtil;
-import net.infonode.util.ColorUtil;
+import java.awt.Component;
+import java.awt.Insets;
+import java.lang.reflect.InvocationTargetException;
 
-import javax.swing.*;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.LookAndFeel;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
@@ -41,8 +42,14 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalBorders;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
-import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
+
+import net.infonode.gui.icon.button.TreeIcon;
+import net.infonode.gui.laf.ui.SlimComboBoxUI;
+import net.infonode.gui.laf.ui.SlimInternalFrameUI;
+import net.infonode.gui.laf.ui.SlimMenuItemUI;
+import net.infonode.gui.laf.ui.SlimSplitPaneUI;
+import net.infonode.util.ArrayUtil;
+import net.infonode.util.ColorUtil;
 
 /**
  * A Look and Feel that's based on Metal. It's slimmer and use other colors than the standard Metal Look and Feel.
@@ -74,104 +81,129 @@ public class InfoNodeLookAndFeel extends MetalLookAndFeel {
   private transient InfoNodeLookAndFeelTheme theme;
 
   private transient DefaultMetalTheme defaultTheme = new DefaultMetalTheme() {
+    @Override
     public ColorUIResource getPrimaryControlHighlight() {
       return theme.getPrimaryControlHighlightColor();
     }
 
+    @Override
     public ColorUIResource getMenuBackground() {
       return theme.getControlColor();
     }
 
+    @Override
     public ColorUIResource getControlHighlight() {
       return theme.getControlHighlightColor();
     }
 
+    @Override
     public ColorUIResource getControl() {
       return theme.getControlColor();
     }
 
+    @Override
     public ColorUIResource getControlShadow() {
       return theme.getControlShadowColor();
     }
 
+    @Override
     public ColorUIResource getControlDarkShadow() {
       return theme.getControlDarkShadowColor();
     }
 
     // Scrollbars, popups etc.
+    @Override
     public ColorUIResource getPrimaryControl() {
       return theme.getPrimaryControlColor();
     }
 
+    @Override
     public ColorUIResource getPrimaryControlShadow() {
       return theme.getPrimaryControlShadowColor();
     }
 
+    @Override
     public ColorUIResource getPrimaryControlDarkShadow() {
       return theme.getPrimaryControlDarkShadowColor();
     }
     // End scrollbars
 
+    @Override
     public ColorUIResource getTextHighlightColor() {
       return theme.getSelectedTextBackgroundColor();
     }
 
+    @Override
     public ColorUIResource getMenuSelectedBackground() {
       return theme.getSelectedMenuBackgroundColor();
     }
 
+    @Override
     public ColorUIResource getWindowBackground() {
       return theme.getBackgroundColor();
     }
 
+    @Override
     protected ColorUIResource getWhite() {
       return theme.getBackgroundColor();
     }
 
+    @Override
     public ColorUIResource getDesktopColor() {
       return theme.getDesktopColor();
     }
 
+    @Override
     public ColorUIResource getHighlightedTextColor() {
       return theme.getSelectedTextColor();
     }
 
+    @Override
     protected ColorUIResource getBlack() {
       return theme.getTextColor();
     }
 
+    @Override
     public ColorUIResource getMenuForeground() {
       return theme.getTextColor();
     }
 
+    @Override
     public ColorUIResource getMenuSelectedForeground() {
       return theme.getSelectedMenuForegroundColor();
     }
 
+    @Override
     public ColorUIResource getFocusColor() {
       return theme.getFocusColor();
     }
 
+    @Override
     public ColorUIResource getControlDisabled() {
       return theme.getControlColor();
     }
 
+    @Override
     public ColorUIResource getSystemTextColor() {
       return theme.getTextColor();
     }
 
+    @Override
     public ColorUIResource getControlTextColor() {
       return theme.getTextColor();
     }
 
+    @Override
     public ColorUIResource getInactiveControlTextColor() {
       return theme.getInactiveTextColor();
     }
 
+    @Override
     public ColorUIResource getInactiveSystemTextColor() {
       return theme.getInactiveTextColor();
     }
 
+    @Override
     public ColorUIResource getUserTextColor() {
       return theme.getTextColor();
     }
@@ -179,26 +211,32 @@ public class InfoNodeLookAndFeel extends MetalLookAndFeel {
 
     // --------------- Fonts --------------------------
 
+    @Override
     public FontUIResource getControlTextFont() {
       return getSystemTextFont();
     }
 
+    @Override
     public FontUIResource getSystemTextFont() {
       return theme.getFont();
     }
 
+    @Override
     public FontUIResource getUserTextFont() {
       return getSystemTextFont();
     }
 
+    @Override
     public FontUIResource getMenuTextFont() {
       return getSystemTextFont();
     }
 
+    @Override
     public FontUIResource getWindowTitleFont() {
       return getSystemTextFont();
     }
 
+    @Override
     public FontUIResource getSubTextFont() {
       return getSystemTextFont();
     }
@@ -230,7 +268,8 @@ public class InfoNodeLookAndFeel extends MetalLookAndFeel {
     return theme;
   }
 
-  public void initialize() {
+  @Override
+public void initialize() {
     super.initialize();
 
     if (oldMetalTheme == null) {
@@ -252,19 +291,23 @@ public class InfoNodeLookAndFeel extends MetalLookAndFeel {
     setCurrentTheme(defaultTheme);
   }
 
-  public void uninitialize() {
+  @Override
+public void uninitialize() {
     setCurrentTheme(oldMetalTheme == null ? new DefaultMetalTheme() : oldMetalTheme);
     oldMetalTheme = null;
   }
 
-  public String getName() {
+  @Override
+public String getName() {
     return LOOK_AND_FEEL_INFO.getName();
   }
 
-  public String getDescription() {
+  @Override
+public String getDescription() {
     return "A slim look and feel based on Metal.";
   }
 
+  @Override
   protected void initClassDefaults(UIDefaults table) {
     super.initClassDefaults(table);
 
@@ -309,6 +352,7 @@ public class InfoNodeLookAndFeel extends MetalLookAndFeel {
       this.focusBorder = focusBorder;
     }
 
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index,
                                                   boolean isSelected,
                                                   boolean cellHasFocus) {
@@ -324,18 +368,20 @@ public class InfoNodeLookAndFeel extends MetalLookAndFeel {
     }
   }
 
-  protected void initComponentDefaults(UIDefaults table) {
+  @Override
+protected void initComponentDefaults(UIDefaults table) {
     super.initComponentDefaults(table);
 
     Class iconClass = MetalLookAndFeel.class;
     UIResource menuItemBorder = new MetalBorders.MenuItemBorder() {
-      public Insets getBorderInsets(Component c) {
+      @Override
+    public Insets getBorderInsets(Component c) {
         return new Insets(2, 0, 2, 0);
       }
     };
 
     Object[] defaults = {
-      "SplitPane.dividerSize", new Integer(theme.getSplitPaneDividerSize()),
+      "SplitPane.dividerSize", Integer.valueOf(theme.getSplitPaneDividerSize()),
 //      "SplitPaneDivider.border", new BorderUIResource(splitPaneDividerBorder),
 //      "SplitPane.border", new BorderUIResource(splitPaneBorder),
 
@@ -362,7 +408,7 @@ public class InfoNodeLookAndFeel extends MetalLookAndFeel {
 
       "ScrollBar.background", theme.getScrollBarBackgroundColor(),
       "ScrollBar.shadow", theme.getScrollBarBackgroundShadowColor(),
-      "ScrollBar.width", new Integer(theme.getScrollBarWidth()),
+      "ScrollBar.width", Integer.valueOf(theme.getScrollBarWidth()),
 //    "ScrollBar.border", new BorderUIResource(new LineBorder(Color.GRAY, 1)),
 
 //    "ScrollBar.thumb", new RelativeColor(thumbColor, 0.8).getColor(),
@@ -410,7 +456,7 @@ public class InfoNodeLookAndFeel extends MetalLookAndFeel {
 
 //      "Button.border", new BorderUIResource(buttonBorder),
 //      "Button.disabledShadow", new ColorUIResource(Color.GREEN), //ColorUtil.blend(textColor, controlColor, 0.5f)),
-      "Button.textShiftOffset", new Integer(2),
+      "Button.textShiftOffset", Integer.valueOf(2),
       "Button.select", theme.getControlLightShadowColor(),
 //    "Button.focus", focusColor,
       "Button.margin", theme.getButtonMargin(),
@@ -419,7 +465,7 @@ public class InfoNodeLookAndFeel extends MetalLookAndFeel {
 
       "ToggleButton.margin", theme.getButtonMargin(),
       "ToggleButton.select", theme.getControlLightShadowColor(),
-      "ToggleButton.textShiftOffset", new Integer(2),
+      "ToggleButton.textShiftOffset", Integer.valueOf(2),
 
       "Tree.openIcon", theme.getTreeOpenIcon(),
       "Tree.closedIcon", theme.getTreeClosedIcon(),
@@ -428,9 +474,9 @@ public class InfoNodeLookAndFeel extends MetalLookAndFeel {
           new TreeIcon(TreeIcon.PLUS, 10, 10, true, theme.getTextColor(), theme.getTreeIconBackgroundColor())),
       "Tree.expandedIcon", new IconUIResource(
           new TreeIcon(TreeIcon.MINUS, 10, 10, true, theme.getTextColor(), theme.getTreeIconBackgroundColor())),
-      "Tree.leftChildIndent", new Integer(5),
-      "Tree.rightChildIndent", new Integer(11),
-//    "Tree.rowHeight", new Integer(12),
+      "Tree.leftChildIndent", Integer.valueOf(5),
+      "Tree.rightChildIndent", Integer.valueOf(11),
+//    "Tree.rowHeight", Integer.valueOf(12),
 
       "OptionPane.errorIcon", LookAndFeel.makeIcon(iconClass, "icons/Error.gif"),
       "OptionPane.informationIcon", LookAndFeel.makeIcon(iconClass, "icons/Inform.gif"),

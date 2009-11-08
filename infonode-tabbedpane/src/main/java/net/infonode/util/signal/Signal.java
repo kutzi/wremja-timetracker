@@ -23,23 +23,23 @@
 // $Id$
 package net.infonode.util.signal;
 
-import net.infonode.util.collection.CopyOnWriteArrayList;
-import net.infonode.util.collection.EmptyIterator;
-
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author $Author$
  * @version $Revision$
  */
 public class Signal {
-  private static class WeakListener extends WeakReference implements SignalListener {
+  private static class WeakListener extends WeakReference<SignalListener> implements SignalListener {
     private SignalHookImpl hook;
 
-    protected WeakListener(SignalListener listener, ReferenceQueue q, SignalHookImpl hook) {
+    protected WeakListener(SignalListener listener, ReferenceQueue<SignalListener> q, SignalHookImpl hook) {
       super(listener, q);
       this.hook = hook;
     }
@@ -74,7 +74,7 @@ public class Signal {
     }
   }
 
-  private static ReferenceQueue refQueue = new ReferenceQueue();
+  private static ReferenceQueue<SignalListener> refQueue = new ReferenceQueue<SignalListener>();
 
   static {
     Thread thread = new Thread(new Runnable() {
@@ -93,7 +93,7 @@ public class Signal {
   }
 
   private boolean reverseNotifyOrder;
-  private CopyOnWriteArrayList listeners;
+  private CopyOnWriteArrayList<SignalListener> listeners;
   private SignalHookImpl signalHook = new SignalHookImpl();
 
   public Signal() {
@@ -112,7 +112,7 @@ public class Signal {
 
   public synchronized void addListener(SignalListener listener) {
     if (listeners == null)
-      listeners = new CopyOnWriteArrayList(2);
+      listeners = new java.util.concurrent.CopyOnWriteArrayList<SignalListener>();
 
     listeners.add(listener);
 
@@ -161,37 +161,41 @@ public class Signal {
     return listeners != null && listeners.size() > 0;
   }
 
-  public synchronized Iterator iterator() {
-    return listeners == null ? EmptyIterator.INSTANCE : listeners.iterator();
+  @SuppressWarnings("unchecked")
+  public synchronized Iterator<SignalListener> iterator() {
+    return listeners == null ? Collections.EMPTY_LIST.iterator() : listeners.iterator();
   }
 
   public SignalHook getHook() {
     return signalHook;
   }
 
-  public synchronized void emit(Object object) {
-    Object[] e;
-    int size;
+  public void emit(Object object) {
+    ListIterator<SignalListener> it;
 
+    boolean reverse = this.reverseNotifyOrder;
     synchronized (this) {
       if (listeners == null)
         return;
 
-      e = listeners.getElements();
-      size = listeners.size();
+      if (reverse) {
+    	  it = listeners.listIterator(listeners.size());
+      } else {
+    	  it = listeners.listIterator();
+      }
     }
 
-    if (reverseNotifyOrder) {
-      for (int i = size - 1; i >= 0; i--)
-        ((SignalListener) e[i]).signalEmitted(this, object);
+    if (reverse) {
+      while (it.hasPrevious())
+        it.previous().signalEmitted(this, object);
     }
     else {
-      for (int i = 0; i < size; i++)
-        ((SignalListener) e[i]).signalEmitted(this, object);
+      while (it.hasNext())
+        it.next().signalEmitted(this, object);
     }
   }
 
-  public void removeListeners(Collection toRemove) {
+  public void removeListeners(Collection<SignalListener> toRemove) {
     listeners.removeAll(toRemove);
   }
 
