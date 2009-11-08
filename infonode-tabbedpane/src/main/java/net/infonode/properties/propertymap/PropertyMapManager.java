@@ -23,16 +23,16 @@
 // $Id$
 package net.infonode.properties.propertymap;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import net.infonode.properties.base.Property;
 import net.infonode.properties.propertymap.value.PropertyValue;
 import net.infonode.util.Utils;
 import net.infonode.util.ValueChange;
 import net.infonode.util.collection.map.base.ConstMap;
 import net.infonode.util.collection.map.base.ConstMapIterator;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Utility class for performing multiple modifications to {@link PropertyMap}'s and merging change notifications to
@@ -44,7 +44,7 @@ import java.util.Map;
 public class PropertyMapManager {
   private static final PropertyMapManager INSTANCE = new PropertyMapManager();
 
-  private HashMap changes;
+  private Map<PropertyMap, Map<Property, ValueChange>> changes;
   private int batchCounter;
 
   /**
@@ -57,10 +57,10 @@ public class PropertyMapManager {
   }
 
   void addMapChanges(PropertyMapImpl propertyMap, ConstMap mapChanges) {
-    HashMap map = (HashMap) changes.get(propertyMap);
+    Map<Property, ValueChange> map = changes.get(propertyMap);
 
     if (map == null) {
-      map = new HashMap();
+      map = new HashMap<Property, ValueChange>();
       changes.put(propertyMap, map);
     }
 
@@ -76,7 +76,7 @@ public class PropertyMapManager {
                         ((ValueChange) value).getOldValue();
 
       if (!Utils.equals(oldValue, newValue))
-        map.put(iterator.getKey(), new ValueChange(oldValue, newValue));
+        map.put((Property) iterator.getKey(), new ValueChange(oldValue, newValue));
       else if (value != null)
         map.remove(key);
     }
@@ -108,14 +108,16 @@ public class PropertyMapManager {
    */
   public void beginBatch() {
     if (batchCounter++ == 0)
-      changes = new HashMap();
+      changes = new HashMap<PropertyMap, Map<Property, ValueChange>>();
   }
 
-  private void addTreeChanges(PropertyMapImpl map, PropertyMapImpl modifiedMap, HashMap changes, HashMap treeChanges) {
-    HashMap changeMap = (HashMap) treeChanges.get(map);
+  private void addTreeChanges(PropertyMapImpl map, PropertyMapImpl modifiedMap,
+		  Map<Property, ValueChange> changes,
+		  Map<PropertyMap, Map<PropertyMap, Map<Property, ValueChange>>> treeChanges) {
+    Map<PropertyMap, Map<Property, ValueChange>> changeMap = treeChanges.get(map);
 
     if (changeMap == null) {
-      changeMap = new HashMap();
+      changeMap = new HashMap<PropertyMap, Map<Property, ValueChange>>();
       treeChanges.put(map, changeMap);
     }
 
@@ -130,14 +132,14 @@ public class PropertyMapManager {
    */
   public void endBatch() {
     if (--batchCounter == 0) {
-      HashMap treeChanges = new HashMap();
-      HashMap localChanges = changes;
+      Map<PropertyMap, Map<PropertyMap, Map<Property, ValueChange>>> treeChanges =
+    	  new HashMap<PropertyMap, Map<PropertyMap, Map<Property, ValueChange>>>();
+      Map<PropertyMap, Map<Property, ValueChange>> localChanges = changes;
       changes = null;
 
-      for (Iterator iterator = localChanges.entrySet().iterator(); iterator.hasNext();) {
-        Map.Entry entry = (Map.Entry) iterator.next();
+      for (Map.Entry<PropertyMap, Map<Property, ValueChange>> entry : localChanges.entrySet()) {
         PropertyMapImpl object = (PropertyMapImpl) entry.getKey();
-        HashMap objectChanges = (HashMap) entry.getValue();
+        Map<Property, ValueChange> objectChanges = entry.getValue();
 
         if (!objectChanges.isEmpty()) {
           object.firePropertyValuesChanged(Collections.unmodifiableMap(objectChanges));
@@ -145,10 +147,9 @@ public class PropertyMapManager {
         }
       }
 
-      for (Iterator iterator = treeChanges.entrySet().iterator(); iterator.hasNext();) {
-        Map.Entry entry = (Map.Entry) iterator.next();
+      for (Map.Entry<PropertyMap, Map<PropertyMap, Map<Property, ValueChange>>> entry : treeChanges.entrySet()) {
         PropertyMapImpl object = (PropertyMapImpl) entry.getKey();
-        HashMap objectChanges = (HashMap) entry.getValue();
+        Map<PropertyMap, Map<Property, ValueChange>> objectChanges = entry.getValue();
 
         if (!objectChanges.isEmpty())
           object.firePropertyTreeValuesChanged(Collections.unmodifiableMap(objectChanges));

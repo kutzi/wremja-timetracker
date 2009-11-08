@@ -23,16 +23,18 @@
 // $Id$
 package net.infonode.properties.propertymap;
 
-import net.infonode.properties.base.Property;
-import net.infonode.properties.util.PropertyChangeListener;
-
-import javax.swing.*;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import javax.swing.SwingUtilities;
+
+import net.infonode.properties.base.Property;
+import net.infonode.properties.util.PropertyChangeListener;
+import net.infonode.util.ValueChange;
 
 /**
  * Handles weak {@link PropertyMap} listeners which are garbage collected and removed from the {@link PropertyMap}
@@ -70,12 +72,14 @@ public class PropertyMapWeakListenerManager {
       map.addListener(this);
     }
 
+    @Override
     public void removeFromMap() {
       getMap().removeListener(this);
       super.removeFromMap();
     }
 
-    public void propertyValuesChanged(PropertyMap propertyMap, Map changes) {
+    @Override
+    public void propertyValuesChanged(PropertyMap propertyMap, Map<Property, ValueChange> changes) {
       PropertyMapListener l = (PropertyMapListener) get();
 
       if (l != null)
@@ -96,6 +100,7 @@ public class PropertyMapWeakListenerManager {
       return property;
     }
 
+    @Override
     public void removeFromMap() {
       getMap().removePropertyChangeListener(property, this);
       super.removeFromMap();
@@ -115,12 +120,13 @@ public class PropertyMapWeakListenerManager {
       map.addTreeListener(this);
     }
 
+    @Override
     public void removeFromMap() {
       getMap().removeTreeListener(this);
       super.removeFromMap();
     }
 
-    public void propertyValuesChanged(Map changes) {
+    public void propertyValuesChanged(Map<PropertyMap, Map<Property, ValueChange>> changes) {
       PropertyMapTreeListener l = (PropertyMapTreeListener) get();
 
       if (l != null)

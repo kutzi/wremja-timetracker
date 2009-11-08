@@ -62,6 +62,7 @@ import net.infonode.gui.hover.panel.HoverableShapedPanel;
 import net.infonode.gui.layout.DirectionLayout;
 import net.infonode.gui.panel.BaseContainerUtil;
 import net.infonode.gui.shaped.panel.ShapedPanel;
+import net.infonode.properties.base.Property;
 import net.infonode.properties.gui.InternalPropertiesUtil;
 import net.infonode.properties.gui.util.ButtonProperties;
 import net.infonode.properties.gui.util.ComponentProperties;
@@ -421,7 +422,7 @@ public class TabbedPanel extends JPanel {
   };
 
   private PropertyMapTreeListener propertyChangedListener = new PropertyMapTreeListener() {
-    public void propertyValuesChanged(Map changes) {
+    public void propertyValuesChanged(Map<PropertyMap, Map<Property, ValueChange>> changes) {
       updateProperties(changes);
       updatePropertiesForTabArea(changes);
       updatePropertiesForTabAreaComponentsArea(changes);
@@ -526,10 +527,10 @@ public class TabbedPanel extends JPanel {
   }
 
 
-  private void updateProperties(Map changes) {
-    Map m = getMap(changes, properties.getMap());
+  private void updateProperties(Map<PropertyMap, Map<Property, ValueChange>> changes) {
+	  Map<Property, ValueChange> m = getMap(changes, properties.getMap());
     if (m != null) {
-      Set keySet = m.keySet();
+      Set<Property> keySet = m.keySet();
 
       // Properties contained by tabs
       if (keySet.contains(TabbedPanelProperties.TAB_REORDER_ENABLED) || m.keySet().contains(
@@ -609,7 +610,7 @@ public class TabbedPanel extends JPanel {
   }
 
   private void updatePropertiesForTabArea(Map changes) {
-    Map m = getMap(changes, properties.getTabAreaProperties().getMap());
+    Map<Property, ValueChange> m = getMap(changes, properties.getTabAreaProperties().getMap());
     if (m != null) {
       if (m.keySet().contains(TabAreaProperties.HOVER_LISTENER)) {
         tabAreaContainer.setHoverListener(
@@ -621,7 +622,7 @@ public class TabbedPanel extends JPanel {
     }
 
     m = getMap(changes, properties.getTabAreaProperties().getComponentProperties().getMap());
-    Map m2 = getMap(changes, properties.getTabAreaProperties().getShapedPanelProperties().getMap());
+    Map<Property, ValueChange> m2 = getMap(changes, properties.getTabAreaProperties().getShapedPanelProperties().getMap());
     if (m != null || m2 != null) {
       properties.getTabAreaProperties().getComponentProperties().applyTo(tabAreaContainer);
       updateIntelligentInsets(tabAreaContainer, properties.getTabAreaProperties().getComponentProperties());
@@ -752,8 +753,8 @@ public class TabbedPanel extends JPanel {
     draggableComponentBox.setComponentDirection(tabAreaOrientation);
   }
 
-  private Map getMap(Map changes, PropertyMap map) {
-    return changes != null ? (Map) changes.get(map) : null;
+  private Map<Property, ValueChange> getMap(Map<PropertyMap, Map<Property, ValueChange>> changes, PropertyMap map) {
+    return changes != null ? changes.get(map) : null;
   }
 
   private void updateTabAreaVisibility() {

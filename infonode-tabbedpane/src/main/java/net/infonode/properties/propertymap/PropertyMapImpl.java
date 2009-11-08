@@ -29,7 +29,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -117,9 +117,8 @@ public class PropertyMapImpl implements PropertyMap {
       }
     }
 
-    public boolean checkListeners(Set visited) {
-      for (Iterator it = getChangeSignalInternal().iterator(); it.hasNext();) {
-        Object l = it.next();
+    public boolean checkListeners(Set<PropertyMap> visited) {
+      for (SignalListener l : getChangeSignalInternal()) {
 
         if (l instanceof PropertyRefValue) {
           PropertyRefValue v = (PropertyRefValue) l;
@@ -133,19 +132,18 @@ public class PropertyMapImpl implements PropertyMap {
     }
 
     public void updateListeners() {
-      for (Iterator it = getChangeSignalInternal().iterator(); it.hasNext();) {
-        if (!(it.next() instanceof PropertyRefValue)) {
+      for (SignalListener l : getChangeSignalInternal()) {
+        if (!(l instanceof PropertyRefValue)) {
           return;
         }
       }
 
-      for (Iterator it = getChangeSignalInternal().iterator(); it.hasNext();) {
-        Object l = it.next();
+      for (SignalListener l : getChangeSignalInternal()) {
 
         if (l instanceof PropertyRefValue) {
           PropertyRefValue v = (PropertyRefValue) l;
 
-          if (v.getMap().checkListeners(new HashSet())) {
+          if (v.getMap().checkListeners(new HashSet<PropertyMap>())) {
             return;
           }
         }
@@ -177,7 +175,7 @@ public class PropertyMapImpl implements PropertyMap {
     }
 
     private void removeInheritedReferences() {
-      ArrayList toBeRemoved = new ArrayList();
+      List<Property> toBeRemoved = new ArrayList<Property>();
 
       for (ConstMapIterator iterator = values.constIterator(); iterator.atEntry(); iterator.next()) {
         Property property = (Property) iterator.getKey();
@@ -232,12 +230,12 @@ public class PropertyMapImpl implements PropertyMap {
   private ConstVectorMap vectorMap = new ConstVectorMap();
   private PropertyObjectMap map = new PropertyObjectMap();
 
-  private ArrayList superMaps = new ArrayList(1);
+  private List<PropertyMap> superMaps = new ArrayList<PropertyMap>(1);
   private MapAdapter childMaps = new MapAdapter();
 
-  private HashMap propertyChangeListeners;
-  private ArrayList listeners;
-  private ArrayList treeListeners;
+  private Map<Property, List<PropertyChangeListener>> propertyChangeListeners;
+  private List<PropertyMapListener> listeners;
+  private List<PropertyMapTreeListener> treeListeners;
 
   private SignalListener mapListener;
 
@@ -317,7 +315,7 @@ public class PropertyMapImpl implements PropertyMap {
     }
   }
 
-  private boolean checkListeners(Set visited) {
+  private boolean checkListeners(Set<PropertyMap> visited) {
     if (visited.contains(this))
       return false;
 
@@ -500,7 +498,7 @@ public class PropertyMapImpl implements PropertyMap {
 
   public void addTreeListener(PropertyMapTreeListener listener) {
     if (treeListeners == null)
-      treeListeners = new ArrayList(2);
+      treeListeners = new ArrayList<PropertyMapTreeListener>(2);
 
     treeListeners.add(listener);
     updateListenerRecursive();
@@ -519,7 +517,7 @@ public class PropertyMapImpl implements PropertyMap {
 
   public void addListener(PropertyMapListener listener) {
     if (listeners == null)
-      listeners = new ArrayList(2);
+      listeners = new ArrayList<PropertyMapListener>(2);
 
     listeners.add(listener);
     updateListener();
@@ -542,12 +540,12 @@ public class PropertyMapImpl implements PropertyMap {
 
   public void addPropertyChangeListener(Property property, PropertyChangeListener listener) {
     if (propertyChangeListeners == null)
-      propertyChangeListeners = new HashMap(4);
+      propertyChangeListeners = new HashMap<Property, List<PropertyChangeListener>>(4);
 
-    ArrayList list = (ArrayList) propertyChangeListeners.get(property);
+    List<PropertyChangeListener> list = propertyChangeListeners.get(property);
 
     if (list == null) {
-      list = new ArrayList(2);
+      list = new ArrayList<PropertyChangeListener>(2);
       propertyChangeListeners.put(property, list);
     }
 
@@ -557,7 +555,7 @@ public class PropertyMapImpl implements PropertyMap {
 
   public void removePropertyChangeListener(Property property, PropertyChangeListener listener) {
     if (propertyChangeListeners != null) {
-      ArrayList list = (ArrayList) propertyChangeListeners.get(property);
+      List<PropertyChangeListener> list = propertyChangeListeners.get(property);
 
       if (list == null)
         return;
@@ -659,7 +657,7 @@ public class PropertyMapImpl implements PropertyMap {
     map.fireEntriesChanged(new SingleValueMap(property, change));
   }
 
-  protected void firePropertyTreeValuesChanged(Map changes) {
+  protected void firePropertyTreeValuesChanged(Map<PropertyMap, Map<Property, ValueChange>> changes) {
     if (treeListeners != null) {
       PropertyMapTreeListener[] l = (PropertyMapTreeListener[]) treeListeners.toArray(
           new PropertyMapTreeListener[treeListeners.size()]);
@@ -669,7 +667,7 @@ public class PropertyMapImpl implements PropertyMap {
     }
   }
 
-  void firePropertyValuesChanged(Map changes) {
+  void firePropertyValuesChanged(Map<Property, ValueChange> changes) {
     if (listeners != null) {
       PropertyMapListener[] l = (PropertyMapListener[]) listeners.toArray(new PropertyMapListener[listeners.size()]);
 
@@ -678,26 +676,25 @@ public class PropertyMapImpl implements PropertyMap {
     }
 
     if (propertyChangeListeners != null) {
-      for (Iterator iterator = changes.entrySet().iterator(); iterator.hasNext();) {
-        Map.Entry entry = (Map.Entry) iterator.next();
-        ArrayList list = (ArrayList) propertyChangeListeners.get(entry.getKey());
+      for (Map.Entry<Property, ValueChange> entry : changes.entrySet()) {
+        List<PropertyChangeListener> list = propertyChangeListeners.get(entry.getKey());
 
         if (list != null) {
-          ValueChange vc = (ValueChange) entry.getValue();
-          PropertyChangeListener[] l = (PropertyChangeListener[]) list.toArray(new PropertyChangeListener[list.size()]);
+          ValueChange vc = entry.getValue();
+          PropertyChangeListener[] l = list.toArray(new PropertyChangeListener[list.size()]);
 
           for (int i = 0; i < l.length; i++)
-            l[i].propertyChanged((Property) entry.getKey(), this, vc.getOldValue(), vc.getNewValue());
+            l[i].propertyChanged(entry.getKey(), this, vc.getOldValue(), vc.getNewValue());
         }
       }
     }
   }
 
   public void dump() {
-    dump(new Printer(), new HashSet(4));
+    dump(new Printer(), new HashSet<PropertyMap>(4));
   }
 
-  public void dump(Printer printer, Set printed) {
+  public void dump(Printer printer, Set<PropertyMap> printed) {
     printed.add(this);
 
     for (ConstMapIterator iterator = values.constIterator(); iterator.atEntry(); iterator.next()) {
@@ -753,7 +750,7 @@ public class PropertyMapImpl implements PropertyMap {
   }
 
   private void doClear(boolean recursive) {
-    ArrayList items = new ArrayList(10);
+    List items = new ArrayList(10);
 
     for (MapIterator iterator = values.iterator(); iterator.atEntry(); iterator.next()) {
       PropertyValue value = (PropertyValue) iterator.getValue();

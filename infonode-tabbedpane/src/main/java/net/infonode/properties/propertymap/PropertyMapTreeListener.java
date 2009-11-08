@@ -25,6 +25,9 @@ package net.infonode.properties.propertymap;
 
 import java.util.Map;
 
+import net.infonode.properties.base.Property;
+import net.infonode.util.ValueChange;
+
 /**
  * Listener interface for property value changes in a property map and it's child maps.
  *
@@ -40,5 +43,5 @@ public interface PropertyMapTreeListener {
    *                {@link net.infonode.properties.base.Property}'s as keys and
    *                {@link net.infonode.util.ValueChange}'s as values.
    */
-  void propertyValuesChanged(Map changes);
+  void propertyValuesChanged(Map<PropertyMap, Map<Property, ValueChange>> changes);
 }

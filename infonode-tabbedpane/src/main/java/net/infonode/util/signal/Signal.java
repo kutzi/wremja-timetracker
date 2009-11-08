@@ -35,7 +35,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author $Author$
  * @version $Revision$
  */
-public class Signal {
+public class Signal implements Iterable<SignalListener> {
   private static class WeakListener extends WeakReference<SignalListener> implements SignalListener {
     private SignalHookImpl hook;
 
@@ -162,6 +162,7 @@ public class Signal {
   }
 
   @SuppressWarnings("unchecked")
+  @Override
   public synchronized Iterator<SignalListener> iterator() {
     return listeners == null ? Collections.EMPTY_LIST.iterator() : listeners.iterator();
   }
