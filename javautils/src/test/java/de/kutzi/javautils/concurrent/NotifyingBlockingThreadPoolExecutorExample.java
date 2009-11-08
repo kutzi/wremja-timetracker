@@ -35,7 +35,7 @@ public class NotifyingBlockingThreadPoolExecutorExample {
 			@Override
 			public Boolean call() throws Exception {
 				LOGGER.info("*** Still waiting for task insertion... ***");
-				return true; // keep waiting
+				return Boolean.TRUE; // keep waiting
 			}
 		};
 		

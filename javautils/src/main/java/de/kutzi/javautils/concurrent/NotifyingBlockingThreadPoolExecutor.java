@@ -393,7 +393,7 @@ public class NotifyingBlockingThreadPoolExecutor extends ThreadPoolExecutor {
 							}
 							// if result if false we need to throw an exception
 							// otherwise, just continue with the loop
-							if(result == false) {
+							if(Boolean.FALSE.equals(result)) {
 								throw new RejectedExecutionException("User decided to stop waiting for task insertion");                        		
 							}
 							else {
