@@ -5,6 +5,7 @@ import info.clearthought.layout.TableLayout;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
@@ -12,8 +13,8 @@ import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXImagePanel;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.action.OpenBrowserAction;
 
-import com.kemai.swing.action.OpenBrowserAction;
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
@@ -66,11 +67,17 @@ public class AboutDialog extends EscapeDialog {
         aboutInfo.setLayout(tableLayout);
         
         aboutInfo.add(new JLabel("<html><b>" + textBundle.textFor("AboutDialog.HomepageLabel") + "</b></html>"), "1, 1"); //$NON-NLS-1$ //$NON-NLS-2$
-        final JXHyperlink hyperlinkHomepage = new JXHyperlink(new OpenBrowserAction(textBundle.textFor("AboutDialog.HomepageUrl"))); //$NON-NLS-1$
+        OpenBrowserAction action = new OpenBrowserAction("http://wremja.kenai.com"); //$NON-NLS-1$
+        action.putValue(Action.NAME, "http://wremja.kenai.com"); //$NON-NLS-1$
+        action.putValue(Action.SHORT_DESCRIPTION, textBundle.textFor("AboutDialog.HomepageUrl")); //$NON-NLS-1$
+        final JXHyperlink hyperlinkHomepage = new JXHyperlink(action);
         aboutInfo.add(hyperlinkHomepage, "3, 1"); //$NON-NLS-1$
 
+        action = new OpenBrowserAction("http://kenai.com/jira/browse/WREMJA"); //$NON-NLS-1$
+        action.putValue(Action.NAME, "http://kenai.com/jira/browse/WREMJA"); //$NON-NLS-1$
+        action.putValue(Action.SHORT_DESCRIPTION, textBundle.textFor("AboutDialog.BugUrl")); //$NON-NLS-1$
         aboutInfo.add(new JLabel("<html><b>" + textBundle.textFor("AboutDialog.BugLabel") + "</b></html>"), "1, 3"); //$NON-NLS-1$ //$NON-NLS-2$
-        final JXHyperlink hyperlinkBug = new JXHyperlink(new OpenBrowserAction(textBundle.textFor("AboutDialog.BugUrl"))); //$NON-NLS-1$
+        final JXHyperlink hyperlinkBug = new JXHyperlink(action);
         aboutInfo.add(hyperlinkBug, "3, 3"); //$NON-NLS-1$
         
         this.add(aboutInfo, BorderLayout.CENTER);
@@ -101,7 +108,8 @@ public class AboutDialog extends EscapeDialog {
         this.getContentPane().setBackground(GuiConstants.BEIGE);
         this.add(image, BorderLayout.NORTH);
         
-        this.setSize(280, 290);
+        //this.setSize(280, 290);
+        this.pack();
     }
     
 }
