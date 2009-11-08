@@ -283,7 +283,8 @@
             <dependency>
                 <groupId>org.swinglabs</groupId>
                 <artifactId>swingx</artifactId>
-                <version>1.6</version>
+                <!-- SwingX 1.6 causes IndexOutOfBoundsExceptions using month filter list -->
+                <version>1.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
