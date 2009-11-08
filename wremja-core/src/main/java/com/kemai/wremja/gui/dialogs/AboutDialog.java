@@ -4,6 +4,7 @@ import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
+import java.net.MalformedURLException;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -19,6 +20,7 @@ import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.settings.ApplicationSettings;
+import com.kemai.wremja.logging.Logger;
 
 /**
  * Displays information about the application like version and homepage.
@@ -27,6 +29,8 @@ import com.kemai.wremja.gui.settings.ApplicationSettings;
  */
 @SuppressWarnings("serial") 
 public class AboutDialog extends EscapeDialog {
+	
+	private static final Logger LOGGER = Logger.getLogger(AboutDialog.class);
 
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(AboutDialog.class);
@@ -45,13 +49,19 @@ public class AboutDialog extends EscapeDialog {
         setResizable(false);
         setBackground(GuiConstants.BEIGE);
         
-        initialize();
+        try {
+	        initialize();
+        } catch (MalformedURLException e) {
+	        LOGGER.error("", e);
+	        e.printStackTrace();
+        }
     }
 
     /**
      * Set up GUI components.
+     * @throws MalformedURLException 
      */
-    private void initialize() {
+    private void initialize() throws MalformedURLException {
         setLayout(new BorderLayout());
         
         final JXImagePanel image = new JXImagePanel(getClass().getResource("/icons/Wremja-About.png")); //$NON-NLS-1$

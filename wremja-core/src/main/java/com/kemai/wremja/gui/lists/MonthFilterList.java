@@ -31,7 +31,7 @@ public class MonthFilterList implements Observer {
     /** The bundle for internationalized texts. */
     private static final TextResourceBundle textBundle = TextResourceBundle.getBundle(MonthFilterList.class);
 
-    public static final DateTimeFormatter MONTH_FORMAT = DateTimeFormat.forPattern("MM"); //$NON-NLS-1$
+    public static final DateTimeFormatter MONTH_FORMAT = DateTimeFormat.forPattern("MMMM"); //$NON-NLS-1$
 
     /** The model. */
     private final PresentationModel model;
@@ -120,8 +120,9 @@ public class MonthFilterList implements Observer {
         }
 
         final String month = MONTH_FORMAT.print(activity.getStart());
+        Integer monthInt = Integer.valueOf(activity.getStart().getMonthOfYear());
         final LabeledItem<Integer> monthItem = new LabeledItem<Integer>(
-                Integer.valueOf(month), 
+                monthInt, 
                 month
         );
 
