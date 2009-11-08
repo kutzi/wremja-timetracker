@@ -10,20 +10,20 @@ public class ThroughputGaugeCASImpl implements ThroughputGauge {
     /**
      * Size of the measurement window in the passed {@link TimeUnit}.
      */
-    private long windowSize;
+    //private long windowSize;
     private long granularityNanos;
     private final AtomicReferenceArray<AtomicLong> pings;
     private final AtomicLong nextBucketTime = new AtomicLong();
     private long startTime;
-    private TimeUnit timeUnit;
-    private long granularity;
+    //private TimeUnit timeUnit;
+    //private long granularity;
     private long totalPings;
 
     public ThroughputGaugeCASImpl(long windowSize, long granularity,
             TimeUnit timeUnit) {
-        this.timeUnit = timeUnit;
-        this.windowSize = windowSize;
-        this.granularity = granularity;
+        //this.timeUnit = timeUnit;
+        //this.windowSize = windowSize;
+        //this.granularity = granularity;
         this.granularityNanos = timeUnit.toNanos(granularity);
         if (windowSize % granularity != 0) {
             throw new IllegalArgumentException(
@@ -95,11 +95,11 @@ public class ThroughputGaugeCASImpl implements ThroughputGauge {
          */
 
         long totalProcessed = getTotalCount(false);
-        double throughput = totalProcessed / (this.pings.length() - 1);
+        double throughput = (double)totalProcessed / (this.pings.length() - 1);
 
-        System.out.println("Throughput in the last " + windowSize + " "
-                + timeUnit.toString() + " :\n" + throughput + " messages / "
-                + granularity + " " + this.timeUnit.toString());
+//        System.out.println("Throughput in the last " + windowSize + " "
+//                + timeUnit.toString() + " :\n" + throughput + " messages / "
+//                + granularity + " " + this.timeUnit.toString());
         return throughput;
     }
 
