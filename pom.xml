@@ -283,8 +283,7 @@
             <dependency>
                 <groupId>org.swinglabs</groupId>
                 <artifactId>swingx</artifactId>
-                <!-- SwingX 1.6 causes IndexOutOfBoundsExceptions using month filter list -->
-                <version>1.0</version>
+                <version>1.6</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -304,13 +303,11 @@
                 <artifactId>jfreechart</artifactId>
                 <version>1.0.13</version>
                 <scope>compile</scope>
-                <!-- Problems with log4j.xml -->
-                <!-- <exclusions>
-                    <exclusion>
-                        <groupId>gnujaxp</groupId>
-                        <artifactId>gnujaxp</artifactId>
-                    </exclusion>
-                </exclusions>-->
+            </dependency>
+            <dependency>
+                <groupId>jfree</groupId>
+                <artifactId>jcommon</artifactId>
+                <version>1.0.16</version>
             </dependency>
             <dependency>
                 <groupId>findbugs</groupId>

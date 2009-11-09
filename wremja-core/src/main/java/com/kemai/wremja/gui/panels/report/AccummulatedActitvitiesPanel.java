@@ -1,7 +1,6 @@
 package com.kemai.wremja.gui.panels.report;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -18,6 +17,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import ca.odell.glazedlists.swing.EventTableModel;
 
+import com.kemai.swing.util.WTable;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
@@ -53,10 +53,8 @@ public class AccummulatedActitvitiesPanel extends JXPanel implements Observer {
      * Set up GUI components.
      */
     private void initialize() {
-        this.setBackground(Color.RED);
-
         tableModel = new EventTableModel<AccumulatedProjectActivity>(this.report.getAccumulatedActivitiesByDay(), new AccumulatedActivitiesTableFormat());
-        final JXTable table = new JXTable(tableModel) {
+        final JXTable table = new WTable(tableModel) {
             @Override
             public String getToolTipText() {
                 if (getSelectedRows().length == 0) {

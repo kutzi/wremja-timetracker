@@ -20,6 +20,7 @@ import org.jdesktop.swingx.renderer.StringValue;
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.EventTableModel;
 
+import com.kemai.swing.util.WTable;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.model.report.HoursByPeriod;
@@ -75,7 +76,7 @@ abstract class HoursByPeriodPanel<P extends HoursByPeriod, R extends HoursByPeri
     private void initialize() {
         tableModel = new EventTableModel<P>(this.report.getHoursByPeriod(), getTableFormat());
 
-        final JXTable table = new JXTable(tableModel);
+        final JXTable table = new WTable(tableModel);
         table.setHighlighters(GuiConstants.HIGHLIGHTERS);
         table.setAutoResizeMode(JXTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         

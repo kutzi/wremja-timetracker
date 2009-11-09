@@ -39,6 +39,7 @@ import ca.odell.glazedlists.swing.EventComboBoxModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 
 import com.kemai.swing.util.AWTUtils;
+import com.kemai.swing.util.WTable;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
@@ -89,7 +90,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
     private void initialize() {
         tableModel = new EventTableModel<ProjectActivity>(model.getActivitiesList(),
                 new AllActivitiesTableFormat(model));
-        final JXTable table = new JXTable(tableModel) {
+        final JXTable table = new WTable(tableModel) {
             @Override
             public String getToolTipText() {
                 if (getSelectedRows().length == 0) {
@@ -106,7 +107,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
                 return textBundle.textFor("AllActivitiesPanel.tooltipDuration", FormatUtils.getDurationFormat().format(duration)); //$NON-NLS-1$
             }
         };
-
+        
         table.getColumn(1).setCellRenderer(new DefaultTableRenderer(new FormatStringValue(DateFormat.getDateInstance())));
         table.getColumn(1).setCellEditor(new DatePickerCellEditor());
 
