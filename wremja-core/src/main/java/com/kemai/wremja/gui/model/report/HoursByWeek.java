@@ -6,7 +6,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  * Item of the hours by week report.
  * @author remast
  */
-public class HoursByWeek extends HoursByPeriod implements Comparable<HoursByWeek> {
+public class HoursByWeek extends HoursPer implements Comparable<HoursByWeek> {
     
     /** The week of the year. */
     private int week;

@@ -8,7 +8,7 @@ import com.kemai.wremja.model.Project;
  * Item of the hours by project report.
  * @author remast
  */
-public class HoursByProject extends HoursByPeriod implements Comparable<HoursByProject> {
+public class HoursByProject extends HoursPer implements Comparable<HoursByProject> {
     
     /** The project. */
     private final Project project;

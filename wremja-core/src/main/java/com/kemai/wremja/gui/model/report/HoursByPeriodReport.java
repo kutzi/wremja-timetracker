@@ -16,7 +16,7 @@ import com.kemai.wremja.model.filter.Filter;
  * Report for the working hours by period.
  * @author kutzi
  */
-public abstract class HoursByPeriodReport<E extends HoursByPeriod> extends Observable implements Observer  {
+public abstract class HoursByPeriodReport<E extends HoursPer> extends Observable implements Observer  {
 
     /** The model. */
     private final PresentationModel model;

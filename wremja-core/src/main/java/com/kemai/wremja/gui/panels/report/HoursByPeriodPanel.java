@@ -23,7 +23,7 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import com.kemai.swing.util.WTable;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
-import com.kemai.wremja.gui.model.report.HoursByPeriod;
+import com.kemai.wremja.gui.model.report.HoursPer;
 import com.kemai.wremja.gui.model.report.HoursByPeriodReport;
 import com.kemai.wremja.logging.Logger;
 
@@ -37,7 +37,7 @@ import com.kemai.wremja.logging.Logger;
  * @author kutzi
  */
 @SuppressWarnings("serial") 
-abstract class HoursByPeriodPanel<P extends HoursByPeriod, R extends HoursByPeriodReport<P>> extends JXPanel implements Observer {
+abstract class HoursByPeriodPanel<P extends HoursPer, R extends HoursByPeriodReport<P>> extends JXPanel implements Observer {
 
     private static final Logger log = Logger.getLogger(HoursByPeriodPanel.class);
     
@@ -106,8 +106,8 @@ abstract class HoursByPeriodPanel<P extends HoursByPeriod, R extends HoursByPeri
         public Component getTableCellRendererComponent(JTable table,
                 Object value, boolean isSelected, boolean hasFocus, int row,
                 int column) {
-            if(value instanceof HoursByPeriod) {
-                HoursByPeriod hoursByPeriod = (HoursByPeriod)value;
+            if(value instanceof HoursPer) {
+                HoursPer hoursByPeriod = (HoursPer)value;
                 JComponent comp = (JComponent) super.getTableCellRendererComponent(table,
                         Double.valueOf(hoursByPeriod.getHours()),
                         isSelected, hasFocus,  row, column);

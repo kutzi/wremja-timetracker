@@ -9,7 +9,7 @@ import org.joda.time.DateTime;
  * @author remast
  * @author kutzi
  */
-public class HoursByDay extends HoursByPeriod implements Comparable<HoursByDay> {
+public class HoursByDay extends HoursPer implements Comparable<HoursByDay> {
     
     /** The day of the year. */
     private final DateTime day;

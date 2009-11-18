@@ -68,7 +68,17 @@ public class ProTrackWriterTest extends TestCase {
         		"  <projectIdSequence>4711</projectIdSequence>\n" +
         		"</proTrack>";
         
-        // TODO: ignore line ends and formatting when comparing the strings!
-        assertEquals(expected.trim(), written.trim());
+        assertEquals(normalizeWhitespace(expected), normalizeWhitespace(written));
+    }
+    
+    
+    private String normalizeWhitespace(String string) {
+        StringBuilder normalized = new StringBuilder();
+        
+        String[] split = string.split("\\r\\n|\\r|\\n");
+        for (String s : split) {
+            normalized.append(s.trim());
+        }
+        return normalized.toString();
     }
 }

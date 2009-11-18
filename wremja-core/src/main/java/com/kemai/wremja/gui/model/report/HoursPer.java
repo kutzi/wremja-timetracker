@@ -1,20 +1,18 @@
 package com.kemai.wremja.gui.model.report;
 
 /**
- * Hours per a period (e.g. hours per day)
- * 
- * TODO: 'period' doesn't get it anymore since HoursByProject is also implemented via this
+ * Hours per something (e.g. hours per day, hours per project, ...)
  * 
  * @author kutzi
  */
-public abstract class HoursByPeriod {
+public abstract class HoursPer {
     
-    /** The amount of hours worked in that period. */
+    /** The amount of hours worked per ... */
     private double hours;
     
     private boolean changing = false;
     
-    HoursByPeriod(final double hours) {
+    HoursPer(final double hours) {
         this.hours = hours;
     }
 
@@ -26,10 +24,11 @@ public abstract class HoursByPeriod {
     }
     
     /**
-     * Adds the given hours to the hours in that period.
+     * Adds the given hours to the hours total.
+     *
      * @param additionalHours the hours to add
      */
-    public void addHours(HoursByPeriod additionalHours) {
+    public void addHours(HoursPer additionalHours) {
         this.hours += additionalHours.getHours();
         this.changing = this.changing || additionalHours.isChanging();
     }

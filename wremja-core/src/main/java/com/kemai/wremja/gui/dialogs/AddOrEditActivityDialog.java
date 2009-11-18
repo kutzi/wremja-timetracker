@@ -371,11 +371,7 @@ public class AddOrEditActivityDialog extends EscapeDialog {
             return false;
         }
 
-        validateTime(this.startField.getText());
-        validateTime(this.endField.getText());
-
         try {
-            // TODO: this parsing is redundant
             start = FormatUtils.parseTime(this.startField.getText());
             end = FormatUtils.parseTime(this.endField.getText());
         } catch (ParseException e) {

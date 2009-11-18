@@ -496,9 +496,8 @@ public class MainFrame extends JXFrame implements Observer {
         return exportMenu;
     }
     
-    
+    // not implemented, yet
     private List<AbstractExportAction> getExporterPlugins() {
-    	// TODO
 //    	try {
 //    		Class<?> clazz = Class.forName("com.kemai.wremja.exporter.anukotimetracker.AnukoExporterAction");
 //    		@SuppressWarnings("unchecked")
