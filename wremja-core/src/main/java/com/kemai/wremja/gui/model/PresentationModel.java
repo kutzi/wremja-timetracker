@@ -612,11 +612,16 @@ public class PresentationModel extends Observable {
     }
 
     /**
-     * Getter for the list of project activities.
-     * @return the list with all project activities
+     * Returns the list of project activities filtered by the currently set filters.
+     *
+     * @return the list with the filtered project activities
      */
     public SortedList<ProjectActivity> getActivitiesList() {
         return activitiesList;
+    }
+    
+    public List<ProjectActivity> getUnfilteredActivities() {
+        return this.data.getActivities();
     }
 
     public ObservingAccumulatedActivitiesReport getFilteredReport() {

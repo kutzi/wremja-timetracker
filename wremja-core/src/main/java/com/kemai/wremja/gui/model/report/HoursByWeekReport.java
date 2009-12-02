@@ -3,7 +3,9 @@ package com.kemai.wremja.gui.model.report;
 import org.joda.time.DateTime;
 
 import com.kemai.wremja.gui.model.PresentationModel;
+import com.kemai.wremja.gui.settings.SettingsConstants;
 import com.kemai.wremja.model.ProjectActivity;
+import com.kemai.wremja.model.filter.Filter;
 
 /**
  * Report for the working hours by week.
@@ -31,5 +33,13 @@ public class HoursByWeekReport extends HoursByPeriodReport<HoursByWeek>  {
         final HoursByWeek newHoursByWeek = new HoursByWeek(dateTime.getWeekOfWeekyear(), activity.getDuration());
         
         addHoursByPeriod(newHoursByWeek);
+    }
+    
+    @Override
+    protected void setFilter(final Filter filter) {
+        Filter copy = filter.copy();
+        // we mustn't filter by day for this report!
+        copy.setDayOfWeek(SettingsConstants.ALL_ITEMS_FILTER_DUMMY);
+        super.setFilter(copy);
     }
 }

@@ -178,7 +178,7 @@
             </plugin>
         </plugins>
     </build>
-        <repositories>
+    <repositories>
         <repository>
             <id>maven2-repository.dev.java.net</id>
             <name>Java.net Repository for Maven</name>
@@ -211,6 +211,28 @@
         <repository>
             <id>google-code</id>
             <url>http://google-maven-repository.googlecode.com/svn/repository/</url>
+        </repository>
+        
+        <!-- For wremja itself and javautils -->
+        <repository>
+            <id>kenai-releases</id>
+            <url>http://oss.sonatype.org/content/repositories/kenai-releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>kenai-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/kenai-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
     <pluginRepositories>

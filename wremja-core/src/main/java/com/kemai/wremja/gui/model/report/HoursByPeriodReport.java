@@ -41,7 +41,7 @@ public abstract class HoursByPeriodReport<E extends HoursPer> extends Observable
     /**
      * @param filter the filter to set
      */
-    private void setFilter(final Filter filter) {
+    protected void setFilter(final Filter filter) {
         this.filter = filter;
 
         calculateHours();
@@ -50,8 +50,10 @@ public abstract class HoursByPeriodReport<E extends HoursPer> extends Observable
     private void calculateHours() {
         this.hoursByPeriodList.clear();
 
-        for (ProjectActivity activity : this.model.getActivitiesList()) {
-            addHours(activity);
+        for (ProjectActivity activity : this.model.getUnfilteredActivities()) {
+            if (this.filter.matchesCriteria(activity)) {
+                addHours(activity);
+            }
         }
         
         if( this.model.isActive() && this.filter.matchesNow() ) {

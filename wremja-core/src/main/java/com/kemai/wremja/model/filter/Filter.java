@@ -19,14 +19,6 @@ import com.kemai.wremja.model.ProjectActivity;
  * @author kutzi
  */
 public class Filter {
-
-    /** The predicates of the filter. */
-    private final Map<Object, Predicate<ProjectActivity>> predicates
-        = new HashMap<Object, Predicate<ProjectActivity>>();
-    
-    // Ugly HACK for the 'smart' week filter
-    private final Map<Object, Predicate<ProjectActivity>> disabledPredicates
-        = new HashMap<Object, Predicate<ProjectActivity>>();
     
     /** The predicate to filter by day of week. */
     private static final Object DAY_PREDICATE = new Object();
@@ -37,23 +29,32 @@ public class Filter {
     /** The predicate to filter by month. */
     private static final String MONTH_PREDICATE = "MONTH_PREDICATE";
     
+    /** The predicate to filter by year. */
+    private static final String YEAR_PREDICATE = "YEAR_PREDICATE";
+    
+    /** The predicate to filter by project. */
+    private static final String PROJECT_PREDICATE = "PROJECT_PREDICATE";
+
+    
+    /** The predicates of the filter. */
+    private final Map<Object, Predicate<ProjectActivity>> predicates
+        = new HashMap<Object, Predicate<ProjectActivity>>();
+    
+    // Ugly HACK for the 'smart' week filter
+    private final Map<Object, Predicate<ProjectActivity>> disabledPredicates
+        = new HashMap<Object, Predicate<ProjectActivity>>();
+    
     /** The month to filter by. */
     private Integer month;
     
     /** The year to filter by. */
     private Integer year;
-    
-    /** The predicate to filter by year. */
-    private static final String YEAR_PREDICATE = "YEAR_PREDICATE";
 
     /** The project to filter by. */
     private Project project;
     
     /** If to display only billable projects. */
     private boolean onlyBillable;
-
-    /** The predicate to filter by project. */
-    private static final String PROJECT_PREDICATE = "PROJECT_PREDICATE";
 
     /**
      * Create filter with no predicates.
@@ -295,5 +296,17 @@ public class Filter {
             Predicate<ProjectActivity> predicate = new BillableProjectPredicate();
             this.predicates.put(PROJECT_PREDICATE, predicate);
         }
+    }
+    
+    public Filter copy() {
+        Filter copy = new Filter();
+        copy.predicates.putAll(this.predicates);
+        copy.disabledPredicates.putAll(this.disabledPredicates);
+        copy.month = this.month;
+        copy.onlyBillable = this.onlyBillable;
+        copy.project = this.project;
+        copy.year = this.year;
+        
+        return copy;
     }
 }

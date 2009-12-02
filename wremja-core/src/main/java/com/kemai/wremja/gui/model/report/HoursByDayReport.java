@@ -24,10 +24,6 @@ public class HoursByDayReport extends HoursByPeriodReport<HoursByDay>  {
 
     @Override
     public void addHours(final ProjectActivity activity) {
-        if( !filterMatches(activity)) {
-            return;
-        }
-
         final HoursByDay newHoursByDay = new HoursByDay(activity.getStart(), activity.getDuration());
         addHoursByPeriod(newHoursByDay);
     }
