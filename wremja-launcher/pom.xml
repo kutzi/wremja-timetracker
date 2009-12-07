@@ -44,19 +44,9 @@
   
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
     	<groupId>com.kenai.wremja</groupId>
     	<artifactId>wremja-core</artifactId>
     	<version>1.2.2-SNAPSHOT</version>
     </dependency>
-	<dependency>
-	  <groupId>findbugs</groupId>
-	  <artifactId>annotations</artifactId>
-	</dependency>
   </dependencies>
 </project>
