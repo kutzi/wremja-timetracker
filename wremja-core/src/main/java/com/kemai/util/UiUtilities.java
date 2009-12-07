@@ -42,12 +42,14 @@ import com.kemai.wremja.logging.Logger;
 /**
  * Provides utilities for UI stuff.
  * 
+ * Based on the same class from Tv-Browser (www.tvbrowser.org)
+ * 
  * @author Til Schneider, www.murfman.de
  * @author MadMan
  */
 public class UiUtilities {
 
-    private static final Logger log = Logger.getLogger(UiUtilities.class);
+    private static final Logger LOG = Logger.getLogger(UiUtilities.class);
     
     /**
      * Scale Icons to a specific width. The aspect ratio is kept.
@@ -99,7 +101,7 @@ public class UiUtilities {
             return new ImageIcon(iconimage);
 
         } catch (Exception e) {
-            log.error(e, e);
+            LOG.error(e, e);
         }
 
         return icon;
@@ -115,8 +117,6 @@ public class UiUtilities {
      * @param y
      *            new Y-Value
      * @return Scaled BufferedImage
-     * 
-     * @since 2.5
      */
     public static BufferedImage scaleIconToBufferedImage(BufferedImage img,
             int x, int y) {
@@ -135,8 +135,6 @@ public class UiUtilities {
      * @param type
      *            The type of the image.
      * @return Scaled BufferedImage
-     * 
-     * @since 2.7
      */
     public static BufferedImage scaleIconToBufferedImage(Image img, int x,
             int y, int type) {
@@ -154,7 +152,7 @@ public class UiUtilities {
     }
 
     /**
-     * Returns the mnemonic a UI resource in the given locale.
+     * Returns the mnemonic for a UI resource in the given locale.
      * 
      * @param key The key of the UI resource e.g. "OptionPane.cancelButtonMnemonic"
      * @param l The locale
