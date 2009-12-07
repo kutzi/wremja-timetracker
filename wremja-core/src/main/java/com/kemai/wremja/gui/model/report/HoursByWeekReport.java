@@ -15,7 +15,7 @@ import com.kemai.wremja.model.filter.Filter;
 public class HoursByWeekReport extends HoursByPeriodReport<HoursByWeek>  {
 
     public HoursByWeekReport(final PresentationModel model) {
-        super(model);
+        super(model, adaptFilter(model.getFilter()));
     }
     
     @Override
@@ -37,9 +37,14 @@ public class HoursByWeekReport extends HoursByPeriodReport<HoursByWeek>  {
     
     @Override
     protected void setFilter(final Filter filter) {
-        Filter copy = filter.copy();
+    	Filter adapted = adaptFilter(filter);
+        super.setFilter(adapted);
+    }
+    
+    private static Filter adaptFilter(final Filter filter) {
+    	Filter copy = filter.copy();
         // we mustn't filter by day for this report!
         copy.setDayOfWeek(SettingsConstants.ALL_ITEMS_FILTER_DUMMY);
-        super.setFilter(copy);
+        return copy;
     }
 }

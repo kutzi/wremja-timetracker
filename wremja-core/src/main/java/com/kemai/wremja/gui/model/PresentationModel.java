@@ -27,6 +27,7 @@ import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.events.WremjaEvent.Type;
+import com.kemai.wremja.gui.lists.ProjectFilterList;
 import com.kemai.wremja.gui.model.edit.EditStack;
 import com.kemai.wremja.gui.model.report.HoursByDayReport;
 import com.kemai.wremja.gui.model.report.HoursByProjectReport;
@@ -147,13 +148,20 @@ public class PresentationModel extends Observable {
 
         this.activitiesList.clear();
 
-        // Set restored filter from settings
-        setFilter(this.settings.restoreFromSettings(), this);
+        // a) restore (most of) filter from settings
+        Filter filter = this.settings.restoreFromSettings();
 
         // b) restore project (can be done here only as we need to search all projects)
         final long selectedProjectId = this.settings.getFilterSelectedProjectId(SettingsConstants.ALL_ITEMS_FILTER_DUMMY);
-        filter.setProject(this.data.findProjectById(selectedProjectId));
-        applyFilter();
+        if (selectedProjectId > 0) {
+        	filter.setProject(this.data.findProjectById(selectedProjectId));
+        } else {
+        	// ugly HACK
+        	if (selectedProjectId == ProjectFilterList.BILLABLE_PROJECTS_DUMMY.getId()) {
+        		filter.setOnlyBillable(true);
+        	}
+        }
+        setFilter(filter, this);
 
         this.description = this.settings.getLastDescription();
 

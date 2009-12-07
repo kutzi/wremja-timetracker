@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
+import com.kemai.util.DateUtils;
 import com.kemai.util.Predicate;
 import com.kemai.wremja.gui.settings.SettingsConstants;
 import com.kemai.wremja.model.Project;
@@ -308,5 +309,16 @@ public class Filter {
         copy.year = this.year;
         
         return copy;
+    }
+
+	public boolean matchesProject(Project project) {
+	    Predicate<ProjectActivity> projectPredicate = this.predicates.get(PROJECT_PREDICATE);
+	    if (projectPredicate != null) {
+	    	DateTime now = DateUtils.getNow();
+	    	ProjectActivity dummy = new ProjectActivity(now, now.plusMinutes(1), project);
+	    	return projectPredicate.evaluate(dummy);
+	    } else {
+	    	return true;
+	    }
     }
 }

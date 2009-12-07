@@ -25,16 +25,19 @@ public abstract class HoursByPeriodReport<E extends HoursPer> extends Observable
 
     private Filter filter;
     
-    HoursByPeriodReport(final PresentationModel model) {
-        this.model = model;
-        this.filter = model.getFilter();
+    protected HoursByPeriodReport(final PresentationModel model) {
+        this(model, model.getFilter());
+    }
+    
+    protected HoursByPeriodReport(PresentationModel model, Filter filter) {
+    	this.model = model;
+        this.filter = filter;
         this.model.addObserver(this);
 
         calculateHours();
     }
-    
-    
-    public EventList<E> getHoursByPeriod() {
+
+	public EventList<E> getHoursByPeriod() {
         return this.hoursByPeriodList;
     }
     
@@ -56,7 +59,9 @@ public abstract class HoursByPeriodReport<E extends HoursPer> extends Observable
             }
         }
         
-        if( this.model.isActive() && this.filter.matchesNow() ) {
+        if( this.model.isActive()
+            && this.filter.matchesNow()
+            && this.filter.matchesProject(this.model.getSelectedProject())) {
             // add hours of current activity
             addCurrentHours();
         } else {
