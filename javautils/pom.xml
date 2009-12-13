@@ -90,6 +90,13 @@
             <classifier>jdk15</classifier>
             <scope>test</scope>
         </dependency>
+        <!-- TestNG has no proper arrayEquals -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <!-- animal-sniffer annotations -->
             <groupId>org.jvnet</groupId>

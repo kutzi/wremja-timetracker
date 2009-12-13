@@ -19,13 +19,19 @@
  */
 package org.wremja.launcher;
 
+import java.awt.Desktop;
 import java.awt.Frame;
 import java.awt.SystemTray;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
@@ -33,18 +39,27 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.jdesktop.swingx.plaf.LookAndFeelAddons;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.xmlpull.mxp1.MXParser;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.kemai.util.CollectionUtils;
 import com.kemai.util.TextResourceBundle;
+import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.MainFrame;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.model.ProjectActivityStateException;
@@ -57,6 +72,8 @@ import com.kemai.wremja.logging.BetterFormatter;
 import com.kemai.wremja.logging.Logger;
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.io.ProTrackReader;
+
+import de.kutzi.javautils.misc.MavenVersion;
 
 /**
  * Controls the lifecycle of the application.
@@ -81,6 +98,8 @@ public final class Launcher {
     private Boolean minimized;
 
     private boolean debug = false;
+
+	private boolean updateCheck;
 
 	private static boolean firstStart;
 
@@ -143,6 +162,8 @@ public final class Launcher {
             initTimer(model);
 
             initShutdownHook(model);
+            
+            mainInstance.checkForUpdates();
         } catch (Throwable t) {
             LOG.error(t, t);
             JOptionPane.showMessageDialog(
@@ -154,8 +175,8 @@ public final class Launcher {
             System.exit(-1);
         }
     }
-    
-    private void initDir() {
+
+	private void initDir() {
     	File wremjaDataDir = ApplicationSettings.instance().getApplicationDataDirectory();
     	if(!wremjaDataDir.exists()) {
     		firstStart = true;
@@ -175,10 +196,12 @@ public final class Launcher {
         }
 
         for (String argument : arguments) {
-            if (argument.startsWith("-m=")) {
-                this.minimized = Boolean.valueOf(argument.substring("-m=".length()));
+            if (argument.startsWith("--minimized")) {
+                this.minimized = Boolean.TRUE;
             } else if (argument.startsWith("--debug")) {
                 this.debug  = true;
+            } else if (argument.startsWith("--updateCheck")) {
+            	this.updateCheck = true;
             }
         }
 
@@ -592,5 +615,146 @@ public final class Launcher {
         if (!deleteSuccessfull) {
             LOG.warn("Could not delete lock file at " + lockFile.getAbsolutePath() + ". Please delete manually.");
         }
+    }
+    
+    private static final URL UPDATE_URL;
+    private static final String DOWNLOAD_URL = "http://kenai.com/projects/wremja/downloads";
+    static {
+    	URL url;
+    	try {
+	        //url = new URL("http://oss.sonatype.org/content/repositories/kenai-snapshots/com/kenai/wremja/wremja-installer/maven-metadata.xml");
+	        url = new URL("http://oss.sonatype.org/content/repositories/kenai-releases/com/kenai/wremja/wremja-installer/maven-metadata.xml");
+        } catch (MalformedURLException e) {
+	        LOG.error("", e);
+	        url = null;
+        }
+        UPDATE_URL = url;
+    }
+    
+    private void checkForUpdates() {
+    	
+    	if (!this.updateCheck) {
+    		return;
+    	}
+    	
+    	SwingWorker<String, Object> checker = new SwingWorker<String, Object>() {
+    		
+    		private String newerVersion;
+    		
+			@Override
+			public String doInBackground() {
+		    	try {
+		    		TimeUnit.SECONDS.sleep(3);
+			        boolean hasInternet = false;
+			        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			        while (interfaces.hasMoreElements()) {
+			          NetworkInterface interf = interfaces.nextElement();
+			          if (interf.isUp()) {
+			        	  if (!interf.isLoopback()) {
+			        		hasInternet = true;
+			        		break;
+			        	  }
+			          }
+			        }
+			        
+			        if (!hasInternet) {
+			        	//System.out.println("No Internet connection found");
+			        	return null;
+			        } else {
+			        	//System.out.println("Internet connection found!");
+			        	MavenVersion currentVersion
+			        		= MavenVersion.fromString(GuiConstants.WREMJA_VERSION);
+			        	
+			        	URLConnection conn = UPDATE_URL.openConnection();
+			        	
+			        	XmlPullParser parser = new MXParser();
+			        	parser.setInput(conn.getInputStream(), null);
+
+			        	while (true) {
+			        		int eventType = parser.next();
+			        		
+			        		if(eventType == XmlPullParser.END_DOCUMENT) {
+			        			break;
+			        		}
+			        		
+			        		if (eventType == XmlPullParser.START_TAG) {
+			        			if ("versioning".equals(parser.getName())) {
+			        				parser.nextTag();
+			        				if ("versions".equals(parser.getName())) {
+			        					this.newerVersion = getNewerVersion(parser, currentVersion);
+			        					return newerVersion;
+			        				}
+			        			}
+			        		}
+			        	}
+			        }
+		        } catch (Exception e) {
+			        LOG.warn("", e);
+		        }
+		        return null;
+			}
+
+			private String getNewerVersion(XmlPullParser parser,
+                    MavenVersion currentVersion) throws XmlPullParserException, IOException {
+	            while (true) {
+	            	int eventType = parser.next();
+	            	
+	            	if (eventType == XmlPullParser.END_TAG) {
+	            		if ("versions".equals(parser.getName())) {
+	            			return null;
+	            		}
+	            	}
+	            	
+	            	if (eventType == XmlPullParser.START_TAG) {
+	            		if ("version".equals(parser.getName())) {
+	            			String versionStr = parser.nextText();
+	            			if (versionStr != null) {
+	            				MavenVersion version = MavenVersion.fromString(versionStr.trim());
+	            				if (version.isGreaterThan(currentVersion)) {
+	            					return versionStr;
+	            				}
+	            			}
+	            		}
+	            	}
+	            }
+            }
+
+			@Override
+            protected void done() {
+				if (newerVersion != null) {
+					// TODO: use mainFrame as parent
+					
+					JEditorPane msg = new JEditorPane();
+					msg.setEditable(false);
+					msg.setContentType("text/html");
+					msg.setText("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">" +
+							"<html>" +
+							"<head>" +
+							"<style>\n" + 
+							"    a {text-decoration: underline; color: blue}\n" + 
+							"</style>\n" + 
+							"</head><body>A newer version (" +
+							newerVersion + ") of Wremja is available.<br>Please download it from"
+									+ " <a href=\"" + DOWNLOAD_URL + "\">here</a>.</body></html>!");
+					msg.addHyperlinkListener(new HyperlinkListener() {
+						@Override
+						public void hyperlinkUpdate(HyperlinkEvent e) {
+							if (e.getEventType().equals(EventType.ACTIVATED)) {
+								try {
+		                            Desktop.getDesktop().browse(e.getURL().toURI());
+	                            } catch (Exception e1) {
+		                            LOG.error("", e1);
+	                            }
+							}
+						}
+					});
+					JOptionPane.showMessageDialog(null, msg);
+				}
+            }
+			
+			
+			
+		};
+		checker.execute();
     }
 }
