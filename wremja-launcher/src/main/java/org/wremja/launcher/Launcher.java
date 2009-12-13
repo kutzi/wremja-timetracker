@@ -681,11 +681,7 @@ public final class Launcher {
 			        		
 			        		if (eventType == XmlPullParser.START_TAG) {
 			        			if ("versioning".equals(parser.getName())) {
-			        				parser.nextTag();
-			        				if ("versions".equals(parser.getName())) {
-			        					this.newerVersion = getNewerVersion(parser, currentVersion);
-			        					return newerVersion;
-			        				}
+			        				return parseVersioningElement(parser, currentVersion);
 			        			}
 			        		}
 			        	}
@@ -695,6 +691,33 @@ public final class Launcher {
 		        }
 		        return null;
 			}
+
+			private String parseVersioningElement(XmlPullParser parser, MavenVersion currentVersion) throws XmlPullParserException, IOException {
+				while (true) {
+					int eventType = parser.next();
+					
+					if(eventType == XmlPullParser.START_TAG
+							&& "release".equals(parser.getName())) {
+						String versionStr = parser.nextText();
+            			if (versionStr != null) {
+            				MavenVersion version = MavenVersion.fromString(versionStr.trim());
+            				if (version.isGreaterThan(currentVersion)) {
+            					return versionStr;
+            				}
+            			}
+					}
+					
+//    				if ("versions".equals(parser.getName())) {
+//    					this.newerVersion = getNewerVersion(parser, currentVersion);
+//    					return newerVersion;
+//    				}
+					
+					if (eventType == XmlPullParser.END_TAG
+							&& "versioning".equals(parser.getName())) {
+						return null;
+					}
+				}
+            }
 
 			private String getNewerVersion(XmlPullParser parser,
                     MavenVersion currentVersion) throws XmlPullParserException, IOException {
