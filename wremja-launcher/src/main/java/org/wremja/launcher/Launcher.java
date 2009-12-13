@@ -702,6 +702,7 @@ public final class Launcher {
             			if (versionStr != null) {
             				MavenVersion version = MavenVersion.fromString(versionStr.trim());
             				if (version.isGreaterThan(currentVersion)) {
+            					this.newerVersion = versionStr.trim();
             					return versionStr;
             				}
             			}
@@ -779,9 +780,6 @@ public final class Launcher {
 					JOptionPane.showMessageDialog(null, msg);
 				}
             }
-			
-			
-			
 		};
 		checker.execute();
     }
