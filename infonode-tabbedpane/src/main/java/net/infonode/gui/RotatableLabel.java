@@ -23,14 +23,17 @@
 // $Id$
 package net.infonode.gui;
 
+import java.awt.Dimension;
+
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.plaf.LabelUI;
+
 import net.infonode.util.Direction;
 
-import javax.swing.*;
-import javax.swing.plaf.LabelUI;
-import java.awt.*;
-
 public class RotatableLabel extends JLabel {
-  private RotatableLabelUI ui = new RotatableLabelUI(Direction.RIGHT);
+    private static final long serialVersionUID = 1L;
+    private RotatableLabelUI ui = new RotatableLabelUI(Direction.RIGHT);
 
   public RotatableLabel(String text) {
     super(text);
@@ -67,7 +70,8 @@ public class RotatableLabel extends JLabel {
     return ui.isMirror();
   }
 
-  public void setUI(LabelUI ui) {
+  @Override
+public void setUI(LabelUI ui) {
     // Ignore
   }
 
@@ -79,31 +83,38 @@ public class RotatableLabel extends JLabel {
     return dim == null ? null : isVertical() ? new Dimension(dim.height, dim.width) : dim;
   }
 
-  public Dimension getPreferredSize() {
+  @Override
+public Dimension getPreferredSize() {
     return rotateDimension(super.getPreferredSize());
   }
 
-  public Dimension getMinimumSize() {
+  @Override
+public Dimension getMinimumSize() {
     return rotateDimension(super.getMinimumSize());
   }
 
-  public Dimension getMaximumSize() {
+  @Override
+public Dimension getMaximumSize() {
     return rotateDimension(super.getMaximumSize());
   }
 
-  public void setMinimumSize(Dimension minimumSize) {
+  @Override
+public void setMinimumSize(Dimension minimumSize) {
     super.setMinimumSize(rotateDimension(minimumSize));
   }
 
-  public void setMaximumSize(Dimension maximumSize) {
+  @Override
+public void setMaximumSize(Dimension maximumSize) {
     super.setMaximumSize(rotateDimension(maximumSize));
   }
 
-  public void setPreferredSize(Dimension preferredSize) {
+  @Override
+public void setPreferredSize(Dimension preferredSize) {
     super.setPreferredSize(rotateDimension(preferredSize));
   }
 
-  public void setOpaque(boolean opaque) {
+  @Override
+public void setOpaque(boolean opaque) {
   }
 
 }

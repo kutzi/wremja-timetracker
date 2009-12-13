@@ -31,7 +31,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractButton;
 import javax.swing.BoxLayout;
@@ -49,8 +50,11 @@ import javax.swing.event.PopupMenuListener;
 import net.infonode.gui.panel.SimplePanel;
 
 public class PopupList extends SimplePanel {
+    private static final long serialVersionUID = 1L;
+
   private static class PopupButtonModel extends DefaultButtonModel {
-    private boolean pressed;
+    private static final long serialVersionUID = 1L;
+	private boolean pressed;
 
     @Override
     public boolean isPressed() {
@@ -69,7 +73,8 @@ public class PopupList extends SimplePanel {
   }
 
   private class Popup extends JPopupMenu {
-    private JList list = new JList();
+    private static final long serialVersionUID = 1L;
+	private JList list = new JList();
     private JScrollPane scrollPane = new JScrollPane(list,
                                                      JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -178,7 +183,7 @@ public class PopupList extends SimplePanel {
   }
 
   private Popup popup = new Popup();
-  private ArrayList listeners = new ArrayList(1);
+  private List<PopupListListener> listeners = new CopyOnWriteArrayList<PopupListListener>();
 
   public PopupList(AbstractButton component) {
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -246,8 +251,7 @@ public void updateUI() {
   }
 
   private void fireWillBecomeVisible() {
-    Object[] l = listeners.toArray();
-    for (int i = 0; i < l.length; i++)
-      ((PopupListListener) l[i]).willBecomeVisible(this);
+    for (PopupListListener l : listeners)
+      l.willBecomeVisible(this);
   }
 }

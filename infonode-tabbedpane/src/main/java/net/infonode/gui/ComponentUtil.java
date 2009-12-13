@@ -80,7 +80,7 @@ public class ComponentUtil {
     return null;
   }
 
-  public static void getComponentTreePosition(Component c, List pos) {
+  public static void getComponentTreePosition(Component c, List<Integer> pos) {
     if (c.getParent() == null) {
       return;
     }
@@ -196,7 +196,7 @@ public class ComponentUtil {
     return false;
   }
 
-  public static Component findFirstComponentOfType(Component comp, Class c) {
+  public static Component findFirstComponentOfType(Component comp, Class<? extends Component> c) {
     if (c.isInstance(comp))
       return comp;
 

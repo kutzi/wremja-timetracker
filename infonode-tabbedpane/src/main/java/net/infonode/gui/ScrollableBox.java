@@ -23,18 +23,25 @@
 
 package net.infonode.gui;
 
-import net.infonode.gui.layout.LayoutUtil;
-import net.infonode.gui.panel.SimplePanel;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.LayoutManager;
+import java.awt.Point;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
+import javax.swing.JComponent;
+
+import net.infonode.gui.layout.LayoutUtil;
+import net.infonode.gui.panel.SimplePanel;
+
 public class ScrollableBox extends SimplePanel {
+  private static final long serialVersionUID = 1L;
+
   private LayoutManager l = new LayoutManager() {
     public void addLayoutComponent(String name, Component comp) {
     }
@@ -260,7 +267,8 @@ public class ScrollableBox extends SimplePanel {
     }
   }
 
-  public void updateUI() {
+  @Override
+public void updateUI() {
     super.updateUI();
     if (listeners != null)
       fireChanged();
