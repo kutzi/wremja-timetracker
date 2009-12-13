@@ -2,14 +2,14 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>com.kenai.wremja</groupId>
-    <version>1.2.2</version>
+    <version>1.2.3-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>wremja-launcher</artifactId>
   <name>wremja-launcher</name>
   <description>The launcher for Wremja</description>
-  <version>1.2.2</version>
+  <version>1.2.3-SNAPSHOT</version>
   <url>http://kenai.com/projects/wremja/pages/Home</url>
   
   <build>
@@ -46,7 +46,7 @@
     <dependency>
     	<groupId>com.kenai.wremja</groupId>
     	<artifactId>wremja-core</artifactId>
-    	<version>1.2.2</version>
+    	<version>1.2.3-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>
