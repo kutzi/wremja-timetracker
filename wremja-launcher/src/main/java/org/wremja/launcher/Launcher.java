@@ -19,6 +19,7 @@
  */
 package org.wremja.launcher;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Frame;
 import java.awt.SystemTray;
@@ -33,6 +34,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -725,6 +727,9 @@ public final class Launcher {
 					// TODO: use mainFrame as parent
 					
 					JEditorPane msg = new JEditorPane();
+					
+					Color bg = (Color) UIManager.get("OptionPane.background", Locale.getDefault());
+					msg.setBackground(bg);
 					msg.setEditable(false);
 					msg.setContentType("text/html");
 					msg.setText("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">" +
