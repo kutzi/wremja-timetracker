@@ -19,7 +19,6 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.gui.GuiConstants;
-import com.kemai.wremja.gui.settings.ApplicationSettings;
 import com.kemai.wremja.logging.Logger;
 
 /**
@@ -53,7 +52,6 @@ public class AboutDialog extends EscapeDialog {
 	        initialize();
         } catch (MalformedURLException e) {
 	        LOGGER.error("", e);
-	        e.printStackTrace();
         }
     }
 
@@ -93,12 +91,12 @@ public class AboutDialog extends EscapeDialog {
         this.add(aboutInfo, BorderLayout.CENTER);
       
         // Get storage mode from ApplicationSettings
-        String storageMode = null;
-        if (ApplicationSettings.instance().isStoreDataInApplicationDirectory()) {
-            storageMode = textBundle.textFor("Settings.DataStorage.PortableLabel");
-        } else {
-            storageMode = textBundle.textFor("Settings.DataStorage.NormalLabel");
-        }
+//        String storageMode = null;
+//        if (ApplicationSettings.instance().isStoreDataInApplicationDirectory()) {
+//            storageMode = textBundle.textFor("Settings.DataStorage.PortableLabel");
+//        } else {
+//            storageMode = textBundle.textFor("Settings.DataStorage.NormalLabel");
+//        }
         
         
         String javaVersion = System.getProperty("java.version");
@@ -108,7 +106,7 @@ public class AboutDialog extends EscapeDialog {
         		":</b> " + GuiConstants.WREMJA_VERSION +
         		"<br><b>Revision:</b> " + GuiConstants.WREMJA_REVISION +
         		"<br><b>Timestamp:</b> " + GuiConstants.WREMJA_TIMESTAMP +
-        		"<br><b>Application mode:</b> " + storageMode +
+        		//"<br><b>Application mode:</b> " + storageMode +
         		"<br><b>Java version:</b> " + javaVersion + "</h2></font>" +
         		"</html>";
         final JLabel versionLabel = new JXLabel(versionInfo, JLabel.CENTER);
@@ -118,7 +116,6 @@ public class AboutDialog extends EscapeDialog {
         this.getContentPane().setBackground(GuiConstants.BEIGE);
         this.add(image, BorderLayout.NORTH);
         
-        //this.setSize(280, 290);
         this.pack();
     }
     
