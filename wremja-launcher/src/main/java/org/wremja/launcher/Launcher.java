@@ -103,6 +103,8 @@ public final class Launcher {
 
 	private boolean updateCheck;
 
+    private MainFrame mainFrame;
+
 	private static boolean firstStart;
 
     /** The daemon to periodically save to disk. */
@@ -217,7 +219,7 @@ public final class Launcher {
      */
     private MainFrame initMainFrame(PresentationModel model, IUserSettings settings) throws Exception {
         LOG.debug("Initializing main frame ...");
-        final MainFrame mainFrame = new MainFrame(model, settings);
+        this.mainFrame = new MainFrame(model, settings);
         
         boolean minimized = false;
         if( this.minimized != null ) {
@@ -695,23 +697,26 @@ public final class Launcher {
 			private String parseVersioningElement(XmlPullParser parser, MavenVersion currentVersion) throws XmlPullParserException, IOException {
 				while (true) {
 					int eventType = parser.next();
+	
+					// seems like <release> is not necessarily what we want:
+					// http://www.sonatype.com/people/2009/12/maven-dependency-resolution-a-repository-perspective/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+sonatype+%28Sonatype+Blogs%29&utm_content=Google+Reader
 					
-					if(eventType == XmlPullParser.START_TAG
-							&& "release".equals(parser.getName())) {
-						String versionStr = parser.nextText();
-            			if (versionStr != null) {
-            				MavenVersion version = MavenVersion.fromString(versionStr.trim());
-            				if (version.isGreaterThan(currentVersion)) {
-            					this.newerVersion = versionStr.trim();
-            					return versionStr;
-            				}
-            			}
-					}
+//					if(eventType == XmlPullParser.START_TAG
+//							&& "release".equals(parser.getName())) {
+//						String versionStr = parser.nextText();
+//            			if (versionStr != null) {
+//            				MavenVersion version = MavenVersion.fromString(versionStr.trim());
+//            				if (version.isGreaterThan(currentVersion)) {
+//            					this.newerVersion = versionStr.trim();
+//            					return versionStr;
+//            				}
+//            			}
+//					}
 					
-//    				if ("versions".equals(parser.getName())) {
-//    					this.newerVersion = getNewerVersion(parser, currentVersion);
-//    					return newerVersion;
-//    				}
+    				if (eventType == XmlPullParser.START_TAG && "versions".equals(parser.getName())) {
+    					this.newerVersion = getNewerVersion(parser, currentVersion);
+    					return newerVersion;
+    				}
 					
 					if (eventType == XmlPullParser.END_TAG
 							&& "versioning".equals(parser.getName())) {
@@ -748,8 +753,6 @@ public final class Launcher {
 			@Override
             protected void done() {
 				if (newerVersion != null) {
-					// TODO: use mainFrame as parent
-					
 					JEditorPane msg = new JEditorPane();
 					
 					Color bg = (Color) UIManager.get("OptionPane.background", Locale.getDefault());
@@ -777,7 +780,7 @@ public final class Launcher {
 							}
 						}
 					});
-					JOptionPane.showMessageDialog(null, msg);
+					JOptionPane.showMessageDialog(mainFrame, msg);
 				}
             }
 		};
