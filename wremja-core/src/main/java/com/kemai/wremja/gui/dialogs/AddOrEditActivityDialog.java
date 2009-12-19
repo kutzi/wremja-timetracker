@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.ParseException;
 
 import javax.swing.BorderFactory;
@@ -92,6 +94,8 @@ public class AddOrEditActivityDialog extends EscapeDialog {
 
     /** Selects the date of the activity. */
     private final JDateTimePicker datePicker = new JDateTimePicker(new DateTime());
+    
+    private boolean submitted = false;
 
     /** The description of the activity. */
     private final TextEditor descriptionEditor = new TextEditor(true, false);
@@ -283,55 +287,73 @@ public class AddOrEditActivityDialog extends EscapeDialog {
 
             // Confirm with 'Enter' key
             submitActivityButton.setMnemonic(KeyEvent.VK_ENTER);
+            
+            submitActivityButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					// there's a strange bug on Linux/Gnome (of course)
+					// that the action listener is not called on the 1st mouse click
+					// (button only gets the focus, but ActionListener is not called)
+					// Therefore this here
+					submitActivity();
+				}
+			});
 
             submitActivityButton.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent event) {
-                    // Validate
-                    if (!AddOrEditActivityDialog.this.validateFields()) {
-                        return;
-                    }
-
-                    final ProjectActivity activity = new ProjectActivity(
-                            start, 
-                            end, 
-                            project,
-                            descriptionEditor.getText()
-                    );
-
-                    try {
-	                    // Check if we're in edit or add mode
-	                    if (oldActivity == null) {
-	                        model.addActivity(activity, this);
-	                    } else {
-	                        final ProjectActivity oldActivity = AddOrEditActivityDialog.this.oldActivity;
-	
-	                        final boolean activitiesEqual = activity.getStart().equals(oldActivity.getStart()) 
-	                        && activity.getEnd().equals(oldActivity.getEnd())
-	                        && activity.getProject().equals(oldActivity.getProject())
-	                        && activity.getDescription().equals(oldActivity.getDescription());
-	                        
-	                        if (!activitiesEqual) {
-	                            model.replaceActivity(oldActivity, activity, AddOrEditActivityDialog.this);
-	                        }
-	                    }
-	                    AddOrEditActivityDialog.this.dispose();
-                    } catch(OverlappingActivitiesException e) {
-                        final String title = "Overlap!";//textBundle.textFor("AddOrEditActivityDialog.Error.Title");
-                        final String message = "Overlapping activities detected!";//textBundle.textFor("AddOrEditActivityDialog.Error.InvalidStartEnd");
-
-                        JOptionPane.showMessageDialog(
-                                AddOrEditActivityDialog.this, 
-                                message,
-                                title, 
-                                JOptionPane.ERROR_MESSAGE
-                        );
-                    }
+                	submitActivity();
                 }
             });
-
-            submitActivityButton.setDefaultCapable(true);
         }
         return submitActivityButton;
+    }
+    
+    private void submitActivity() {
+    	if (submitted) {
+    		return;
+    	}
+    	
+        // Validate
+        if (!AddOrEditActivityDialog.this.validateFields()) {
+            return;
+        }
+
+        final ProjectActivity activity = new ProjectActivity(
+                start, 
+                end, 
+                project,
+                descriptionEditor.getText()
+        );
+
+        try {
+            // Check if we're in edit or add mode
+            if (oldActivity == null) {
+                model.addActivity(activity, this);
+            } else {
+                final ProjectActivity oldActivity = AddOrEditActivityDialog.this.oldActivity;
+
+                final boolean activitiesEqual = activity.getStart().equals(oldActivity.getStart()) 
+                && activity.getEnd().equals(oldActivity.getEnd())
+                && activity.getProject().equals(oldActivity.getProject())
+                && activity.getDescription().equals(oldActivity.getDescription());
+                
+                if (!activitiesEqual) {
+                    model.replaceActivity(oldActivity, activity, AddOrEditActivityDialog.this);
+                }
+            }
+            submitted = true;
+            AddOrEditActivityDialog.this.dispose();
+        } catch(OverlappingActivitiesException e) {
+            final String title = textBundle.textFor("AddOrEditActivityDialog.OverlapError.Title");
+            final String message = textBundle.textFor("AddOrEditActivityDialog.OverlapError.Text");
+
+            JOptionPane.showMessageDialog(
+                    AddOrEditActivityDialog.this, 
+                    message,
+                    title, 
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     /**
