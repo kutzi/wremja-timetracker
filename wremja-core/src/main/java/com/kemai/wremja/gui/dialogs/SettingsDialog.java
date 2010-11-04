@@ -263,19 +263,6 @@ public class SettingsDialog extends EscapeDialog {
         readFromSettings();
         
         addSaveEnabler();
-        
-    	
-    	allowOverlappingActivities.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(!allowOverlappingActivities.isSelected()) {
-					JOptionPane.showMessageDialog(SettingsDialog.this,
-	                		"Note that disabling this option should be considered experimental!\nPress 'Cancel' if you're not sure.",
-	                		 "Warning", JOptionPane.WARNING_MESSAGE);
-				}
-			}
-		});
-
     }
 
 	private void addSaveEnabler() {

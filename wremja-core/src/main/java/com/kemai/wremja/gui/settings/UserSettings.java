@@ -448,7 +448,7 @@ public final class UserSettings implements IUserSettings {
      * @see com.kemai.wremja.gui.settings.IUserSettings#isDiscardEmptyActivities()
      */
     public boolean isDiscardEmptyActivities() {
-        return doGetBoolean(DISCARD_EMPTY_ACTIVITIES, false);
+        return doGetBoolean(DISCARD_EMPTY_ACTIVITIES, true);
     }
     /* (non-Javadoc)
      * @see com.kemai.wremja.gui.settings.IUserSettings#setDiscardEmptyActivities(boolean)
@@ -496,7 +496,7 @@ public final class UserSettings implements IUserSettings {
      */
     @Override
     public boolean isAllowOverlappingActivities() {
-    	return doGetBoolean(ALLOW_OVERLAPPING_ACTIVITIES, true);
+    	return doGetBoolean(ALLOW_OVERLAPPING_ACTIVITIES, false);
     }
     
     /* (non-Javadoc)
