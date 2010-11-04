@@ -2,7 +2,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>wremja-installer</artifactId>
 	<packaging>jar</packaging>
-	<version>1.2.3-SNAPSHOT</version>
 	<name>Wremja Installer</name>
         <description>This module generates the installer files for Wremja</description>
 	<url>http://kenai.com/projects/wremja/pages/Home</url>

@@ -9,8 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>wremja-core</artifactId>
 	<name>Wremja core application</name>
-        <description>The core files (i.e. the businesslogic) of Wremja</description>
-	<version>1.2.3-SNAPSHOT</version>
+    <description>The core files (i.e. the businesslogic) of Wremja</description>
 	
 	<build>
 		<resources>
