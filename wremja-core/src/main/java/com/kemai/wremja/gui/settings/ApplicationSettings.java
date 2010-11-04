@@ -26,7 +26,15 @@ public final class ApplicationSettings {
     //------------------------------------------------
 
     /** Default data directory. */
-    public static final File dataDirectoryDefault = new File(System.getProperty("user.home"), ".wremja"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final File dataDirectoryDefault;
+    
+    static {
+    	if (System.getProperty("wremja.datadir") != null) {
+    		dataDirectoryDefault = new File(System.getProperty("wremja.datadir"));
+    	} else {
+    		dataDirectoryDefault = new File(System.getProperty("user.home"), ".wremja"); //$NON-NLS-1$ //$NON-NLS-2$
+    	}
+    }
     
     /** The singleton instance. */
     private static final ApplicationSettings instance = new ApplicationSettings();
