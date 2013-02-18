@@ -31,8 +31,8 @@
     </licenses>
     
     <scm>
-        <developerConnection>scm:svn:https://kenai.com/svn/wremja~svn/trunk</developerConnection>
-        <url>https://kenai.com/svn/wremja~svn/trunk</url>
+        <developerConnection>scm:git:git@github.com:kutzi/wremja-timetracker.git</developerConnection>
+        <url>https://github.com/kutzi/wremja-timetracker.git</url>
     </scm>
     <modules>
         <module>infonode-tabbedpane</module>
@@ -108,7 +108,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>1.0-beta-4</version>
+                    <version>1.2</version>
                     <executions>
                         <execution>
                             <phase>validate</phase>
@@ -185,30 +185,35 @@
     </build>
     <repositories>
         <repository>
-            <id>maven2-repository.dev.java.net</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/
-            </url>
+            <id>central</id>
+            <name>Maven central</name>
+            <url>http://repo1.maven.org/maven2/</url>
         </repository>
-        <repository>
-            <id>maven2-repository.atlassian.com
-            </id>
-            <name>Atlassian Repository for Maven</name>
-            <url>https://maven.atlassian.com/repository/public
-            </url>
-        </repository>
-        <repository>
-            <id>mirrors.ibiblio.org</id>
-            <name>Ibiblio Repository for Maven</name>
-            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2
-            </url>
-        </repository>
-        <repository>
+<!--         <repository> -->
+<!--             <id>maven2-repository.dev.java.net</id> -->
+<!--             <name>Java.net Repository for Maven</name> -->
+<!--             <url>http://download.java.net/maven/2/ -->
+<!--             </url> -->
+<!--         </repository> -->
+<!--         <repository> -->
+<!--             <id>maven2-repository.atlassian.com -->
+<!--             </id> -->
+<!--             <name>Atlassian Repository for Maven</name> -->
+<!--             <url>https://maven.atlassian.com/repository/public -->
+<!--             </url> -->
+<!--         </repository> -->
+<!--         <repository> -->
+<!--             <id>mirrors.ibiblio.org</id> -->
+<!--             <name>Ibiblio Repository for Maven</name> -->
+<!--             <url>http://mirrors.ibiblio.org/pub/mirrors/maven2 -->
+<!--             </url> -->
+<!--         </repository> -->
+        <!-- <repository>
             <id>repository.jboss.org</id>
             <name>JBoss Repository for Maven</name>
             <url>http://repository.jboss.org/maven2
             </url>
-        </repository>
+        </repository> -->
         <repository>
             <id>projectlombok.org</id>
             <url>http://projectlombok.org/mavenrepo</url>
@@ -318,7 +323,7 @@
             <dependency>
                 <groupId>net.sourceforge.jexcelapi</groupId>
                 <artifactId>jxl</artifactId>
-                <version>2.6.8</version>
+                <version>2.6.12</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
