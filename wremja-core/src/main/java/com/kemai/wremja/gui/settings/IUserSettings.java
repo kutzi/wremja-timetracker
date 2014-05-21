@@ -153,4 +153,8 @@ public interface IUserSettings {
     boolean getBooleanProperty(String key, boolean defaultValue);
 
     void setBooleanProperty(String key, boolean value);
+    
+    String getTimeZone();
+    
+    void setTimeZone(String tz);
 }

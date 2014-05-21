@@ -35,6 +35,7 @@ import java.nio.channels.FileLock;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -52,6 +53,7 @@ import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.jdesktop.swingx.plaf.LookAndFeelAddons;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -159,6 +161,12 @@ public final class Launcher {
 
             @SuppressWarnings("deprecation")
             IUserSettings settings = UserSettings.instance();
+            
+            TimeZone tz = TimeZone.getTimeZone(settings.getTimeZone());
+            LOG.info("Using timezone: " + tz);
+            TimeZone.setDefault(tz);
+            DateTimeZone.setDefault(DateTimeZone.forTimeZone(tz));
+            
             final PresentationModel model = initModel(settings);
 
             mainInstance.initMainFrame(model, settings);

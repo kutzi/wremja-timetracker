@@ -155,8 +155,17 @@ public class UserSettingsAdapter implements IUserSettings {
     @Override
     public void setDurationFormat(String format) {
     }
-
+    
     @Override
+	public String getTimeZone() {
+		return null;
+	}
+
+	@Override
+	public void setTimeZone(String tz) {
+	}
+
+	@Override
     public void setFilterSelectedMonth(int month) {
     }
 

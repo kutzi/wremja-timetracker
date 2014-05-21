@@ -8,6 +8,7 @@ import static com.kemai.wremja.gui.settings.SettingsConstants.YEAR_FILTER_ENABLE
 import info.clearthought.layout.TableLayout;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -26,10 +27,15 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.jdesktop.swingx.JXHeader;
+import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXTextField;
 
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.util.TextResourceBundle;
@@ -115,6 +121,11 @@ public class SettingsDialog extends EscapeDialog {
         durationFormat.setRenderer(renderer);
     }
     
+    private JTextField timeZone = new JTextField("Time Zone");
+    {
+    	timeZone.setPreferredSize(new Dimension(250, 20));
+    }
+    
     private final JCheckBox projectFilter = new JCheckBox(text("SettingsDialog.Setting.ProjectFilter.Title"));
     private final JCheckBox yearFilter = new JCheckBox(text("SettingsDialog.Setting.YearFilter.Title"));
     private final JCheckBox monthFilter = new JCheckBox(text("SettingsDialog.Setting.MonthFilter.Title"));
@@ -182,6 +193,7 @@ public class SettingsDialog extends EscapeDialog {
                 settings.setUseTrayIcon(useTrayicon.isSelected());
                 settings.setAllowOverlappingActivities(allowOverlappingActivities.isSelected());
                 settings.setDurationFormat(durationFormat.getSelectedItem().toString());
+                settings.setTimeZone(timeZone.getText());
                 
                 settings.setBooleanProperty(PROJECT_FILTER_ENABLED, projectFilter.isSelected());
                 settings.setBooleanProperty(YEAR_FILTER_ENABLED, yearFilter.isSelected());
@@ -233,11 +245,19 @@ public class SettingsDialog extends EscapeDialog {
         generalPanel.add(purgeEmptyActivities, "1, 3, 3, 3"); //$NON-NLS-1$
         generalPanel.add(allowOverlappingActivities, "1, 5, 3, 5"); //$NON-NLS-1$
         generalPanel.add(useTrayicon, "1, 7, 3, 7"); //$NON-NLS-1$
+        
+        JPanel timezonePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        timezonePanel.add(new JLabel("Time Zone"));
+        timezonePanel.add(timeZone);
+        generalPanel.add(timezonePanel, "1, 9, 3, 9");
+        
+        
+        
         JPanel durationFormatPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         durationFormatPanel.add(new JLabel(text("SettingsDialog.Setting.DurationFormat.Title")));
         durationFormatPanel.add(durationFormat);
         
-        generalPanel.add(durationFormatPanel, "1, 9, 3, 9"); //$NON-NLS-1$
+        generalPanel.add(durationFormatPanel, "1, 11, 3, 11"); //$NON-NLS-1$
 
         
         JPanel filterPanel = new JPanel();
@@ -272,12 +292,31 @@ public class SettingsDialog extends EscapeDialog {
 				saveButton.setEnabled(true);
 			}
 		};
+		
+		DocumentListener docListener = new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				saveButton.setEnabled(true);
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				saveButton.setEnabled(true);
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				saveButton.setEnabled(true);
+			}
+		};
         
         rememberWindowSizeLocation.addActionListener(saveEnabler);
         purgeEmptyActivities.addActionListener(saveEnabler);
         allowOverlappingActivities.addActionListener(saveEnabler);
         useTrayicon.addActionListener(saveEnabler);
         durationFormat.addActionListener(saveEnabler);
+        timeZone.getDocument().addDocumentListener(docListener);
         
         this.projectFilter.addActionListener(saveEnabler);
         this.yearFilter.addActionListener(saveEnabler);
@@ -295,6 +334,7 @@ public class SettingsDialog extends EscapeDialog {
         this.allowOverlappingActivities.setSelected(this.settings.isAllowOverlappingActivities());
         this.useTrayicon.setSelected(this.settings.isUseTrayIcon());
         this.durationFormat.setSelectedItem(this.settings.getDurationFormat());
+        this.timeZone.setText(this.settings.getTimeZone());
         
         this.projectFilter.setSelected(this.settings.getBooleanProperty(PROJECT_FILTER_ENABLED, true));
         this.yearFilter.setSelected(this.settings.getBooleanProperty(YEAR_FILTER_ENABLED, true));

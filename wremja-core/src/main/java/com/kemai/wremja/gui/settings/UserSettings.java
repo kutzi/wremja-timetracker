@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
+import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -489,7 +490,17 @@ public final class UserSettings implements IUserSettings {
         userConfig.setProperty(DURATION_FORMAT, format);
     } 
     
-    private static final String ALLOW_OVERLAPPING_ACTIVITIES = "allow.overlapping.activities";
+    @Override
+	public String getTimeZone() {
+    	return doGetString("timeZone", TimeZone.getDefault().getID());
+	}
+
+	@Override
+	public void setTimeZone(String tz) {
+		userConfig.setProperty("timeZone", tz);
+	}
+
+	private static final String ALLOW_OVERLAPPING_ACTIVITIES = "allow.overlapping.activities";
     
     /* (non-Javadoc)
      * @see com.kemai.wremja.gui.settings.IUserSettings#isAllowOverlappingActivities()
