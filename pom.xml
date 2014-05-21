@@ -314,6 +314,7 @@
             <dependency>
                 <groupId>org.swinglabs</groupId>
                 <artifactId>swingx</artifactId>
+                <!-- 1.6.2 removes (makes private) JXImagePanel which we still need -->
                 <version>1.6.1</version>
                 <scope>compile</scope>
             </dependency>
@@ -351,13 +352,6 @@
                 <artifactId>httpclient</artifactId>
                 <version>4.0</version>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>0.9.3</version>
-                <scope>provided</scope>
-                <optional>true</optional>
             </dependency>
         </dependencies>
     </dependencyManagement>
