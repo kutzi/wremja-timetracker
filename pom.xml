@@ -208,10 +208,6 @@
             </url>
         </repository> -->
         <repository>
-            <id>projectlombok.org</id>
-            <url>http://projectlombok.org/mavenrepo</url>
-        </repository>
-        <repository>
             <id>google-code</id>
             <url>http://google-maven-repository.googlecode.com/svn/repository/</url>
         </repository>

@@ -118,9 +118,5 @@
             <groupId>com.kenai.wremja</groupId>
             <artifactId>infonode-tabbedpane</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
 	</dependencies>
 </project>

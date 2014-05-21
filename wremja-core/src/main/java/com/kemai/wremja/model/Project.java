@@ -2,9 +2,6 @@ package com.kemai.wremja.model;
 
 import java.io.Serializable;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -29,8 +26,8 @@ public class Project implements Serializable, Comparable<Project>{
     /** A description of the project. */
     private String description;
     
-    @Getter @Setter private Boolean billable;
-    @Getter @Setter private Boolean enabled;
+    private Boolean billable;
+    private Boolean enabled;
     
     /**
      * Creates a new project.
@@ -45,8 +42,8 @@ public class Project implements Serializable, Comparable<Project>{
         this.id = id;
         this.title = title;
         this.description = description;
-        this.billable = Boolean.TRUE;
-        this.enabled = Boolean.TRUE;
+        this.setBillable(Boolean.TRUE);
+        this.setEnabled(Boolean.TRUE);
     }
 
     /**
@@ -151,12 +148,28 @@ public class Project implements Serializable, Comparable<Project>{
     }
     
     private Object readResolve() {
-        if (this.enabled == null) {
-            this.enabled = Boolean.TRUE;
+        if (this.getEnabled() == null) {
+            this.setEnabled(Boolean.TRUE);
         }
-        if (this.billable == null) {
-            this.billable = Boolean.TRUE;
+        if (this.getBillable() == null) {
+            this.setBillable(Boolean.TRUE);
         }
         return this;
     }
+
+	public Boolean getBillable() {
+		return billable;
+	}
+
+	public void setBillable(Boolean billable) {
+		this.billable = billable;
+	}
+
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
 }
