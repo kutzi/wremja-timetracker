@@ -7,6 +7,7 @@ import static com.kemai.wremja.gui.settings.SettingsConstants.WEEK_OF_YEAR_FILTE
 import static com.kemai.wremja.gui.settings.SettingsConstants.YEAR_FILTER_ENABLED;
 import info.clearthought.layout.TableLayout;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -17,11 +18,14 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.swing.ImageIcon;
+import javax.swing.InputVerifier;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -33,8 +37,12 @@ import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import net.java.balloontip.BalloonTip;
+import net.java.balloontip.styles.BalloonTipStyle;
+import net.java.balloontip.styles.RoundedBalloonStyle;
+import net.java.balloontip.utils.ToolTipUtils;
+
 import org.jdesktop.swingx.JXHeader;
-import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTextField;
 
 import com.kemai.swing.dialog.EscapeDialog;
@@ -121,9 +129,37 @@ public class SettingsDialog extends EscapeDialog {
         durationFormat.setRenderer(renderer);
     }
     
-    private JTextField timeZone = new JTextField("Time Zone");
+    private JXTextField timeZone = new JXTextField("Time Zone");
     {
     	timeZone.setPreferredSize(new Dimension(250, 20));
+    	timeZone.setInputVerifier(new InputVerifier() {
+			
+    		private TimeZone GMT = TimeZone.getTimeZone("GMT");
+    		
+			@Override
+			public boolean verify(JComponent input) {
+				JXTextField jTextField = (JXTextField)input;
+				String text = jTextField.getText();
+				if (text == null || text.isEmpty()) {
+					return true;
+				}
+				
+				TimeZone zone = TimeZone.getTimeZone(text);
+				if (!zone.equals(GMT)) {
+					return true;
+				} else {
+					boolean valid = text.equals("GMT");
+					if (!valid) {
+						saveButton.setEnabled(false);
+						jTextField.setForeground(Color.RED);
+						BalloonTipStyle style = new RoundedBalloonStyle(5,5,Color.WHITE, Color.RED);
+						BalloonTip balloonTip = new BalloonTip(jTextField, "Unknown TimeZone '" + text + "'!", style, false);
+						balloonTip.addDefaultMouseListener(true);
+					}
+					return valid;
+				}
+			}
+		});
     }
     
     private final JCheckBox projectFilter = new JCheckBox(text("SettingsDialog.Setting.ProjectFilter.Title"));
@@ -186,7 +222,13 @@ public class SettingsDialog extends EscapeDialog {
         this.add(tabbedPane, "1, 3, 3, 3");
 
         saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent event) {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if (!saveButton.isEnabled()) {
+					return;
+				}
+				
                 settings.setRememberWindowSizeLocation(rememberWindowSizeLocation
                                 .isSelected());
                 settings.setDiscardEmptyActivities(purgeEmptyActivities.isSelected());
@@ -297,16 +339,19 @@ public class SettingsDialog extends EscapeDialog {
 			
 			@Override
 			public void removeUpdate(DocumentEvent e) {
+				timeZone.setForeground(Color.BLACK);
 				saveButton.setEnabled(true);
 			}
 			
 			@Override
 			public void insertUpdate(DocumentEvent e) {
+				timeZone.setForeground(Color.BLACK);
 				saveButton.setEnabled(true);
 			}
 			
 			@Override
 			public void changedUpdate(DocumentEvent e) {
+				timeZone.setForeground(Color.BLACK);
 				saveButton.setEnabled(true);
 			}
 		};
