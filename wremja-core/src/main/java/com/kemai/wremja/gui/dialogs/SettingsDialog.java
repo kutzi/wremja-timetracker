@@ -31,7 +31,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
@@ -40,7 +39,6 @@ import javax.swing.event.DocumentListener;
 import net.java.balloontip.BalloonTip;
 import net.java.balloontip.styles.BalloonTipStyle;
 import net.java.balloontip.styles.RoundedBalloonStyle;
-import net.java.balloontip.utils.ToolTipUtils;
 
 import org.jdesktop.swingx.JXHeader;
 import org.jdesktop.swingx.JXTextField;
@@ -100,15 +98,15 @@ public class SettingsDialog extends EscapeDialog {
 	    }
     };
     
-    private final JComboBox durationFormat = new JComboBox(new Object[] {"#0.00", "#0:00"}); //$NON-NLS-1$
+    private final JComboBox<String> durationFormat = new JComboBox<String>(new String[] {"#0.00", "#0:00"}); //$NON-NLS-1$
     {
-        ListCellRenderer renderer = new ListCellRenderer() {
+        ListCellRenderer<String> renderer = new ListCellRenderer<String>() {
             
             private final JLabel label = new JLabel();
             
             @Override
-            public Component getListCellRendererComponent(JList list,
-                    Object value, int index, boolean isSelected,
+            public Component getListCellRendererComponent(JList<? extends String> list,
+                    String value, int index, boolean isSelected,
                     boolean cellHasFocus) {
 
                 if (isSelected) {
