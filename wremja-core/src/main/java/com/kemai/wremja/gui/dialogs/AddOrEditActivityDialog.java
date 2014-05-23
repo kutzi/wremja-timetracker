@@ -281,7 +281,7 @@ public class AddOrEditActivityDialog extends EscapeDialog {
                 submitActivityButton.setText(textBundle.textFor("AddOrEditActivityDialog.AddLabel")); //$NON-NLS-1$
                 submitActivityButton.setIcon(new ImageIcon(getClass().getResource("/icons/gtk-add.png"))); //$NON-NLS-1$
             } else {
-                submitActivityButton.setText(textBundle.textFor("AddOrEditActivityDialog.SaveLabel")); //$NON-NLS-1$
+                submitActivityButton.setText(textBundle.textFor("Dialogs.SaveLabel")); //$NON-NLS-1$
                 submitActivityButton.setIcon(new ImageIcon(getClass().getResource("/icons/gtk-save.png"))); //$NON-NLS-1$
             }
 
@@ -344,8 +344,8 @@ public class AddOrEditActivityDialog extends EscapeDialog {
             submitted = true;
             AddOrEditActivityDialog.this.dispose();
         } catch(OverlappingActivitiesException e) {
-            final String title = textBundle.textFor("AddOrEditActivityDialog.OverlapError.Title");
-            final String message = textBundle.textFor("AddOrEditActivityDialog.OverlapError.Text");
+            final String title = textBundle.textFor("Dialogs.OverlapError.Title");
+            final String message = textBundle.textFor("Dialogs.OverlapError.Text");
 
             JOptionPane.showMessageDialog(
                     AddOrEditActivityDialog.this, 
@@ -408,8 +408,8 @@ public class AddOrEditActivityDialog extends EscapeDialog {
         try {
             new ProjectActivity(start, end, project);
         } catch (IllegalArgumentException e) {
-            final String title = textBundle.textFor("AddOrEditActivityDialog.Error.Title");
-            final String message = textBundle.textFor("AddOrEditActivityDialog.Error.InvalidStartEnd");
+            final String title = textBundle.textFor("Dialogs.Error.Title");
+            final String message = textBundle.textFor("Dialogs.Error.InvalidStartEnd");
 
             JOptionPane.showMessageDialog(
                     AddOrEditActivityDialog.this, 

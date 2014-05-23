@@ -44,6 +44,7 @@ import com.kemai.util.TextResourceBundle;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.gui.dialogs.AddOrEditActivityDialog;
+import com.kemai.wremja.gui.dialogs.SplitActivityDialog;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.panels.table.AllActivitiesTableFormat;
@@ -136,47 +137,49 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
 
     private void initPopupMenu(final JXTable table) {
         final JPopupMenu menu = new JPopupMenu();
-        final AbstractAction editAction = new AbstractAction(textBundle.textFor("AllActitvitiesPanel.Edit"), new ImageIcon(getClass().getResource("/icons/gtk-edit.png"))) { //$NON-NLS-1$
+        final AbstractAction editAction = new TablePopupAction(table, "AllActitvitiesPanel.Edit", "/icons/gtk-edit.png") {
 
-            public void actionPerformed(final ActionEvent event) {
-                // Get selected activities
-                int[] selectionIndices = table.getSelectedRows();
-
-                if (selectionIndices.length == 0) {
-                    return;
-                }
-                
-                int modelIndex = table.convertRowIndexToModel(selectionIndices[0]);
-
-                // edit 1st selected activity
+			@Override
+			protected void actionPerformed(
+					List<ProjectActivity> selectedActivities) {
+				// edit 1st selected activity
                 final AddOrEditActivityDialog editActivityDialog = new AddOrEditActivityDialog(
                         AWTUtils.getFrame(AllActitvitiesPanel.this), 
                         model, 
-                        model.getActivitiesList().get(modelIndex)
+                        selectedActivities.get(0)
                 );
                 editActivityDialog.pack();
                 editActivityDialog.setLocationRelativeTo(AWTUtils.getFrame(menu));
                 editActivityDialog.setVisible(true);
-            }
+			}
         };
         
         menu.add(editAction);
-        menu.add(new AbstractAction(textBundle.textFor("AllActitvitiesPanel.Delete"), new ImageIcon(getClass().getResource("/icons/gtk-delete.png"))) { //$NON-NLS-1$
+        
+        final AbstractAction splitAction = new TablePopupAction(table, "AllActitvitiesPanel.Split", "/icons/edit-cut.png") {
 
-            public void actionPerformed(final ActionEvent event) {
-                // 1. Get selected activities
-                int[] selectionIndices = table.getSelectedRows();
-                
-                List<ProjectActivity> selectedActivities = new ArrayList<ProjectActivity>(selectionIndices.length);
-                for(int index : selectionIndices) {
-                    int modelIndex = table.convertRowIndexToModel(index);
-                    selectedActivities.add(tableModel.getElementAt(modelIndex));
-                }
-                
-                // 2. Remove all selected activities
-                model.removeActivities(selectedActivities, this);
-            }
+			@Override
+			protected void actionPerformed(
+					List<ProjectActivity> selectedActivities) {
+                SplitActivityDialog dialog = new SplitActivityDialog(
+                        AWTUtils.getFrame(AllActitvitiesPanel.this), 
+                        model, 
+                        selectedActivities.get(0)
+                );
+                dialog.pack();
+                dialog.setLocationRelativeTo(AWTUtils.getFrame(menu));
+                dialog.setVisible(true);
+			}
+        };
+        menu.add(splitAction);
+        
+        menu.add(new TablePopupAction(table, "AllActitvitiesPanel.Delete", "/icons/gtk-delete.png") {
 
+			@Override
+			protected void actionPerformed(
+					List<ProjectActivity> selectedActivities) {
+				model.removeActivities(selectedActivities, this);
+			}
         });
 
         table.addMouseListener(new MouseAdapter() {
@@ -209,8 +212,10 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
                     if(selectionIndices.length > 1) {
                         // edit action works only on a single cell
                         editAction.setEnabled(false);
+                        splitAction.setEnabled(false);
                     } else {
                         editAction.setEnabled(true);
+                        splitAction.setEnabled(true);
                     }
                     menu.show(e.getComponent(), e.getX(), e.getY());
                 }
@@ -219,6 +224,30 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
     }
 
 
+    private abstract class TablePopupAction extends AbstractAction {
+    	private final JXTable table;
+    	
+    	public TablePopupAction(JXTable table, String resourceKey, String iconUrl) {
+    		super(textBundle.textFor(resourceKey), new ImageIcon(AllActitvitiesPanel.class.getResource(iconUrl)));
+			this.table = table;
+		}
+
+		public void actionPerformed(final ActionEvent event) {
+    		// 1. Get selected activities
+            int[] selectionIndices = table.getSelectedRows();
+            
+            List<ProjectActivity> selectedActivities = new ArrayList<ProjectActivity>(selectionIndices.length);
+            for(int index : selectionIndices) {
+                int modelIndex = table.convertRowIndexToModel(index);
+                selectedActivities.add(tableModel.getElementAt(modelIndex));
+            }
+            
+            actionPerformed(selectedActivities);
+    	}
+
+		protected abstract void actionPerformed(List<ProjectActivity> selectedActivities);
+    }
+    
     /**
      * {@inheritDoc}
      */
