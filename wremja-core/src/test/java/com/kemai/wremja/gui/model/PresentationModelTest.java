@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.kemai.util.DateUtils;
@@ -33,6 +34,11 @@ import com.kemai.wremja.model.ProjectActivity;
  * @see PresentationModel
  */
 public class PresentationModelTest extends AbstractWremjaTestCase {
+	
+	@BeforeClass
+	public static void beforeClass() {
+		System.setProperty("java.awt.headless", "true");
+	}
 
     /** First test project. */
     private static Project project1 = new Project(1, "Project1", "Project 1");
