@@ -27,8 +27,7 @@ public class DateTimeConverter implements SingleValueConverter {
     }
     
     @Override
-    @SuppressWarnings("unchecked")
-    public boolean canConvert(Class type) {
+    public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
         return type.equals(DateTime.class);
     }
 
