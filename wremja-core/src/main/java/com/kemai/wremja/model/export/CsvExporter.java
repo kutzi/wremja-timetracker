@@ -63,17 +63,18 @@ public class CsvExporter implements Exporter {
             activities = filter.applyFilters(data.getActivities());
         }
 
-        final CSVWriter writer = new CSVWriter(
+        try (CSVWriter writer = new CSVWriter(
                 new OutputStreamWriter(outputStream, IOConstants.FILE_ENCODING),
                 SEPARATOR_CHARACTER, '"', "\n"
-        );
+        )) {
 
-        writer.writeNext(CSV_HEADER);
-
-        for (ProjectActivity activity : activities) {
-            writer.writeNext(makeCsvLine(activity));
+	        writer.writeNext(CSV_HEADER);
+	
+	        for (ProjectActivity activity : activities) {
+	            writer.writeNext(makeCsvLine(activity));
+	        }
+	        writer.flush();
         }
-        writer.flush();
     }
 
     /**
