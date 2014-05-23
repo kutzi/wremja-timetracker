@@ -19,8 +19,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import org.jdesktop.swingx.JXFrame;
 import org.joda.time.DateTime;
@@ -559,15 +564,35 @@ public class MainFrame extends JXFrame implements Observer {
                 options[1] = "Stop & Edit";
                 options[2] = "Continue activity";
                 
-                String text = ""
-                    + "There is an unfinished activity from a previous run!" +
-                      " That can result from various reasons. For example:\n\n" +
-                      "- Wremja was still running when the OS was shut down\n" +
-                      "- Wremja crashed\n" +
-                      "\nWould you like the activity on project '" + model.getData().getActiveProject().getTitle() 
-                      + "' starting at "+ FormatUtils.formatDate( model.getStart()) + " " + FormatUtils.formatTime( model.getStart()) 
-                      + "h to stop at " + FormatUtils.formatTime(lastTouch) + "h?";
-                int chosen = JOptionPane.showOptionDialog(MainFrame.this, text,
+                JTextPane pane = new JTextPane();
+                SimpleAttributeSet set = new SimpleAttributeSet();
+                StyleConstants.setBold(set, true);
+                StyleConstants.setFontSize(set, (int)(pane.getFont().getSize() * 1.5));
+
+                // Set the attributes before adding text
+                pane.setCharacterAttributes(set, true);
+                pane.setText("'" + model.getData().getActiveProject().getTitle() + "'");
+                
+                try {
+                	set = new SimpleAttributeSet();
+                    StyledDocument doc = pane.getStyledDocument();
+                	
+					doc.insertString(doc.getLength(), " was running when Wremja was shut down.\n"
+						+ "Start time: " + FormatUtils.formatDate( model.getStart()) + " " + FormatUtils.formatTime( model.getStart()) + "h\n"
+						+ "Shutdown time: " + FormatUtils.formatDate(lastTouch) + " " + FormatUtils.formatTime(lastTouch) + "h\n\n",
+					set);
+					
+					set = new SimpleAttributeSet();
+					StyleConstants.setItalic(set, true);
+					doc.insertString(doc.getLength(), "Stop the activity at that time or continue it?", set);
+					
+				} catch (BadLocationException e) {
+					throw new RuntimeException(e);
+				}
+                pane.setEditable(false);
+                
+                
+                int chosen = JOptionPane.showOptionDialog(MainFrame.this, pane,
                         "Unfinished activity", 0, JOptionPane.INFORMATION_MESSAGE, null,
                         options, options[0]);
                 
