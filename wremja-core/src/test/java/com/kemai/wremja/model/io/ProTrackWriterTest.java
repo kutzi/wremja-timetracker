@@ -6,15 +6,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 
-
-
-
-import java.util.TimeZone;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.kemai.wremja.model.ActivityRepository;
@@ -23,23 +16,6 @@ import com.kemai.wremja.model.ProjectActivity;
 
 public class ProTrackWriterTest {
     
-	private String defaultTz;
-
-	@Before
-	public void setUp() {
-		// TODO: better to inject the timezone into the ProTrackWriter, so
-		// we don't have to fiddle with the default TZ
-		defaultTz = DateTimeZone.getDefault().getID();
-		DateTimeZone.setDefault(DateTimeZone.forID("Europe/Berlin"));
-		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
-	}
-	
-	@After
-	public void tearDown() {
-		DateTimeZone.setDefault(DateTimeZone.forID(defaultTz));
-		TimeZone.setDefault(TimeZone.getTimeZone(defaultTz));
-	}
-	
     /**
      * Tests that a predefined ActivityRepository data always results in the same output format.
      * 
@@ -68,7 +44,7 @@ public class ProTrackWriterTest {
         writer.write(data, baos);
         
         String written = baos.toString(IOConstants.FILE_ENCODING);
-        String expected = "<proTrack id=\"1\" active=\"true\" startTime=\"2009-03-14 18:00:00.0 CET\">\n" + 
+        String expected = "<proTrack id=\"1\" active=\"true\" startTime=\"2009-03-14 18:00:00.0 UTC\">\n" + 
         		"  <activeProjects id=\"2\">\n" + 
         		"    <project id=\"3\">\n" + 
         		"      <id>42</id>\n" + 
@@ -88,8 +64,8 @@ public class ProTrackWriterTest {
         		"  <projectsToBeDeleted id=\"5\"/>\n" + 
         		"  <activities id=\"6\">\n" + 
         		"    <projectActivity id=\"7\">\n" + 
-        		"      <start id=\"8\">2009-03-13 15:00:00.0 CET</start>\n" + 
-        		"      <end id=\"9\">2009-03-13 17:00:00.0 CET</end>\n" + 
+        		"      <start id=\"8\">2009-03-13 15:00:00.0 UTC</start>\n" + 
+        		"      <end id=\"9\">2009-03-13 17:00:00.0 UTC</end>\n" + 
         		"      <project reference=\"3\"/>\n" + 
         		"    </projectActivity>\n" + 
         		"  </activities>\n" + 
@@ -112,6 +88,6 @@ public class ProTrackWriterTest {
     }
     
 	private DateTime time(int year, int month, int day, int hour, int minutes, int seconds, int ms) {
-		return new DateTime(year, month, day, hour, minutes, seconds, ms);
+		return new DateTime(year, month, day, hour, minutes, seconds, ms, DateTimeZone.UTC);
 	}
 }
