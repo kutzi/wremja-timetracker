@@ -137,6 +137,8 @@ public final class Launcher {
     /** last modified time of the previous run if it was a 'dirty' shutdown. Only set if cleanShutdown == false */
     private static long lastModified;
 
+	private static RandomAccessFile lockRafFile;
+
     /** Hide constructor. */
     private Launcher() { }
 
@@ -578,7 +580,8 @@ public final class Launcher {
                 lastTouchFile.createNewFile();
             }
 
-            final FileChannel channel = new RandomAccessFile(lockFile, "rw").getChannel(); //$NON-NLS-1$
+            lockRafFile = new RandomAccessFile(lockFile, "rw");
+			final FileChannel channel = lockRafFile.getChannel(); //$NON-NLS-1$
             lock = channel.tryLock();
 
             return lock != null;
@@ -620,6 +623,11 @@ public final class Launcher {
                 lock.channel().close();
             } catch (Exception e) {
                 // ignore
+            }
+            try {
+            	lockRafFile.close();
+            } catch (Exception e) {
+            	// ignore
             }
         }
         
