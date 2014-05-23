@@ -20,6 +20,7 @@ import java.util.Observer;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -97,7 +98,7 @@ public class ActivityPanel extends JPanel implements Observer {
     private final JButton startStopButton;
 
     /** The list of projects. The selected project is the currently active project. */
-    private JComboBox projectSelector;
+    private JComboBox<Project> projectSelector;
 
     /** The description editor. */
     private TextEditor descriptionEditor;
@@ -300,9 +301,9 @@ public class ActivityPanel extends JPanel implements Observer {
      * Initializes the projectSelector.
      */
     private void createProjectSelector(int preferredHeight) {
-        projectSelector = new JComboBox();
+        projectSelector = new JComboBox<>();
         projectSelector.setToolTipText(textBundle.textFor("ProjectSelector.ToolTipText")); //$NON-NLS-1$
-        projectSelector.setModel(new EventComboBoxModel<Project>(this.model.getVisibleProjects()));
+        projectSelector.setModel(getVisibleProjectsModel());
 
         /* Handling of selection events: */
         projectSelector.addActionListener(new ActionListener() {
@@ -320,10 +321,10 @@ public class ActivityPanel extends JPanel implements Observer {
         Dimension preferredSize = projectSelector.getPreferredSize();
         preferredSize.setSize(preferredSize.width, preferredHeight);
         projectSelector.setPreferredSize(preferredSize);
-        final ListCellRenderer renderer = projectSelector.getRenderer();
-        projectSelector.setRenderer(new ListCellRenderer() {
+        final ListCellRenderer<? super Project> renderer = projectSelector.getRenderer();
+        projectSelector.setRenderer(new ListCellRenderer<Project>() {
             @Override
-            public Component getListCellRendererComponent(JList list, Object value,
+            public Component getListCellRendererComponent(JList<? extends Project> list, Project value,
                     int index, boolean isSelected, boolean cellHasFocus) {
                 Component comp = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (comp instanceof JLabel) {
@@ -334,6 +335,11 @@ public class ActivityPanel extends JPanel implements Observer {
             }
         });
     }
+
+	@SuppressWarnings("unchecked")
+	private ComboBoxModel<Project> getVisibleProjectsModel() {
+		return new EventComboBoxModel<Project>(this.model.getVisibleProjects());
+	}
 
     /**
      * {@inheritDoc}
@@ -347,31 +353,42 @@ public class ActivityPanel extends JPanel implements Observer {
 
         switch (event.getType()) {
 
-        case PROJECT_ACTIVITY_STARTED:
-            this.updateStart();
-            break;
-
-        case PROJECT_ACTIVITY_STOPPED:
-            this.updateStop();
-            break;
-
-        case PROJECT_CHANGED:
-            this.updateProjectChanged(event);
-            break;
-
-        case PROJECT_ADDED:
-            break;
-
-        case PROJECT_REMOVED:
-            break;
-
-        case START_CHANGED:
-            updateDuration();
-            break;
-
-        case DURATION_CHANGED:
-            updateDuration();
-            break;
+	        case PROJECT_ACTIVITY_STARTED:
+	            this.updateStart();
+	            break;
+	
+	        case PROJECT_ACTIVITY_STOPPED:
+	            this.updateStop();
+	            break;
+	
+	        case PROJECT_CHANGED:
+	            this.updateProjectChanged(event);
+	            break;
+	
+	        case PROJECT_ADDED:
+	            break;
+	
+	        case PROJECT_REMOVED:
+	            break;
+	
+	        case START_CHANGED:
+	            updateDuration();
+	            break;
+	
+	        case DURATION_CHANGED:
+	            updateDuration();
+	            break;
+	            
+			case DATA_CHANGED:
+				break;
+			case FILTER_CHANGED:
+				break;
+			case PROJECT_ACTIVITY_ADDED:
+				break;
+			case PROJECT_ACTIVITY_CHANGED:
+				break;
+			case PROJECT_ACTIVITY_REMOVED:
+				break;
         }
     }
 
