@@ -378,30 +378,43 @@ public class MainFrame extends JXFrame implements Observer {
 
         switch (event.getType()) {
 
-        case PROJECT_ACTIVITY_STARTED:
-            updateStart();
-            break;
-
-        case PROJECT_ACTIVITY_STOPPED:
-            updateStop();
-            break;
-
-        case PROJECT_CHANGED:
-            // If there is no active project leave everything as is
-            if (model.isActive()) {
-                updateTitle();
-            }
-            break;
-
-        case PROJECT_ADDED:
-            break;
-
-        case PROJECT_REMOVED:
-            break;
-
-        case START_CHANGED:
-            updateTitle();
-            break;
+	        case PROJECT_ACTIVITY_STARTED:
+	            updateStart();
+	            break;
+	
+	        case PROJECT_ACTIVITY_STOPPED:
+	            updateStop();
+	            break;
+	
+	        case PROJECT_CHANGED:
+	            // If there is no active project leave everything as is
+	            if (model.isActive()) {
+	                updateTitle();
+	            }
+	            break;
+	
+	        case PROJECT_ADDED:
+	            break;
+	
+	        case PROJECT_REMOVED:
+	            break;
+	
+	        case START_CHANGED:
+	            updateTitle();
+	            break;
+	            
+			case DATA_CHANGED:
+				break;
+			case DURATION_CHANGED:
+				break;
+			case FILTER_CHANGED:
+				break;
+			case PROJECT_ACTIVITY_ADDED:
+				break;
+			case PROJECT_ACTIVITY_CHANGED:
+				break;
+			case PROJECT_ACTIVITY_REMOVED:
+				break;
         }
     }
 
