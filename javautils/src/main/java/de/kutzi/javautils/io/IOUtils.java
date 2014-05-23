@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
@@ -70,9 +71,9 @@ public class IOUtils {
         Path sourcePath = source.toPath();
         Path targetPath = destination.toPath();
         if (copyAttributes) {
-        	sourcePath.copyTo(targetPath, StandardCopyOption.COPY_ATTRIBUTES);
+        	Files.copy(sourcePath, targetPath, StandardCopyOption.COPY_ATTRIBUTES);
         } else {
-        	sourcePath.copyTo(targetPath);
+        	Files.copy(sourcePath, targetPath);
         }
     }
 
