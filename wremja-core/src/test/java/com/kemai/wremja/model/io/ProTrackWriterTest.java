@@ -1,18 +1,45 @@
 package com.kemai.wremja.model.io;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+
+
+
+
+import java.util.TimeZone;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
-public class ProTrackWriterTest extends TestCase {
+public class ProTrackWriterTest {
     
+	private String defaultTz;
+
+	@Before
+	public void setUp() {
+		// TODO: better to inject the timezone into the ProTrackWriter, so
+		// we don't have to fiddle with the default TZ
+		defaultTz = DateTimeZone.getDefault().getID();
+		DateTimeZone.setDefault(DateTimeZone.forID("Europe/Berlin"));
+		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
+	}
+	
+	@After
+	public void tearDown() {
+		DateTimeZone.setDefault(DateTimeZone.forID(defaultTz));
+		TimeZone.setDefault(TimeZone.getTimeZone(defaultTz));
+	}
+	
     /**
      * Tests that a predefined ActivityRepository data always results in the same output format.
      * 
@@ -20,7 +47,9 @@ public class ProTrackWriterTest extends TestCase {
      * 
      * Adapt this test, when you make deliberate changes to the data model!
      */
+	@Test
     public void testProTrackWriting() throws IOException {
+    	
         ActivityRepository data = new ActivityRepository();
         Project a = new Project(42, "foobar", "foo!");
         Project b = new Project(4711, "The Answer", "To the question");
@@ -28,10 +57,10 @@ public class ProTrackWriterTest extends TestCase {
         data.add(b);
         
         data.setActiveProject(b);
-        data.start(new DateTime(2009, 3, 14, 18, 0, 0, 0));
+        data.start(time(2009, 3, 14, 18, 0, 0, 0));
         
-        ProjectActivity activity = new ProjectActivity(new DateTime(2009, 3, 13, 15, 0, 0, 0),
-                new DateTime(2009, 3, 13, 17, 0, 0, 0), a);
+        ProjectActivity activity = new ProjectActivity(time(2009, 3, 13, 15, 0, 0, 0),
+                time(2009, 3, 13, 17, 0, 0, 0), a);
         data.addActivity(activity);
         
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -81,4 +110,8 @@ public class ProTrackWriterTest extends TestCase {
         }
         return normalized.toString();
     }
+    
+	private DateTime time(int year, int month, int day, int hour, int minutes, int seconds, int ms) {
+		return new DateTime(year, month, day, hour, minutes, seconds, ms);
+	}
 }

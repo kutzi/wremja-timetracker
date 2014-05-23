@@ -6,12 +6,15 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import com.kemai.wremja.model.ActivityRepository;
 import com.kemai.wremja.model.Project;
 import com.kemai.wremja.model.ProjectActivity;
 
 public class ProTrackReaderTest extends TestCase {
+	
+	private static final DateTimeZone TZ_BERLIN = DateTimeZone.forID("Europe/Berlin");
     
     /**
      * Tests that a predefined data file can be read in correctly.
@@ -29,14 +32,14 @@ public class ProTrackReaderTest extends TestCase {
         assertEquals(3, data.getProjects().size());
         assertEquals("Testing", data.getActiveProject().getTitle());
         assertFalse(data.isActive());
-        DateTime startTime = new DateTime(2009, 1, 28, 19, 24, 0, 0);
+        DateTime startTime = time(2009, 1, 28, 19, 24, 0, 0);
         assertEquals(startTime, data.getStart());
         
         assertEquals(6, data.getActivities().size());
         ProjectActivity activity = data.getActivities().get(3);
         assertEquals("Bugfixing", activity.getProject().getTitle());
-        DateTime activityStartTime = new DateTime(2008, 11, 29, 15, 0, 0, 0);
-        DateTime activityEndTime = new DateTime(2008, 11, 29, 15, 15, 0, 0);
+        DateTime activityStartTime = time(2008, 11, 29, 15, 0, 0, 0);
+        DateTime activityEndTime = time(2008, 11, 29, 15, 15, 0, 0);
         assertEquals(activityStartTime, activity.getStart());
         assertEquals(activityEndTime, activity.getEnd());
         
@@ -52,7 +55,8 @@ public class ProTrackReaderTest extends TestCase {
         		"</html>";
         assertEquals(description, activity.getDescription().trim());
     }
-    
+
+
     /**
      * Tests that a 'legacy' data file can be read in correctly. I.e. a file with:
      * 
@@ -74,7 +78,7 @@ public class ProTrackReaderTest extends TestCase {
         assertEquals(6, data.getDeletedProjects().size());
         assertEquals("Testing", data.getActiveProject().getTitle());
         assertFalse(data.isActive());
-        DateTime expectedStartTime = new DateTime(2009, 1, 28, 19, 24, 0, 0);
+        DateTime expectedStartTime = time(2009, 1, 28, 19, 24, 0, 0);
         assertEquals(expectedStartTime, data.getStart());
         
         // when reading legacy (without sequence) data, the calculated
@@ -93,8 +97,8 @@ public class ProTrackReaderTest extends TestCase {
         {
             ProjectActivity activity = data.getActivities().get(0);
             assertEquals("Testing", activity.getProject().getTitle());
-            DateTime activityStartTime = new DateTime(2009, 1, 28, 20, 0, 0, 0);
-            DateTime activityEndTime = new DateTime(2009, 1, 28, 19, 0, 0, 0);
+            DateTime activityStartTime = time(2009, 1, 28, 20, 0, 0, 0);
+            DateTime activityEndTime = time(2009, 1, 28, 19, 0, 0, 0);
             assertEquals(activityStartTime, activity.getStart());
             assertEquals(activityEndTime, activity.getEnd());
             assertEquals(-1.0, activity.getDuration(), 0.001);
@@ -106,8 +110,8 @@ public class ProTrackReaderTest extends TestCase {
         {
             ProjectActivity activity = data.getActivities().get(1);
             assertEquals("Development", activity.getProject().getTitle());
-            DateTime activityStartTime = new DateTime(2009, 1, 28, 15, 0, 0, 0);
-            DateTime activityEndTime = new DateTime(2009, 1, 29, 17, 30, 0, 0);
+            DateTime activityStartTime = time(2009, 1, 28, 15, 0, 0, 0);
+            DateTime activityEndTime = time(2009, 1, 29, 17, 30, 0, 0);
             assertEquals(activityStartTime, activity.getStart());
             assertEquals(activityEndTime, activity.getEnd());
             assertEquals(24 + 2.5, activity.getDuration(), 0.001);
@@ -119,8 +123,8 @@ public class ProTrackReaderTest extends TestCase {
         {
             ProjectActivity activity = data.getActivities().get(2);
             assertEquals("Bugfixing", activity.getProject().getTitle());
-            DateTime activityStartTime = new DateTime(2008, 11, 25, 0, 0, 0, 0);
-            DateTime activityEndTime = new DateTime(2008, 11, 29, 15, 15, 0, 0);
+            DateTime activityStartTime = time(2008, 11, 25, 0, 0, 0, 0);
+            DateTime activityEndTime = time(2008, 11, 29, 15, 15, 0, 0);
             assertEquals(activityStartTime, activity.getStart());
             assertEquals(activityEndTime, activity.getEnd());
             assertEquals(4*24 + 15.25, activity.getDuration(), 0.001);
@@ -129,4 +133,11 @@ public class ProTrackReaderTest extends TestCase {
             assertEquals(description, activity.getDescription().trim());
         }
     }
+    
+	private DateTime time(int year, int month, int day, int hour, int minutes, int seconds, int ms) {
+		// dates in file are expressed as CET and then we need it to convert into the local
+		// timezone:
+		return new DateTime(year, month, day, hour, minutes, seconds, ms, TZ_BERLIN)
+			.withZone(DateTimeZone.getDefault());
+	}
 }
