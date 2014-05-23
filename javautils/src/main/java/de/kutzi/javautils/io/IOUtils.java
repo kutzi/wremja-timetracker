@@ -46,8 +46,10 @@ public class IOUtils {
             FileInputStream fis = null;
             FileOutputStream fos = null;
             try {
-                FileChannel sourceChannel = new FileInputStream(source).getChannel();
-                FileChannel destChannel = new FileOutputStream(destination).getChannel();
+            	fis = new FileInputStream(source);
+            	fos =  new FileOutputStream(destination);
+                FileChannel sourceChannel = fis.getChannel();
+                FileChannel destChannel = fos.getChannel();
                 long size = sourceChannel.size();
                 long transferedBytes = 0;
                 while (transferedBytes < size) {
