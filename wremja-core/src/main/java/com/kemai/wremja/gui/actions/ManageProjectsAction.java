@@ -23,7 +23,7 @@ public class ManageProjectsAction extends AbstractWremjaAction {
         super(owner, model);
         setName(textBundle.textFor("ManageProjectsAction.Name")); //$NON-NLS-1$
         setTooltip(textBundle.textFor("ManageProjectsAction.ShortDescription")); //$NON-NLS-1$
-        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/gtk-edit.png"))); //$NON-NLS-1$
+        putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/folder-open.png"))); //$NON-NLS-1$
     }
 
     /**

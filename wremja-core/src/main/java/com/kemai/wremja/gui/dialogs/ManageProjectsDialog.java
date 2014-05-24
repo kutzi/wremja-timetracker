@@ -87,7 +87,7 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
      */
     private void initialize() {
         setLocationRelativeTo(getOwner());
-        this.setIconImage(new ImageIcon(getClass().getResource("/icons/gtk-edit.png")).getImage()); //$NON-NLS-1$
+        this.setIconImage(new ImageIcon(getClass().getResource("/icons/folder-open.png")).getImage()); //$NON-NLS-1$
 
         this.setModal(true);
         this.setTitle(textBundle.textFor("ManageProjectsDialog.Title")); //$NON-NLS-1$

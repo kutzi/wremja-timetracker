@@ -500,7 +500,7 @@ public class MainFrame extends JXFrame implements Observer {
     private JMenu getExportMenu() {
         if (exportMenu == null) {
             exportMenu = new WMenu(textBundle.textFor("MainFrame.ExportMenu.Title")); //$NON-NLS-1$
-            exportMenu.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/document-save-as.png")));
+            exportMenu.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/export-icon.png")));
             exportMenu.setMnemonic(textBundle.textFor("MainFrame.ExportMenu.Title").charAt(0)); //$NON-NLS-1$
 
             exportMenu.add(getExportExcelItem());
@@ -516,16 +516,6 @@ public class MainFrame extends JXFrame implements Observer {
     
     // not implemented, yet
     private List<AbstractExportAction> getExporterPlugins() {
-//    	try {
-//    		Class<?> clazz = Class.forName("com.kemai.wremja.exporter.anukotimetracker.AnukoExporterAction");
-//    		@SuppressWarnings("unchecked")
-//    		Constructor<AbstractExportAction> cons = (Constructor<AbstractExportAction>) clazz.getConstructor(Frame.class, PresentationModel.class, IUserSettings.class);
-//    		AbstractExportAction action = cons.newInstance(this, model, settings);
-//    		return Collections.singletonList(action);
-//    	} catch(Exception e) {
-//    		LOG.warn(e, e);
-//    		return Collections.emptyList();
-//    	}
     	return Collections.emptyList();
     }
 
@@ -536,7 +526,7 @@ public class MainFrame extends JXFrame implements Observer {
     private JMenu getImportMenu() {
         if (importMenu == null) {
             importMenu = new WMenu(textBundle.textFor("MainFrame.ImportMenu.Title")); //$NON-NLS-1$
-            importMenu.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/document-open.png")));
+            importMenu.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/import-icon.png")));
             importMenu.setMnemonic(textBundle.textFor("MainFrame.ImportMenu.Title").charAt(0)); //$NON-NLS-1$
             importMenu.add(getImportItem());
         }
