@@ -211,7 +211,7 @@ public class AddOrEditActivityDialog extends EscapeDialog {
         final TableLayout tableLayout = new TableLayout(size);
         this.setLayout(tableLayout);
 
-        this.projectSelector = new JComboBox(new EventComboBoxModel<Project>(model.getProjectList()));
+        this.projectSelector = new JComboBox(new EventComboBoxModel<Project>(model.getVisibleProjects()));
         this.projectSelector.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {

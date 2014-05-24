@@ -127,7 +127,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
 
         final TableColumn projectColumn = table.getColumn(0);
         final TableCellEditor cellEditor = new ComboBoxCellEditor(new JComboBox(new EventComboBoxModel<Project>(model
-                .getProjectList())));
+                .getVisibleProjects())));
         projectColumn.setCellEditor(cellEditor);
 
         JScrollPane table_scroll_pane = new JScrollPane(table);

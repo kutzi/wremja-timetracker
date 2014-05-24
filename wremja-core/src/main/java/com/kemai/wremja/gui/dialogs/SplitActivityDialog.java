@@ -215,7 +215,7 @@ public class SplitActivityDialog extends EscapeDialog {
 
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	private ComboBoxModel<Project> newProjectListComboModel() {
-		return new EventComboBoxModel<Project>(model.getProjectList());
+		return new EventComboBoxModel<Project>(model.getVisibleProjects());
 	}
 
     private JButton getSubmitActivityButton() {
