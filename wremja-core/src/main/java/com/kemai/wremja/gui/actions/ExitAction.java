@@ -35,7 +35,7 @@ public class ExitAction extends AbstractWremjaAction {
 
         setName(TEXT_BUNDLE.textFor("ExitAction.Name")); //$NON-NLS-1$
         setTooltip(TEXT_BUNDLE.textFor("ExitAction.ShortDescription")); //$NON-NLS-1$
-        setIcon(new ImageIcon(getClass().getResource("/icons/gtk-quit.png"))); //$NON-NLS-1$
+        setIcon(new ImageIcon(getClass().getResource("/icons/gtk-stop.png"))); //$NON-NLS-1$
         putValue(LONG_DESCRIPTION, TEXT_BUNDLE.textFor("ExitAction.LongDescription")); //$NON-NLS-1$
     }
 
