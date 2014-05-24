@@ -2,7 +2,7 @@ package com.kemai.swing.util;
 
 import org.jdesktop.swingx.JXTable;
 
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 
 /**
  * This class extends SwingX' {@link JXTable} and
@@ -16,7 +16,7 @@ public class WTable extends JXTable {
 
     private static final long serialVersionUID = 1L;
 
-    public WTable(EventTableModel<?> glazedListsModel) {
+    public WTable(DefaultEventTableModel<?> glazedListsModel) {
         super(glazedListsModel);
         setAutoCreateRowSorter(false);
         setRowSorter(null);

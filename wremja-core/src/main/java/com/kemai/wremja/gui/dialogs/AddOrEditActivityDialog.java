@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.text.ParseException;
 
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -78,7 +79,7 @@ public class AddOrEditActivityDialog extends EscapeDialog {
     // ------------------------------------------------
 
     /** Selects the project of the activity. */
-    private JComboBox projectSelector = null;
+    private JComboBox<Project> projectSelector = null;
 
     /** Button to submit the edited activity. */
     private JButton submitActivityButton = null;
@@ -211,7 +212,7 @@ public class AddOrEditActivityDialog extends EscapeDialog {
         final TableLayout tableLayout = new TableLayout(size);
         this.setLayout(tableLayout);
 
-        this.projectSelector = new JComboBox(new EventComboBoxModel<Project>(model.getVisibleProjects()));
+        this.projectSelector = new JComboBox<>(newVisibleProjectsModel());
         this.projectSelector.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -268,6 +269,11 @@ public class AddOrEditActivityDialog extends EscapeDialog {
 
         this.add(getSubmitActivityButton(), "1, 11, 3, 11");
     }
+
+	@SuppressWarnings({ "unchecked", "deprecation" })
+	private ComboBoxModel<Project> newVisibleProjectsModel() {
+		return new EventComboBoxModel<Project>(model.getVisibleProjects());
+	}
 
     /**
      * This method initializes addActivityButton.

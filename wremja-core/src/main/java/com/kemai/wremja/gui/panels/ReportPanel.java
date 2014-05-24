@@ -13,7 +13,7 @@ import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledSeparator;
 
-import ca.odell.glazedlists.swing.EventComboBoxModel;
+import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 
 import com.kemai.swing.util.LabeledItem;
 import com.kemai.util.TextResourceBundle;
@@ -46,19 +46,19 @@ public class ReportPanel extends JXPanel implements ActionListener {
     private final IUserSettings settings;
 
     /** Filter by selected project. */
-    private JComboBox projectFilterSelector;
+    private JComboBox<Project> projectFilterSelector;
 
     /** Filter by selected year. */
-    private JComboBox yearFilterSelector;
+    private JComboBox<Integer> yearFilterSelector;
 
     /** Filter by selected month. */
-    private JComboBox monthFilterSelector;
+    private JComboBox<Integer> monthFilterSelector;
 
     /** Filter by selected week. */
-    private JComboBox weekFilterSelector;
+    private JComboBox<Integer> weekFilterSelector;
     
     /** Filter by selected day. */
-    private JComboBox dayFilterSelector;
+    private JComboBox<Integer> dayFilterSelector;
     
     /** The panel that actually displays the filtered activities. */
     private FilteredActivitiesPane filteredActivitiesPane;
@@ -183,10 +183,11 @@ public class ReportPanel extends JXPanel implements ActionListener {
     /**
      * @return the monthFilterSelector
      */
-    private JComboBox initMonthFilterSelector() {
+    @SuppressWarnings("unchecked")
+	private JComboBox<Integer> initMonthFilterSelector() {
         MonthFilterList monthFilterList = new MonthFilterList(model);
-        monthFilterSelector = new JComboBox(
-                new EventComboBoxModel<LabeledItem<Integer>>(monthFilterList.getMonthList())
+        monthFilterSelector = new JComboBox<>(
+                new DefaultEventComboBoxModel<LabeledItem<Integer>>(monthFilterList.getMonthList())
         );
         monthFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("MonthFilterSelector.ToolTipText")); 
 
@@ -205,9 +206,10 @@ public class ReportPanel extends JXPanel implements ActionListener {
     /**
      * @return the weekFilterSelector
      */
-    private JComboBox initWeekOfYearFilterSelector() {
+    @SuppressWarnings("unchecked")
+	private JComboBox<Integer> initWeekOfYearFilterSelector() {
         WeekOfYearFilterList weekOfYearFilterList = new WeekOfYearFilterList(model);
-        weekFilterSelector = new JComboBox(new EventComboBoxModel<LabeledItem<Integer>>(weekOfYearFilterList
+        weekFilterSelector = new JComboBox<>(new DefaultEventComboBoxModel<LabeledItem<Integer>>(weekOfYearFilterList
                 .getWeekList()));
         weekFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("WeekOfYearFilterSelector.ToolTipText")); 
 
@@ -223,9 +225,10 @@ public class ReportPanel extends JXPanel implements ActionListener {
         return weekFilterSelector;
     }
     
-    private JComboBox initDayOfWeekFilterSelector() {
+    @SuppressWarnings("unchecked")
+	private JComboBox<Integer> initDayOfWeekFilterSelector() {
         DayOfWeekFilterList dayOfWeekFilterList = new DayOfWeekFilterList();
-        dayFilterSelector = new JComboBox(new EventComboBoxModel<LabeledItem<Integer>>(dayOfWeekFilterList
+        dayFilterSelector = new JComboBox<>(new DefaultEventComboBoxModel<LabeledItem<Integer>>(dayOfWeekFilterList
                 .getDayList()));
         dayFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("DayOfWeekFilterSelector.ToolTipText")); 
 
@@ -244,11 +247,12 @@ public class ReportPanel extends JXPanel implements ActionListener {
     /**
      * @return the projectFilterSelector
      */
-    private JComboBox getProjectFilterSelector() {
+    @SuppressWarnings("unchecked")
+	private JComboBox<Project> getProjectFilterSelector() {
         if (projectFilterSelector == null) {
             ProjectFilterList projectFilterList = new ProjectFilterList(model);
-            projectFilterSelector = new JComboBox(
-                    new EventComboBoxModel<LabeledItem<Project>>(projectFilterList.getProjectList())
+            projectFilterSelector = new JComboBox<>(
+                    new DefaultEventComboBoxModel<LabeledItem<Project>>(projectFilterList.getProjectList())
             );
             projectFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("ProjectFilterSelector.ToolTipText")); 
 
@@ -268,11 +272,12 @@ public class ReportPanel extends JXPanel implements ActionListener {
     /**
      * @return the yearFilterSelector
      */
-    private JComboBox initYearFilterSelector() {
+    @SuppressWarnings("unchecked")
+	private JComboBox<Integer> initYearFilterSelector() {
         if (yearFilterSelector == null) {
             YearFilterList yearFilterList = new YearFilterList(model);
-            yearFilterSelector = new JComboBox(
-                    new EventComboBoxModel<LabeledItem<Integer>>(yearFilterList.getYearList())
+            yearFilterSelector = new JComboBox<>(
+                    new DefaultEventComboBoxModel<LabeledItem<Integer>>(yearFilterList.getYearList())
             );
             yearFilterSelector.setToolTipText(TEXT_BUNDLE.textFor("YearFilterSelector.ToolTipText")); 
 

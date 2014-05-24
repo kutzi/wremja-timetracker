@@ -148,6 +148,21 @@ public class DescriptionPanel extends JXPanel implements Observer {
             case FILTER_CHANGED:
                 initializeDescriptionEntries();
                 break;
+                
+			case DATA_CHANGED:
+				break;
+			case DURATION_CHANGED:
+				break;
+			case PROJECT_ACTIVITY_STARTED:
+				break;
+			case PROJECT_ACTIVITY_STOPPED:
+				break;
+			case PROJECT_ADDED:
+				break;
+			case PROJECT_REMOVED:
+				break;
+			case START_CHANGED:
+				break;
         }
     }
 }

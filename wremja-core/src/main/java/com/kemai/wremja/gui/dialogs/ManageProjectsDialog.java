@@ -302,9 +302,11 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
         final WremjaEvent event = (WremjaEvent) eventObject;
 
         switch (event.getType()) {
-        case PROJECT_CHANGED:
-            projectListTableModel.fireTableDataChanged();
-            break;
+	        case PROJECT_CHANGED:
+	            projectListTableModel.fireTableDataChanged();
+	            break;
+			default:
+				break;
         }
     }
     
