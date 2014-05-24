@@ -14,6 +14,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.AbstractAction;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
@@ -35,8 +36,8 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.renderer.FormatStringValue;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 
-import ca.odell.glazedlists.swing.EventComboBoxModel;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 
 import com.kemai.swing.util.AWTUtils;
 import com.kemai.swing.util.WTable;
@@ -66,7 +67,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
     /** The model. */
     private final PresentationModel model;
 
-    private EventTableModel<ProjectActivity> tableModel;
+    private DefaultEventTableModel<ProjectActivity> tableModel;
 
 
     /**
@@ -89,7 +90,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
      * Set up GUI components.
      */
     private void initialize() {
-        tableModel = new EventTableModel<ProjectActivity>(model.getActivitiesList(),
+        tableModel = new DefaultEventTableModel<ProjectActivity>(model.getActivitiesList(),
                 new AllActivitiesTableFormat(model));
         final JXTable table = new WTable(tableModel) {
             @Override
@@ -126,8 +127,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
         table.setCellEditor(new JXTable.GenericEditor());
 
         final TableColumn projectColumn = table.getColumn(0);
-        final TableCellEditor cellEditor = new ComboBoxCellEditor(new JComboBox(new EventComboBoxModel<Project>(model
-                .getVisibleProjects())));
+        final TableCellEditor cellEditor = new ComboBoxCellEditor(new JComboBox<>(newVisibleProjectsModel()));
         projectColumn.setCellEditor(cellEditor);
 
         JScrollPane table_scroll_pane = new JScrollPane(table);
@@ -135,9 +135,15 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
     }
 
 
+	@SuppressWarnings({"unchecked" })
+	private ComboBoxModel<Project> newVisibleProjectsModel() {
+		return new DefaultEventComboBoxModel<Project>(model.getVisibleProjects());
+	}
+
+
     private void initPopupMenu(final JXTable table) {
         final JPopupMenu menu = new JPopupMenu();
-        final AbstractAction editAction = new TablePopupAction(table, "AllActitvitiesPanel.Edit", "/icons/gtk-edit.png") {
+        final AbstractAction editAction = new TablePopupAction(table, "AllActitvitiesPanel.Edit", "/icons/edit-icon.png") {
 
 			@Override
 			protected void actionPerformed(
@@ -272,6 +278,8 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
             case PROJECT_CHANGED:
                 tableModel.fireTableDataChanged();
                 break;
+			default:
+				break;
         }
     }
 
@@ -303,9 +311,9 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
                 tf.getActionMap().put("check", new AbstractAction() {
                     public void actionPerformed(ActionEvent e) {
                         if (!tf.isEditValid()) { // The text is invalid.
-                            if (false) { // userSaysRevert()) { //reverted
-                                tf.postActionEvent(); // inform the editor
-                            }
+//                            if (false) { // userSaysRevert()) { //reverted
+//                                tf.postActionEvent(); // inform the editor
+//                            }
                         } else
                             try { // The text is valid,
                                 tf.commitEdit(); // so use it.
