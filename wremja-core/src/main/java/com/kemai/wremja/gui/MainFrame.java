@@ -239,12 +239,10 @@ public class MainFrame extends JXFrame implements Observer {
         toolBar.setFloatable(false);
 
         toolBar.add(new ManageProjectsAction(this, this.model));
-        
         toolBar.add(new AddActivityAction(this, this.model));
+        
         toolBar.add(new JToolBar.Separator());
-        toolBar.add(new ExportExcelAction(this, this.model, this.settings));
-        toolBar.add(new ExportCsvAction(this, this.model, this.settings));
-        toolBar.add(new JToolBar.Separator());
+        
         toolBar.add(this.model.getEditStack().getUndoAction());
         toolBar.add(this.model.getEditStack().getRedoAction());
 
