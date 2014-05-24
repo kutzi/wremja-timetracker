@@ -15,7 +15,7 @@ import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 
 import com.kemai.swing.util.WTable;
 import com.kemai.util.TextResourceBundle;
@@ -38,7 +38,7 @@ public class AccummulatedActitvitiesPanel extends JXPanel implements Observer {
 	
     private final AccumulatedActivitiesReport report;
     
-    private EventTableModel<AccumulatedProjectActivity> tableModel;
+    private DefaultEventTableModel<AccumulatedProjectActivity> tableModel;
 
     public AccummulatedActitvitiesPanel(final AccumulatedActivitiesReport report) {
         this.report = report;
@@ -53,7 +53,7 @@ public class AccummulatedActitvitiesPanel extends JXPanel implements Observer {
      * Set up GUI components.
      */
     private void initialize() {
-        tableModel = new EventTableModel<AccumulatedProjectActivity>(this.report.getAccumulatedActivitiesByDay(), new AccumulatedActivitiesTableFormat());
+        tableModel = new DefaultEventTableModel<AccumulatedProjectActivity>(this.report.getAccumulatedActivitiesByDay(), new AccumulatedActivitiesTableFormat());
         final JXTable table = new WTable(tableModel) {
             @Override
             public String getToolTipText() {

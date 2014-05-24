@@ -30,7 +30,7 @@ import javax.swing.text.Document;
 
 import org.jdesktop.swingx.JXTable;
 
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.util.TextResourceBundle;
@@ -71,7 +71,7 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
 
     private JLabel lableProjectTitle = null;
 
-    private EventTableModel<Project> projectListTableModel;
+    private DefaultEventTableModel<Project> projectListTableModel;
 
     public ManageProjectsDialog(final Frame owner, final PresentationModel model) {
         super(owner);
@@ -122,7 +122,7 @@ public class ManageProjectsDialog extends EscapeDialog implements Observer {
             projectList.setSortable(false);
             projectList.getTableHeader().setVisible(true);
 
-            projectListTableModel = new EventTableModel<Project>(model.getProjectList(), new ProjectListTableFormat(model));
+            projectListTableModel = new DefaultEventTableModel<Project>(model.getProjectList(), new ProjectListTableFormat(model));
             projectList.setModel(projectListTableModel);
             projectList.setToolTipText(textBundle.textFor("ManageProjectsDialog.ProjectList.ToolTipText")); //$NON-NLS-1$
             

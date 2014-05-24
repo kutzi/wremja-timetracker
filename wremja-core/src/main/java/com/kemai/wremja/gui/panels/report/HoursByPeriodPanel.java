@@ -18,7 +18,7 @@ import org.jdesktop.swingx.renderer.FormatStringValue;
 import org.jdesktop.swingx.renderer.StringValue;
 
 import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 
 import com.kemai.swing.util.WTable;
 import com.kemai.wremja.FormatUtils;
@@ -49,7 +49,7 @@ abstract class HoursByPeriodPanel<P extends HoursPer, R extends HoursByPeriodRep
     /**
      * The table model.
      */
-    private EventTableModel<P> tableModel;
+    private DefaultEventTableModel<P> tableModel;
     
     /**
      * Creates a new panel for the given report of hours by day.
@@ -74,7 +74,7 @@ abstract class HoursByPeriodPanel<P extends HoursPer, R extends HoursByPeriodRep
      * Set up GUI components.
      */
     private void initialize() {
-        tableModel = new EventTableModel<P>(this.report.getHoursByPeriod(), getTableFormat());
+        tableModel = new DefaultEventTableModel<P>(this.report.getHoursByPeriod(), getTableFormat());
 
         final JXTable table = new WTable(tableModel);
         table.setHighlighters(GuiConstants.HIGHLIGHTERS);

@@ -29,7 +29,7 @@ import javax.swing.text.Document;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
-import ca.odell.glazedlists.swing.EventComboBoxModel;
+import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.swing.text.TextEditor;
@@ -270,9 +270,9 @@ public class AddOrEditActivityDialog extends EscapeDialog {
         this.add(getSubmitActivityButton(), "1, 11, 3, 11");
     }
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({ "unchecked" })
 	private ComboBoxModel<Project> newVisibleProjectsModel() {
-		return new EventComboBoxModel<Project>(model.getVisibleProjects());
+		return new DefaultEventComboBoxModel<Project>(model.getVisibleProjects());
 	}
 
     /**

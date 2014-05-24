@@ -37,8 +37,7 @@ import org.jdesktop.swingx.JXTitledSeparator;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
-import ca.odell.glazedlists.swing.EventComboBoxModel;
-
+import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 import com.kemai.swing.text.TextEditor;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
@@ -338,7 +337,7 @@ public class ActivityPanel extends JPanel implements Observer {
 
 	@SuppressWarnings("unchecked")
 	private ComboBoxModel<Project> getVisibleProjectsModel() {
-		return new EventComboBoxModel<Project>(this.model.getVisibleProjects());
+		return new DefaultEventComboBoxModel<Project>(this.model.getVisibleProjects());
 	}
 
     /**

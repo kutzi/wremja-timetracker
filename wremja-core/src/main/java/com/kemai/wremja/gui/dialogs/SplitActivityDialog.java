@@ -30,7 +30,7 @@ import javax.swing.text.Document;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
-import ca.odell.glazedlists.swing.EventComboBoxModel;
+import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
 
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.util.DateUtils;
@@ -213,9 +213,9 @@ public class SplitActivityDialog extends EscapeDialog {
 		return oldActivity.getStart().plus(duration / 2);
 	}
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({ "unchecked" })
 	private ComboBoxModel<Project> newProjectListComboModel() {
-		return new EventComboBoxModel<Project>(model.getVisibleProjects());
+		return new DefaultEventComboBoxModel<Project>(model.getVisibleProjects());
 	}
 
     private JButton getSubmitActivityButton() {
