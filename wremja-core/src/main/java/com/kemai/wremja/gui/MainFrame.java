@@ -4,6 +4,7 @@ import static com.kemai.wremja.gui.GuiConstants.ACTIVE_ICON;
 import static com.kemai.wremja.gui.GuiConstants.NORMAL_ICON;
 import info.clearthought.layout.TableLayout;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.reflect.InvocationTargetException;
@@ -49,6 +50,7 @@ import com.kemai.wremja.gui.actions.ImportDataAction;
 import com.kemai.wremja.gui.actions.ManageProjectsAction;
 import com.kemai.wremja.gui.actions.SettingsAction;
 import com.kemai.wremja.gui.dialogs.AddOrEditActivityDialog;
+import com.kemai.wremja.gui.dialogs.SplitActivityDialog;
 import com.kemai.wremja.gui.events.WremjaEvent;
 import com.kemai.wremja.gui.model.PresentationModel;
 import com.kemai.wremja.gui.model.ProjectActivityStateException;
@@ -135,6 +137,8 @@ public class MainFrame extends JXFrame implements Observer {
     
     /** The Tray icon, if any. */
     private final TraySupport tray;
+
+	private AbstractWremjaAction splitCurrentActivityAction;
 
     /**
      * This is the default constructor.
@@ -231,16 +235,33 @@ public class MainFrame extends JXFrame implements Observer {
         return mainMenuBar;
     }
 
-    /**
-     * This method initializes toolBar.
-     * @return javax.swing.JToolBar
-     */
-    public JToolBar initToolBar() {
+    private JToolBar initToolBar() {
         toolBar.setFloatable(false);
 
         toolBar.add(new ManageProjectsAction(this, this.model));
         toolBar.add(new AddActivityAction(this, this.model));
         
+        toolBar.add(new JToolBar.Separator());
+        
+        splitCurrentActivityAction = new AbstractWremjaAction(this, model) {
+        	{
+        		setName(textBundle.textFor("SplitCurrentActivityAction.Name"));
+                setTooltip(textBundle.textFor("SplitCurrentActivityAction.ShortDescription"));
+                putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/icons/edit-cut.png")));
+        	}
+        	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SplitActivityDialog dialog = new SplitActivityDialog(MainFrame.this, model);
+				dialog.pack();
+				dialog.setLocationRelativeTo(getOwner());
+				dialog.setVisible(true);
+			}
+		};
+		splitCurrentActivityAction.setEnabled(model.isActive());
+		toolBar.add(splitCurrentActivityAction);
+        
+        toolBar.add(new JToolBar.Separator());
         toolBar.add(new JToolBar.Separator());
         
         toolBar.add(this.model.getEditStack().getUndoAction());
@@ -445,6 +466,7 @@ public class MainFrame extends JXFrame implements Observer {
     private void updateStart() {
         setIconImage(ACTIVE_ICON);
         updateTitle();
+        splitCurrentActivityAction.setEnabled(true);
     }
 
     /**
@@ -453,6 +475,7 @@ public class MainFrame extends JXFrame implements Observer {
     private void updateStop() {
         setIconImage(NORMAL_ICON);
         updateTitle();
+        splitCurrentActivityAction.setEnabled(false);
     }
 
     /**

@@ -72,15 +72,12 @@ public class SplitActivityDialog extends EscapeDialog {
     
     private JFormattedTextField endField;
 
-    private PresentationModel model;
+    private final PresentationModel model;
 
     private boolean submitted = false;
 
-    // ------------------------------------------------
-    // Edit components
-    // ------------------------------------------------
-
     private final ProjectActivity oldActivity;
+    private boolean currentActivityIsRunning = false;
 
     private DateTime start;
     private DateTime mid;
@@ -94,7 +91,21 @@ public class SplitActivityDialog extends EscapeDialog {
         initialize();
     }
 
-    /**
+    public SplitActivityDialog(Frame owner, PresentationModel model) {
+    	super(owner);
+    	this.model = model;
+    	
+    	if (!model.isActive()) {
+    		throw new IllegalStateException();
+    	}
+    	
+    	oldActivity = new ProjectActivity(model.getStart(), DateUtils.getNow(), model.getSelectedProject(), model.getDescription());
+    	currentActivityIsRunning = true;
+    	
+    	initialize();
+	}
+
+	/**
      * Set up GUI components.
      */
     private void initialize() {
@@ -182,7 +193,7 @@ public class SplitActivityDialog extends EscapeDialog {
 
         this.add(midLabel, "1, 7");
         JFormattedTextField midField = getMidField();
-        midField.setText(formatTime(getMiddleTime()));
+        midField.setText(formatTime(getMiddleTime(oldActivity.getStart(), oldActivity.getEnd())));
         midField.getDocument().addDocumentListener(validDateListener);
 		this.add(midField, "3, 7");
 
@@ -198,17 +209,20 @@ public class SplitActivityDialog extends EscapeDialog {
         this.add(project2Label, "1, 11");
         this.add(project2Selector, "3, 11");
         
-        add(endLabel, "1, 13");
         JFormattedTextField endField = getEndField();
         endField.setText(formatTime(oldActivity.getEnd()));
         endField.setEditable(false);
-		add(endField, "3, 13");
+        
+        if (!currentActivityIsRunning) {
+            add(endLabel, "1, 13");
+			add(endField, "3, 13");
+        }
         
         this.add(getSubmitActivityButton(), "1, 17, 3, 17");
     }
 
-	private DateTime getMiddleTime() {
-		long duration = oldActivity.getEnd().getMillis() - oldActivity.getStart().getMillis();
+	private DateTime getMiddleTime(DateTime start, DateTime end) {
+		long duration = end.getMillis() - start.getMillis();
 		
 		return oldActivity.getStart().plus(duration / 2);
 	}
@@ -281,8 +295,15 @@ public class SplitActivityDialog extends EscapeDialog {
 //            && activity1.getDescription().equals(oldActivity.getDescription());
             
             //if (!activitiesEqual) {
-            model.replaceActivity(oldActivity, activity1, SplitActivityDialog.this);
-            model.addActivity(activity2, SplitActivityDialog.this);
+        	
+        	if (currentActivityIsRunning) {
+        		model.addActivity(activity1, SplitActivityDialog.this);
+        		model.setStart(mid);
+        		model.changeProjectOfCurrentActivity(activity2.getProject());
+        	} else {
+        		model.replaceActivity(oldActivity, activity1, SplitActivityDialog.this);
+        		model.addActivity(activity2, SplitActivityDialog.this);
+        	}
             
             submitted = true;
             SplitActivityDialog.this.dispose();

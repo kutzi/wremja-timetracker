@@ -20,6 +20,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.matchers.Matcher;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
 
 import com.kemai.util.DateUtils;
 import com.kemai.util.IdGenerator;
@@ -113,7 +114,7 @@ public class PresentationModel extends Observable {
         this.lastTouchFile = lastTouchFile;
         this.data = new ActivityRepository();
         this.projectList = new SortedList<Project>(new BasicEventList<Project>());
-        this.activitiesList = new SortedList<ProjectActivity>(new BasicEventList<ProjectActivity>());
+        this.activitiesList = new SortedList<ProjectActivity>(GlazedListsSwing.swingThreadProxyList(new BasicEventList<ProjectActivity>()));
 
         initialize();
         
@@ -456,6 +457,18 @@ public class PresentationModel extends Observable {
         event.setData(activeProject);
         notify(event);
     }
+    
+    public synchronized final void changeProjectOfCurrentActivity(Project newProject) {
+        this.selectedProject = newProject;
+
+        this.data.setActiveProject(newProject);
+        
+        // Fire project changed event
+        final WremjaEvent event = new WremjaEvent(WremjaEvent.Type.PROJECT_CHANGED);
+        event.setData(newProject);
+        notify(event);
+    }
+    
 
     /**
      * Save the model.
@@ -530,25 +543,6 @@ public class PresentationModel extends Observable {
         event.setData(activity);
         notify(event);
     }
-    
-    /**
-     * Changes an activity - i.e. replaces its attributes with that of a new activity.
-     *
-     * @param originalActivity the activity to be changed
-     * @param activity the activity with the changed attributes
-     * @param source the source of the change
-     * @throws OverlappingActivitiesException if the changed activity overlaps with an existing one AND overlapping activities are not allowed
-     */
-//	public void changeActivity(ProjectActivity originalActivity, ProjectActivity activity,
-//			Object source) throws OverlappingActivitiesException {
-//    	ProjectActivity overlappingActivity = getOverlappingActivity(activity, originalActivity);
-//    	if(overlappingActivity != null) {
-//    		throw new OverlappingActivitiesException(activity, overlappingActivity);
-//    	}
-//		
-//		removeActivity(originalActivity, source);
-//		addActivity(activity, source);
-//	}
     
     /**
      * Remove a collection of activities from the model.
