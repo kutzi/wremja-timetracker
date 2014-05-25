@@ -385,7 +385,7 @@ public class PresentationModel extends Observable {
             list.add(new ProjectActivity(start, end,
                     project, description));
         } else {
-            DateTime firstMidnightAfterStart = start.plusDays(1).toDateMidnight().toDateTime();
+            DateTime firstMidnightAfterStart = start.plusDays(1).withTimeAtStartOfDay();
             list.add(new ProjectActivity(start, firstMidnightAfterStart, project, description));
             createActivities(firstMidnightAfterStart, end, description, project, list);
         }

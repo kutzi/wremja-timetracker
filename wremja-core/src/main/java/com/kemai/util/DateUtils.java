@@ -28,7 +28,7 @@ public abstract class DateUtils {
      * Returns <code>true</code> iff the 2 dates are on the same day.
      */
     public static boolean isSameDay(DateTime dt1, DateTime dt2) {
-        return dt1.toDateMidnight().equals(dt2.toDateMidnight());
+        return dt1.withTimeAtStartOfDay().equals(dt2.withTimeAtStartOfDay());
     }
 
     /**
