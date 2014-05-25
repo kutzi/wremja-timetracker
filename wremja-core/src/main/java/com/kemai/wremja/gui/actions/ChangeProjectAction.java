@@ -51,7 +51,7 @@ public class ChangeProjectAction extends AbstractWremjaAction {
         boolean projectHasChanged = false;
         // Check if the new project is different from the old one
         if (! ObjectUtils.equals(getModel().getSelectedProject(), newProject)) {
-            getModel().changeProject(newProject);
+            getModel().startNewProject(newProject);
             projectHasChanged = true;
         }
 

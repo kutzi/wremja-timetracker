@@ -309,7 +309,7 @@ public class ActivityPanel extends JPanel implements Observer {
             public void actionPerformed(final ActionEvent e) {
                 // 1. Set current project to the just selected project.
                 final Project selectedProject = (Project) projectSelector.getSelectedItem();
-                ActivityPanel.this.model.changeProject(selectedProject);
+                ActivityPanel.this.model.startNewProject(selectedProject);
 
                 // 2. Clear the description.
                 if (descriptionEditor != null) {

@@ -59,7 +59,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
         final ReadableInstant midnight = yesterday.plusDays(1).toDateMidnight();
 
         // Set active project
-        model.changeProject(project1);
+        model.startNewProject(project1);
 
         // Start activity on yesterday
         model.start(yesterday);
@@ -112,7 +112,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
         final DateTime midnight = threeDaysAgo.plusDays(1).toDateMidnight().toDateTime();
 
         // Set active project
-        model.changeProject(project1);
+        model.startNewProject(project1);
 
         // Start activity on threeDaysAgo
         model.start(threeDaysAgo);
@@ -165,21 +165,21 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
 
     /**
      * Test for changing the active project.
-     * @see PresentationModel#changeProject(Project)
+     * @see PresentationModel#startNewProject(Project)
      */
     @Test
     public void testChangeProject() {
         PresentationModel model = getNewTestModel();
         
-        model.changeProject(project1);
+        model.startNewProject(project1);
         assertEquals(project1, model.getSelectedProject());
         assertTrue(model.isDirty());
 
-        model.changeProject(project2);
+        model.startNewProject(project2);
         assertEquals(project2, model.getSelectedProject());
         assertTrue(model.isDirty());
 
-        model.changeProject(null);
+        model.startNewProject(null);
         assertEquals(null, model.getSelectedProject());
         assertTrue(model.isDirty());
     }
@@ -199,7 +199,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
     public void testExceptionOnDoubleStart() throws ProjectActivityStateException {
         PresentationModel model = getNewTestModel();
 
-        model.changeProject(project1);
+        model.startNewProject(project1);
         model.start();
         
         assertTrue(model.isActive());
@@ -302,7 +302,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
             
             Project project = new Project(1, "TestProject", "");
             model.addProject(project, this);
-            model.changeProject(project);
+            model.startNewProject(project);
             DateTime now = DateUtils.getNow();
             model.start(now);
             model.stop(now);
@@ -313,7 +313,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
             Project projectB = new Project(2, "Project B", "");
             model.addProject(projectB, this);
             model.start();
-            model.changeProject(projectB);
+            model.startNewProject(projectB);
             model.stop();
             assertTrue(model.getActivitiesList().isEmpty());
             
@@ -336,7 +336,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
             
             Project project = new Project(1, "TestProject", "");
             model.addProject(project, this);
-            model.changeProject(project);
+            model.startNewProject(project);
             DateTime now = DateUtils.getNow();
             model.start(now);
             model.stop(now);
@@ -347,7 +347,7 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
             Project projectB = new Project(2, "Project B", "");
             model.addProject(projectB, this);
             model.start();
-            model.changeProject(projectB);
+            model.startNewProject(projectB);
             model.stop();
             assertEquals(3, model.getActivitiesList().size());
             

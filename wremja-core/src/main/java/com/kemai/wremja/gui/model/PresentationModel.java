@@ -402,10 +402,11 @@ public class PresentationModel extends Observable {
     }
 
     /**
-     * Changes to the given project.
+     * Finish activity on current project and start a new one.
+     *
      * @param activeProject the new active project
      */
-    public final void changeProject(final Project activeProject) {
+    public final void startNewProject(final Project activeProject) {
     	final DateTime now = DateUtils.getNow();
     	synchronized(this) {
 	        // If there's no change we're done.
