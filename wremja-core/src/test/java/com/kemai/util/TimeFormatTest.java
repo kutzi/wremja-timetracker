@@ -27,6 +27,15 @@ public class TimeFormatTest {
 		assertEquals(23, date.getMinutes());
 	}
 	
+	@Test
+	public void shouldParseValidHoursAndPartialMinutes() throws ParseException {
+		Date date = timeFormat.parse("12:2");
+		
+		assertNotNull(date);
+		assertEquals(12, date.getHours());
+		assertEquals(2, date.getMinutes());
+	}
+	
 	@Test(expected = ParseException.class)
 	public void shouldRejectNonDigits() throws ParseException {
 		timeFormat.parse("15:1a");
@@ -35,5 +44,10 @@ public class TimeFormatTest {
 	@Test(expected = ParseException.class)
 	public void shouldRejectNonDigits2() throws ParseException {
 		timeFormat.parse("15:a1");
+	}
+	
+	@Test(expected = ParseException.class)
+	public void shouldRejectNonDigits3() throws ParseException {
+		timeFormat.parse("1a:11");
 	}
 }
