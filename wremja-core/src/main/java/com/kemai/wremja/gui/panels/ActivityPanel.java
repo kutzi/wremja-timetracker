@@ -507,6 +507,7 @@ public class ActivityPanel extends JPanel implements Observer {
         		}
         		
                 model.setStart(newStart);
+                start.setText(FormatUtils.formatTime(model.getStart()));
             } else {
                 JOptionPane.showMessageDialog(
                         ActivityPanel.this, 
