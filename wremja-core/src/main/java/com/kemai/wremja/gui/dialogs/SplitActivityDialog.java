@@ -64,7 +64,7 @@ public class SplitActivityDialog extends EscapeDialog {
     
 	private JComboBox<Project> project2Selector;
 
-    private JButton submitActivityButton;
+    private JButton submitButton;
 
     private JFormattedTextField startField;
 
@@ -118,7 +118,7 @@ public class SplitActivityDialog extends EscapeDialog {
 
         initializeLayout();
 
-        this.getRootPane().setDefaultButton(submitActivityButton);
+        this.getRootPane().setDefaultButton(submitButton);
     }
 
     /**
@@ -147,7 +147,7 @@ public class SplitActivityDialog extends EscapeDialog {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if(e.getItem() != null && e.getStateChange() == ItemEvent.SELECTED) {
-                    submitActivityButton.setEnabled(true);
+                    submitButton.setEnabled(true);
                 }
             }
         });
@@ -175,13 +175,13 @@ public class SplitActivityDialog extends EscapeDialog {
                 try {
                     String text = document.getText(0, document.getLength());
                     if(validateTime(text)) {
-                        submitActivityButton.setEnabled(true);
+                        submitButton.setEnabled(true);
                         return;
                     }
                 } catch (BadLocationException e) {
                     // fall through
                 }
-                submitActivityButton.setEnabled(false);
+                submitButton.setEnabled(false);
             }
         };
         
@@ -202,7 +202,7 @@ public class SplitActivityDialog extends EscapeDialog {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if(e.getItem() != null && e.getStateChange() == ItemEvent.SELECTED) {
-                    submitActivityButton.setEnabled(true);
+                    submitButton.setEnabled(true);
                 }
             }
         });
@@ -233,16 +233,16 @@ public class SplitActivityDialog extends EscapeDialog {
 	}
 
     private JButton getSubmitActivityButton() {
-        if (submitActivityButton == null) {
-            submitActivityButton = new JButton();
+        if (submitButton == null) {
+            submitButton = new JButton();
 
-            submitActivityButton.setText(textBundle.textFor("Dialogs.SaveLabel")); //$NON-NLS-1$
-            submitActivityButton.setIcon(new ImageIcon(getClass().getResource("/icons/gtk-save.png"))); //$NON-NLS-1$
+            submitButton.setText(textBundle.textFor("SplitActivityDialog.SplitButton.Label"));
+            submitButton.setIcon(new ImageIcon(getClass().getResource("/icons/edit-cut.png")));
 
             // Confirm with 'Enter' key
-            submitActivityButton.setMnemonic(KeyEvent.VK_ENTER);
+            submitButton.setMnemonic(KeyEvent.VK_ENTER);
             
-            submitActivityButton.addMouseListener(new MouseAdapter() {
+            submitButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					// there's a strange bug on Linux/Gnome (of course)
@@ -253,13 +253,13 @@ public class SplitActivityDialog extends EscapeDialog {
 				}
 			});
 
-            submitActivityButton.addActionListener(new ActionListener() {
+            submitButton.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent event) {
                 	submitActivity();
                 }
             });
         }
-        return submitActivityButton;
+        return submitButton;
     }
     
     private void submitActivity() {
