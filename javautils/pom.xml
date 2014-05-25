@@ -27,10 +27,6 @@
         </dependency>
     </dependencies>
     
-    <scm>
-        <developerConnection>scm:svn:https://kenai.com/svn/wremja~svn/trunk/javautils</developerConnection>
-        <url>https://kenai.com/svn/wremja~svn/trunk/javautils</url>
-    </scm>
     <distributionManagement>
     	<repository>
     		<id>kenai-releases</id>
