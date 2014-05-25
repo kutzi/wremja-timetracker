@@ -502,6 +502,7 @@ public class ActivityPanel extends JPanel implements Observer {
                             "Overlap",
                             JOptionPane.ERROR_MESSAGE
                     );
+        			start.setText(FormatUtils.formatTime(model.getStart()));
         			return;
         		}
         		
