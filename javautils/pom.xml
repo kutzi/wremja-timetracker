@@ -2,13 +2,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.kutzi</groupId>
     <artifactId>javautils</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <name>General purpose Java utils</name>
     
    	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>com.kenai.wremja</groupId>
-		<version>1.2.3-SNAPSHOT</version>
+		<version>1.2.3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
     
