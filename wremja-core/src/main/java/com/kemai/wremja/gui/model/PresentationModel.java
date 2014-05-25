@@ -20,7 +20,6 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.matchers.Matcher;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
 
 import com.kemai.util.DateUtils;
 import com.kemai.util.IdGenerator;
@@ -114,7 +113,7 @@ public class PresentationModel extends Observable {
         this.lastTouchFile = lastTouchFile;
         this.data = new ActivityRepository();
         this.projectList = new SortedList<Project>(new BasicEventList<Project>());
-        this.activitiesList = new SortedList<ProjectActivity>(GlazedListsSwing.swingThreadProxyList(new BasicEventList<ProjectActivity>()));
+        this.activitiesList = new SortedList<ProjectActivity>(new BasicEventList<ProjectActivity>());
 
         initialize();
         
