@@ -36,6 +36,18 @@ public class TimeFormat extends DateFormat {
      */
     @Override
     public Date parse(final String source, final ParsePosition pos) {
+    	
+    	if (source != null && source.length() > 0) {
+    		String[] split = source.split(":");
+    		for (String s : split) {
+    			try {
+					Integer.parseInt(s);
+				} catch (NumberFormatException e) {
+					return null;
+				}
+    		}
+    	}
+    	
         synchronized (timeFormat) {
             return timeFormat.parse(source, pos);
         }

@@ -192,7 +192,15 @@ public class ActivityPanel extends JPanel implements Observer {
         buttonPanel.add(startStopButton, "1, 1, 3, 1"); //$NON-NLS-1$
         buttonPanel.add(this.projectSelector, "1, 3, 3, 3"); //$NON-NLS-1$
 
-        start = new JFormattedTextField(FormatUtils.getTimeFormat());
+        start = new JFormattedTextField(FormatUtils.getTimeFormat()) {
+
+			@Override
+			protected void invalidEdit() {
+				super.invalidEdit();
+				setForeground(Color.RED);
+			}
+        	
+        };
         start.setToolTipText(textBundle.textFor("ActivityPanel.Start.ToolTipText"));
         start.setBorder(BorderFactory.createEmptyBorder());
         start.setFont(FONT_BIG_BOLD);
@@ -469,6 +477,7 @@ public class ActivityPanel extends JPanel implements Observer {
      * The start time is validated so that it is before the current time.
      */
     private void changeStartTime() {
+    	start.setForeground(HIGHLIGHT_COLOR);
         if (StringUtils.isEmpty(start.getText())) {
             return;
         }
@@ -519,6 +528,8 @@ public class ActivityPanel extends JPanel implements Observer {
                 start.setText(FormatUtils.formatTime(model.getStart()));
             }
         } catch (ParseException e) {
+        	// shouldn't come here, as any parse errors should already be caught by JFormattedTextField's parser
+        	start.setForeground(Color.RED);
             return;
         }
     }
