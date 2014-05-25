@@ -2,11 +2,11 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>com.kenai.wremja</groupId>
-    <version>1.2.3</version>
+    <version>1.2.4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>infonode-tabbedpane</artifactId>
-  <version>1.3</version>
+  <version>1.4-SNAPSHOT</version>
   <name>Infonode Tabbedpanel</name>
   <description>The tabbed panel component from http://www.infonode.net/. Bases on v1.6.1</description>
 </project>

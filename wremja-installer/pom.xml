@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.kenai.wremja</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.2.3</version>
+		<version>1.2.4-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
@@ -98,12 +98,12 @@
 		<dependency>
 			<groupId>com.kenai.wremja</groupId>
 			<artifactId>wremja-core</artifactId>
-			<version>1.2.3</version>
+			<version>1.2.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.kenai.wremja</groupId>
 			<artifactId>wremja-launcher</artifactId>
-			<version>1.2.3</version>
+			<version>1.2.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
