@@ -143,7 +143,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
 
     private void initPopupMenu(final JXTable table) {
         final JPopupMenu menu = new JPopupMenu();
-        final AbstractAction editAction = new TablePopupAction(table, "AllActitvitiesPanel.Edit", "/icons/edit-icon.png") {
+        final AbstractAction editAction = new TablePopupAction(table, tableModel, "AllActitvitiesPanel.Edit", "/icons/edit-icon.png") {
 
 			@Override
 			protected void actionPerformed(
@@ -162,7 +162,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
         
         menu.add(editAction);
         
-        final AbstractAction splitAction = new TablePopupAction(table, "AllActitvitiesPanel.Split", "/icons/edit-cut.png") {
+        final AbstractAction splitAction = new TablePopupAction(table, tableModel, "AllActitvitiesPanel.Split", "/icons/edit-cut.png") {
 
 			@Override
 			protected void actionPerformed(
@@ -179,7 +179,7 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
         };
         menu.add(splitAction);
         
-        menu.add(new TablePopupAction(table, "AllActitvitiesPanel.Delete", "/icons/gtk-delete.png") {
+        menu.add(new TablePopupAction(table, tableModel, "AllActitvitiesPanel.Delete", "/icons/gtk-delete.png") {
 
 			@Override
 			protected void actionPerformed(
@@ -230,12 +230,14 @@ public class AllActitvitiesPanel extends JXPanel implements Observer {
     }
 
 
-    private abstract class TablePopupAction extends AbstractAction {
+    private static abstract class TablePopupAction extends AbstractAction {
     	private final JXTable table;
+    	private final DefaultEventTableModel<ProjectActivity> tableModel;
     	
-    	public TablePopupAction(JXTable table, String resourceKey, String iconUrl) {
+    	public TablePopupAction(JXTable table, DefaultEventTableModel<ProjectActivity> tableModel, String resourceKey, String iconUrl) {
     		super(textBundle.textFor(resourceKey), new ImageIcon(AllActitvitiesPanel.class.getResource(iconUrl)));
 			this.table = table;
+			this.tableModel = tableModel;
 		}
 
 		public void actionPerformed(final ActionEvent event) {
