@@ -1,6 +1,9 @@
 package com.kemai.wremja.model.report;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -9,6 +12,7 @@ import org.joda.time.DateTime;
 import org.joda.time.base.AbstractInstant;
 
 import com.kemai.wremja.model.Project;
+import com.kemai.wremja.model.ProjectActivity;
 
 /**
  * An activity which represents the accumulated time for all activities
@@ -23,14 +27,24 @@ public class AccumulatedProjectActivity implements Comparable<AccumulatedProject
     private final Project project;
 
     private double time;
+    
+    private List<ProjectActivity> activities = new ArrayList<>();
 
+    @Deprecated
     public AccumulatedProjectActivity(final Project project, final DateTime day, final double time) {
         this.project = project;
         this.day = day.toDateMidnight();
         this.time = time;
     }
 
-    /**
+    public AccumulatedProjectActivity(ProjectActivity activity) {
+		this.project = activity.getProject();
+        this.day = activity.getStart().toDateMidnight();
+        this.time = activity.getDuration();
+		activities.add(activity);
+    }
+
+	/**
      * @return the day
      */
     public Date getDay() {
@@ -58,8 +72,13 @@ public class AccumulatedProjectActivity implements Comparable<AccumulatedProject
     }
 
     /** Adds the given time to this accumulated activity. */
-    public void addTime(final double toAdd) {
-        this.time += toAdd;
+    public void addTime(ProjectActivity activity) {
+        this.time += activity.getDuration();
+        activities.add(activity);
+    }
+    
+    public List<ProjectActivity> getActivities() {
+    	return Collections.unmodifiableList(activities);
     }
 
     @Override

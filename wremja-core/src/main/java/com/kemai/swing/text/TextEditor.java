@@ -33,8 +33,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.StyledEditorKit;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXPanel;
@@ -80,7 +78,7 @@ public class TextEditor extends JXPanel {
     
     private final List<TextChangeObserver> textObservers = new CopyOnWriteArrayList<TextChangeObserver>();
     
-    private final JTextPane textPane = new JTextPane(); //new JXEditorPane();
+    private final JTextPane textPane = new ActivityDescriptionPane("");
     {
     	textPane.addCaretListener(new CaretListener() {
 
@@ -145,13 +143,6 @@ public class TextEditor extends JXPanel {
 
     private void initialize() {
         this.setLayout(new BorderLayout());
-
-        StyleSheet styleSheet = new StyleSheet();
-        styleSheet.addRule("body {font-family: Tahoma; font-size: 11pt; font-style: normal; font-weight: normal;}");
-
-        HTMLEditorKit editorKit = new HTMLEditorKit();
-        editorKit.setStyleSheet(styleSheet);
-        textPane.setEditorKit(editorKit);
 
         textPane.setEnabled(true);
         textPane.setEditable(true);
