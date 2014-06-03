@@ -31,7 +31,7 @@ public class DescriptionsDialog extends EscapeDialog {
 
     private void initialize() {
         setLocationRelativeTo(getOwner());
-        setModal(true);
+        setModalityType(ModalityType.MODELESS);
         
         setMinimumSize(new Dimension(300, 200));
         
