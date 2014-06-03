@@ -154,7 +154,7 @@ public class AddOrEditActivityDialog extends EscapeDialog {
             this.setIconImage(new ImageIcon(getClass().getResource("/icons/gtk-add.png")).getImage()); //$NON-NLS-1$
             this.setTitle(textBundle.textFor("AddOrEditActivityDialog.AddActivityLabel")); //$NON-NLS-1$
         } else {
-            this.setIconImage(new ImageIcon(getClass().getResource("/icons/gtk-edit.png")).getImage()); //$NON-NLS-1$
+            this.setIconImage(new ImageIcon(getClass().getResource("/icons/edit-icon.png")).getImage()); //$NON-NLS-1$
             this.setTitle(textBundle.textFor("AddOrEditActivityDialog.EditActivityLabel")); //$NON-NLS-1$
         }
 
