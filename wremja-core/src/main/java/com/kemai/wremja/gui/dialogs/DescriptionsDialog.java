@@ -8,9 +8,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 
 import com.kemai.swing.dialog.EscapeDialog;
 import com.kemai.swing.text.ActivityDescriptionPane;
