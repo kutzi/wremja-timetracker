@@ -106,7 +106,7 @@ public class AccummulatedActitvitiesPanel extends JXPanel implements Observer {
 
     private void initPopupMenu(JXTable table) {
     	final JPopupMenu menu = new JPopupMenu();
-        final AbstractAction editAction = new TablePopupAction(table, tableModel, "Actions.ShowDescriptions", "/icons/text-x-generic.png") {
+        final AbstractAction showDescriptionsAction = new TablePopupAction(table, tableModel, "Actions.ShowDescriptions", "/icons/text-x-generic.png") {
 
 			@Override
 			protected void actionPerformed(
@@ -120,7 +120,7 @@ public class AccummulatedActitvitiesPanel extends JXPanel implements Observer {
 			}
         };
         
-        menu.add(editAction);
+        menu.add(showDescriptionsAction);
         
         // attach menu to table cells
         table.addMouseListener(new MouseAdapter() {
@@ -152,9 +152,9 @@ public class AccummulatedActitvitiesPanel extends JXPanel implements Observer {
                     
                     if(selectionIndices.length > 1) {
                         // edit action works only on a single cell
-                        editAction.setEnabled(false);
+                        showDescriptionsAction.setEnabled(false);
                     } else {
-                        editAction.setEnabled(true);
+                        showDescriptionsAction.setEnabled(true);
                     }
                     menu.show(e.getComponent(), e.getX(), e.getY());
                 }
