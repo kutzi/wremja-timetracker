@@ -7,7 +7,7 @@ import java.io.StringReader;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
 
-public class Html2Text extends HTMLEditorKit.ParserCallback {
+public class Html2Text{
 
 	private Html2Text() {
 	}
