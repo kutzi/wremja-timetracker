@@ -78,7 +78,7 @@ public class TextEditor extends JXPanel {
     
     private final List<TextChangeObserver> textObservers = new CopyOnWriteArrayList<TextChangeObserver>();
     
-    private final JTextPane textPane = new ActivityDescriptionPane("");
+    private final JTextPane textPane = StyledTextPane.newHtmlTextPane("").asComponent();
     {
     	textPane.addCaretListener(new CaretListener() {
 
