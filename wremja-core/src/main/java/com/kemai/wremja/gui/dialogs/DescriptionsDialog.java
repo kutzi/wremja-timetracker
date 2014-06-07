@@ -9,10 +9,15 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 import com.kemai.swing.dialog.EscapeDialog;
-import com.kemai.swing.text.ActivityDescriptionPane;
 import com.kemai.swing.text.Html2Text;
+import com.kemai.swing.text.SimpleTextPane;
 import com.kemai.wremja.FormatUtils;
 import com.kemai.wremja.gui.GuiConstants;
 import com.kemai.wremja.model.ProjectActivity;
@@ -56,9 +61,24 @@ public class DescriptionsDialog extends EscapeDialog {
 			
 			String plainDescription = Html2Text.parse(activity.getDescription());
 			
-			String text = plainDescription + " : "
-					+ durationFormat.format(activity.getDuration()) + "h";
-			ActivityDescriptionPane pane = new ActivityDescriptionPane(text);
+			JTextPane pane = new SimpleTextPane();
+			
+			Document doc = pane.getDocument();
+
+			try {
+				SimpleAttributeSet sas = new SimpleAttributeSet();
+	            StyleConstants.setBold(sas, true);
+				doc.insertString(0, durationFormat.format(activity.getDuration()) + "h", sas);
+				
+				sas = new SimpleAttributeSet();
+	            StyleConstants.setBold(sas, false);
+				doc.insertString(doc.getLength(), "\n", sas);
+				
+				doc.insertString(doc.getLength(), plainDescription, null);
+			} catch (BadLocationException e) {
+				throw new RuntimeException(e);
+			}
+			
 	        pane.setEditable(false);
 	        pane.setBorder(BorderFactory.createLineBorder(GuiConstants.VERY_LIGHT_GREY));
 			
