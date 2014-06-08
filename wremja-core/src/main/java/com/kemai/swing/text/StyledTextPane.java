@@ -16,7 +16,7 @@ public class StyledTextPane {
 		super();
 	}
 	
-	public static StyledTextPane newHtmlTextPane(String htmlText) {
+	public static StyledTextPane newHtmlTextPane() {
 		StyledTextPane p = new StyledTextPane();
 
 		StyleSheet styleSheet = new StyleSheet();
@@ -25,8 +25,6 @@ public class StyledTextPane {
         HTMLEditorKit editorKit = new HTMLEditorKit();
         editorKit.setStyleSheet(styleSheet);
         p.pane.setEditorKit(editorKit);
-        
-        p.pane.setText(htmlText);
         
         return p;
 	}
