@@ -507,7 +507,8 @@ public class ActivityPanel extends JPanel implements Observer {
         			model.setStart(newStart);
         			start.setText(FormatUtils.formatTime(model.getStart()));
         		} else {
-        			start.setText(FormatUtils.formatTime(model.getStart()));
+        			// need to use setValue, so propertyChange is recognized by Swing
+        			start.setValue(model.getStart().toDate());
         		}
             } else {
                 JOptionPane.showMessageDialog(
