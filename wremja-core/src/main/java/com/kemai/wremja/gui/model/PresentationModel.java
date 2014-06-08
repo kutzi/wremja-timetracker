@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -340,13 +341,19 @@ public class PresentationModel extends Observable {
 	        events = new ArrayList<WremjaEvent>(activities.size());
 	        for(ProjectActivity activity : activities) {
 	            getData().addActivity(activity);
-	            activitiesList.add(activity);
 	            
 	            // Create Event for Project Activity
 	            WremjaEvent event  = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
 	            event.setData(activity);
 	            events.add(event);
 	        }
+	        
+            SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					activitiesList.addAll(activities);
+				}
+			});
 	
 	        this.stop = stopTime;
 	
@@ -821,6 +828,14 @@ public class PresentationModel extends Observable {
     	}
     	
     	return getData().getIntersection(newActivity, original);
+    }
+    
+    public List<ProjectActivity> getOverlappingActivities(ProjectActivity newActivity, ProjectActivity original) {
+    	if(this.settings.isAllowOverlappingActivities()) {
+    		return null;
+    	}
+    	
+    	return getData().getIntersections(newActivity, original);
     }
     
     public long nextProjectId() {
