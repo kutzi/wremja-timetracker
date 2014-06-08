@@ -501,42 +501,14 @@ public class ActivityPanel extends JPanel implements Observer {
             );
 
             if (correct) {
-            	// check for overlap
-        		ProjectActivity tmp = new ProjectActivity(newStart, DateUtils.getNow(), null);
-        		List<ProjectActivity> overlappingActivities = model.getOverlappingActivities(tmp, null);
-				if(!overlappingActivities.isEmpty()) {
-					if (overlappingActivities.size() == 1) {
-						
-						// TODO: only do this, if new end time > start time of overlapping activity,
-						// so we don't create empty activities this way!
-	        			Object[] options = { "Yes", "No" };
-	        			int choice = JOptionPane.showOptionDialog(
-	        					ActivityPanel.this,
-	        					"Overlaps with an existing activity. Adjust end time of previous activity?",
-	        					"Overlap",
-	        					JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
-	        					null, options, options[0]);
-	        			
-	        			if (choice == 0) {
-	        				overlappingActivities.get(0).setEnd(newStart);
-	        			} else {
-	        				start.setText(FormatUtils.formatTime(model.getStart()));
-	        				return;
-	        			}
-	        		} else {
-	        			JOptionPane.showMessageDialog(
-	                             ActivityPanel.this, 
-	                             "Overlaps with existing activities!",
-	                             "Overlap",
-	                             JOptionPane.ERROR_MESSAGE
-	                     );
-	         			start.setText(FormatUtils.formatTime(model.getStart()));
-	         			return;
-	        		}
-				}
-        		
-                model.setStart(newStart);
-                start.setText(FormatUtils.formatTime(model.getStart()));
+
+        		boolean noOverlap = handleOverlappingActivities(newStart);
+        		if (noOverlap) {
+        			model.setStart(newStart);
+        			start.setText(FormatUtils.formatTime(model.getStart()));
+        		} else {
+        			start.setText(FormatUtils.formatTime(model.getStart()));
+        		}
             } else {
                 JOptionPane.showMessageDialog(
                         ActivityPanel.this, 
@@ -552,6 +524,46 @@ public class ActivityPanel extends JPanel implements Observer {
         	start.setForeground(Color.RED);
             return;
         }
+    }
+    
+    /**
+     * Checks for overlapping activities if the newStart time would be applied.
+     * @return true, if there are now overlaps or all overlaps have been handled.
+     */
+    private boolean handleOverlappingActivities(DateTime newStart) {
+    	// check for overlap
+		ProjectActivity tmp = new ProjectActivity(newStart, DateUtils.getNow(), null);
+		List<ProjectActivity> overlappingActivities = model.getOverlappingActivities(tmp, null);
+		if(!overlappingActivities.isEmpty()) {
+			if (overlappingActivities.size() == 1) {
+				
+				// TODO: only do this, if new end time > start time of overlapping activity,
+				// so we don't create empty activities this way!
+    			Object[] options = { "Yes", "No" };
+    			int choice = JOptionPane.showOptionDialog(
+    					ActivityPanel.this,
+    					"Overlaps with an existing activity. Adjust end time of previous activity?",
+    					"Overlap",
+    					JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
+    					null, options, options[0]);
+    			
+    			if (choice == 0) {
+    				overlappingActivities.get(0).setEnd(newStart);
+    			} else {
+    				return false;
+    			}
+    		} else {
+    			JOptionPane.showMessageDialog(
+                         ActivityPanel.this, 
+                         "Overlaps with existing activities!",
+                         "Overlap",
+                         JOptionPane.ERROR_MESSAGE
+                 );
+     			return false;
+    		}
+		}
+		
+		return true;
     }
 
 }
