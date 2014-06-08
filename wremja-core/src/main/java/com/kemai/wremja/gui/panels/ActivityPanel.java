@@ -3,7 +3,6 @@ package com.kemai.wremja.gui.panels;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -25,11 +24,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import javax.swing.ListCellRenderer;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXPanel;
@@ -328,19 +325,19 @@ public class ActivityPanel extends JPanel implements Observer {
         Dimension preferredSize = projectSelector.getPreferredSize();
         preferredSize.setSize(preferredSize.width, preferredHeight);
         projectSelector.setPreferredSize(preferredSize);
-        final ListCellRenderer<? super Project> renderer = projectSelector.getRenderer();
-        projectSelector.setRenderer(new ListCellRenderer<Project>() {
-            @Override
-            public Component getListCellRendererComponent(JList<? extends Project> list, Project value,
-                    int index, boolean isSelected, boolean cellHasFocus) {
-                Component comp = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (comp instanceof JLabel) {
-                    JLabel label = (JLabel) comp;
-                    label.setText(label.getText());
-                }
-                return comp;
-            }
-        });
+//        final ListCellRenderer<? super Project> renderer = projectSelector.getRenderer();
+//        projectSelector.setRenderer(new ListCellRenderer<Project>() {
+//            @Override
+//            public Component getListCellRendererComponent(JList<? extends Project> list, Project value,
+//                    int index, boolean isSelected, boolean cellHasFocus) {
+//                Component comp = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+//                if (comp instanceof JLabel) {
+//                    JLabel label = (JLabel) comp;
+//                    label.setText(label.getText());
+//                }
+//                return comp;
+//            }
+//        });
     }
 
 	@SuppressWarnings("unchecked")
