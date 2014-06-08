@@ -142,6 +142,10 @@ public class ProjectActivity implements Serializable, Comparable<ProjectActivity
     public DateTime getEnd() {
         return end;
     }
+
+    public void setEnd(DateTime end) {
+    	this.end = end;
+    }
     
     /**
      * Sets the end hours and minutes while respecting the class invariants.
@@ -198,6 +202,10 @@ public class ProjectActivity implements Serializable, Comparable<ProjectActivity
      */
     public DateTime getStart() {
         return start;
+    }
+    
+    public void setStart(DateTime start) {
+    	this.start = start;
     }
     
     /**

@@ -241,6 +241,18 @@ public class ActivityRepository implements ReadableRepository, Serializable {
     	}
     	return null;
     }
+    
+    public List<ProjectActivity> getIntersections(ProjectActivity newActivity, ProjectActivity original) {
+    	List<ProjectActivity> intersections = new ArrayList<>();
+    	for(ProjectActivity activity : activities) {
+    		if(!activity.equals(original)) {
+    			if(activity.hasIntersection(newActivity)) {
+    				intersections.add(activity);
+    			}
+    		}
+    	}
+    	return intersections;
+    }
 
 	/**
 	 * Returns the LAST value of the sequence.

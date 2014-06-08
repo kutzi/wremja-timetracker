@@ -13,6 +13,7 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -35,6 +36,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 
 import ca.odell.glazedlists.swing.DefaultEventComboBoxModel;
+
 import com.kemai.swing.text.TextEditor;
 import com.kemai.util.DateUtils;
 import com.kemai.util.TextResourceBundle;
@@ -501,16 +503,37 @@ public class ActivityPanel extends JPanel implements Observer {
             if (correct) {
             	// check for overlap
         		ProjectActivity tmp = new ProjectActivity(newStart, DateUtils.getNow(), null);
-        		if(model.getOverlappingActivity(tmp, null) != null) {
-        			JOptionPane.showMessageDialog(
-                            ActivityPanel.this, 
-                            "Overlaps with an existing activity!",
-                            "Overlap",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-        			start.setText(FormatUtils.formatTime(model.getStart()));
-        			return;
-        		}
+        		List<ProjectActivity> overlappingActivities = model.getOverlappingActivities(tmp, null);
+				if(!overlappingActivities.isEmpty()) {
+					if (overlappingActivities.size() == 1) {
+						
+						// TODO: only do this, if new end time > start time of overlapping activity,
+						// so we don't create empty activities this way!
+	        			Object[] options = { "Yes", "No" };
+	        			int choice = JOptionPane.showOptionDialog(
+	        					ActivityPanel.this,
+	        					"Overlaps with an existing activity. Adjust end time of previous activity?",
+	        					"Overlap",
+	        					JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
+	        					null, options, options[0]);
+	        			
+	        			if (choice == 0) {
+	        				overlappingActivities.get(0).setEnd(newStart);
+	        			} else {
+	        				start.setText(FormatUtils.formatTime(model.getStart()));
+	        				return;
+	        			}
+	        		} else {
+	        			JOptionPane.showMessageDialog(
+	                             ActivityPanel.this, 
+	                             "Overlaps with existing activities!",
+	                             "Overlap",
+	                             JOptionPane.ERROR_MESSAGE
+	                     );
+	         			start.setText(FormatUtils.formatTime(model.getStart()));
+	         			return;
+	        		}
+				}
         		
                 model.setStart(newStart);
                 start.setText(FormatUtils.formatTime(model.getStart()));
