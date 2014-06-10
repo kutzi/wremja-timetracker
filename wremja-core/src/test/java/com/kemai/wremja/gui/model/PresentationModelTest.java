@@ -54,9 +54,9 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
     @Test
     public void testActivityOverMidnight() throws ProjectActivityStateException {
         PresentationModel model = getNewTestModel();
-        final DateTime yesterday = DateUtils.getNow().toDateMidnight().toDateTime().minusMinutes(5);
+        final DateTime yesterday = DateUtils.getNow().withTimeAtStartOfDay().minusMinutes(5);
 
-        final ReadableInstant midnight = yesterday.plusDays(1).toDateMidnight();
+        final ReadableInstant midnight = yesterday.plusDays(1).withTimeAtStartOfDay();
 
         // Set active project
         model.startNewProject(project1);
@@ -107,9 +107,9 @@ public class PresentationModelTest extends AbstractWremjaTestCase {
     @Test
     public void testAcitivityOverMidnight2() throws ProjectActivityStateException {
         PresentationModel model = getNewTestModel();
-        final DateTime threeDaysAgo = DateUtils.getNow().toDateMidnight().toDateTime().minusDays(2).minusMinutes(5);
+        final DateTime threeDaysAgo = DateUtils.getNow().withTimeAtStartOfDay().minusDays(2).minusMinutes(5);
 
-        final DateTime midnight = threeDaysAgo.plusDays(1).toDateMidnight().toDateTime();
+        final DateTime midnight = threeDaysAgo.plusDays(1).withTimeAtStartOfDay();
 
         // Set active project
         model.startNewProject(project1);

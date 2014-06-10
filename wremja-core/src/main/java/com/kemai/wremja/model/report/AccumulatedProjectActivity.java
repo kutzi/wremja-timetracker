@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.base.AbstractInstant;
 
@@ -22,7 +21,7 @@ import com.kemai.wremja.model.ProjectActivity;
  */
 public class AccumulatedProjectActivity implements Comparable<AccumulatedProjectActivity> {
 
-    private final DateMidnight day;
+    private final DateTime day;
 
     private final Project project;
 
@@ -33,13 +32,13 @@ public class AccumulatedProjectActivity implements Comparable<AccumulatedProject
     @Deprecated
     public AccumulatedProjectActivity(final Project project, final DateTime day, final double time) {
         this.project = project;
-        this.day = day.toDateMidnight();
+        this.day = day.withTimeAtStartOfDay();
         this.time = time;
     }
 
     public AccumulatedProjectActivity(ProjectActivity activity) {
 		this.project = activity.getProject();
-        this.day = activity.getStart().toDateMidnight();
+        this.day = activity.getStart().withTimeAtStartOfDay();
         this.time = activity.getDuration();
 		activities.add(activity);
     }
