@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -348,12 +349,16 @@ public class PresentationModel extends Observable {
 	            events.add(event);
 	        }
 	        
-            SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					activitiesList.addAll(activities);
-				}
-			});
+            try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						activitiesList.addAll(activities);
+					}
+				});
+			} catch (InvocationTargetException | InterruptedException e) {
+				throw new RuntimeException(e);
+			}
 	
 	        this.stop = stopTime;
 	
