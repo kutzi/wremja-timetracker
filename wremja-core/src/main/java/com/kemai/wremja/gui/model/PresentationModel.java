@@ -4,14 +4,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -342,6 +340,7 @@ public class PresentationModel extends Observable {
 	        events = new ArrayList<WremjaEvent>(activities.size());
 	        for(ProjectActivity activity : activities) {
 	            getData().addActivity(activity);
+	            activitiesList.add(activity);
 	            
 	            // Create Event for Project Activity
 	            WremjaEvent event  = new WremjaEvent(WremjaEvent.Type.PROJECT_ACTIVITY_ADDED);
@@ -349,17 +348,6 @@ public class PresentationModel extends Observable {
 	            events.add(event);
 	        }
 	        
-            try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						activitiesList.addAll(activities);
-					}
-				});
-			} catch (InvocationTargetException | InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-	
 	        this.stop = stopTime;
 	
 	        clearOldActivity();
